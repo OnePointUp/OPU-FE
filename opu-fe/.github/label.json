@@ -1,0 +1,57 @@
+[
+    {
+        "name": "🎨 Design",
+        "color": "efeeb3",
+        "description": "style: 코드 구조/형태 개선"
+    },
+    {
+        "name": "⚡ Perf",
+        "color": "f0e68c",
+        "description": "perf: 성능 개선"
+    },
+    {
+        "name": "✨ Feature",
+        "color": "e2caf4",
+        "description": "feat: 새로운 기능"
+    },
+    {
+        "name": "🔥 Remove",
+        "color": "ff6b6b",
+        "description": "remove: 코드/파일 삭제"
+    },
+    {
+        "name": "🐛 Bug",
+        "color": "e99695",
+        "description": "fix: 버그 수정"
+    },
+    {
+        "name": "♻️ Refactor",
+        "color": "c2e0c6",
+        "description": "refactor: 코드 리팩토링"
+    },
+    {
+        "name": "➕ Chore Add",
+        "color": "d4edda",
+        "description": "chore: 의존성 추가"
+    },
+    {
+        "name": "➖ Chore Remove",
+        "color": "f5c6cb",
+        "description": "chore: 의존성 삭제"
+    },
+    {
+        "name": "🚚 Rename/Move",
+        "color": "bee5eb",
+        "description": "rename:/move: 파일 이름/위치 변경"
+    },
+    {
+        "name": "💡 Comment",
+        "color": "fff3cd",
+        "description": "comment: 주석 추가/수정"
+    },
+    {
+        "name": "📄 Docs",
+        "color": "bfdadd",
+        "description": "docs: 문서 추가/수정"
+    }
+]
