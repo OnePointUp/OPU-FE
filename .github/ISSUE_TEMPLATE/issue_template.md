@@ -1,7 +1,7 @@
 ---
 name: 📝 기능/수정/버그 이슈
 about: 기능 구현, 코드 수정, 버그 등 모든 작업 기록용
-title: "[이슈] "
+title: ": "
 labels: ""
 assignees: ""
 ---

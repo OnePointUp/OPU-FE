@@ -1,7 +1,7 @@
 ---
 name: 📝 PR Template
 about: Pull Request 작성 시 사용
-title: "[PR] "
+title: ": "
 labels: ""
 assignees: ""
 ---
