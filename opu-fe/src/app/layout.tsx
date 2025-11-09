@@ -19,9 +19,11 @@ export default function RootLayout({
                     content="width=device-width, initial-scale=1, viewport-fit=cover"
                 />
             </head>
-            <body className="min-h-screen">
-                <div id="root" className="flex flex-col min-h-screen">
-                    <main className="flex-1">{children}</main>
+            <body className="min-h-screen bg-zinc-50">
+                <div className="flex min-h-screen items-center justify-center">
+                    <div className="layout-frame w-full max-w-[600px] min-h-screen bg-white">
+                        {children}
+                    </div>
                 </div>
             </body>
         </html>
