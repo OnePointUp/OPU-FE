@@ -1,18 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/layout/Header";
-import Menu from "@/components/layout/Menu";
-
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
     title: "One Point Up",
@@ -26,13 +13,17 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="ko">
-            <body
-                className={`${geistSans.variable} ${geistMono.variable} min-h-screen`}
-            >
-                <div id="root" className="flex flex-col min-h-screen">
-                    <Header />
-                    <main className="flex-1">{children}</main>
-                    <Menu />
+            <head>
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1, viewport-fit=cover"
+                />
+            </head>
+            <body className="min-h-screen bg-zinc-50">
+                <div className="flex min-h-screen items-center justify-center">
+                    <div className="layout-frame w-full max-w-[600px] min-h-screen bg-white">
+                        {children}
+                    </div>
                 </div>
             </body>
         </html>

@@ -3,9 +3,18 @@
 
 /* ---------------- 기본 색상 ---------------- */
 :root {
+    --app-max: 600px;
+
     --background: #ffffff;
     --foreground: #171717;
+
+    --safe-top: env(safe-area-inset-top);
+    --safe-bottom: env(safe-area-inset-bottom);
+    --safe-left: env(safe-area-inset-left);
+    --safe-right: env(safe-area-inset-right);
 }
+
+:root.debug-safe { --safe-top: 24px; }
 
 /* ---------------- 테마 ---------------- */
 @theme inline {
@@ -235,6 +244,115 @@
         background-repeat: no-repeat;
         background-position: center;
     }
+
+    /* 헤더 */
+        .menu-bar{
+            position: fixed;       
+            left: 0; right: 0; bottom: 0;
+            z-index: 9999;
+            height: 72px;
+            background: #fff;
+            border-top: 1px solid var(--color-super-light-gray);
+
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(100%, var(--app-max)); 
+        }
+    .app-header {
+        position: fixed;
+        top: 0;
+        z-index: 50;
+        height: calc(56px + var(--safe-top));
+        padding-top: var(--safe-top);
+        background: var(--background);
+        border-bottom: 1px solid var(--color-super-light-gray);
+
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(100%, var(--app-max)); 
+    }
+    
+    .app-header__inner {
+        height: 56px;
+        display: grid;
+        grid-template-columns: 56px 1fr 56px;
+        align-items: center;
+    }
+    
+    .app-header__back {
+        width: 56px;
+        height: 56px;
+        display: grid;
+        place-items: center;
+        color: var(--color-foreground);
+    }
+    
+    .app-header__title {
+        text-align: center;
+        font-weight: var(--weight-semibold);
+        font-size: var(--text-h2);
+        line-height: 1;
+    }
+    
+    .app-header__spacer {
+        width: 56px;
+        height: 56px;
+    }
+
+    /* 메뉴 바 스타일 */
+    .menu-bar{
+        position: fixed;       
+        left: 0; right: 0; bottom: 0;
+        z-index: 9999;
+        height: 72px;
+        background: #fff;
+        border-top: 1px solid var(--color-super-light-gray);
+
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(100%, var(--app-max)); 
+    }
+
+    .menu-bar__list{ 
+        height:72px; 
+        display:flex; 
+        justify-content:space-between; 
+        align-items:center; 
+        margin:0; padding:0 20px; 
+        list-style:none; 
+    }
+
+
+    .menu-bar__item {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        color: #a1a7b3;
+        font-weight: var(--weight-semibold);
+        font-size: var(--text-mini);
+        line-height: 1;
+        padding: 10px 4px;
+    }
+
+    .menu-bar__icon { width: 25px; height: 25px; }
+
+    /* 활성 상태 */
+    .menu-bar__item.is-active {
+        color: #000000;
+    }
+    .menu-bar__item.is-active::after{
+        content:"";
+        position:absolute;
+        left:50%; transform:translateX(-50%);
+        bottom:-6px;
+        width:28px; height:2px; border-radius:2px;
+        background: currentColor;
+      }
+
 }
 
 /* ---------------- 다크모드 ---------------- */
@@ -245,20 +363,46 @@
     }
 }
 
-/* ---------------- 전역 폰트 강제 ---------------- */
+/* ---------------- 전역 폰트 + safe area ---------------- */
 @layer base {
     html {
         font-family: var(--font-sans);
-    }
-    body {
-        font-family: inherit;
         background: var(--background);
         color: var(--foreground);
+    
+        /* Safe area 반영 */
+        padding-top: var(--safe-top);
+        padding-bottom: var(--safe-bottom);
+        padding-left: var(--safe-left);
+        padding-right: var(--safe-right);
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        overflow-x:hidden;
     }
+
+    body {
+        font-family: inherit;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--background);
+        color: var(--foreground);
+        box-sizing: border-box;
+    }
+
     button,
     input,
     select,
     textarea {
         font: inherit;
     }
+
+    /* 안드/아이폰 최신 브라우저에서 주소창 변형 대응 */
+.app-shell{ min-height: 100svh; }
+@supports (height: 100dvh){
+    .app-shell{ min-height: 100dvh; }  /* 가능하면 100dvh 사용 */
+}
+
+
 }
