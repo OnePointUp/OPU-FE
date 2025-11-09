@@ -12,6 +12,8 @@
     --safe-right: env(safe-area-inset-right);
 }
 
+:root.debug-safe { --safe-top: 24px; }
+
 /* ---------------- 테마 ---------------- */
 @theme inline {
     --color-background: var(--background);
@@ -240,6 +242,44 @@
         background-repeat: no-repeat;
         background-position: center;
     }
+
+    /* 헤더 */
+    .app-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        height: calc(56px + var(--safe-top));
+        padding-top: var(--safe-top);
+        background: var(--background);
+        border-bottom: 1px solid var(--color-super-light-gray);
+    }
+    
+    .app-header__inner {
+        height: 56px;
+        display: grid;
+        grid-template-columns: 56px 1fr 56px;
+        align-items: center;
+    }
+    
+    .app-header__back {
+        width: 56px;
+        height: 56px;
+        display: grid;
+        place-items: center;
+        color: var(--color-foreground);
+    }
+    
+    .app-header__title {
+        text-align: center;
+        font-weight: var(--weight-semibold);
+        font-size: var(--text-h2);
+        line-height: 1;
+    }
+    
+    .app-header__spacer {
+        width: 56px;
+        height: 56px;
+    }
 }
 
 /* ---------------- 다크모드 ---------------- */
@@ -276,7 +316,7 @@
         color: var(--foreground);
         box-sizing: border-box;
     }
-    
+
     button,
     input,
     select,
