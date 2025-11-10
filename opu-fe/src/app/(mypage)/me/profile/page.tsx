@@ -36,12 +36,22 @@ export default function ProfileEditPage() {
 
     // 닉네임 중복 체크
     async function handleBlurNickname() {
+        // 프로필 정보 로드되기 전에는 중복 체크 X
+        if (!profile) return;
+
         const v = nickname.trim();
-        if (!v) return setDupError("닉네임을 입력해 주세요.");
+        if (!v) {
+            setDupError("닉네임을 입력해 주세요.");
+            return;
+        }
+
         setChecking(true);
-        const isDup = await checkNicknameDup(v);
+
+        const current = profile?.nickname;
+        const isDup = await checkNicknameDup(v, current);
+
         setChecking(false);
-        setDupError(isDup ? "이미 존재하는 닉네임 입니다." : "");
+        setDupError(isDup ? "이미 존재하는 닉네임입니다." : "");
     }
 
     // 이미지 선택

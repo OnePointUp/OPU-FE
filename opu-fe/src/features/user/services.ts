@@ -23,13 +23,15 @@ export async function fetchMyProfile(): Promise<UserProfile> {
     return getJSON<UserProfile>(url);
 }
 
-type NickCheckRes = { exists: boolean };
-export async function checkNicknameDup(nickname: string): Promise<boolean> {
+export async function checkNicknameDup(
+    nickname: string,
+    currentNickname?: string
+): Promise<boolean> {
     const q = encodeURIComponent(nickname.trim());
-    const url = API_BASE
-        ? `${API_BASE}/users/nickname/check?nickname=${q}`
-        : `/api/nickname/check?nickname=${q}`;
-    const data = await getJSON<NickCheckRes>(url);
+    const cur = encodeURIComponent(currentNickname?.trim() ?? "");
+    const url = `/api/nickname/check?nickname=${q}&current=${cur}`;
+    const res = await fetch(url);
+    const data = await res.json();
     return data.exists;
 }
 
