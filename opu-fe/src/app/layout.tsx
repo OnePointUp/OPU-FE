@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
     title: "One Point Up",
@@ -25,6 +26,18 @@ export default function RootLayout({
                         {children}
                     </div>
                 </div>
+                <Toaster
+                    position="top-center"
+                    toastOptions={{
+                        duration: 2000,
+                        style: {
+                            fontSize: "14px",
+                            fontWeight: 500,
+                            borderRadius: "10px",
+                            padding: "10px 14px",
+                        },
+                    }}
+                />
             </body>
         </html>
     );
