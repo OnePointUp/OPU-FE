@@ -5,9 +5,9 @@ import Header from "@/components/layout/Header";
 import ProfileAvatarPicker from "@/features/user/components/ProfileAvatarPicker";
 import NicknameField from "@/features/user/components/NicknameField";
 import IntroField from "@/features/user/components/IntroField";
-import SaveBar from "@/features/user/components/SaveBar";
 import { fetchMyProfile, type UserProfile } from "@/features/user/services";
 import { checkNicknameDup, saveProfile } from "@/features/user/services";
+import BottomActionBar from "@/components/common/BottomActionBar";
 
 export default function ProfileEditPage() {
     const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -118,7 +118,11 @@ export default function ProfileEditPage() {
                 />
             </main>
 
-            <SaveBar disabled={!canSubmit} onSave={handleSave} />
+            <BottomActionBar
+                label="저장"
+                disabled={!canSubmit}
+                onClick={handleSave}
+            />
         </div>
     );
 }
