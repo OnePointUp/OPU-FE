@@ -31,7 +31,7 @@
     --color-saturday: #66b5ff;
     --color-sunday: #f88183;
     --color-opu-red: #ff615b;
-    --color-opu-blue: #49A7FF
+    --color-opu-blue: #49A7FF;
     --color-placeholder: #c9cacd;
     --color-error: #e11d48;
     --color-opu-tag: #686868;
@@ -42,6 +42,9 @@
     --color-super-light-gray: #e8ebf0;
     --color-dark-navy: #0f172a;
     --color-like-pink: #FF575D;
+    --color-light-pink: #FFD4D4;
+    --color-dark-yellow: #D7D7B4;
+    --color-light-yellow: #FFFFE8;
 
     /* 폰트 패밀리 */
     --font-sans: "Pretendard Variable", Pretendard, -apple-system,
@@ -378,8 +381,160 @@
         bottom:-6px;
         width:28px; height:2px; border-radius:2px;
         background: currentColor;
-      }
+    }
 
+    /* ---------------- 플러스 버튼 ---------------- */
+    .plus-button__container {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+    }
+
+    /* 메뉴 */
+    .plus-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: none;
+    margin-left:60px;
+    }
+
+    /* 메뉴 아이템 (한 줄 단위) */
+    .plus-menu__item-wrapper {
+    opacity: 0;
+    transform: translateY(0); /* 기본적으로 플러스 버튼 위치 */
+    position: absolute;
+    transition: opacity 0.1s ease, transform 0.1s ease;
+    }
+
+    /* 열림 애니메이션 */
+    .plus-menu--open {
+    pointer-events: auto;
+    }
+
+    .plus-menu--open .plus-menu__item-wrapper {
+    opacity: 1;
+    }
+
+    /* 메뉴가 열릴 때 각 항목이 위로 순차적으로 이동 */
+    .plus-menu--open .plus-menu__item-wrapper:nth-child(1) {
+    transform: translateY(-210px);
+    transition-delay: 0.12s;
+    }
+    .plus-menu--open .plus-menu__item-wrapper:nth-child(2) {
+    transform: translateY(-140px);
+    transition-delay: 0.08s;
+    }
+    .plus-menu--open .plus-menu__item-wrapper:nth-child(3) {
+    transform: translateY(-70px);
+    transition-delay: 0.05s;
+    }
+
+    /* 닫힘 애니메이션 */
+    .plus-menu--closed .plus-menu__item-wrapper {
+    opacity: 0;
+    transform: translateY(0);
+    }
+
+    /* 닫힐 때는 반대로 순차적으로 사라짐 */
+    .plus-menu--closed .plus-menu__item-wrapper:nth-child(1) {
+    transition-delay: 0.05s;
+    }
+    .plus-menu--closed .plus-menu__item-wrapper:nth-child(2) {
+    transition-delay: 0.08s;
+    }
+    .plus-menu--closed .plus-menu__item-wrapper:nth-child(3) {
+    transition-delay: 0.12s;
+    }
+
+    /* 플로팅 메뉴 안의 한 줄 구조: [텍스트] [동그란 버튼] */
+    .plus-menu__item-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 20px;
+    }
+
+    /* 각 메뉴 아이템 */
+    .plus-menu__item {
+    width: 63px;
+    height: 63px;
+    border-radius: 50%;
+    box-shadow: 0px 0.5px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+    }
+    .plus-menu__item:hover {
+    transform: scale(1.05);
+    }
+    .plus-menu__item:active {
+    transform: scale(0.95);
+    }
+
+    /* 버튼 클릭 시 배경 어둡게 */
+    .plus-menu__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 5;
+    }
+
+    /* 메뉴가 열렸을 때 오버레이 보이기 */
+    .plus-menu__overlay--visible {
+    opacity: 1;
+    pointer-events: auto;
+    }
+
+    /* 메뉴와 버튼이 오버레이 위에 오게 */
+    .plus-button__container {
+    position: relative;
+    z-index: 10;
+    }
+
+    /* 메뉴 라벨 */
+    .plus-menu__label {
+    color: #ffffff;
+    width: max-content;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    margin-top: 4px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    }
+
+    /* 플러스 버튼 본체 */
+    .plus-button {
+    width: 63px;
+    height: 63px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0.5px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    }
+    .plus-button:active {
+    transform: scale(0.95);
+    }
+    .plus-button__icon {
+    transition: transform 0.3s ease;
+    }
+    .plus-button--rotated .plus-button__icon {
+    transform: rotate(45deg);
+    }
 }
 
 /* ---------------- 다크모드 ---------------- */
