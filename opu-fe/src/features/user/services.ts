@@ -23,6 +23,7 @@ export async function fetchMyProfile(): Promise<UserProfile> {
     return getJSON<UserProfile>(url);
 }
 
+// --- 닉네임 중복 검증 ---
 export async function checkNicknameDup(
     nickname: string,
     currentNickname?: string
@@ -35,6 +36,7 @@ export async function checkNicknameDup(
     return data.exists;
 }
 
+// --- 프로필 수정 ---
 export async function saveProfile(payload: {
     nickname: string;
     bio: string;
@@ -54,4 +56,29 @@ export async function saveProfile(payload: {
 
     if (!res.ok) throw new Error("Save failed");
     return { ok: true };
+}
+
+// --- 비밀번호 검증 ---
+export async function verifyCurrentPassword(currentPassword: string) {
+    const res = await fetch("/api/me/password/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword }),
+    });
+    if (!res.ok) throw new Error(await res.text().catch(() => "검증 실패"));
+    return res.json() as Promise<{ ok: boolean }>;
+}
+
+// --- 비밀번호 검증 ---
+export async function changePassword2(
+    currentPassword: string,
+    newPassword: string
+) {
+    const res = await fetch("/api/me/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    if (!res.ok) throw new Error(await res.text().catch(() => "변경 실패"));
+    return res.json() as Promise<{ ok: boolean }>;
 }
