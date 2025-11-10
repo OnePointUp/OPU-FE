@@ -6,8 +6,11 @@ import SettingsList from "@/features/user/components/SettingsList";
 import Header from "@/components/layout/Header";
 import { fetchMyProfile, type UserProfile } from "@/features/user/services";
 import Menu from "@/components/layout/Menu";
+import { useRouter } from "next/navigation";
 
 export default function MyPage() {
+    const router = useRouter();
+
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -21,9 +24,13 @@ export default function MyPage() {
     useEffect(() => {
         fetchMyProfile()
             .then(setProfile)
-            .catch((err) => console.error(err))
+            .catch((err) => console.error("프로필 불러오기 실패: ", err))
             .finally(() => setLoading(false));
     }, []);
+
+    function handleEdit() {
+        router.push("/me/profile");
+    }
 
     return (
         <div className="min-h-screen flex flex-col items-center bg-[var(--background)]">
@@ -40,9 +47,9 @@ export default function MyPage() {
                 <UserInfo
                     nickname={profile?.nickname ?? ""}
                     email={profile?.email ?? ""}
-                    introduction={profile?.introduction}
+                    bio={profile?.bio}
                     profileImageUrl={profile?.profileImageUrl}
-                    handleEdit={() => console.log("프로필 편집 이동")}
+                    handleEdit={handleEdit}
                     className="mt-4"
                     loading={loading}
                 />
