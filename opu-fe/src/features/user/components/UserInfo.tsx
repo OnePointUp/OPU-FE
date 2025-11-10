@@ -5,7 +5,7 @@ import Image from "next/image";
 type Props = {
     nickname: string;
     email: string;
-    introduction?: string;
+    bio?: string;
     profileImageUrl?: string;
     handleEdit?: () => void;
     className?: string;
@@ -15,12 +15,15 @@ type Props = {
 export default function UserInfo({
     nickname,
     email,
-    introduction = "아직 자기소개가 없어요 😊",
+    bio = "아직 자기소개가 없어요 😊",
     profileImageUrl,
     handleEdit,
     className = "",
     loading = false,
 }: Props) {
+    const initial =
+        nickname && nickname.trim().length > 0 ? nickname.trim().charAt(0) : "";
+
     if (loading) {
         return (
             <section
@@ -64,7 +67,7 @@ export default function UserInfo({
                         />
                     ) : (
                         <div className="grid h-full w-full place-items-center text-[var(--color-light-gray)] font-[var(--weight-semibold)]">
-                            {nickname?.[0] ?? "U"}
+                            {initial}
                         </div>
                     )}
                 </div>
@@ -95,7 +98,7 @@ export default function UserInfo({
                             fontWeight: "var(--weight-regular)",
                         }}
                     >
-                        {introduction}
+                        {bio}
                     </p>
                 </div>
             </div>
