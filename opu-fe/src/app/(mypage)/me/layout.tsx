@@ -3,5 +3,5 @@ export default function MyPageLayout({
 }: {
     children: React.ReactNode;
 }) {
-    return <section className="min-h-screen bg-white px-5">{children}</section>;
+    return <section className="min-h-screen bg-white">{children}</section>;
 }

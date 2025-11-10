@@ -3,5 +3,6 @@
         "GitHub.codespaces",
         "GitHub.vscode-pull-request-github",
         "Github.copilot"
-    ]
+    ],
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

@@ -39,14 +39,11 @@ export default function PasswordStep1() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center bg-[var(--background)]">
+        <div className="app-page">
             <Header title="비밀번호 변경" />
-            <main
-                className="w-full flex flex-col items-center"
-                style={{ paddingTop: "calc(56px + var(--safe-top) + 10px)" }}
-            >
+            <main className="app-container pt-app-header pb-40">
                 <section
-                    className="w-full px-5 pb-24"
+                    className="w-full px-2 pb-24"
                     style={{ width: "min(100%, var(--app-max))" }}
                 >
                     <PasswordInput
