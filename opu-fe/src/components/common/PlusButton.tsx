@@ -2,41 +2,91 @@
 
 import { useState } from 'react'
 import { Icon } from '@iconify/react'
-import FloatingMenu from './FloatingMenu'
+import clsx from 'clsx'
 
-// 메뉴에게 전달할 것들
-interface MenuOption {
-  label: string
-  icon?: React.ReactNode
-  onClick?: () => void
-}
-
-// 부모에게 받은 것
-interface PlusButtonProps {
-  options: MenuOption[]
-  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-}
-
-// 버튼
-export default function PlusButton({ options, position = 'top-left' }: PlusButtonProps) {
+export default function PlusButton() {
   const [isOpen, setIsOpen] = useState(false)
-
   const toggleMenu = () => setIsOpen((prev) => !prev)
   const closeMenu = () => setIsOpen(false)
 
-  return (
-    <div className="relative">
-      {/* 플러스 버튼 */}
-      <button
-        onClick={toggleMenu}
-        className="w-15 h-15 rounded-full flex items-center justify-center shadow-lg transition-transform active:scale-95"
-        style={{ backgroundColor: '#FFB6C5' }}
-      >
-        <Icon icon="mdi:plus" width={28} height={28} className="text-white" />
-      </button>
+  const menuItems = [
+    {
+      label: '직접 생성',
+      icon: <Icon icon="pajamas:todo-done" width={28} height={28} className="text-white" />,
+      bgColor: 'var(--color-opu-green)',
+      onClick: () => {
+        alert('직접 생성 클릭')
+        closeMenu()
+      },
+    },
+    {
+      label: 'OPU에서 추가',
+      icon: (
+        <Icon
+          icon="mdi:bulletin-board"
+          width={30}
+          height={30}
+          style={{ color: 'var(--color-dark-yellow)' }}
+        />
+      ),
+      bgColor: 'var(--color-light-yellow)',
+      onClick: () => {
+        alert('OPU에서 추가 클릭')
+        closeMenu()
+      },
+    },
+    {
+      label: '랜덤 OPU 뽑기',
+      icon: <Icon icon="lucide:rabbit" width={30} height={30} className="text-white" />,
+      bgColor: 'var(--color-light-pink)',
+      onClick: () => {
+        alert('랜덤 OPU 뽑기 클릭')
+        closeMenu()
+      },
+    },
+  ]
 
-      {/* 메뉴 */}
-      <FloatingMenu isOpen={isOpen} onClose={closeMenu} options={options} position={position} />
-    </div>
+  return (
+    <>
+      {/* 어두운 오버레이 */}
+      <div
+        className={clsx('plus-menu__overlay', isOpen && 'plus-menu__overlay--visible')}
+        onClick={closeMenu}
+      />
+
+      {/* 버튼 + 메뉴 전체 래퍼 */}
+      <div className="plus-button__container">
+        {/* 메뉴 */}
+        <div className={clsx('plus-menu', isOpen ? 'plus-menu--open' : 'plus-menu--closed')}>
+          {menuItems.map((item, index) => (
+            <div key={index} className="plus-menu__item-wrapper">
+              <span className="plus-menu__label">{item.label}</span>
+              <button
+                onClick={item.onClick}
+                className="plus-menu__item"
+                style={{ backgroundColor: item.bgColor }}
+              >
+                {item.icon}
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* 플러스 버튼 */}
+        <button
+          onClick={toggleMenu}
+          className={clsx('plus-button', isOpen && 'plus-button--rotated')}
+          style={{ backgroundColor: 'var(--color-opu-pink)' }}
+        >
+          <Icon
+            icon="mdi:plus"
+            width={32}
+            height={32}
+            className="plus-button__icon"
+            style={{ color: '#FFFFFF' }}
+          />
+        </button>
+      </div>
+    </>
   )
 }
