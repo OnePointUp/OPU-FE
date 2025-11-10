@@ -106,36 +106,67 @@
     .input-box {
         position: absolute;
         left: 50%;
-        bottom: 34px;
         transform: translateX(-50%);
-        width: 316px;
+        width: 355px;
         height: 50px;
-        border-radius: 18px;
+ 
+        border: 1px solid #E8EBF0;
+        border-radius: 12px;
 
         background-color: #ffffff;
-        color: var(--color-dark-gray);
+        color: var(--color-dark-navy);
 
-        font-family: var(--font-sans);
-        font-weight: var(--weight-semibold);
-        font-size: 0.875rem;
+        font-weight: var(--weight-regular);
+        font-size: var(--text-sub);
         line-height: 1.5;
+        padding-left: 15px;
     }
+
+    .input-box--field {
+        position: static;          
+        transform: none;          
+        width: 100%;              
+        height: 50px;             
+        display: block;           
+    }
+
+    .input-box--textarea {
+        position: static;          
+        transform: none;
+        width: 100%;
+        min-height: 120px;         
+        resize: none;             
+        padding: 12px 16px;      
+        line-height: 1.6;
+        border: 1px solid #E8EBF0;
+        border-radius: 18px;
+        background-color: #fff;
+        color: var(--color-dark-navy);
+
+        font-weight: var(--weight-regular);
+        font-size: var(--text-sub);
+      }
+    
+      .input-box:focus,
+      .input-box--textarea:focus {
+        outline: none;
+        border-color: var(--color-opu-green);
+      }
 
     /* 버튼 스타일 */
     .btn-primary {
         position: absolute;
         left: 50%;
-        bottom: 34px;
+        bottom: 14px;
         transform: translateX(-50%);
-        width: 360px;
+        width: 90%;
         height: 60px;
         border-radius: 18px;
 
-        background-color: var(--color-primary);
-        color: var(--color-primary-text);
+        background-color: var(--color-opu-green);
+        color: #ffffff;
         border: 1.5px solid var(--color-super-light-gray);
 
-        font-family: var(--font-sans);
         font-weight: var(--weight-semibold);
         font-size: 1.125rem;
         line-height: 1.5;
@@ -153,7 +184,6 @@
         color: #000000;
         border: 1.5px solid #000000;
 
-        font-family: var(--font-sans);
         font-weight: var(--weight-regular);
         font-size: 1.125rem;
         line-height: 1.5;
@@ -171,7 +201,6 @@
         color: var(--color-opu-pink);
         border: 3px solid var(--color-opu-pink);
 
-        font-family: var(--font-sans);
         font-weight: var(--weight-medium);
         font-size: 1.125rem;
         line-height: 1.5;
@@ -189,7 +218,6 @@
         color: var(--color-blue-gray);
         border: 1.5px solid var(--color-blue-gray);
 
-        font-family: var(--font-sans);
         font-weight: var(--weight-medium);
         font-size: 1.125rem;
         line-height: 1.5;
@@ -213,7 +241,6 @@
         border: 1.3px solid var(--color-opu-tag);
         border-radius: 100px;
 
-        font-family: var(--font-sans);
         font-weight: var(--weight-medium);
         font-size: 0.875rem;
 
@@ -247,18 +274,18 @@
     }
 
     /* 헤더 */
-        .menu-bar{
-            position: fixed;       
-            left: 0; right: 0; bottom: 0;
-            z-index: 9999;
-            height: 72px;
-            background: #fff;
-            border-top: 1px solid var(--color-super-light-gray);
+    .menu-bar{
+        position: fixed;       
+        left: 0; right: 0; bottom: 0;
+        z-index: 9999;
+        height: 72px;
+        background: #fff;
+        border-top: 1px solid var(--color-super-light-gray);
 
-            left: 50%;
-            transform: translateX(-50%);
-            width: min(100%, var(--app-max)); 
-        }
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(100%, var(--app-max)); 
+    }
     .app-header {
         position: fixed;
         top: 0;
@@ -322,7 +349,6 @@
         margin:0; padding:0 20px; 
         list-style:none; 
     }
-
 
     .menu-bar__item {
         position: relative;
