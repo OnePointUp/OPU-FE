@@ -8,10 +8,11 @@
     --background: #ffffff;
     --foreground: #171717;
 
-    --safe-top: env(safe-area-inset-top);
+    --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom);
     --safe-left: env(safe-area-inset-left);
     --safe-right: env(safe-area-inset-right);
+    --app-header-h: calc(56px + var(--safe-top));
 }
 
 :root.debug-safe { --safe-top: 24px; }
@@ -71,6 +72,35 @@
 /* ---------------- 컴포넌트 스타일 ---------------- */
 
 @layer components {
+
+    /* 페이지 전체를 감싸는 div에 적용!!!!!! */
+    .app-page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: var(--background);
+        margin-top: 0.5rem; /* mt-2 */
+      }
+
+    /* 헤더 만큼 위 패딩 */
+    .pt-app-header {
+        padding-top: var(--app-header-h);
+    }
+
+    /* 페이지 폭 + 가운데 정렬 + 좌우 패딩 */
+    .app-container {
+        width: min(100%, var(--app-max));
+        margin-inline: auto;
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+
+    /* 하단 여백 재사용(예: Fixed 바와 겹침 방지) */
+    .pb-app-bottom {
+        padding-bottom: max(10rem, var(--safe-bottom)); 
+    }
+
     /*  텍스트 스타일 */
     .text-page-title {
         font-size: 1.125rem;
@@ -120,7 +150,7 @@
         color: var(--color-dark-navy);
 
         font-weight: var(--weight-regular);
-        font-size: var(--text-sub);
+        font-size: var(--text-body);
         line-height: 1.5;
         padding-left: 15px;
     }
@@ -142,12 +172,12 @@
         padding: 12px 16px;      
         line-height: 1.6;
         border: 1px solid #E8EBF0;
-        border-radius: 18px;
+        border-radius: 12px;
         background-color: #fff;
         color: var(--color-dark-navy);
 
         font-weight: var(--weight-regular);
-        font-size: var(--text-sub);
+        font-size: var(--text-body);
       }
     
       .input-box:focus,
@@ -159,21 +189,20 @@
     /* 버튼 스타일 */
     .btn-primary {
         position: absolute;
-        left: 50%;
         bottom: 14px;
-        transform: translateX(-50%);
-        width: 90%;
+        left: 0;      
+        right: 0;    
         height: 60px;
         border-radius: 18px;
-
+      
         background-color: var(--color-opu-green);
         color: #ffffff;
-        border: 1.5px solid var(--color-super-light-gray);
-
+      
         font-weight: var(--weight-semibold);
-        font-size: 1.125rem;
+        font-size: var(--text-h3);
         line-height: 1.5;
-    }
+      }
+
     .btn-random-opu {
         position: absolute;
         left: 50%;
@@ -289,6 +318,7 @@
         transform: translateX(-50%);
         width: min(100%, var(--app-max)); 
     }
+
     .app-header {
         position: fixed;
         top: 0;

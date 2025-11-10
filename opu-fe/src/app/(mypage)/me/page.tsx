@@ -33,28 +33,20 @@ export default function MyPage() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center bg-[var(--background)]">
-            {/* 헤더 */}
+        <div className="app-page overflow-hidden ">
             <Header title="마이페이지" showBack={false} />
 
-            <main
-                className="w-full flex flex-col items-center"
-                style={{
-                    paddingTop: "calc(56px + var(--safe-top) + 10px)",
-                }}
-            >
-                {/* 상단 사용자 정보 */}
+            <main className="app-container pt-app-header pb-40">
                 <UserInfo
                     nickname={profile?.nickname ?? ""}
                     email={profile?.email ?? ""}
                     bio={profile?.bio}
                     profileImageUrl={profile?.profileImageUrl}
                     handleEdit={handleEdit}
-                    className="mt-4"
+                    className="mt-6"
                     loading={loading}
                 />
 
-                {/* 하단 설정 리스트 */}
                 <div className="w-full">
                     <SettingsList items={items} />
                 </div>

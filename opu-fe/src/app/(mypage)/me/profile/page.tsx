@@ -87,15 +87,9 @@ export default function ProfileEditPage() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center bg-[var(--background)]">
+        <div className="app-page overflow-hidden overscroll-none">
             <Header title="프로필 편집" showBack />
-            <main
-                className="w-full px-5 pb-40"
-                style={{
-                    width: "min(100%, var(--app-max))",
-                    paddingTop: "calc(56px + var(--safe-top))",
-                }}
-            >
+            <main className="app-container pt-app-header pb-40 px-6">
                 <ProfileAvatarPicker
                     nickname={nickname}
                     previewUrl={previewUrl}
