@@ -31,13 +31,14 @@ export default function UserInfo({
                 style={{ width: "min(100%, var(--app-max))" }}
             >
                 <div className="flex items-center gap-4">
-                    <div className="size-16 rounded-full bg-[var(--color-super-light-gray)] animate-pulse" />
+                    <div className="size-16 rounded-full skeleton" />
                     <div className="flex-1 space-y-2">
-                        <div className="h-4 w-20 rounded bg-[var(--color-super-light-gray)] animate-pulse" />
-                        <div className="h-3 w-35 rounded bg-[var(--color-super-light-gray)] animate-pulse" />
-                        <div className="h-3 w-52 rounded bg-[var(--color-super-light-gray)] animate-pulse" />
+                        <div className="h-4 w-20 rounded skeleton" />
+                        <div className="h-3 w-36 rounded skeleton" />
+                        <div className="h-3 w-52 rounded skeleton" />
                     </div>
                 </div>
+
                 <button
                     disabled
                     className="mt-5 h-10 w-full rounded-xl border border-[var(--color-super-light-gray)] bg-[var(--background)] text-[var(--color-light-gray)]"

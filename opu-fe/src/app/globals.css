@@ -27,6 +27,7 @@
     /* 브랜드 컬러 */
     --color-opu-pink: #ffb6c5;
     --color-opu-dark-pink: #f38ba0;
+    --color-opu-dark-pink-30: rgba(243, 139, 160, 0.3);
     --color-opu-light-green: #cde990;
     --color-opu-green: #b8dd7c;
 
@@ -579,6 +580,31 @@
     .plus-button--rotated .plus-button__icon {
         transform: rotate(45deg);
     }
+}
+
+/* Shimmer skeleton */
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+.skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-super-light-gray);
+}
+.skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.55),
+        transparent
+    );
+    animation: shimmer 1.2s infinite;
 }
 
 /* ---------------- 다크모드 ---------------- */
