@@ -15,7 +15,9 @@
     --app-header-h: calc(56px + var(--safe-top));
 }
 
-:root.debug-safe { --safe-top: 24px; }
+:root.debug-safe {
+    --safe-top: 24px;
+}
 
 /* ---------------- 테마 ---------------- */
 @theme inline {
@@ -32,7 +34,7 @@
     --color-saturday: #66b5ff;
     --color-sunday: #f88183;
     --color-opu-red: #ff615b;
-    --color-opu-blue: #49A7FF;
+    --color-opu-blue: #49a7ff;
     --color-placeholder: #c9cacd;
     --color-error: #e11d48;
     --color-opu-tag: #686868;
@@ -42,10 +44,12 @@
     --color-light-gray: #b4b4b4;
     --color-super-light-gray: #e8ebf0;
     --color-dark-navy: #0f172a;
-    --color-like-pink: #FF575D;
-    --color-light-pink: #FFD4D4;
-    --color-dark-yellow: #D7D7B4;
-    --color-light-yellow: #FFFFE8;
+    --color-like-pink: #ff575d;
+    --color-light-pink: #ffd4d4;
+    --color-dark-yellow: #d7d7b4;
+    --color-light-yellow: #ffffe8;
+    --color-toggle-on: #a1d152;
+    --color-toggle-off: #dfe4ea;
 
     /* 폰트 패밀리 */
     --font-sans: "Pretendard Variable", Pretendard, -apple-system,
@@ -72,7 +76,6 @@
 /* ---------------- 컴포넌트 스타일 ---------------- */
 
 @layer components {
-
     /* 페이지 전체를 감싸는 div에 적용!!!!!! */
     .app-page {
         min-height: 100vh;
@@ -81,7 +84,7 @@
         align-items: center;
         background: var(--background);
         margin-top: 0.5rem; /* mt-2 */
-      }
+    }
 
     /* 헤더 만큼 위 패딩 */
     .pt-app-header {
@@ -98,7 +101,7 @@
 
     /* 하단 여백 재사용(예: Fixed 바와 겹침 방지) */
     .pb-app-bottom {
-        padding-bottom: max(10rem, var(--safe-bottom)); 
+        padding-bottom: max(10rem, var(--safe-bottom));
     }
 
     /*  텍스트 스타일 */
@@ -142,8 +145,8 @@
         transform: translateX(-50%);
         width: 355px;
         height: 50px;
- 
-        border: 1px solid #E8EBF0;
+
+        border: 1px solid #e8ebf0;
         border-radius: 12px;
 
         background-color: #ffffff;
@@ -156,52 +159,52 @@
     }
 
     .input-box--field {
-        position: static;          
-        transform: none;          
-        width: 100%;              
-        height: 50px;             
-        display: block;           
+        position: static;
+        transform: none;
+        width: 100%;
+        height: 50px;
+        display: block;
     }
 
     .input-box--textarea {
-        position: static;          
+        position: static;
         transform: none;
         width: 100%;
-        min-height: 120px;         
-        resize: none;             
-        padding: 12px 16px;      
+        min-height: 120px;
+        resize: none;
+        padding: 12px 16px;
         line-height: 1.6;
-        border: 1px solid #E8EBF0;
+        border: 1px solid #e8ebf0;
         border-radius: 12px;
         background-color: #fff;
         color: var(--color-dark-navy);
 
         font-weight: var(--weight-regular);
         font-size: var(--text-body);
-      }
-    
-      .input-box:focus,
-      .input-box--textarea:focus {
+    }
+
+    .input-box:focus,
+    .input-box--textarea:focus {
         outline: none;
         border-color: var(--color-opu-green);
-      }
+    }
 
     /* 버튼 스타일 */
     .btn-primary {
         position: absolute;
         bottom: 14px;
-        left: 0;      
-        right: 0;    
+        left: 0;
+        right: 0;
         height: 60px;
         border-radius: 18px;
-      
+
         background-color: var(--color-opu-green);
         color: #ffffff;
-      
+
         font-weight: var(--weight-semibold);
         font-size: var(--text-h3);
         line-height: 1.5;
-      }
+    }
 
     .btn-random-opu {
         position: absolute;
@@ -283,19 +286,19 @@
 
     /* 체크박스 스타일 */
     .custom-checkbox {
-        appearance: none;             
+        appearance: none;
         -webkit-appearance: none;
         -moz-appearance: none;
         box-sizing: border-box;
-      
+
         width: 20px;
         height: 20px;
         border: 1px solid var(--color-dark-navy);
-        border-radius: 4px;            
+        border-radius: 4px;
         background-color: #ffffff;
         cursor: pointer;
         transition: all 0.2s ease-in-out;
-      }
+    }
     .custom-checkbox:checked {
         background-color: var(--color-dark-navy);
         border-color: var(--color-dark-navy);
@@ -306,9 +309,11 @@
     }
 
     /* 헤더 */
-    .menu-bar{
-        position: fixed;       
-        left: 0; right: 0; bottom: 0;
+    .menu-bar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
         z-index: 9999;
         height: 72px;
         background: #fff;
@@ -316,7 +321,7 @@
 
         left: 50%;
         transform: translateX(-50%);
-        width: min(100%, var(--app-max)); 
+        width: min(100%, var(--app-max));
     }
 
     .app-header {
@@ -330,16 +335,16 @@
 
         left: 50%;
         transform: translateX(-50%);
-        width: min(100%, var(--app-max)); 
+        width: min(100%, var(--app-max));
     }
-    
+
     .app-header__inner {
         height: 56px;
         display: grid;
         grid-template-columns: 56px 1fr 56px;
         align-items: center;
     }
-    
+
     .app-header__back {
         width: 56px;
         height: 56px;
@@ -347,23 +352,25 @@
         place-items: center;
         color: var(--color-foreground);
     }
-    
+
     .app-header__title {
         text-align: center;
         font-weight: var(--weight-semibold);
         font-size: var(--text-h3);
         line-height: 1;
     }
-    
+
     .app-header__spacer {
         width: 56px;
         height: 56px;
     }
 
     /* 메뉴 바 스타일 */
-    .menu-bar{
-        position: fixed;       
-        left: 0; right: 0; bottom: 0;
+    .menu-bar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
         z-index: 9999;
         height: 72px;
         background: #fff;
@@ -371,16 +378,17 @@
 
         left: 50%;
         transform: translateX(-50%);
-        width: min(100%, var(--app-max)); 
+        width: min(100%, var(--app-max));
     }
 
-    .menu-bar__list{ 
-        height:72px; 
-        display:flex; 
-        justify-content:space-between; 
-        align-items:center; 
-        margin:0; padding:0 20px; 
-        list-style:none; 
+    .menu-bar__list {
+        height: 72px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0;
+        padding: 0 20px;
+        list-style: none;
     }
 
     .menu-bar__item {
@@ -398,172 +406,178 @@
         padding: 10px 4px;
     }
 
-    .menu-bar__icon { width: 25px; height: 25px; }
+    .menu-bar__icon {
+        width: 25px;
+        height: 25px;
+    }
 
     /* 활성 상태 */
     .menu-bar__item.is-active {
         color: #000000;
     }
-    .menu-bar__item.is-active::after{
-        content:"";
-        position:absolute;
-        left:50%; transform:translateX(-50%);
-        bottom:-6px;
-        width:28px; height:2px; border-radius:2px;
+    .menu-bar__item.is-active::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: -6px;
+        width: 28px;
+        height: 2px;
+        border-radius: 2px;
         background: currentColor;
     }
 
     /* ---------------- 플러스 버튼 ---------------- */
     .plus-button__container {
-    position: absolute;
-    bottom: 24px;
-    right: 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    z-index: 10;
+        position: absolute;
+        bottom: 24px;
+        right: 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 10;
     }
 
     /* 메뉴 */
     .plus-menu {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 12px;
-    transform: translateY(0);
-    opacity: 1;
-    pointer-events: none;
-    margin-left:60px;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 12px;
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: none;
+        margin-left: 60px;
     }
 
     /* 메뉴 아이템 (한 줄 단위) */
     .plus-menu__item-wrapper {
-    opacity: 0;
-    transform: translateY(0); /* 기본적으로 플러스 버튼 위치 */
-    position: absolute;
-    transition: opacity 0.1s ease, transform 0.1s ease;
+        opacity: 0;
+        transform: translateY(0); /* 기본적으로 플러스 버튼 위치 */
+        position: absolute;
+        transition: opacity 0.1s ease, transform 0.1s ease;
     }
 
     /* 열림 애니메이션 */
     .plus-menu--open {
-    pointer-events: auto;
+        pointer-events: auto;
     }
 
     .plus-menu--open .plus-menu__item-wrapper {
-    opacity: 1;
+        opacity: 1;
     }
 
     /* 메뉴가 열릴 때 각 항목이 위로 순차적으로 이동 */
     .plus-menu--open .plus-menu__item-wrapper:nth-child(1) {
-    transform: translateY(-210px);
-    transition-delay: 0.12s;
+        transform: translateY(-210px);
+        transition-delay: 0.12s;
     }
     .plus-menu--open .plus-menu__item-wrapper:nth-child(2) {
-    transform: translateY(-140px);
-    transition-delay: 0.08s;
+        transform: translateY(-140px);
+        transition-delay: 0.08s;
     }
     .plus-menu--open .plus-menu__item-wrapper:nth-child(3) {
-    transform: translateY(-70px);
-    transition-delay: 0.05s;
+        transform: translateY(-70px);
+        transition-delay: 0.05s;
     }
 
     /* 닫힘 애니메이션 */
     .plus-menu--closed .plus-menu__item-wrapper {
-    opacity: 0;
-    transform: translateY(0);
+        opacity: 0;
+        transform: translateY(0);
     }
 
     /* 닫힐 때는 반대로 순차적으로 사라짐 */
     .plus-menu--closed .plus-menu__item-wrapper:nth-child(1) {
-    transition-delay: 0.05s;
+        transition-delay: 0.05s;
     }
     .plus-menu--closed .plus-menu__item-wrapper:nth-child(2) {
-    transition-delay: 0.08s;
+        transition-delay: 0.08s;
     }
     .plus-menu--closed .plus-menu__item-wrapper:nth-child(3) {
-    transition-delay: 0.12s;
+        transition-delay: 0.12s;
     }
 
     /* 플로팅 메뉴 안의 한 줄 구조: [텍스트] [동그란 버튼] */
     .plus-menu__item-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 20px;
     }
 
     /* 각 메뉴 아이템 */
     .plus-menu__item {
-    width: 63px;
-    height: 63px;
-    border-radius: 50%;
-    box-shadow: 0px 0.5px 20px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.15s ease;
-    flex-shrink: 0;
+        width: 63px;
+        height: 63px;
+        border-radius: 50%;
+        box-shadow: 0px 0.5px 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.15s ease;
+        flex-shrink: 0;
     }
     .plus-menu__item:hover {
-    transform: scale(1.05);
+        transform: scale(1.05);
     }
     .plus-menu__item:active {
-    transform: scale(0.95);
+        transform: scale(0.95);
     }
 
     /* 버튼 클릭 시 배경 어둡게 */
     .plus-menu__overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    z-index: 5;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        z-index: 5;
     }
 
     /* 메뉴가 열렸을 때 오버레이 보이기 */
     .plus-menu__overlay--visible {
-    opacity: 1;
-    pointer-events: auto;
+        opacity: 1;
+        pointer-events: auto;
     }
 
     /* 메뉴와 버튼이 오버레이 위에 오게 */
     .plus-button__container {
-    position: relative;
-    z-index: 10;
+        position: relative;
+        z-index: 10;
     }
 
     /* 메뉴 라벨 */
     .plus-menu__label {
-    color: #ffffff;
-    width: max-content;
-    font-size: var(--text-caption);
-    font-weight: var(--weight-medium);
-    margin-top: 4px;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+        color: #ffffff;
+        width: max-content;
+        font-size: var(--text-caption);
+        font-weight: var(--weight-medium);
+        margin-top: 4px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
     }
 
     /* 플러스 버튼 본체 */
     .plus-button {
-    width: 63px;
-    height: 63px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0px 0.5px 20px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
+        width: 63px;
+        height: 63px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0px 0.5px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease;
     }
     .plus-button:active {
-    transform: scale(0.95);
+        transform: scale(0.95);
     }
     .plus-button__icon {
-    transition: transform 0.3s ease;
+        transition: transform 0.3s ease;
     }
     .plus-button--rotated .plus-button__icon {
-    transform: rotate(45deg);
+        transform: rotate(45deg);
     }
 }
 
@@ -581,7 +595,7 @@
         font-family: var(--font-sans);
         background: var(--background);
         color: var(--foreground);
-    
+
         /* Safe area 반영 */
         padding-top: var(--safe-top);
         padding-bottom: var(--safe-bottom);
@@ -590,7 +604,7 @@
         box-sizing: border-box;
         width: 100%;
         height: 100%;
-        overflow-x:hidden;
+        overflow-x: hidden;
     }
 
     body {
@@ -611,10 +625,12 @@
     }
 
     /* 안드/아이폰 최신 브라우저에서 주소창 변형 대응 */
-.app-shell{ min-height: 100svh; }
-@supports (height: 100dvh){
-    .app-shell{ min-height: 100dvh; }  /* 가능하면 100dvh 사용 */
-}
-
-
+    .app-shell {
+        min-height: 100svh;
+    }
+    @supports (height: 100dvh) {
+        .app-shell {
+            min-height: 100dvh;
+        } /* 가능하면 100dvh 사용 */
+    }
 }
