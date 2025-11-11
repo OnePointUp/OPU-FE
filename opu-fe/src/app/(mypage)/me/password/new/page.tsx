@@ -114,6 +114,7 @@ export default function PasswordStep2() {
             <BottomActionBar
                 label="저장"
                 disabled={!canSubmit}
+                loading={loading}
                 onClick={onSubmit}
                 className="px-2"
             />

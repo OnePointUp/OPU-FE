@@ -8,6 +8,7 @@ import IntroField from "@/features/user/components/IntroField";
 import { fetchMyProfile, type UserProfile } from "@/features/user/services";
 import { checkNicknameDup, saveProfile } from "@/features/user/services";
 import BottomActionBar from "@/components/common/BottomActionBar";
+import SpinnerOverlay from "@/components/common/SpinnerOverlay";
 
 export default function ProfileEditPage() {
     const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -76,16 +77,6 @@ export default function ProfileEditPage() {
         history.back();
     }
 
-    if (loading) {
-        return (
-            <div className="min-h-screen flex flex-col items-center bg-[var(--background)] justify-center">
-                <p className="text-[var(--color-light-gray)]">
-                    프로필 불러오는 중...
-                </p>
-            </div>
-        );
-    }
-
     return (
         <div className="app-page overflow-hidden overscroll-none">
             <Header title="프로필 편집" showBack />
@@ -115,6 +106,7 @@ export default function ProfileEditPage() {
             <BottomActionBar
                 label="저장"
                 disabled={!canSubmit}
+                loading={loading}
                 onClick={handleSave}
             />
         </div>

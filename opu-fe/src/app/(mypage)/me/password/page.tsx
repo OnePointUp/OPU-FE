@@ -30,9 +30,20 @@ export default function PasswordStep1() {
             router.push("/me/password/new");
         } catch (e: unknown) {
             console.error(e);
-            if (process.env.NODE_ENV === "development") {
-                toast.error(String(e));
-            }
+            const msg =
+                e instanceof Error
+                    ? e.message
+                    : "비밀번호를 확인할 수 없습니다. 다시 시도해 주세요.";
+            toast.error(msg);
+            // if (axios.isAxiosError(e)) {
+            //     if (e.response?.status === 401) {
+            //         toast.error("현재 비밀번호가 일치하지 않습니다.");
+            //     } else {
+            //         toast.error("서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+            //     }
+            // } else {
+            //     toast.error("예상치 못한 오류가 발생했습니다.");
+            // }
         } finally {
             setLoading(false);
         }
@@ -61,7 +72,8 @@ export default function PasswordStep1() {
 
             <BottomActionBar
                 label="다음"
-                disabled={loading || !cur}
+                disabled={!cur}
+                loading={loading}
                 onClick={goNext}
             />
         </div>

@@ -1,8 +1,11 @@
 "use client";
 
+import Spinner from "@/components/common/Spinner";
+
 type Props = {
     label?: string;
     disabled?: boolean;
+    loading?: boolean;
     onClick: () => void;
     className?: string;
 };
@@ -10,9 +13,12 @@ type Props = {
 export default function BottomActionBar({
     label = "저장",
     disabled,
+    loading = false,
     onClick,
     className = "",
 }: Props) {
+    const isDisabled = disabled || loading;
+
     return (
         <div
             className={`fixed left-0 right-0 px-5 pt-3 pb-[max(16px,var(--safe-bottom))] flex justify-center ${className}`}
@@ -28,19 +34,17 @@ export default function BottomActionBar({
                 <button
                     type="button"
                     onClick={onClick}
-                    disabled={disabled}
-                    className="btn-primary"
-                    style={{
-                        opacity: disabled ? 0.6 : 1,
-                        background: disabled
-                            ? "#DDE7C0"
-                            : "var(--color-opu-green)",
-                        color: "#fff",
-                        fontSize: "var(--text-h3)",
-                        fontWeight: "var(--weight-semibold)",
-                    }}
+                    disabled={isDisabled}
+                    className="btn-primary flex justify-center items-center gap-2"
+                    style={{ opacity: isDisabled ? 0.6 : 1 }}
                 >
-                    {label}
+                    {loading ? (
+                        <>
+                            <Spinner />
+                        </>
+                    ) : (
+                        label
+                    )}
                 </button>
             </div>
         </div>
