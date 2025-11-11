@@ -77,10 +77,6 @@ export default function ProfileEditPage() {
         history.back();
     }
 
-    if (loading) {
-        return <SpinnerOverlay />;
-    }
-
     return (
         <div className="app-page overflow-hidden overscroll-none">
             <Header title="프로필 편집" showBack />
