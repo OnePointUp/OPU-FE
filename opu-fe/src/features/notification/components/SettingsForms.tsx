@@ -10,7 +10,6 @@ import Group from "./Group";
 import { toast } from "react-hot-toast";
 import Toggle from "./Toggle";
 import ToggleRow from "./ToggleRow";
-import BottomActionBar from "@/components/common/BottomActionBar";
 
 export default function SettingsForm() {
     const [data, setData] = useState<NotificationSettings | null>(null);
@@ -70,8 +69,8 @@ export default function SettingsForm() {
             <div className="flex h-12 items-center justify-between px-4 mb-2 mt-3">
                 <span
                     style={{
-                        fontWeight: "var(--weight-semibold)",
-                        fontSize: "var(--text-sub)",
+                        fontWeight: "var(--weight-regular)",
+                        fontSize: "var(--text-body)",
                     }}
                 >
                     전체 알림
