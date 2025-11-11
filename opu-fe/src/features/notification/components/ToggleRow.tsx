@@ -4,40 +4,46 @@ import Toggle from "./Toggle";
 
 type Props = {
     label: string;
+    description: string;
     checked: boolean;
     onChange: (v: boolean) => void;
     help?: string;
     disabled?: boolean;
 };
 
-export default function SwitchRow({
+export default function ToggleRow({
     label,
+    description,
     checked,
     onChange,
-    help,
     disabled,
 }: Props) {
     return (
-        <div className="flex h-15 items-center justify-between px-4">
-            <div className="flex items-center gap-2">
-                <span
-                    className="text-[var(--color-dark-navy)]"
+        <div className="flex items-center justify-between px-2 py-4 gap-3">
+            {/* 왼쪽 텍스트 영역 */}
+            <div className="min-w-0 flex-1">
+                <p
+                    className="text-[var(--color-dark-navy)] truncate"
                     style={{
                         fontWeight: "var(--weight-regular)",
                         fontSize: "var(--text-body)",
                     }}
                 >
                     {label}
-                </span>
-                {help ? (
-                    <span
-                        title={help}
-                        className="grid place-items-center rounded-full text-[10px] w-4 h-4
-                           bg-[var(--color-super-light-gray)] text-[var(--color-dark-gray)]"
+                </p>
+
+                {description && (
+                    <p
+                        className="text-[var(--color-dark-gray)] truncate"
+                        style={{
+                            fontWeight: "var(--weight-regular)",
+                            fontSize: "var(--text-caption)",
+                        }}
+                        title={description}
                     >
-                        ?
-                    </span>
-                ) : null}
+                        {description}
+                    </p>
+                )}
             </div>
 
             <Toggle checked={checked} onChange={onChange} disabled={disabled} />

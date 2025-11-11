@@ -1,21 +1,30 @@
-import type { NotificationSettings } from "./types";
+import type { NotificationSettings, NotificationKey } from "./types";
 
-async function getJSON<T>(url: string, init?: RequestInit): Promise<T> {
+async function requestJSON<T>(url: string, init?: RequestInit): Promise<T> {
     const res = await fetch(url, { cache: "no-store", ...init });
-    if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+    if (!res.ok)
+        throw new Error(await res.text().catch(() => "Request failed"));
     return res.json() as Promise<T>;
 }
 
-export async function fetchNotificationSettings(): Promise<NotificationSettings> {
-    return getJSON<NotificationSettings>("/api/notification");
+const BASE = "/api/notification";
+
+export function fetchNotificationSettings() {
+    return requestJSON<NotificationSettings>(BASE);
 }
 
-export async function saveNotificationSettings(payload: NotificationSettings) {
-    const res = await fetch("/api/notification", {
-        method: "PUT",
+export function patchNotificationItem(key: NotificationKey, enabled: boolean) {
+    return requestJSON<NotificationSettings>(BASE, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ key, enabled }),
     });
-    if (!res.ok) throw new Error("Save failed");
-    return { ok: true };
+}
+
+export function setAllNotifications(enabled: boolean) {
+    return requestJSON<NotificationSettings>(BASE, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: "ALL", enabled }),
+    });
 }

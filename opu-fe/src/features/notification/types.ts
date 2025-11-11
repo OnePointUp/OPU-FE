@@ -1,13 +1,24 @@
+export type NotificationKey =
+    | "morning"
+    | "evening"
+    | "routine"
+    | "todo"
+    | "random";
+
+export type NotificationItem = {
+    key: NotificationKey;
+    label: string;
+    description: string;
+    enabled: boolean;
+};
+
+export type NotificationSection = {
+    id: string;
+    type: string;
+    items: NotificationItem[];
+};
+
 export type NotificationSettings = {
     allEnabled: boolean;
-
-    // 기본 알림
-    morning: boolean;
-    evening: boolean;
-
-    // 수행 관련 알림
-    routine: boolean;
-    todayTodo: boolean;
-    reminder1: boolean;
-    reminder2: boolean;
+    sections: NotificationSection[];
 };
