@@ -9,7 +9,7 @@ import {
 } from "../services";
 import type { NotificationSettings, NotificationKey } from "../types";
 import Group from "./Group";
-import Toggle from "./Toggle";
+import Toggle from "../../../components/common/Toggle";
 import ToggleRow from "./ToggleRow";
 import { toast } from "react-hot-toast";
 

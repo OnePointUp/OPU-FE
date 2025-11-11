@@ -1,6 +1,6 @@
 "use client";
 
-import Toggle from "./Toggle";
+import Toggle from "../../../components/common/Toggle";
 
 type Props = {
     label: string;

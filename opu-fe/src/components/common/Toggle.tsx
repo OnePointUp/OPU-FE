@@ -7,7 +7,7 @@ type Props = {
     id?: string;
 };
 
-export default function Switch({ checked, onChange, disabled, id }: Props) {
+export default function Toggle({ checked, onChange, disabled, id }: Props) {
     return (
         <button
             id={id}
