@@ -7,6 +7,7 @@ import PasswordInput from "@/features/user/components/PasswordInput";
 import { changePassword2 } from "@/features/user/services";
 import { toast } from "react-hot-toast";
 import BottomActionBar from "@/components/common/BottomActionBar";
+import SpinnerOverlay from "@/components/common/SpinnerOverlay";
 
 const VERIFIED_KEY = "pw-verified";
 const CUR_CACHE_KEY = "pw-cur-cache";
@@ -114,6 +115,7 @@ export default function PasswordStep2() {
             <BottomActionBar
                 label="저장"
                 disabled={!canSubmit}
+                loading={loading}
                 onClick={onSubmit}
                 className="px-2"
             />
