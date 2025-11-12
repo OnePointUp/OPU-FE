@@ -32,15 +32,14 @@ export default function RootLayout({
                 </div>
 
                 <Toaster
-                    position="top-center"
+                    position="bottom-center"
+                    gutter={6}
+                    containerStyle={{
+                        bottom: "100px",
+                        zIndex: 10000,
+                    }}
                     toastOptions={{
                         duration: 2000,
-                        style: {
-                            fontSize: "14px",
-                            fontWeight: 500,
-                            borderRadius: "10px",
-                            padding: "10px 14px",
-                        },
                     }}
                 />
             </body>

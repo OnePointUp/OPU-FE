@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const REAL_CURRENT = "correct-password"; // 데모용
+const REAL_CURRENT = "11111111"; // 테스트용
 
 export async function POST(req: Request) {
     const { currentPassword } = await req.json();
