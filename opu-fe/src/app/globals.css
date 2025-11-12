@@ -1,7 +1,6 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css");
 @import "tailwindcss";
 
-/* ---------------- 기본 색상 ---------------- */
 :root {
     --app-max: 600px;
 
@@ -13,10 +12,65 @@
     --safe-left: env(safe-area-inset-left);
     --safe-right: env(safe-area-inset-right);
     --app-header-h: calc(56px + var(--safe-top));
+
+    --toast-radius: 12px;
+    --toast-text: var(--color-dark-gray);
+    --toast-success: #19a864;
+    --toast-error: #e54848;
+    --toast-warn: #f5a524;
+    --toast-success-bg: #f4fff8;
+    --toast-error-bg: #fff6f6;
+    --toast-warn-bg: #fffaf2;
+    --toast-shadow-1: 0 12px 24px rgba(0, 0, 0, 0.08);
+    --toast-shadow-2: 0 6px 12px rgba(0, 0, 0, 0.06);
+    --toast-shadow-3: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 :root.debug-safe {
     --safe-top: 24px;
+}
+
+.toast-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 15px;
+    min-width: 280px;
+    max-width: 400px;
+
+    border-radius: var(--toast-radius);
+    box-shadow: var(--toast-shadow-1), var(--toast-shadow-2),
+        var(--toast-shadow-3);
+
+    color: var(--toast-text);
+    font-size: var(--text-sub);
+    font-weight: var(--weight-regular);
+    background: #fff;
+}
+
+.toast-card.is-success {
+    color: var(--toast-success);
+}
+
+.toast-card.is-error {
+    color: var(--toast-error);
+}
+
+.toast-card.is-warn {
+    color: var(--toast-warn);
+}
+
+.toast-icon {
+    line-height: 0;
+}
+.toast-close {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 0;
+    color: var(--color-light-gray);
 }
 
 /* ---------------- 테마 ---------------- */
