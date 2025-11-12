@@ -11,7 +11,7 @@ import type { NotificationSettings, NotificationKey } from "../types";
 import Group from "./Group";
 import Toggle from "../../../components/common/Toggle";
 import ToggleRow from "./ToggleRow";
-import { toast } from "react-hot-toast";
+import { toastError } from "@/lib/toast";
 
 export default function SettingsForm() {
     const [data, setData] = useState<NotificationSettings | null>(null);
@@ -36,7 +36,7 @@ export default function SettingsForm() {
             setData(saved);
         } catch (e) {
             console.error(e);
-            toast.error("저장 실패");
+            toastError("저장 실패");
             setData(data);
         }
     };
@@ -58,7 +58,7 @@ export default function SettingsForm() {
             setData(saved);
         } catch (e) {
             console.error(e);
-            toast.error("저장 실패");
+            toastError("저장 실패");
             setData(data);
         }
     };

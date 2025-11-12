@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import PasswordInput from "@/features/user/components/PasswordInput";
 import { verifyCurrentPassword } from "@/features/user/services";
-import { toast } from "react-hot-toast";
 import BottomActionBar from "@/components/common/BottomActionBar";
+import { toastError } from "@/lib/toast";
 
 const VERIFIED_KEY = "pw-verified";
 const CUR_CACHE_KEY = "pw-cur-cache";
@@ -34,15 +34,15 @@ export default function PasswordStep1() {
                 e instanceof Error
                     ? e.message
                     : "비밀번호를 확인할 수 없습니다. 다시 시도해 주세요.";
-            toast.error(msg);
+            toastError(msg);
             // if (axios.isAxiosError(e)) {
             //     if (e.response?.status === 401) {
-            //         toast.error("현재 비밀번호가 일치하지 않습니다.");
+            //         toastError("현재 비밀번호가 일치하지 않습니다.");
             //     } else {
-            //         toast.error("서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+            //         toastError("서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
             //     }
             // } else {
-            //     toast.error("예상치 못한 오류가 발생했습니다.");
+            //     toastError("예상치 못한 오류가 발생했습니다.");
             // }
         } finally {
             setLoading(false);

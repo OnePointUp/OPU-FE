@@ -7,6 +7,7 @@ import PasswordInput from "@/features/user/components/PasswordInput";
 import { changePassword2 } from "@/features/user/services";
 import { toast } from "react-hot-toast";
 import BottomActionBar from "@/components/common/BottomActionBar";
+import { toastError, toastSuccess } from "@/lib/toast";
 
 const VERIFIED_KEY = "pw-verified";
 const CUR_CACHE_KEY = "pw-cur-cache";
@@ -57,12 +58,12 @@ export default function PasswordStep2() {
             await changePassword2(cur, next);
             sessionStorage.removeItem(VERIFIED_KEY);
             sessionStorage.removeItem(CUR_CACHE_KEY);
-            toast.success("비밀번호가 변경되었습니다");
+            toastSuccess("비밀번호가 변경되었습니다");
             setTimeout(() => router.replace("/me"), 1000);
         } catch (e: unknown) {
             console.error(e);
             if (process.env.NODE_ENV === "development") {
-                toast.error(String(e));
+                toastError(String(e));
             }
         } finally {
             setLoading(false);
