@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import ProfileAvatarPicker from "@/features/user/components/ProfileAvatarPicker";
 import NicknameField from "@/features/user/components/NicknameField";
@@ -12,6 +13,8 @@ import { checkNicknameDup, saveProfile } from "@/features/user/services";
 import { toastError, toastSuccess } from "@/lib/toast";
 
 export default function RegisterEmailPage() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState(""); 
   const [password, setPassword] = useState("");
@@ -61,7 +64,6 @@ export default function RegisterEmailPage() {
       const isDup = await checkNicknameDup(v, current);
       setDupError(isDup ? "이미 존재하는 닉네임입니다." : "");
     } catch (err) {
-      console.error("닉네임 중복 검사 실패:", err);
       setDupError("닉네임 검사 중 오류가 발생했습니다.");
     } finally {
       setChecking(false);
@@ -111,10 +113,10 @@ export default function RegisterEmailPage() {
         bio: "",
         profileFile: file,
       });
-      toastSuccess("회원가입이 완료되었습니다!");
-      history.back();
+      toastSuccess("인증용 이메일 발송 완료!");
+      router.push("/signpup/check-email");
     } catch (e) {
-      toastError("회원가입 실패");
+      toastError("인증용 이메일 발송 중에 문제가 생겼어요.");
     }
   }
 
