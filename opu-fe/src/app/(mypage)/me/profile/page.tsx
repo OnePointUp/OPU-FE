@@ -8,7 +8,7 @@ import IntroField from "@/features/user/components/IntroField";
 import { fetchMyProfile, type UserProfile } from "@/features/user/services";
 import { checkNicknameDup, saveProfile } from "@/features/user/services";
 import BottomActionBar from "@/components/common/BottomActionBar";
-import SpinnerOverlay from "@/components/common/SpinnerOverlay";
+import { toastSuccess } from "@/lib/toast";
 
 export default function ProfileEditPage() {
     const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -75,6 +75,7 @@ export default function ProfileEditPage() {
             profileFile: file,
         });
         history.back();
+        toastSuccess("프로필 수정이 완료되었습니다!");
     }
 
     return (
