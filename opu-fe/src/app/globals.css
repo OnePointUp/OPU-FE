@@ -24,6 +24,66 @@
     --toast-shadow-1: 0 12px 24px rgba(0, 0, 0, 0.08);
     --toast-shadow-2: 0 6px 12px rgba(0, 0, 0, 0.06);
     --toast-shadow-3: 0 2px 6px rgba(0, 0, 0, 0.04);
+
+    /* 브랜드 컬러 */
+    --color-opu-pink: #ffb6c5;
+    --color-opu-dark-pink: #f38ba0;
+    --color-opu-dark-pink-30: rgba(243, 139, 160, 0.3);
+
+    --color-opu-light-green: #cde990;
+    --color-opu-green: #b8dd7c;
+    --color-opu-dark-green: #a7d162;
+
+    /* 보조 색상 */
+    --color-saturday: #66b5ff;
+    --color-sunday: #f88183;
+    --color-opu-red: #ff615b;
+    --color-opu-blue: #49a7ff;
+
+    --color-placeholder: #c9cacd;
+    --color-error: #e11d48;
+    --color-opu-tag: #686868;
+
+    --color-super-light-gray: #e8ebf0;
+    --color-light-gray: #b4b4b4;
+    --color-dark-gray: #667085;
+    --color-super-dark-gray: #595959;
+
+    --color-blue-gray: #94a3b8;
+    --color-dark-navy: #0f172a;
+
+    --color-like-pink: #ff575d;
+    --color-light-pink: #ffd4d4;
+
+    --color-dark-yellow: #d7d7b4;
+    --color-light-yellow: #ffffe8;
+
+    --color-toggle-on: #a1d152;
+    --color-toggle-off: #dfe4ea;
+
+    --color-modal-bg: rgba(0, 0, 0, 0.9);
+
+    /* 폰트 패밀리 */
+    --font-sans: "Pretendard Variable", Pretendard, -apple-system,
+        BlinkMacSystemFont, system-ui, Roboto, sans-serif, "Apple Color Emoji",
+        "Segoe UI Emoji", "Noto Color Emoji";
+
+    /* 폰트 크기 */
+    --text-h1: 1.5rem; /* 24px */
+    --text-h2: 1.25rem; /* 20px */
+    --text-h3: 1.125rem; /* 18px */
+    --text-body: 1rem; /* 16px */
+    --text-sub: 0.875rem; /* 14px */
+    --text-caption: 0.75rem; /* 12px */
+    --text-mini: 0.625rem; /* 10px */
+    --text-tiny: 0.5rem; /* 8px */
+
+    /* 폰트 굵기 */
+    --weight-light: 300;
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --weight-bold: 700;
 }
 
 :root.debug-safe {
@@ -77,55 +137,6 @@
 @theme inline {
     --color-background: var(--background);
     --color-foreground: var(--foreground);
-
-    /* 브랜드 컬러 */
-    --color-opu-pink: #ffb6c5;
-    --color-opu-dark-pink: #f38ba0;
-    --color-opu-dark-pink-30: rgba(243, 139, 160, 0.3);
-    --color-opu-light-green: #cde990;
-    --color-opu-green: #b8dd7c;
-
-    /* 보조 색상 */
-    --color-saturday: #66b5ff;
-    --color-sunday: #f88183;
-    --color-opu-red: #ff615b;
-    --color-opu-blue: #49a7ff;
-    --color-placeholder: #c9cacd;
-    --color-error: #e11d48;
-    --color-opu-tag: #686868;
-    --color-super-dark-gray: #595959;
-    --color-dark-gray: #667085;
-    --color-blue-gray: #94a3b8;
-    --color-light-gray: #b4b4b4;
-    --color-super-light-gray: #e8ebf0;
-    --color-dark-navy: #0f172a;
-    --color-like-pink: #ff575d;
-    --color-light-pink: #ffd4d4;
-    --color-dark-yellow: #d7d7b4;
-    --color-light-yellow: #ffffe8;
-    --color-toggle-on: #a1d152;
-    --color-toggle-off: #dfe4ea;
-
-    /* 폰트 패밀리 */
-    --font-sans: "Pretendard Variable", Pretendard, -apple-system,
-        BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-
-    /* 폰트 크기 */
-    --text-h1: 1.5rem; /* 24px */
-    --text-h2: 1.25rem; /* 20px */
-    --text-h3: 1.125rem; /* 18px */
-    --text-body: 1rem; /* 16px */
-    --text-sub: 0.875rem; /* 14px */
-    --text-caption: 0.75rem; /* 12px */
-    --text-mini: 0.625rem; /* 10px */
-    --text-tiny: 0.5rem; /* 8px */
-
-    /* 폰트 굵기 */
-    --weight-light: 300;
-    --weight-regular: 400;
-    --weight-medium: 500;
-    --weight-semibold: 600;
-    --weight-bold: 700;
 }
 
 /* ---------------- 컴포넌트 스타일 ---------------- */
@@ -340,27 +351,30 @@
     }
 
     /* 체크박스 스타일 */
-    .custom-checkbox {
-        appearance: none;
+    input.custom-checkbox {
         -webkit-appearance: none;
-        -moz-appearance: none;
+        appearance: none;
+        accent-color: initial;
         box-sizing: border-box;
-
-        width: 20px;
-        height: 20px;
-        border: 1px solid var(--color-dark-navy);
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 1px solid var(--color-dark-gray, #6f6f6f);
         border-radius: 4px;
-        background-color: #ffffff;
+        background: #fff;
+        background-clip: padding-box;
+        vertical-align: middle;
+        transition: background-color 0.2s, border-color 0.2s;
         cursor: pointer;
-        transition: all 0.2s ease-in-out;
     }
-    .custom-checkbox:checked {
-        background-color: var(--color-dark-navy);
-        border-color: var(--color-dark-navy);
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path d="M7.2 13.2L3.5 9.5l1.4-1.4 2.3 2.3 6-6 1.4 1.4-7.4 7.4z"/></svg>');
-        background-size: 20px;
+
+    input.custom-checkbox:checked {
+        background-color: var(--color-dark-navy, #0b1220);
+        border-color: var(--color-dark-navy, #0b1220);
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="white"><path d="m24.768 9.64-10.7 12.842-6.775-6.775 1.414-1.414 5.226 5.226 9.299-11.16z"/></svg>');
         background-repeat: no-repeat;
         background-position: center;
+        background-size: 17px 17px;
     }
 
     /* 헤더 */
