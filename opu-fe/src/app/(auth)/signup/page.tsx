@@ -168,7 +168,7 @@ export default function RegisterEmailPage() {
       </main>
 
       <BottomActionBar
-        label="OPU 시작하기"
+        label="다음"
         disabled={!canSubmit}
         onClick={handleSubmit}
       />
