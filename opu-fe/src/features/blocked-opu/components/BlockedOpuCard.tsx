@@ -3,7 +3,6 @@
 import { Icon } from "@iconify/react";
 import { CATEGORY_BADGE, type OpuCardModel } from "@/types/opu";
 import { formatDate } from "@/utils/formatDate";
-import FloatingMenu from "@/components/common/FloatingMenu";
 import { useState } from "react";
 
 function Badge({
@@ -32,8 +31,6 @@ function Badge({
 export default function BlockedOpuCard({
     item,
     onMore,
-    onUnblock,
-    onAddToTodo,
     selectable = false,
     checked = false,
     onCheckedChange,
@@ -66,11 +63,11 @@ export default function BlockedOpuCard({
             )}
 
             <div className="w-full bg-[var(--background)]">
-                <div className="mx-2">
+                <div className="ml-2">
                     <div className="grid grid-cols-[50px_1fr_auto] items-start gap-4">
                         {/* 이모지 */}
                         <div
-                            className="flex items-center justify-center rounded-md pt-1"
+                            className="flex items-center justify-center rounded-md"
                             style={{
                                 width: 50,
                                 height: 50,
@@ -108,24 +105,6 @@ export default function BlockedOpuCard({
                                             }}
                                         />
                                     </button>
-
-                                    <FloatingMenu
-                                        isOpen={menuOpen}
-                                        onClose={() => setMenuOpen(false)}
-                                        position="bottom-right"
-                                        options={[
-                                            {
-                                                label: "투두리스트에 추가",
-                                                onClick: () =>
-                                                    onAddToTodo?.(item.id),
-                                            },
-                                            {
-                                                label: "차단 해제",
-                                                onClick: () =>
-                                                    onUnblock?.(item.id),
-                                            },
-                                        ]}
-                                    />
                                 </div>
                             </div>
 

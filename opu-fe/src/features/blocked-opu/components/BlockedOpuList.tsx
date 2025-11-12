@@ -5,34 +5,32 @@ import SearchBar from "@/components/common/SearchBar";
 import type { OpuCardModel } from "@/types/opu";
 import BlockedOpuCard from "./BlockedOpuCard";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import ActionList from "@/components/common/ActionList";
+import BottomSheet from "@/components/common/BottomSheet";
 
 type Props = {
     initialItems: OpuCardModel[];
-    onDeleteSelected?: (ids: number[]) => Promise<void> | void; // 실제 삭제 API 연결시 사용
+    onDeleteSelected?: (ids: number[]) => Promise<void> | void;
+    // 하나만 해제(삭제)
+    onUnblockOne?: (id: number) => Promise<void> | void;
 };
 
 export default function BlockedOpuList({
     initialItems,
     onDeleteSelected,
+    onUnblockOne,
 }: Props) {
     const [items, setItems] = useState<OpuCardModel[]>(initialItems);
     const [selected, setSelected] = useState<Set<number>>(new Set());
     const [qInput, setQInput] = useState("");
     const [q, setQ] = useState("");
+
+    // 모달/시트
     const [showConfirm, setShowConfirm] = useState(false);
+    const [sheetItemId, setSheetItemId] = useState<number | null>(null);
+    const closeSheet = () => setSheetItemId(null);
 
-    const handleDelete = async () => {
-        const ids = Array.from(selected);
-        if (ids.length === 0) return;
-        try {
-            await onDeleteSelected?.(ids);
-        } finally {
-            setItems((prev) => prev.filter((i) => !selected.has(i.id)));
-            setSelected(new Set());
-            setShowConfirm(false);
-        }
-    };
-
+    // === 목록/검색 ===
     useEffect(() => {
         setItems(initialItems);
         setSelected((prev) => {
@@ -75,6 +73,47 @@ export default function BlockedOpuList({
             return s;
         });
     };
+
+    // === 선택 삭제(일괄) ===
+    const handleDeleteSelected = async () => {
+        const ids = Array.from(selected);
+        if (ids.length === 0) return;
+        try {
+            await onDeleteSelected?.(ids);
+        } finally {
+            setItems((prev) => prev.filter((i) => !selected.has(i.id)));
+            setSelected(new Set());
+            setShowConfirm(false);
+        }
+    };
+
+    const handleAddTodo = (id: number) => {
+        console.log("루틴 추가", id);
+        closeSheet();
+    };
+
+    const handleUnblockOne = async (id: number) => {
+        try {
+            await onUnblockOne?.(id);
+        } finally {
+            setItems((prev) => prev.filter((i) => i.id !== id));
+            setSelected((prev) => {
+                const s = new Set(prev);
+                s.delete(id);
+                return s;
+            });
+            closeSheet();
+        }
+    };
+
+    const sheetOptions = (id: number) => [
+        { label: "투두리스트에 추가", onClick: () => handleAddTodo(id) },
+        {
+            label: "차단 해제",
+            danger: true,
+            onClick: () => handleUnblockOne(id),
+        },
+    ];
 
     return (
         <div className="flex flex-col gap-3 px-1">
@@ -121,10 +160,11 @@ export default function BlockedOpuList({
                         isOpen={showConfirm}
                         message={`선택한 ${selected.size}개의 OPU 차단을\n해제하시겠습니까?`}
                         onCancel={() => setShowConfirm(false)}
-                        onConfirm={handleDelete}
+                        onConfirm={handleDeleteSelected}
                     />
                 </div>
             </div>
+
             <div className="h-[1px] bg-[var(--color-super-light-gray)] -mx-6" />
 
             {/* 리스트 */}
@@ -136,7 +176,7 @@ export default function BlockedOpuList({
                         selectable
                         checked={selected.has(item.id)}
                         onCheckedChange={toggleOne}
-                        onMore={(id) => console.log("more", id)}
+                        onMore={(id) => setSheetItemId(id)}
                     />
                 ))}
 
@@ -152,6 +192,13 @@ export default function BlockedOpuList({
                     </div>
                 )}
             </div>
+
+            {/* 바텀시트 + 액션리스트 */}
+            <BottomSheet open={sheetItemId !== null} onClose={closeSheet}>
+                {sheetItemId !== null && (
+                    <ActionList items={sheetOptions(sheetItemId)} />
+                )}
+            </BottomSheet>
         </div>
     );
 }
