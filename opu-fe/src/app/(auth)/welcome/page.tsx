@@ -38,14 +38,14 @@ export default function IntroPage() {
         <div className="text-center text-sub text-[var(--color-light-gray)] mt-3">
           <span
             className="cursor-pointer hover:underline"
-            onClick={() => router.push('/auth/login')}
+            onClick={() => router.push('/login')}
           >
             이메일로 로그인
           </span>
           {'  |  '}
           <span
             className="cursor-pointer hover:underline"
-            onClick={() => router.push('/auth/signup')}
+            onClick={() => router.push('/signup')}
           >
             회원가입
           </span>
