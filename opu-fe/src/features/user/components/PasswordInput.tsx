@@ -51,13 +51,13 @@ export default function PasswordInput({
                     style={{ color: "var(--color-light-gray)" }}
                 >
                     {show ? (
-                        <Icon icon="basil:eye-outline" width="24" height="24" />
-                    ) : (
                         <Icon
                             icon="basil:eye-closed-outline"
                             width="24"
                             height="24"
                         />
+                    ) : (
+                        <Icon icon="basil:eye-outline" width="24" height="24" />
                     )}
                 </button>
             </div>
