@@ -94,7 +94,7 @@ export default function BlockedOpuCard({
                                             onMore?.(item.id);
                                             setMenuOpen((v) => !v);
                                         }}
-                                        className="inline-flex shrink-0 ml-2"
+                                        className="inline-flex shrink-0 -mx-2"
                                         title="더보기"
                                     >
                                         <Icon
@@ -126,7 +126,7 @@ export default function BlockedOpuCard({
 
                                 {dateLabel && (
                                     <span
-                                        className="shrink-0 text-[var(--color-light-gray)] text-right whitespace-nowrap"
+                                        className="shrink-0 text-[var(--color-light-gray)] text-right -mx-2"
                                         style={{
                                             fontSize: "var(--text-mini)",
                                         }}
