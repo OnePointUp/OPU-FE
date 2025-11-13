@@ -1,7 +1,8 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { CATEGORY_BADGE, type OpuCardModel } from "@/types/opu";
+import { CATEGORY_BADGE } from "@/features/opu/domain";
+import { type OpuCardModel } from "@/features/opu/domain";
 import { formatDate } from "@/utils/formatDate";
 import { useState } from "react";
 

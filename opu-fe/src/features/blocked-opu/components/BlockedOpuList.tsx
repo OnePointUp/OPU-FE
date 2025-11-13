@@ -1,110 +1,38 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
 import SearchBar from "@/components/common/SearchBar";
-import type { OpuCardModel } from "@/types/opu";
-import BlockedOpuCard from "./BlockedOpuCard";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import ActionList from "@/components/common/ActionList";
 import BottomSheet from "@/components/common/BottomSheet";
+import BlockedOpuCard from "./BlockedOpuCard";
+import type { OpuCardModel } from "@/features/opu/domain";
+import { useBlockedOpuList } from "@/features/blocked-opu/hooks/useBlockedOpuList";
 
 type Props = {
     initialItems: OpuCardModel[];
     onDeleteSelected?: (ids: number[]) => Promise<void> | void;
-    // 하나만 해제(삭제)
     onUnblockOne?: (id: number) => Promise<void> | void;
 };
 
-export default function BlockedOpuList({
-    initialItems,
-    onDeleteSelected,
-    onUnblockOne,
-}: Props) {
-    const [items, setItems] = useState<OpuCardModel[]>(initialItems);
-    const [selected, setSelected] = useState<Set<number>>(new Set());
-    const [qInput, setQInput] = useState("");
-    const [q, setQ] = useState("");
-
-    // 모달/시트
-    const [showConfirm, setShowConfirm] = useState(false);
-    const [sheetItemId, setSheetItemId] = useState<number | null>(null);
-    const closeSheet = () => setSheetItemId(null);
-
-    // === 목록/검색 ===
-    useEffect(() => {
-        setItems(initialItems);
-        setSelected((prev) => {
-            const ids = new Set(initialItems.map((i) => i.id));
-            const next = new Set<number>();
-            prev.forEach((id) => ids.has(id) && next.add(id));
-            return next;
-        });
-    }, [initialItems]);
-
-    useEffect(() => {
-        const t = setTimeout(() => setQ(qInput.trim().toLowerCase()), 250);
-        return () => clearTimeout(t);
-    }, [qInput]);
-
-    const filtered = useMemo(() => {
-        const query = q.trim().toLowerCase();
-        if (!query) return items;
-        return items.filter((i) => i.title.toLowerCase().includes(query));
-    }, [items, q]);
-
-    const allIds = useMemo(() => filtered.map((i) => i.id), [filtered]);
-    const allSelected =
-        allIds.length > 0 && allIds.every((id) => selected.has(id));
-
-    const toggleOne = useCallback((id: number, next: boolean) => {
-        setSelected((prev) => {
-            const s = new Set(prev);
-            if (next) s.add(id);
-            else s.delete(id);
-            return s;
-        });
-    }, []);
-
-    const toggleAllOnPage = (next: boolean) => {
-        setSelected((prev) => {
-            const s = new Set(prev);
-            if (next) allIds.forEach((id) => s.add(id));
-            else allIds.forEach((id) => s.delete(id));
-            return s;
-        });
-    };
-
-    // === 선택 삭제(일괄) ===
-    const handleDeleteSelected = async () => {
-        const ids = Array.from(selected);
-        if (ids.length === 0) return;
-        try {
-            await onDeleteSelected?.(ids);
-        } finally {
-            setItems((prev) => prev.filter((i) => !selected.has(i.id)));
-            setSelected(new Set());
-            setShowConfirm(false);
-        }
-    };
-
-    const handleAddTodo = (id: number) => {
-        console.log("루틴 추가", id);
-        closeSheet();
-    };
-
-    const handleUnblockOne = async (id: number) => {
-        try {
-            await onUnblockOne?.(id);
-        } finally {
-            setItems((prev) => prev.filter((i) => i.id !== id));
-            setSelected((prev) => {
-                const s = new Set(prev);
-                s.delete(id);
-                return s;
-            });
-            closeSheet();
-        }
-    };
+export default function BlockedOpuList(props: Props) {
+    const {
+        filtered,
+        selected,
+        qInput,
+        allSelected,
+        allIds,
+        showConfirm,
+        sheetItemId,
+        setQInput,
+        setShowConfirm,
+        toggleOne,
+        toggleAllOnPage,
+        handleDeleteSelected,
+        handleAddTodo,
+        handleUnblockOne,
+        openSheetFor,
+        closeSheet,
+    } = useBlockedOpuList(props);
 
     const sheetOptions = (id: number) => [
         { label: "투두리스트에 추가", onClick: () => handleAddTodo(id) },
@@ -140,7 +68,11 @@ export default function BlockedOpuList({
                             style={{ fontSize: "var(--text-sub)" }}
                         >
                             <p>{allSelected ? "전체해제" : "전체선택"}</p>
-                            <p style={{ color: "var(--color-dark-gray)" }}>
+                            <p
+                                style={{
+                                    color: "var(--color-dark-gray)",
+                                }}
+                            >
                                 ({selected.size}/{allIds.length})
                             </p>
                         </span>
@@ -176,7 +108,7 @@ export default function BlockedOpuList({
                         selectable
                         checked={selected.has(item.id)}
                         onCheckedChange={toggleOne}
-                        onMore={(id) => setSheetItemId(id)}
+                        onMore={openSheetFor}
                     />
                 ))}
 
