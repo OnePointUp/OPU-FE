@@ -1,6 +1,6 @@
 import { LIKE, OPU } from "@/mocks/api/db/opu.db";
 import { toOpuCardModelFromEntity } from "./mappers";
-import type { OpuCardModel } from "@/types/opu";
+import { OpuCardModel } from "./domain";
 
 export async function fetchOpuCardsByMember(
     memberId: number

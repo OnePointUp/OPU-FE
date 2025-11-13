@@ -1,4 +1,4 @@
-import type { OpuEntity, LikeEntity } from "@/types/opu";
+import type { OpuEntity, LikeEntity } from "@/features/opu/domain";
 
 // --- OPU 목데이터 ---
 export const OPU: OpuEntity[] = [
