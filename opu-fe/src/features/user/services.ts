@@ -15,7 +15,6 @@ async function getJSON<T>(url: string, init?: RequestInit): Promise<T> {
     return res.json() as Promise<T>;
 }
 
-// API 베이스 (운영 전환 시 .env에 NEXT_PUBLIC_API_BASE만 세팅)
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE?.replace(/\/$/, "");
 
 export async function fetchMyProfile(): Promise<UserProfile> {
