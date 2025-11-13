@@ -2,7 +2,7 @@
 
 import Header from "@/components/layout/Header";
 import BlockedOpuList from "@/features/blocked-opu/components/BlockedOpuList";
-import type { OpuCardModel } from "@/types/opu";
+import { OpuCardModel } from "@/features/opu/domain";
 
 type Props = {
     initialItems: OpuCardModel[];
