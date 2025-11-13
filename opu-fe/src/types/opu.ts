@@ -8,6 +8,7 @@ export type OpuEntity = {
     created_at: string;
     required_time: "1M" | "5M" | "30M" | "1H" | "DAILY";
     is_shared: "Y" | "N";
+    emoji: string;
 };
 
 // 찜 테이블
@@ -29,6 +30,8 @@ export type OpuCardModel = {
     locked?: boolean;
     liked: boolean;
     shareLabel?: string;
+    createdAt?: string;
+    emoji?: string;
 };
 
 export type CategoryBadgeStyle = { bg: string; text: string };
@@ -42,7 +45,7 @@ export const CATEGORY_BADGE: Record<string, CategoryBadgeStyle> = {
     "🎨 문화생활": { bg: "#FFF6E5", text: "#E37D00" },
     "📚 지식확장": { bg: "#EDF0FF", text: "#4953C4" },
     "💰 경제습관": { bg: "#FFF1E6", text: "#D96B00" },
-    "🏡 생활습관": { bg: "#EEEFF3", text: "#6F6F6F" },
+    "🏡 생활습관": { bg: "#D9E0FF", text: "#4366FF" },
     "🛌 휴식&재충전": { bg: "#F3E8FF", text: "#7E3AF2" },
     "💞 자기이해": { bg: "#FFE8F0", text: "#D72672" },
     "🎯 도전&성취": { bg: "#E8F7FF", text: "#0086C9" },
