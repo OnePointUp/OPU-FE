@@ -38,8 +38,6 @@ export default function BlockedOpuCard({
 }: {
     item: OpuCardModel;
     onMore?: (id: number) => void;
-    onUnblock?: (id: number) => void;
-    onAddToTodo?: (id: number) => void;
     selectable?: boolean;
     checked?: boolean;
     onCheckedChange?: (id: number, next: boolean) => void;
@@ -49,8 +47,16 @@ export default function BlockedOpuCard({
     const dateLabel = item.createdAt ? formatDate(item.createdAt) : null;
     const [menuOpen, setMenuOpen] = useState(false);
 
+    const toggleChecked = () => {
+        if (!selectable) return;
+        onCheckedChange?.(item.id, !checked);
+    };
+
     return (
-        <div className="flex items-start gap-2">
+        <div
+            className="flex items-start gap-2 cursor-pointer"
+            onClick={toggleChecked} // ← 카드 전체 클릭 토글
+        >
             {selectable && (
                 <input
                     type="checkbox"
@@ -59,6 +65,7 @@ export default function BlockedOpuCard({
                     onChange={(e) =>
                         onCheckedChange?.(item.id, e.target.checked)
                     }
+                    onClick={(e) => e.stopPropagation()} // ← 카드 클릭 방지
                     aria-label={`${item.title} 선택`}
                 />
             )}
@@ -66,7 +73,6 @@ export default function BlockedOpuCard({
             <div className="w-full bg-[var(--background)]">
                 <div className="ml-2">
                     <div className="grid grid-cols-[50px_1fr_auto] items-start gap-4">
-                        {/* 이모지 */}
                         <div
                             className="flex items-center justify-center rounded-md"
                             style={{
@@ -78,7 +84,6 @@ export default function BlockedOpuCard({
                             {item.emoji ?? "❓"}
                         </div>
 
-                        {/* 타이틀 + 더보기 */}
                         <div className="min-w-0">
                             <div className="flex justify-between">
                                 <p className="text-[var(--text-body)] font-[var(--weight-medium)]">
@@ -90,7 +95,8 @@ export default function BlockedOpuCard({
                                         type="button"
                                         aria-haspopup="menu"
                                         aria-expanded={menuOpen}
-                                        onClick={() => {
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // ← 카드 선택 방지
                                             onMore?.(item.id);
                                             setMenuOpen((v) => !v);
                                         }}
@@ -109,7 +115,6 @@ export default function BlockedOpuCard({
                                 </div>
                             </div>
 
-                            {/* 뱃지 + 차단일 */}
                             <div className="mt-1 flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-1 min-w-0">
                                     <Badge
@@ -127,9 +132,7 @@ export default function BlockedOpuCard({
                                 {dateLabel && (
                                     <span
                                         className="shrink-0 text-[var(--color-light-gray)] text-right -mx-2"
-                                        style={{
-                                            fontSize: "var(--text-mini)",
-                                        }}
+                                        style={{ fontSize: "var(--text-mini)" }}
                                     >
                                         차단일 {dateLabel}
                                     </span>
@@ -138,7 +141,6 @@ export default function BlockedOpuCard({
                         </div>
                     </div>
 
-                    {/* 구분선 */}
                     <div className="h-[1px] bg-[var(--color-super-light-gray)] mt-4" />
                 </div>
             </div>

@@ -8,7 +8,6 @@ type Props = {
     bio?: string;
     profileImageUrl?: string;
     handleEdit?: () => void;
-    className?: string;
     loading?: boolean;
 };
 
@@ -18,7 +17,6 @@ export default function UserInfo({
     bio = "아직 자기소개가 없어요 😊",
     profileImageUrl,
     handleEdit,
-    className = "",
     loading = false,
 }: Props) {
     const initial =
@@ -27,7 +25,7 @@ export default function UserInfo({
     if (loading) {
         return (
             <section
-                className={`w-full px-1 pb-1 ${className}`}
+                className="`w-full px-2 mt-4"
                 style={{ width: "min(100%, var(--app-max))" }}
             >
                 <div className="flex items-center gap-4">
@@ -53,7 +51,7 @@ export default function UserInfo({
 
     return (
         <section
-            className={`w-full px-1 pb-1 ${className}`}
+            className="w-full px-2 mt-4"
             style={{ width: "min(100%, var(--app-max))" }}
         >
             <div className="flex items-center gap-4">

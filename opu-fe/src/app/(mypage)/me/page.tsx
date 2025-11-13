@@ -43,7 +43,6 @@ export default function MyPage() {
                     bio={profile?.bio}
                     profileImageUrl={profile?.profileImageUrl}
                     handleEdit={handleEdit}
-                    className="mt-6"
                     loading={loading}
                 />
 
