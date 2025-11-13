@@ -31,7 +31,7 @@ export default function Header({
 
     return (
         <header className="app-header">
-            <div className="app-header__inner relative">
+            <div className="app-header__inner">
                 {showBack ? (
                     <button
                         className="app-header__back"

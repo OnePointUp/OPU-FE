@@ -14,7 +14,7 @@ export default function SettingsList({
 }) {
     return (
         <section
-            className="w-full mt-2"
+            className="w-full mt-2 mx-2"
             style={{ width: "min(100%, var(--app-max))" }}
         >
             {items.map((it) => (
@@ -33,7 +33,7 @@ export default function SettingsList({
             <button
                 type="button"
                 onClick={onWithdraw}
-                className="h-12 w-full px-2 text-left text-[var(--color-light-gray)] opacity-70 hover:opacity-90 focus:opacity-90 focus:outline-none"
+                className="h-12 w-full text-left text-[var(--color-light-gray)] opacity-70 hover:opacity-90 focus:opacity-90 focus:outline-none"
                 style={{ fontSize: "var(--text-sub)" }}
             >
                 회원 탈퇴

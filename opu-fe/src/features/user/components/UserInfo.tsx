@@ -46,7 +46,7 @@ export default function UserInfo({
                 >
                     프로필 편집
                 </button>
-                <div className="mt-5 h-2 bg-[#F3F5F8] -mx-5" />
+                <div className="mt-5 h-2 bg-[#F3F5F8] -mx-8" />
             </section>
         );
     }
@@ -116,7 +116,7 @@ export default function UserInfo({
             >
                 프로필 편집
             </button>
-            <div className="mt-5 h-2 bg-[#F3F5F8] -mx-5" />
+            <div className="mt-5 h-2 bg-[#F3F5F8] -mx-7" />
         </section>
     );
 }

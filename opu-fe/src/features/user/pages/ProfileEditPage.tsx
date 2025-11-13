@@ -31,9 +31,9 @@ export default function ProfileEditPage() {
         !dupError;
 
     return (
-        <div className="app-page overflow-hidden overscroll-none">
+        <div className="app-page overflow-hidden overscroll-none mx-2">
             <Header title="프로필 편집" showBack />
-            <main className="app-container pt-app-header pb-40 px-6">
+            <main className="app-container pt-app-header pb-40">
                 <ProfileAvatarPicker
                     nickname={nickname}
                     previewUrl={profileImgUrl}
