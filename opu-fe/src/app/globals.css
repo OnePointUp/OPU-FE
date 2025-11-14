@@ -397,12 +397,16 @@
         position: fixed;
         top: 0;
         z-index: 50;
-        height: calc(56px + var(--safe-top));
+
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: var(--app-max);
+
+        height: var(--app-header-h);
         padding-top: var(--safe-top);
         background: var(--background);
         border-bottom: 1px solid var(--color-super-light-gray);
-
-        width: 100dvw;
     }
 
     .app-header__inner {
