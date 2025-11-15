@@ -11,9 +11,9 @@ export default function IntroPage() {
     <div className="app-page app-container flex flex-col justify-between max-h-screen py-10">
       {/* ---------- 상단: 로고 & 문구 ---------- */}
       <header className="flex flex-col items-center mt-20 text-center">
-        <h1 className="text-h1 font-bold text-[var(--color-dark-navy)]">OPU</h1>
-        <p className="text-sub text-[var(--color-dark-gray)] mt-1">One Point Up!</p>
-        <p className="text-sub text-[var(--color-dark-gray)]">
+        <h1 className="text-h1 font-bold text-[color:var(--color-dark-navy)] text-[length:var(--text-h1)]">OPU</h1>
+        <p className="text-sub text-[var(--color-dark-gray)] mt-[33px]">
+          One Point Up!<br/>
           한 걸음씩, 오늘도 나아가기
         </p>
       </header>
@@ -35,7 +35,7 @@ export default function IntroPage() {
         <SocialLoginButton provider="google" onClick={() => alert('구글 로그인 클릭')} />
 
         {/* 이메일 로그인 / 회원가입 */}
-        <div className="text-center text-sub text-[var(--color-light-gray)] mt-3">
+        <div className="text-center text-[length:var(--text-caption)] text-[color:var(--color-light-gray)] mt-[7px]">
           <span
             className="cursor-pointer hover:underline"
             onClick={() => router.push('/login')}
