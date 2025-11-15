@@ -6,8 +6,8 @@ import Header from "@/components/layout/Header";
 import ProfileAvatarPicker from "@/features/user/components/ProfileAvatarPicker";
 import NicknameField from "@/features/user/components/NicknameField";
 import PasswordInput from "@/features/user/components/PasswordInput";
-import EmailField from "@/features/user/components/EmailField";
-import AgreementsField from "@/features/user/components/AgreementsField";
+import EmailField from "@/features/auth/components/EmailField";
+import AgreementsField from "@/features/auth/components/AgreementsField";
 import BottomActionBar from "@/components/common/BottomActionBar";
 import { checkNicknameDup, saveProfile } from "@/features/user/services";
 import { toastError, toastSuccess } from "@/lib/toast";
@@ -114,7 +114,7 @@ export default function RegisterEmailPage() {
         profileFile: file,
       });
       toastSuccess("인증용 이메일 발송 완료!");
-      router.push("/signpup/check-email");
+      router.push("/signup/check-email");
     } catch (e) {
       toastError("인증용 이메일 발송 중에 문제가 생겼어요.");
     }
