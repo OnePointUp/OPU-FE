@@ -1,6 +1,5 @@
 "use client";
 
-import Header from "@/components/layout/Header";
 import PasswordInput from "@/features/user/components/PasswordInput";
 import BottomActionBar from "@/components/common/BottomActionBar";
 import { useSetNewPassword } from "@/features/user/hooks/useSetNewPassword";
@@ -20,7 +19,6 @@ export default function PasswordChange2Page() {
 
     return (
         <div className="app-page">
-            <Header title="비밀번호 변경" />
             <main className="app-container pt-app-header pb-40">
                 <section
                     className="w-full px-2 pb-24"
