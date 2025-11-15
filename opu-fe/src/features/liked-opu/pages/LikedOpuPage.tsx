@@ -1,17 +1,19 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SearchBar from "@/components/common/SearchBar";
 import BottomSheet from "@/components/common/BottomSheet";
 import ActionList from "@/components/common/ActionList";
 import OpuFilterSheet from "@/features/opu/components/OpuFilterSheet";
 import LikedOpuList from "@/features/liked-opu/components/LikedOpuList";
+import OpuToolbar from "@/features/opu/components/OpuToolbar";
+
 import type { OpuCardModel } from "@/features/opu/domain";
 import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
-import { PeriodCode } from "@/features/opu/utils/period";
+import type { PeriodCode } from "@/features/opu/utils/period";
 import {
     getSortLabel,
-    SortOption,
+    type SortOption,
     sortOpuList,
 } from "@/features/opu/utils/sort";
 import {
@@ -19,7 +21,6 @@ import {
     getCategoryFilterLabel,
     getPeriodFilterLabel,
 } from "@/features/opu/utils/filter";
-import OpuToolbar from "@/features/opu/components/OpuToolbar";
 
 type FilterMode = "period" | "category";
 
@@ -29,21 +30,32 @@ type Props = {
 
 export default function LikedOpuPage({ items }: Props) {
     const [q, setQ] = useState("");
-    const [sheetId, setSheetId] = useState<number | null>(null);
-
     const [filterMode, setFilterMode] = useState<FilterMode>("period");
     const [filterSheetOpen, setFilterSheetOpen] = useState(false);
-
     const [periods, setPeriods] = useState<PeriodCode[]>([]);
     const [categoryIds, setCategoryIds] = useState<number[]>([]);
-
     const [sortOption, setSortOption] = useState<SortOption>("name");
     const [showSortSheet, setShowSortSheet] = useState(false);
 
+    const [data, setData] = useState<OpuCardModel[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const [sheetId, setSheetId] = useState<number | null>(null);
+
+    // 목데이터로 로딩 시뮬레이션
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setData(items);
+            setLoading(false);
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [items]);
+
     // 정렬
     const sortedItems = useMemo(
-        () => sortOpuList(items, sortOption),
-        [items, sortOption]
+        () => sortOpuList(data, sortOption),
+        [data, sortOption]
     );
 
     // 검색 + 필터
@@ -57,7 +69,6 @@ export default function LikedOpuPage({ items }: Props) {
         [sortedItems, q, periods, categoryIds]
     );
 
-    // 라벨
     const periodLabel = useMemo(() => getPeriodFilterLabel(periods), [periods]);
     const categoryLabel = useMemo(
         () => getCategoryFilterLabel(categoryIds),
@@ -65,7 +76,6 @@ export default function LikedOpuPage({ items }: Props) {
     );
     const sortLabel = getSortLabel(sortOption);
 
-    // 기간 토글
     const handleTogglePeriod = (value: PeriodCode) => {
         if (value === "ALL") {
             setPeriods([]);
@@ -81,7 +91,6 @@ export default function LikedOpuPage({ items }: Props) {
         });
     };
 
-    // 카테고리 토글 (-1 = 전체)
     const handleToggleCategory = (id: number) => {
         if (id === -1) {
             setCategoryIds([]);
@@ -101,6 +110,9 @@ export default function LikedOpuPage({ items }: Props) {
         setSortOption(opt);
         setShowSortSheet(false);
     };
+
+    const selectedItem =
+        sheetId !== null ? data.find((i) => i.id === sheetId) : undefined;
 
     return (
         <div className="app-container pt-app-header pb-40">
@@ -135,76 +147,25 @@ export default function LikedOpuPage({ items }: Props) {
             <div className="mt-3">
                 <LikedOpuList
                     items={filtered}
+                    loading={loading}
                     onMore={(id) => setSheetId(id)}
                 />
             </div>
 
             {/* 카드 더보기 액션 시트 */}
-            <BottomSheet
+            <MoreActionsSheet
                 open={sheetId !== null}
                 onClose={() => setSheetId(null)}
-            >
-                {sheetId !== null && (
-                    <ActionList
-                        items={
-                            items.find((i) => i.id === sheetId)?.creatorId ===
-                            CURRENT_MEMBER_ID
-                                ? [
-                                      {
-                                          label: "투두리스트 추가",
-                                          onClick: () => {},
-                                      },
-                                      { label: "루틴 추가", onClick: () => {} },
-                                      { label: "수정", onClick: () => {} },
-                                      {
-                                          label: "삭제",
-                                          danger: true,
-                                          onClick: () => {},
-                                      },
-                                  ]
-                                : [
-                                      {
-                                          label: "투두리스트 추가",
-                                          onClick: () => {},
-                                      },
-                                      { label: "루틴 추가", onClick: () => {} },
-                                      {
-                                          label: "차단하기",
-                                          danger: true,
-                                          onClick: () => {},
-                                      },
-                                  ]
-                        }
-                    />
-                )}
-            </BottomSheet>
+                target={selectedItem}
+            />
 
             {/* 정렬 시트 */}
-            <BottomSheet
+            <SortSheet
                 open={showSortSheet}
                 onClose={() => setShowSortSheet(false)}
-            >
-                <ActionList
-                    items={[
-                        {
-                            label: "이름순",
-                            onClick: () => handleChangeSort("name"),
-                        },
-                        {
-                            label: "최신순",
-                            onClick: () => handleChangeSort("latest"),
-                        },
-                        {
-                            label: "완료순",
-                            onClick: () => handleChangeSort("completed"),
-                        },
-                        {
-                            label: "찜 많은 순",
-                            onClick: () => handleChangeSort("liked"),
-                        },
-                    ]}
-                />
-            </BottomSheet>
+                current={sortOption}
+                onChange={handleChangeSort}
+            />
 
             {/* 기간 / 카테고리 필터 시트 */}
             <OpuFilterSheet
@@ -220,5 +181,91 @@ export default function LikedOpuPage({ items }: Props) {
                 onReset={handleResetFilter}
             />
         </div>
+    );
+}
+
+type SortSheetProps = {
+    open: boolean;
+    onClose: () => void;
+    current: SortOption;
+    onChange: (opt: SortOption) => void;
+};
+
+function SortSheet({ open, onClose, onChange }: SortSheetProps) {
+    const handleSelect = (opt: SortOption) => () => {
+        onChange(opt);
+        onClose();
+    };
+
+    return (
+        <BottomSheet open={open} onClose={onClose}>
+            <ActionList
+                items={[
+                    {
+                        label: "이름순",
+                        onClick: handleSelect("name"),
+                    },
+                    {
+                        label: "최신순",
+                        onClick: handleSelect("latest"),
+                    },
+                    {
+                        label: "완료순",
+                        onClick: handleSelect("completed"),
+                    },
+                    {
+                        label: "찜 많은 순",
+                        onClick: handleSelect("liked"),
+                    },
+                ]}
+            />
+        </BottomSheet>
+    );
+}
+
+type MoreActionsSheetProps = {
+    open: boolean;
+    onClose: () => void;
+    target?: OpuCardModel;
+};
+
+function MoreActionsSheet({ open, onClose, target }: MoreActionsSheetProps) {
+    if (!target) {
+        return null;
+    }
+
+    const isMine = target.creatorId === CURRENT_MEMBER_ID;
+
+    const items = isMine
+        ? [
+              {
+                  label: "투두리스트 추가",
+                  onClick: () => {},
+              },
+              { label: "루틴 추가", onClick: () => {} },
+              { label: "수정", onClick: () => {} },
+              {
+                  label: "삭제",
+                  danger: true,
+                  onClick: () => {},
+              },
+          ]
+        : [
+              {
+                  label: "투두리스트 추가",
+                  onClick: () => {},
+              },
+              { label: "루틴 추가", onClick: () => {} },
+              {
+                  label: "차단하기",
+                  danger: true,
+                  onClick: () => {},
+              },
+          ];
+
+    return (
+        <BottomSheet open={open} onClose={onClose}>
+            <ActionList items={items} />
+        </BottomSheet>
     );
 }

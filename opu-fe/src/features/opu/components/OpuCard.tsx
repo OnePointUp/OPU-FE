@@ -5,6 +5,13 @@ import { useState } from "react";
 import { CATEGORY_BADGE, type OpuCardModel } from "@/features/opu/domain";
 import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
 
+type Props = {
+    item: OpuCardModel;
+    onAddTodo?: (id: number) => void;
+    onMore?: (id: number) => void;
+    loading?: boolean;
+};
+
 function Badge({
     label,
     bg,
@@ -28,14 +35,7 @@ function Badge({
     );
 }
 
-export default function OpuCard({
-    item,
-    onMore,
-}: {
-    item: OpuCardModel;
-    onAddTodo?: (id: number) => void;
-    onMore?: (id: number) => void;
-}) {
+export default function OpuCard({ item, onMore, loading = false }: Props) {
     const [liked, setLiked] = useState(item.liked);
 
     const categoryKey = item.categoryName ?? "기타";
@@ -52,6 +52,47 @@ export default function OpuCard({
         e.stopPropagation();
         setLiked((v) => !v);
     };
+
+    // 스켈레톤
+    if (loading) {
+        return (
+            <div
+                className="w-full rounded-2xl bg-[var(--background)] border px-3 pt-3 pb-2"
+                style={{ borderColor: "var(--color-super-light-gray)" }}
+            >
+                <div className="flex justify-between mb-2.5">
+                    <div className="flex gap-4 items-start">
+                        <div
+                            className="rounded-xl skeleton"
+                            style={{ width: 48, height: 48 }}
+                        />
+
+                        {/* 제목 + 배지 */}
+                        <div className="flex flex-col gap-2">
+                            {/* 제목 라인 */}
+                            <div className="h-4.5 w-32 rounded-md skeleton" />
+                            {/* 배지 두 개 */}
+                            <div className="h-5 w-25 rounded-md skeleton" />
+                        </div>
+                    </div>
+
+                    {/* 오른쪽 상단(자물쇠 / 좋아요) */}
+                    <div className="flex items-start gap-2">
+                        <div className="h-6 w-6 rounded-full skeleton" />
+                    </div>
+                </div>
+
+                {/* 하단 영역 */}
+                <div className="flex items-end justify-between mt-2">
+                    {/* 완료 / 찜 개수 */}
+                    <div className="h-4 w-25 rounded-md skeleton" />
+
+                    {/* 작성자 닉네임 */}
+                    <div className="h-4 w-20 rounded-md skeleton" />
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div
