@@ -3,27 +3,27 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
-import ProfileAvatarPicker from "@/features/user/components/ProfileAvatarPicker";
-import NicknameField from "@/features/user/components/NicknameField";
-import PasswordInput from "@/features/user/components/PasswordInput";
 import EmailField from "@/features/auth/components/EmailField";
+import PasswordInput from "@/features/user/components/PasswordInput";
+import NicknameField from "@/features/user/components/NicknameField";
 import AgreementsField from "@/features/auth/components/AgreementsField";
 import BottomActionBar from "@/components/common/BottomActionBar";
-import { checkNicknameDup, saveProfile } from "@/features/user/services";
+
+import { checkNicknameDup } from "@/features/user/services";
+import { validateEmail } from "@/features/auth/services";
+import { requestSignupEmail } from "@/features/auth/services";
 import { toastError, toastSuccess } from "@/lib/toast";
 
 export default function RegisterEmailPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState(""); 
+  const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [nickname, setNickname] = useState("");
   const [dupError, setDupError] = useState("");
   const [checking, setChecking] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string>("");
-  const [file, setFile] = useState<File | null>(null);
 
   const [agreements, setAgreements] = useState({
     all: false,
@@ -33,25 +33,14 @@ export default function RegisterEmailPage() {
     notification: false,
   });
 
-  const [profile] = useState<{ nickname: string | null }>({ nickname: null });
-
-  // 이메일 형식 검사
-  function validateEmail(value: string) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!value.trim()) return "";
-    if (!emailRegex.test(value)) return "이메일 형식에 맞게 입력해주세요.";
-    return "";
-  }
-
-  // 입력할 때마다 자동 검사
+  // 이메일 입력할 때 검사
   function handleEmailChange(v: string) {
     setEmail(v);
-    const msg = validateEmail(v);
-    setEmailError(msg);
+    setEmailError(validateEmail(v));
   }
 
+  // 닉네임 blur 시 중복체크
   async function handleBlurNickname() {
-    if (!profile) return;
     const v = nickname.trim();
     if (!v) {
       setDupError("닉네임을 입력해 주세요.");
@@ -60,19 +49,43 @@ export default function RegisterEmailPage() {
 
     setChecking(true);
     try {
-      const current = profile?.nickname ?? undefined;
-      const isDup = await checkNicknameDup(v, current);
+      const isDup = await checkNicknameDup(v, undefined);
       setDupError(isDup ? "이미 존재하는 닉네임입니다." : "");
-    } catch (err) {
+    } catch {
       setDupError("닉네임 검사 중 오류가 발생했습니다.");
     } finally {
       setChecking(false);
     }
   }
 
-  function handlePickImage(f: File) {
-    setFile(f);
-    setPreviewUrl(URL.createObjectURL(f));
+  const isPwMismatch = confirmPassword && confirmPassword !== password;
+
+  const canSubmit =
+    email.trim() &&
+    !emailError &&
+    password.trim() &&
+    nickname.trim() &&
+    !dupError &&
+    !checking &&
+    !isPwMismatch &&
+    agreements.terms &&
+    agreements.privacy;
+
+  async function handleSubmit() {
+    if (!canSubmit) return;
+
+    try {
+      await requestSignupEmail({
+        email: email.trim(),
+        password: password,
+        nickname: nickname.trim(),
+      });
+
+      toastSuccess("인증용 이메일이 발송되었습니다.");
+      router.push("/signup/check-email");
+    } catch {
+      toastError("인증 이메일 발송 중 문제가 발생했어요.");
+    }
   }
 
   const handleCheckAll = (checked: boolean) => {
@@ -91,50 +104,13 @@ export default function RegisterEmailPage() {
     setAgreements(next);
   };
 
-  const isPwMismatch = confirmPassword && confirmPassword !== password;
-
-  const canSubmit =
-    email.trim() &&
-    !emailError && 
-    password.trim() &&
-    nickname.trim() &&
-    !dupError &&
-    !checking &&
-    !isPwMismatch &&
-    agreements.terms &&
-    agreements.privacy;
-
-  async function handleSubmit() {
-    if (!canSubmit) return;
-
-    try {
-      await saveProfile({
-        nickname: nickname.trim(),
-        bio: "",
-        profileFile: file,
-      });
-      toastSuccess("인증용 이메일 발송 완료!");
-      router.push("/signup/check-email");
-    } catch (e) {
-      toastError("인증용 이메일 발송 중에 문제가 생겼어요.");
-    }
-  }
-
   return (
     <div className="app-page overflow-hidden overscroll-none">
       <Header title="회원가입" showBack />
 
       <main className="app-container pt-app-header pb-40 px-6">
-        <ProfileAvatarPicker
-          nickname={nickname}
-          previewUrl={previewUrl}
-          onPick={handlePickImage}
-        />
-        <EmailField
-          value={email}
-          onChange={handleEmailChange}
-          error={emailError}
-        />
+
+        <EmailField value={email} onChange={handleEmailChange} error={emailError} />
 
         <PasswordInput
           label="비밀번호"
@@ -169,11 +145,7 @@ export default function RegisterEmailPage() {
         />
       </main>
 
-      <BottomActionBar
-        label="다음"
-        disabled={!canSubmit}
-        onClick={handleSubmit}
-      />
+      <BottomActionBar label="다음" disabled={!canSubmit} onClick={handleSubmit} />
     </div>
   );
 }
