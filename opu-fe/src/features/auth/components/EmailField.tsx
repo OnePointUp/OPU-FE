@@ -4,22 +4,31 @@ type Props = {
     value: string;
     onChange: (v: string) => void;
     className?: string;
+    isLabeled?: boolean;
     error?: string;
 };
 
-export default function EmailField({ value, onChange, className = "", error}: Props) {
+export default function EmailField({
+  value,
+  onChange,
+  className = "",
+  isLabeled = true,
+  error
+}: Props) {
   return (
     <section className={`mt-6 ${className}`}>
-      <label
-        className="block mb-2 ml-1"
-        style={{
-          fontSize: "var(--text-sub)",
-          fontWeight: "var(--weight-semibold)",
-          color: "var(--color-dark-navy)",
-        }}
-      >
-        이메일
-      </label>
+      {isLabeled && (
+        <label
+          className="block mb-2 ml-1"
+          style={{
+            fontSize: "var(--text-sub)",
+            fontWeight: "var(--weight-semibold)",
+            color: "var(--color-dark-navy)",
+          }}
+        >
+          이메일
+        </label>
+      )}
 
       <input
         type="email"
