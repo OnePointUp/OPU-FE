@@ -1,28 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/components/layout/Header";
 import BottomActionBar from "@/components/common/BottomActionBar";
 import Image from "next/image";
-import { toastError, toastSuccess } from "@/lib/toast";
 
 export default function EmailVerifyPage() {
   const router = useRouter();
-  const [isSending, setIsSending] = useState(false);
-
-  // 이메일 재전송 처리
-  const handleResendEmail = async () => {
-    try {
-      setIsSending(true);
-      await new Promise((r) => setTimeout(r, 1000)); // TODO: 실제 API 연결
-      toastSuccess("이메일이 재전송 되었습니다.");
-    } catch (e) {
-      toastError("이메일 재전송 중에 문제가 생겼습니다. 나중에 다시 시도해주세요.");
-    } finally {
-      setIsSending(false);
-    }
-  };
 
   const handleNext = () => {
     router.push("/login");
