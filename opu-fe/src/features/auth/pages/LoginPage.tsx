@@ -1,4 +1,5 @@
 "use client";
+
 import Header from "@/components/layout/Header";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -8,7 +9,6 @@ import PasswordInput from "@/features/user/components/PasswordInput";
 import MainButton from "@/components/common/MainButton"
 import { validateEmail } from "../services";
 import { toastError, toastSuccess } from "@/lib/toast";
-import { text } from "stream/consumers";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -79,7 +79,7 @@ export default function LoginPage() {
         >
           <button onClick={() => router.push("/welcome")}>회원가입</button>
           <span>|</span>
-          <button onClick={() => router.push("/find-password")}>비밀번호 찾기</button>
+          <button onClick={() => router.push("/find-pw")}>비밀번호 찾기</button>
         </div>
       </main>
     </div>
