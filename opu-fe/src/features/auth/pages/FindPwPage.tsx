@@ -11,7 +11,6 @@ import { toastError, toastSuccess } from "@/lib/toast";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState(""); 
-  const [password, setPassword] = useState("");
   const router = useRouter();
 
   const isActive =
@@ -22,7 +21,7 @@ export default function LoginPage() {
     try {
           
           toastSuccess("이메일을 전송하였습니다.");
-          router.push("/");
+          router.push("/find-pw/email-confirmed");
         } catch (e) {
           toastError("이메일 전송 중 문제가 생겼습니다. 이메일 주소를 확인하거나 다시 시도해주세요.");
         }
