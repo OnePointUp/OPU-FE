@@ -4,7 +4,6 @@ import Header from "@/components/layout/Header";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import EmailField from "../components/EmailField";
-import PasswordInput from "@/features/user/components/PasswordInput";
 import MainButton from "@/components/common/MainButton"
 import { validateEmail } from "../services";
 import { toastError, toastSuccess } from "@/lib/toast";
@@ -25,7 +24,7 @@ export default function LoginPage() {
           toastSuccess("이메일을 전송하였습니다.");
           router.push("/");
         } catch (e) {
-          toastError("이메일 전송 중 문제가 생겼습니다. 다시 시도해주세요.");
+          toastError("이메일 전송 중 문제가 생겼습니다. 이메일 주소를 확인하거나 다시 시도해주세요.");
         }
   }
 
@@ -51,7 +50,7 @@ export default function LoginPage() {
             className="text-center">
               비밀번호 재설정을 위해
               <br />
-              가입하신 이메일 주소를 입력해주세요
+              가입하신 이메일 주소를 입력해주세요.
           </p>
         </div>
 
@@ -64,7 +63,7 @@ export default function LoginPage() {
                     isLabeled={false}
                   />
 
-          {/* 로그인 버튼 */}
+          {/* 확인 버튼 */}
           <MainButton label="확인" onClick={handleSubmit} fullWidth={true} disabled={!isActive}/>
         </form>
       </main>
