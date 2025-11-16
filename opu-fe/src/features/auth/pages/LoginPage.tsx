@@ -76,14 +76,14 @@ export default function LoginPage() {
         <div className="text-center text-[length:var(--text-caption)] text-[color:var(--color-light-gray)] mt-[15px]">
           <span
             className="cursor-pointer hover:underline"
-            onClick={() => router.push('/login')}
+            onClick={() => router.push('/welcome')}
           >
             회원가입
           </span>
           {'  |  '}
           <span
             className="cursor-pointer hover:underline"
-            onClick={() => router.push('/signup')}
+            onClick={() => router.push('/find-pw')}
           >
             비밀번호 찾기
           </span>
