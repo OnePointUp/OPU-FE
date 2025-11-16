@@ -11,7 +11,6 @@ import BottomActionBar from "@/components/common/BottomActionBar";
 
 import { checkNicknameDup } from "@/features/user/services";
 import { validateEmail } from "@/features/auth/services";
-import { requestSignupEmail } from "@/features/auth/services";
 import { toastError, toastSuccess } from "@/lib/toast";
 
 export default function RegisterEmailPage() {
@@ -75,11 +74,7 @@ export default function RegisterEmailPage() {
     if (!canSubmit) return;
 
     try {
-      await requestSignupEmail({
-        email: email.trim(),
-        password: password,
-        nickname: nickname.trim(),
-      });
+      await new Promise((r) => setTimeout(r, 500));
 
       toastSuccess("인증용 이메일이 발송되었습니다.");
       router.push("/signup/check-email");
