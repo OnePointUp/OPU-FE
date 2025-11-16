@@ -1,7 +1,7 @@
 "use client";
 
 import PasswordInput from "@/features/user/components/PasswordInput";
-import BottomActionBar from "@/components/common/BottomActionBar";
+import OpuActionButton from "@/components/common/OpuActionButton";
 import { useSetNewPassword } from "@/features/user/hooks/useSetNewPassword";
 
 export default function PasswordChange2Page() {
@@ -41,7 +41,7 @@ export default function PasswordChange2Page() {
                 </section>
             </main>
 
-            <BottomActionBar
+            <OpuActionButton
                 label="저장"
                 disabled={!canSubmit}
                 loading={loading}

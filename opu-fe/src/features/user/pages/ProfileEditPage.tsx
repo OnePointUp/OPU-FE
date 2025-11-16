@@ -3,7 +3,7 @@
 import ProfileAvatarPicker from "@/features/user/components/ProfileAvatarPicker";
 import NicknameField from "@/features/user/components/NicknameField";
 import IntroField from "@/features/user/components/IntroField";
-import BottomActionBar from "@/components/common/BottomActionBar";
+import OpuActionButton from "@/components/common/OpuActionButton";
 import { useProfileEdit } from "@/features/user/hooks/useProfileEdit";
 
 export default function ProfileEditPage() {
@@ -49,7 +49,7 @@ export default function ProfileEditPage() {
                 <IntroField value={bio} onChange={setBio} max={introMax} />
             </main>
 
-            <BottomActionBar
+            <OpuActionButton
                 label="저장"
                 disabled={!canSubmit}
                 loading={saving}
