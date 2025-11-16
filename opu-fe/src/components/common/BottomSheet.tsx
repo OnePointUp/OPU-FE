@@ -12,8 +12,9 @@ type BottomSheetProps = {
     dismissThreshold?: number;
 };
 
+// 바깥 래퍼: open 아닐 땐 아예 마운트 안 함
 export default function BottomSheet(props: BottomSheetProps) {
-    if (!props.open) return null; // 열릴 때만 내부를 마운트 → 상태 자동 초기화
+    if (!props.open) return null;
     return createPortal(<BottomSheetInner {...props} />, document.body);
 }
 
@@ -31,31 +32,22 @@ function BottomSheetInner({
     const [dragY, setDragY] = useState(0);
     const [dragging, setDragging] = useState(false);
 
-    // 바디 잠금(레이아웃 움직임 방지 + 스크롤 유지)
+    // 바디 스크롤 잠금 (가로 이동 유발하는 paddingRight, left/right 설정 제거)
     useEffect(() => {
         const body = document.body;
-        const docEl = document.documentElement;
         const scrollY = window.scrollY;
 
         const prev = {
             position: body.style.position,
             top: body.style.top,
-            left: body.style.left,
-            right: body.style.right,
             width: body.style.width,
-            paddingRight: body.style.paddingRight,
-            overscroll: body.style.getPropertyValue("overscroll-behavior"),
+            overflow: body.style.overflow,
         };
-
-        const scrollbarWidth = window.innerWidth - docEl.clientWidth;
-        if (scrollbarWidth > 0) body.style.paddingRight = `${scrollbarWidth}px`;
 
         body.style.position = "fixed";
         body.style.top = `-${scrollY}px`;
-        body.style.left = "0";
-        body.style.right = "0";
         body.style.width = "100%";
-        body.style.setProperty("overscroll-behavior", "contain");
+        body.style.overflow = "hidden";
 
         const onKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") onClose();
@@ -67,14 +59,8 @@ function BottomSheetInner({
 
             body.style.position = prev.position;
             body.style.top = prev.top;
-            body.style.left = prev.left;
-            body.style.right = prev.right;
             body.style.width = prev.width;
-            body.style.paddingRight = prev.paddingRight;
-
-            if (prev.overscroll)
-                body.style.setProperty("overscroll-behavior", prev.overscroll);
-            else body.style.removeProperty("overscroll-behavior");
+            body.style.overflow = prev.overflow;
 
             const y =
                 parseInt((prev.top || "0").replace("-", ""), 10) || scrollY;
@@ -82,7 +68,7 @@ function BottomSheetInner({
         };
     }, [onClose]);
 
-    // 드래그 제스처
+    // 드래그 시작/이동/끝
     const beginDrag = (y: number) => {
         startY.current = y;
         setDragging(true);
@@ -102,8 +88,7 @@ function BottomSheetInner({
 
         if (dragY >= dismissThreshold) {
             setDragY(window.innerHeight);
-            // 닫힘 애니메이션 후 종료
-            setTimeout(onClose, 160);
+            setTimeout(onClose, 160); // 내려가는 애니메이션 후 닫기
         } else {
             setDragY(0);
         }
@@ -132,12 +117,13 @@ function BottomSheetInner({
                 return;
             beginDrag(e.touches[0].clientY);
         };
+
         const tmove = (e: TouchEvent) => {
-            if (dragging) {
-                e.preventDefault();
-                moveDrag(e.touches[0].clientY);
-            }
+            if (!dragging) return;
+            e.preventDefault();
+            moveDrag(e.touches[0].clientY);
         };
+
         const tend = () => endDrag();
 
         el.addEventListener("touchstart", tstart, { passive: true });
@@ -168,7 +154,7 @@ function BottomSheetInner({
                 style={{ opacity: backdropOpacity }}
             />
 
-            {/* 시트 래퍼 (중앙 정렬) */}
+            {/* 시트 래퍼 */}
             <div
                 className="absolute left-1/2 bottom-0 w-full"
                 style={{ transform: "translateX(-50%)" }}

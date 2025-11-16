@@ -5,9 +5,10 @@ export const OPU: OpuEntity[] = [
     {
         id: 1,
         category_id: 6,
-        created_by: 101,
-        title: "물 2L 마시기",
-        description: "하루 두 번 1L씩 나눠 마시기",
+        member_id: 101,
+        title: "물 2L 마시기 하루종일 마십니다 글자수 테스트",
+        description:
+            "하루 총 2L를 오전/오후로 나눠서 마시며 수분 밸런스 챙기기",
         created_at: "2025-11-01T00:00:00Z",
         required_time: "DAILY",
         is_shared: "Y",
@@ -16,9 +17,10 @@ export const OPU: OpuEntity[] = [
     {
         id: 2,
         category_id: 2,
-        created_by: 102,
+        member_id: 102,
         title: "명상 10분 하기",
-        description: "아침 명상으로 하루를 맑게 시작",
+        description:
+            "잠깐 멈춰 호흡을 정리하고 마음을 차분하게 가라앉히는 시간 갖기",
         created_at: "2025-11-03T00:00:00Z",
         required_time: "5M",
         is_shared: "N",
@@ -27,9 +29,9 @@ export const OPU: OpuEntity[] = [
     {
         id: 3,
         category_id: 1,
-        created_by: 101,
+        member_id: 101,
         title: "독서 20분 하기",
-        description: "자기계발서 읽기",
+        description: "하루 20분, 집중해서 읽으며 생각을 넓히기",
         created_at: "2025-11-05T00:00:00Z",
         required_time: "30M",
         is_shared: "Y",
@@ -38,9 +40,9 @@ export const OPU: OpuEntity[] = [
     {
         id: 4,
         category_id: 5,
-        created_by: 103,
+        member_id: 103,
         title: "아침 스트레칭",
-        description: "기상 후 5분 스트레칭으로 몸 깨우기",
+        description: "기상 직후 가볍게 몸을 풀어 하루 시작을 부드럽게 열기",
         created_at: "2025-11-06T06:00:00Z",
         required_time: "5M",
         is_shared: "Y",
@@ -49,9 +51,10 @@ export const OPU: OpuEntity[] = [
     {
         id: 5,
         category_id: 4,
-        created_by: 104,
+        member_id: 104,
         title: "그림 그리기",
-        description: "하루 한 장 스케치",
+        description:
+            "하루 한 장 스케치하며 감각을 깨우고 나만의 작은 창작 기록 남기기",
         created_at: "2025-11-07T10:00:00Z",
         required_time: "30M",
         is_shared: "N",
@@ -60,9 +63,10 @@ export const OPU: OpuEntity[] = [
     {
         id: 6,
         category_id: 9,
-        created_by: 105,
+        member_id: 105,
         title: "가계부 정리",
-        description: "지출 내역 기록하고 예산 점검하기",
+        description:
+            "오늘 지출을 빠르게 정리하고 예산 흐름을 확인해 소비 습관 점검하기",
         created_at: "2025-11-07T18:00:00Z",
         required_time: "30M",
         is_shared: "Y",
@@ -71,9 +75,10 @@ export const OPU: OpuEntity[] = [
     {
         id: 7,
         category_id: 7,
-        created_by: 106,
+        member_id: 106,
         title: "영화 감상",
-        description: "주말마다 새로운 영화 한 편 보기",
+        description:
+            "주말마다 새로운 영화 한 편으로 취향 확장하고 여유 시간 채우기",
         created_at: "2025-11-08T20:00:00Z",
         required_time: "1H",
         is_shared: "N",
@@ -82,9 +87,10 @@ export const OPU: OpuEntity[] = [
     {
         id: 8,
         category_id: 8,
-        created_by: 107,
+        member_id: 107,
         title: "뉴스레터 읽기",
-        description: "IT 트렌드 뉴스레터 구독 및 정리",
+        description:
+            "트렌드 뉴스레터를 읽고 핵심 내용을 정리하며 최신 동향 따라가기",
         created_at: "2025-11-09T09:00:00Z",
         required_time: "5M",
         is_shared: "Y",
@@ -93,9 +99,9 @@ export const OPU: OpuEntity[] = [
     {
         id: 9,
         category_id: 10,
-        created_by: 101,
+        member_id: 101,
         title: "방 청소하기",
-        description: "주말마다 방 정리",
+        description: "주말마다 방을 정돈해 깔끔한 생활 공간 유지하기리",
         created_at: "2025-11-09T13:00:00Z",
         required_time: "1H",
         is_shared: "N",
@@ -104,9 +110,9 @@ export const OPU: OpuEntity[] = [
     {
         id: 10,
         category_id: 3,
-        created_by: 108,
+        member_id: 108,
         title: "친구에게 안부 문자 보내기",
-        description: "소중한 관계 챙기기",
+        description: "가볍게 안부를 전하며 소중한 관계를 꾸준히 이어가기",
         created_at: "2025-11-09T20:00:00Z",
         required_time: "5M",
         is_shared: "Y",
@@ -115,9 +121,10 @@ export const OPU: OpuEntity[] = [
     {
         id: 11,
         category_id: 13,
-        created_by: 109,
+        member_id: 109,
         title: "30일 챌린지 진행",
-        description: "하루 한 번 꾸준히 도전하기",
+        description:
+            "매일 한 번씩 도전하며 꾸준함을 기록하는 30일 루틴 유지하기",
         created_at: "2025-11-10T00:00:00Z",
         required_time: "DAILY",
         is_shared: "Y",
@@ -126,9 +133,9 @@ export const OPU: OpuEntity[] = [
     {
         id: 12,
         category_id: 12,
-        created_by: 101,
+        member_id: 101,
         title: "감정 일기 쓰기",
-        description: "오늘의 감정 한 줄 기록",
+        description: "오늘 느낀 감정을 한 줄로 남기고 하루를 차분히 정리하기",
         created_at: "2025-11-11T22:00:00Z",
         required_time: "5M",
         is_shared: "N",
