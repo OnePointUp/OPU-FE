@@ -45,10 +45,10 @@ export default function LoginPage() {
         {/* 로고 영역 */}
         <div className="mt-10 mb-10 flex justify-center">
           <Image
-                      src="/images/cabit_logo.png"
+                      src="/images/cabit_logo2.png"
                       alt="OPU mascot"
-                      width={180}
-                      height={180}
+                      width={150}
+                      height={150}
                       priority
                     />
         </div>

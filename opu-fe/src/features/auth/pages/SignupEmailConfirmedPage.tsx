@@ -27,10 +27,10 @@ export default function EmailVerifyPage() {
         {/* 마스코트 이미지 */}
         <section className="flex justify-center my-10">
           <Image
-            src="/images/cabit_congratulation.png"
+            src="/images/cabit_congratulation4.png"
             alt="OPU mascot"
-            width={230}
-            height={230}
+            width={280}
+            height={280}
             priority
           />
         </section>
