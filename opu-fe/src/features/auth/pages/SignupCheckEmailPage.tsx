@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
-import BottomActionBar from "@/components/common/BottomActionBar";
+import OpuActionButton from "@/components/common/OpuActionButton";
 import Image from "next/image";
 import { toastError, toastSuccess } from "@/lib/toast";
 
@@ -83,7 +83,7 @@ export default function EmailVerifyPage() {
       </main>
 
       {/* 하단 버튼 */}
-      <BottomActionBar label="다음" disabled={false} onClick={handleNext} />
+      <OpuActionButton label="다음" disabled={false} onClick={handleNext} />
     </div>
   );
 }

@@ -7,7 +7,7 @@ import EmailField from "@/features/auth/components/EmailField";
 import PasswordInput from "@/features/user/components/PasswordInput";
 import NicknameField from "@/features/user/components/NicknameField";
 import AgreementsField from "@/features/auth/components/AgreementsField";
-import BottomActionBar from "@/components/common/BottomActionBar";
+import OpuActionButton from "@/components/common/OpuActionButton";
 
 import { checkNicknameDup } from "@/features/user/services";
 import { validateEmail } from "@/features/auth/services";
@@ -140,7 +140,7 @@ export default function RegisterEmailPage() {
         />
       </main>
 
-      <BottomActionBar label="다음" disabled={!canSubmit} onClick={handleSubmit} />
+      <OpuActionButton label="다음" disabled={!canSubmit} onClick={handleSubmit} />
     </div>
   );
 }

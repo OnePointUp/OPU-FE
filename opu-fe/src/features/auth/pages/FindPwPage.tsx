@@ -4,7 +4,7 @@ import Header from "@/components/layout/Header";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import EmailField from "../components/EmailField";
-import MainButton from "@/components/common/MainButton"
+import OpuActionButton from "@/components/common/OpuActionButton"
 import { validateEmail } from "../services";
 import { toastError, toastSuccess } from "@/lib/toast";
 
@@ -63,7 +63,7 @@ export default function LoginPage() {
                   />
 
           {/* 확인 버튼 */}
-          <MainButton label="확인" onClick={handleSubmit} fullWidth={true} disabled={!isActive}/>
+          <OpuActionButton label="확인" onClick={handleSubmit} positionFixed={false} disabled={!isActive}/>
         </form>
       </main>
     </div>

@@ -2,7 +2,7 @@
 
 import Header from "@/components/layout/Header";
 import PasswordInput from "@/features/user/components/PasswordInput";
-import BottomActionBar from "@/components/common/BottomActionBar";
+import OpuActionButton from "@/components/common/OpuActionButton";
 import { useVerifyCurrentPassword } from "@/features/user/hooks/useVerifyCurrentPassword";
 
 export default function VerifyCurrentPasswordPage() {
@@ -27,7 +27,7 @@ export default function VerifyCurrentPasswordPage() {
                 </section>
             </main>
 
-            <BottomActionBar
+            <OpuActionButton
                 label="다음"
                 disabled={!canNext}
                 loading={loading}

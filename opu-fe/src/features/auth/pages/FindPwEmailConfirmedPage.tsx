@@ -3,7 +3,7 @@
 import Header from "@/components/layout/Header";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import MainButton from "@/components/common/MainButton"
+import OpuActionButton from "@/components/common/OpuActionButton"
 import { validateEmail } from "../services";
 import { toastError, toastSuccess } from "@/lib/toast";
 
@@ -31,7 +31,7 @@ export default function LoginPage() {
     try {
           
           toastSuccess("비밀번호가 재설정 되었습니다.");
-          router.push("/");
+          router.push("/login");
         } catch (e) {
           toastError("이메일 재전송 중 문제가 생겼습니다. 다시 시도해주세요.");
         }
@@ -64,7 +64,7 @@ export default function LoginPage() {
         </div>
 
         {/* 확인 버튼 */}
-        <MainButton label="확인" onClick={handleSubmit} fullWidth={true}/>
+        <OpuActionButton label="확인" onClick={handleSubmit} positionFixed={false} className="w-full" />
 
         {/* 하단 링크 */}
         <div className="text-center mb-8">

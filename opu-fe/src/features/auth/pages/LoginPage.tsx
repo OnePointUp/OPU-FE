@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import EmailField from "../components/EmailField";
 import PasswordInput from "@/features/user/components/PasswordInput";
-import MainButton from "@/components/common/MainButton"
+import OpuActionButton from "@/components/common/OpuActionButton"
 import { validateEmail } from "../services";
 import { toastError, toastSuccess } from "@/lib/toast";
 
@@ -45,10 +45,10 @@ export default function LoginPage() {
         {/* 로고 영역 */}
         <div className="mt-10 mb-10 flex justify-center">
           <Image
-                      src="/images/cabit_logo2.png"
+                      src="/images/cabit_logo.png"
                       alt="OPU mascot"
-                      width={150}
-                      height={150}
+                      width={180}
+                      height={180}
                       priority
                     />
         </div>
@@ -69,7 +69,7 @@ export default function LoginPage() {
           />
 
           {/* 로그인 버튼 */}
-          <MainButton label="로그인" onClick={handleSubmit} fullWidth={true} disabled={!isActive}/>
+          <OpuActionButton label="로그인" onClick={handleSubmit} positionFixed={false} disabled={!isActive}/>
         </form>
 
         {/* 하단 링크 */}
