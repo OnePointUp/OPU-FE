@@ -43,9 +43,9 @@ export default function LoginPage() {
 
        <main className="app-container pt-app-header pb-40 px-6 flex flex-col items-center">
         {/* 로고 영역 */}
-        <div className="mt-10 mb-10 flex justify-center">
+        <div className="mt-10 flex justify-center">
           <Image
-                      src="/images/cabit_logo.png"
+                      src="/images/cabit_logo3.png"
                       alt="OPU mascot"
                       width={180}
                       height={180}
@@ -54,7 +54,7 @@ export default function LoginPage() {
         </div>
 
         {/* 입력 폼 */}
-        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-[17px]">
+        <form onSubmit={handleSubmit} className="w-full flex flex-col">
           <EmailField
                     value={email}
                     onChange={handleEmailChange}
@@ -69,17 +69,24 @@ export default function LoginPage() {
           />
 
           {/* 로그인 버튼 */}
-          <OpuActionButton label="로그인" onClick={handleSubmit} positionFixed={false} disabled={!isActive}/>
+          <OpuActionButton label="로그인" onClick={handleSubmit} positionFixed={false} disabled={!isActive} className="mt-[17px]"/>
         </form>
 
         {/* 하단 링크 */}
-        <div
-          className="flex justify-center gap-4 mt-4 text-xs"
-          style={{color: "var(--color-light-gray)"}}
-        >
-          <button onClick={() => router.push("/welcome")}>회원가입</button>
-          <span>|</span>
-          <button onClick={() => router.push("/find-pw")}>비밀번호 찾기</button>
+        <div className="text-center text-[length:var(--text-caption)] text-[color:var(--color-light-gray)] mt-[15px]">
+          <span
+            className="cursor-pointer hover:underline"
+            onClick={() => router.push('/login')}
+          >
+            회원가입
+          </span>
+          {'  |  '}
+          <span
+            className="cursor-pointer hover:underline"
+            onClick={() => router.push('/signup')}
+          >
+            비밀번호 찾기
+          </span>
         </div>
       </main>
     </div>
