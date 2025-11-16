@@ -14,35 +14,27 @@ export default function LikedOpuList({
     onMore,
     loading = false,
 }: Props) {
-    if (loading) {
-        return (
-            <div className="flex flex-col gap-3 px-2">
-                {Array.from({ length: 4 }).map((_, idx) => (
-                    <OpuCard
-                        key={`skeleton-${idx}`}
-                        item={{
-                            id: idx,
-                            title: "",
-                            emoji: "",
-                            categoryId: 0,
-                            periodLabel: "",
-                            liked: false,
-                        }}
-                        loading
-                    />
-                ))}
-            </div>
-        );
-    }
+    const cardList = loading
+        ? Array.from({ length: 4 }).map((_, idx) => ({
+              id: idx,
+              title: "",
+              emoji: "",
+              categoryId: 0,
+              periodLabel: "",
+              liked: false,
+          }))
+        : items;
 
     return (
-        <div className="flex flex-col gap-3 px-2">
-            {items.map((item) => (
-                <OpuCard key={item.id} item={item} onMore={onMore} />
+        <div className="flex flex-wrap gap-2 px-1">
+            {cardList.map((item) => (
+                <div key={item.id} className="w-[calc(50%-4px)]">
+                    <OpuCard item={item} onMore={onMore} loading={loading} />
+                </div>
             ))}
 
-            {items.length === 0 && (
-                <div className="text-center text-sm py-10">
+            {!loading && items.length === 0 && (
+                <div className="text-center text-sm py-10 w-full">
                     찜한 OPU가 없습니다
                 </div>
             )}

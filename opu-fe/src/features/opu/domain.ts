@@ -18,6 +18,7 @@ export type LikeEntity = {
 export type OpuCardModel = {
     id: number;
     title: string;
+    description?: string;
     emoji?: string;
     categoryId: number;
     categoryName?: string;

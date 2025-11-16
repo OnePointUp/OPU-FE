@@ -33,6 +33,7 @@ export function toOpuCardModelFromEntity(
     return {
         id: o.id,
         title: o.title,
+        description: o.description,
         categoryId: o.category_id,
         categoryName: toCategoryName(o.category_id),
         periodLabel: toPeriodLabelFromCode(o.required_time),

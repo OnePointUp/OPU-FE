@@ -23,10 +23,10 @@ function Badge({
 }) {
     return (
         <span
-            className="inline-flex items-center justify-center h-5 px-1.5 rounded-md font-medium leading-[16px]"
+            className="inline-flex items-center justify-center h-4 px-1 rounded-sm font-medium leading-[16px]"
             style={{
                 backgroundColor: bg,
-                color: color,
+                color,
                 fontSize: "var(--text-mini)",
             }}
         >
@@ -57,38 +57,27 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
     if (loading) {
         return (
             <div
-                className="w-full rounded-2xl bg-[var(--background)] border px-3 pt-3 pb-2"
+                className="w-full rounded-xl bg-[var(--background)] border px-3 pt-3 pb-2"
                 style={{ borderColor: "var(--color-super-light-gray)" }}
             >
-                <div className="flex justify-between mb-2.5">
-                    <div className="flex gap-4 items-start">
-                        <div
+                <div className="flex justify-between mb-1">
+                    {/* <div
                             className="rounded-xl skeleton"
-                            style={{ width: 48, height: 48 }}
-                        />
-
-                        {/* 제목 + 배지 */}
-                        <div className="flex flex-col gap-2">
-                            {/* 제목 라인 */}
-                            <div className="h-4.5 w-32 rounded-md skeleton" />
-                            {/* 배지 두 개 */}
-                            <div className="h-5 w-25 rounded-md skeleton" />
-                        </div>
+                            style={{ width: 35, height: 35 }}
+                        /> */}
+                    <div className="flex flex-col gap-1 mb-1">
+                        <div className="h-4 w-24 rounded-md skeleton" />
+                        <div className="h-4 w-20 rounded-md skeleton" />
                     </div>
-
-                    {/* 오른쪽 상단(자물쇠 / 좋아요) */}
-                    <div className="flex items-start gap-2">
-                        <div className="h-6 w-6 rounded-full skeleton" />
-                    </div>
+                    <div className="h-5 w-5 rounded-full skeleton" />
                 </div>
 
-                {/* 하단 영역 */}
-                <div className="flex items-end justify-between mt-2">
-                    {/* 완료 / 찜 개수 */}
-                    <div className="h-4 w-25 rounded-md skeleton" />
+                <div className="h-3 w-36 rounded-md skeleton mt-1" />
+                <div className="h-3 w-24 rounded-md skeleton mt-1" />
 
-                    {/* 작성자 닉네임 */}
-                    <div className="h-4 w-20 rounded-md skeleton" />
+                <div className="flex items-end justify-between mt-2">
+                    <div className="h-3 w-18 rounded-md skeleton" />
+                    <div className="h-3 w-12 rounded-md skeleton" />
                 </div>
             </div>
         );
@@ -96,57 +85,61 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
 
     return (
         <div
-            className="w-full rounded-2xl bg-[var(--background)] border px-3 pt-3 pb-2"
+            className="w-full rounded-xl bg-[var(--background)] border px-3 pt-2 pb-2"
             style={{ borderColor: "var(--color-super-light-gray)" }}
             role="group"
             aria-label={item.title}
             onClick={handleCardClick}
         >
-            <div className="flex justify-between mb-2.5">
-                <div className="flex gap-4 items-start">
-                    <div
-                        className="flex items-center justify-center rounded-xl"
-                        style={{
-                            width: 48,
-                            height: 48,
-                            backgroundColor: "var(--color-opu-yellow)",
-                        }}
-                    >
-                        <span style={{ fontSize: "var(--text-h1)" }}>
+            <div className="flex items-start justify-between mb-2.5">
+                <div className="flex flex-col items-start min-w-0 w-full">
+                    {/* 이모지 */}
+                    <div className="p-1.5 bg-[var(--color-opu-yellow)] rounded-2xl mb-1">
+                        <span
+                            className="flex items-center justify-center"
+                            style={{
+                                fontSize: "var(--text-h3)",
+                                width: 30,
+                                height: 30,
+                            }}
+                        >
                             {item.emoji ?? "❓"}
                         </span>
                     </div>
 
-                    <div className="flex flex-col justify-between">
-                        <span
-                            style={{
-                                fontSize: "var(--text-sub)",
-                                fontWeight: "var(--weight-semibold)",
-                            }}
-                        >
-                            {item.title}
-                        </span>
-                        <div className="mt-1 flex items-center gap-1">
-                            <Badge label={categoryKey} bg={bg} color={text} />
-                            <Badge
-                                label={item.periodLabel}
-                                bg="#E3E3E3"
-                                color="#6F6F6F"
+                    {/* 제목 */}
+
+                    <span
+                        className="flex items-center gap-0.5 line-clamp-2 mb-1 w-full"
+                        style={{
+                            fontSize: "var(--text-sub)",
+                            fontWeight: "var(--weight-semibold)",
+                        }}
+                    >
+                        {item.title}
+                        {isPrivate && (
+                            <Icon
+                                className="mb-0.5"
+                                icon="material-symbols:lock-sharp"
+                                width={11}
+                                height={11}
+                                style={{ color: "var(--color-dark-gray)" }}
                             />
-                        </div>
+                        )}
+                    </span>
+
+                    {/* 배지 */}
+                    <div className="flex items-center gap-1 flex-wrap">
+                        <Badge label={categoryKey} bg={bg} color={text} />
+                        <Badge
+                            label={item.periodLabel}
+                            bg="#E3E3E3"
+                            color="#6F6F6F"
+                        />
                     </div>
                 </div>
 
-                <div className="flex items-start gap-2">
-                    {isPrivate && (
-                        <Icon
-                            icon="material-symbols:lock-sharp"
-                            width={18}
-                            height={18}
-                            style={{ color: "var(--color-dark-gray)" }}
-                        />
-                    )}
-
+                <div className="flex items-center mt-1 gap-1 flex-shrink-0">
                     <button
                         type="button"
                         onClick={handleLikeClick}
@@ -168,8 +161,23 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
                 </div>
             </div>
 
+            {/* 설명 */}
+            {item.description && (
+                <p
+                    className="line-clamp-2 mt-0.5 mb-2"
+                    style={{
+                        color: "var(--color-light-gray)",
+                        fontSize: "var(--text-mini)",
+                        fontWeight: "var(--weight-regular)",
+                    }}
+                >
+                    {item.description}
+                </p>
+            )}
+
+            {/* 하단 영역 */}
             <div className="flex items-end justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
                     <div className="flex items-center gap-0.5">
                         <Icon
                             icon="lets-icons:check-fill"
@@ -177,7 +185,6 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
                             height={15}
                             style={{ color: "var(--color-opu-green)" }}
                         />
-
                         <span
                             style={{
                                 fontSize: "var(--text-mini)",
@@ -207,6 +214,7 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
                         </span>
                     </div>
                 </div>
+
                 <div className="flex items-center gap-0.5">
                     <Icon
                         icon="material-symbols:person-rounded"
