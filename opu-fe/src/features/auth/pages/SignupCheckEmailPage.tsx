@@ -1,32 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import OpuActionButton from "@/components/common/OpuActionButton";
 import Image from "next/image";
-import { toastError, toastSuccess } from "@/lib/toast";
+import { useEmailVerify } from "@/features/auth/hooks/useCheckEmail";
 
 export default function EmailVerifyPage() {
-  const router = useRouter();
-  const [isSending, setIsSending] = useState(false);
-
-  // 이메일 재전송 처리
-  const handleResendEmail = async () => {
-    try {
-      setIsSending(true);
-      await new Promise((r) => setTimeout(r, 1000)); // TODO: 실제 API 연결
-      toastSuccess("이메일이 재전송 되었습니다.");
-    } catch (e) {
-      toastError("이메일 재전송 중에 문제가 생겼습니다. 나중에 다시 시도해주세요.");
-    } finally {
-      setIsSending(false);
-    }
-  };
-
-  const handleNext = () => {
-    router.push("/signup/email-confirmed");
-  };
+  const { isSending, handleResendEmail, handleNext } = useEmailVerify();
 
   return (
     <div className="app-page relative overflow-hidden overscroll-none">
@@ -37,7 +17,7 @@ export default function EmailVerifyPage() {
         className="
           absolute left-0 right-0 
           top-[var(--app-header-height,56px)] 
-          bottom-[var(--bottom-action-height,72px)] 
+          bottom-[var(--bottom-action-height,72px)]
           flex flex-col items-center justify-center px-6
         "
       >
@@ -66,14 +46,14 @@ export default function EmailVerifyPage() {
           />
         </section>
 
-        {/* 하단 링크 */}
+        {/* 재전송 링크 */}
         <div className="text-center mb-8">
           <button
             onClick={handleResendEmail}
             disabled={isSending}
             style={{
-                color: "var(--color-light-gray)",
-                fontSize: "var(--text-caption)",
+              color: "var(--color-light-gray)",
+              fontSize: "var(--text-caption)",
             }}
             className="underline disabled:opacity-50"
           >
@@ -83,7 +63,7 @@ export default function EmailVerifyPage() {
       </main>
 
       {/* 하단 버튼 */}
-      <OpuActionButton label="다음" disabled={false} onClick={handleNext} />
+      <OpuActionButton label="다음" onClick={handleNext} />
     </div>
   );
 }

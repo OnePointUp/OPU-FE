@@ -22,7 +22,7 @@ export default function AgreementsField({
   className = "",
 }: Props) {
   return (
-    <section className={`mt-6 text-sm ${className}`}>
+    <section className={`mt-8 text-sm ${className}`}>
       
       {/* 전체 동의 */}
       <label className="flex items-center gap-2 cursor-pointer">
