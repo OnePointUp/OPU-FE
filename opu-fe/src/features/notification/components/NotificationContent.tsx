@@ -20,7 +20,7 @@ export default function NotificationSettingsContent() {
 
     return (
         <div className="app-container pt-app-header pb-40">
-            <div className="flex h-13 items-center justify-between px-2 mb-2 mt-3">
+            <div className="flex h-10 items-center justify-between px-2 mb-2 mt-4">
                 <span
                     style={{
                         fontWeight: "var(--weight-regular)",
