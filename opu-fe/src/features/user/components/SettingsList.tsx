@@ -13,10 +13,7 @@ export default function SettingsList({
     onWithdraw?: () => void;
 }) {
     return (
-        <section
-            className="w-full mt-2 mx-2"
-            style={{ width: "min(100%, var(--app-max))" }}
-        >
+        <div>
             {items.map((it) => (
                 <SettingRow
                     key={it.label}
@@ -38,6 +35,6 @@ export default function SettingsList({
             >
                 회원 탈퇴
             </button>
-        </section>
+        </div>
     );
 }
