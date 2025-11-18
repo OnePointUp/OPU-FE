@@ -3,42 +3,12 @@
 import { useRouter, usePathname } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
-
-const TITLE_MAP: Record<string, string> = {
-    "/": "홈",
-    "/login": "로그인",
-    "/opu": "OPU",
-    "/me": "마이페이지",
-    "/me/blocked-opu": "차단 OPU 관리",
-    "/me/liked-opu": "찜",
-    "/me/profile": "프로필 편집",
-    "/me/password": "비밀번호 변경",
-    "/calendar": "캘린더",
-    "/stats": "통계",
-    "/social-signup": "회원가입",
-    "/signup": "회원가입",
-    "/signup/check-email": "회원가입",
-    "/signup/email-confirmed": "회원가입",
-};
-
-// 라우트별 기본 툴팁
-const TOOLTIP_MAP: Record<string, Tooltip> = {
-    "/me/blocked-opu": {
-        message: [
-            "차단을 해제한 OPU는 랜덤 뽑기 시",
-            "다시 나타날 수 있으니 참고하시기 바랍니다.",
-        ],
-        position: "bottom",
-    },
-};
-
-type Tooltip = {
-    message: string | string[];
-    position?: "top" | "bottom" | "right";
-};
+import {
+    getHeaderConfig,
+    type Tooltip,
+} from "@/components/layout/headerConfig";
 
 type Props = {
-    // 필요하면 override 용으로만 씀 (안 넘겨도 됨)
     titleOverride?: string;
     show?: boolean;
     showBack?: boolean;
@@ -57,27 +27,13 @@ export default function Header({
     const router = useRouter();
     const [visible, setVisible] = useState(false);
 
-    const HIDDEN_HEADER_PATHS = ["/signup/email-confirmed"];
+    const { title, tooltip, hide, defaultShowBack } = getHeaderConfig(pathname);
 
-    const hideByPath = HIDDEN_HEADER_PATHS.includes(pathname);
+    if (!show || hide) return null;
 
-    if (!show || hideByPath) return null;
-
-    const routeTitle = TITLE_MAP[pathname] ?? "OPU"; // 기본 타이틀: URL 기반
-    const title = titleOverride ?? routeTitle; // 필요하면 props로 덮어쓸 수 있게
-
-    // 툴팁도 라우트 기반 + override 가능
-    const routeTooltip = TOOLTIP_MAP[pathname];
-    const tooltip = tooltipOverride ?? routeTooltip;
-
-    // 뒤로가기 기본값: 홈/메인에서는 안 보이게 하고 싶으면 여기서 처리
-    const isRoot =
-        pathname === "/opu" ||
-        pathname === "/me" ||
-        pathname === "/calendar" ||
-        pathname === "/stats";
-
-    const backVisible = showBack ?? !isRoot;
+    const finalTitle = titleOverride ?? title;
+    const finalTooltip = tooltipOverride ?? tooltip;
+    const backVisible = showBack ?? defaultShowBack;
 
     return (
         <header className="app-header">
@@ -98,11 +54,10 @@ export default function Header({
                     <span className="app-header__spacer" />
                 )}
 
-                {/* 제목 + 툴팁 */}
                 <div className="flex items-center justify-center gap-1 relative">
-                    <h1 className="app-header__title">{title}</h1>
+                    <h1 className="app-header__title">{finalTitle}</h1>
 
-                    {tooltip && (
+                    {finalTooltip && (
                         <div
                             className="relative group"
                             onMouseEnter={() => setVisible(true)}
@@ -124,9 +79,10 @@ export default function Header({
                                                bg-[var(--background)] text-[11px] text-[var(--color-dark-gray)] 
                                                rounded-md px-3 py-2 shadow-sm
                                                ${
-                                                   tooltip.position === "top"
+                                                   finalTooltip.position ===
+                                                   "top"
                                                        ? "bottom-full mb-2 left-1/2 -translate-x-1/2"
-                                                       : tooltip.position ===
+                                                       : finalTooltip.position ===
                                                          "right"
                                                        ? "left-full ml-2 top-1/2 -translate-y-1/2"
                                                        : "top-full mt-2 left-1/2 -translate-x-1/2"
@@ -138,9 +94,9 @@ export default function Header({
                                         wordBreak: "keep-all",
                                     }}
                                 >
-                                    {Array.isArray(tooltip.message)
-                                        ? tooltip.message.join("\n")
-                                        : tooltip.message}
+                                    {Array.isArray(finalTooltip.message)
+                                        ? finalTooltip.message.join("\n")
+                                        : finalTooltip.message}
                                 </div>
                             )}
                         </div>
