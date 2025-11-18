@@ -33,7 +33,7 @@ export default function SocialSignupPage() {
           nickname={nickname}
           previewUrl={profileImgUrl}
           onPick={handlePickImage}
-          className="mt-[50px]"
+          className="mt-[35px]"
         />
 
         <NicknameField
