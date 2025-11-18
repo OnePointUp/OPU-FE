@@ -31,8 +31,8 @@ export default function IntroPage() {
 
       {/* ---------- 하단: 버튼 영역 ---------- */}
       <footer className="flex flex-col gap-[14px] items-center w-full mb-10">
-        <SocialLoginButton provider="kakao" onClick={() => alert('카카오 로그인 클릭')} />
-        <SocialLoginButton provider="google" onClick={() => alert('구글 로그인 클릭')} />
+        <SocialLoginButton provider="kakao" onClick={() => router.push('/social-signup')} />
+        <SocialLoginButton provider="google" onClick={() => router.push('/social-signup')} />
 
         {/* 이메일 로그인 / 회원가입 */}
         <div className="text-center text-[length:var(--text-caption)] text-[color:var(--color-light-gray)] mt-[7px]">
