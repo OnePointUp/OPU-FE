@@ -44,7 +44,7 @@ export default function RegisterEmailPage() {
                   nickname={nickname}
                   previewUrl={profileImgUrl}
                   onPick={handlePickImage}
-                  className="mt-[50px]"
+                  className="mt-[35px]"
         />
 
         <EmailField value={email} onChange={handleEmailChange} error={emailError} />
