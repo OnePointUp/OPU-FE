@@ -20,50 +20,51 @@ export default function OpuToolbar({
     onClickPeriod,
 }: Props) {
     return (
-        <div className="mt-3">
-            <div className="mx-auto flex items-center justify-end px-2 py-1 gap-3">
-                <button
-                    type="button"
-                    onClick={onClickPeriod}
-                    className="flex items-center justify-center gap-1 text-[13px]"
-                >
-                    <span>{periodLabel}</span>
-                    <Icon
-                        icon="ic:round-keyboard-arrow-down"
-                        width={16}
-                        height={16}
-                        style={{ color: "var(--color-super-dark-gray)" }}
-                    />
-                </button>
+        <div className="flex justify-end items-center px-1 py-1 gap-2.5">
+            <button
+                type="button"
+                onClick={onClickPeriod}
+                className="flex items-center justify-center gap-1"
+                style={{ fontSize: "var(--text-caption)" }}
+            >
+                <span>{periodLabel}</span>
+                <Icon
+                    icon="ic:round-keyboard-arrow-down"
+                    width={16}
+                    height={16}
+                    style={{ color: "var(--color-dark-gray)" }}
+                />
+            </button>
 
-                <button
-                    type="button"
-                    onClick={onClickCategory}
-                    className="flex items-center justify-center gap-1 text-[13px]"
-                >
-                    <span>{categoryLabel}</span>
-                    <Icon
-                        icon="ic:round-keyboard-arrow-down"
-                        width={16}
-                        height={16}
-                        style={{ color: "var(--color-super-dark-gray)" }}
-                    />
-                </button>
+            <button
+                type="button"
+                onClick={onClickCategory}
+                className="flex items-center justify-center gap-1"
+                style={{ fontSize: "var(--text-caption)" }}
+            >
+                <span>{categoryLabel}</span>
+                <Icon
+                    icon="ic:round-keyboard-arrow-down"
+                    width={16}
+                    height={16}
+                    style={{ color: "var(--color-super-dark-gray)" }}
+                />
+            </button>
 
-                <button
-                    type="button"
-                    onClick={onClickSort}
-                    className="flex items-center justify-center gap-1 text-[13px]"
-                >
-                    <span>{sortLabel}</span>
-                    <Icon
-                        icon="ic:round-keyboard-arrow-down"
-                        width={16}
-                        height={16}
-                        style={{ color: "var(--color-super-dark-gray)" }}
-                    />
-                </button>
-            </div>
+            <button
+                type="button"
+                onClick={onClickSort}
+                className="flex items-center justify-center gap-1"
+                style={{ fontSize: "var(--text-caption)" }}
+            >
+                <span>{sortLabel}</span>
+                <Icon
+                    icon="ic:round-keyboard-arrow-down"
+                    width={16}
+                    height={16}
+                    style={{ color: "var(--color-super-dark-gray)" }}
+                />
+            </button>
         </div>
     );
 }

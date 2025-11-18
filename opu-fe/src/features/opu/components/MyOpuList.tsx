@@ -9,11 +9,7 @@ type Props = {
     loading?: boolean;
 };
 
-export default function LikedOpuList({
-    items,
-    onMore,
-    loading = false,
-}: Props) {
+export default function MyOpuList({ items, onMore, loading = false }: Props) {
     const cardList: OpuCardModel[] = loading
         ? Array.from({ length: 4 }).map((_, idx) => ({
               id: -idx - 1,
@@ -34,7 +30,7 @@ export default function LikedOpuList({
                     color: "var(--color-light-gray)",
                 }}
             >
-                찜한 OPU가 없습니다
+                나의 OPU가 없습니다
             </div>
         );
     }
