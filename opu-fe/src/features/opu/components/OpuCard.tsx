@@ -85,7 +85,7 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
 
     return (
         <div
-            className="w-full rounded-xl bg-[var(--background)] border px-3 pt-2 pb-2"
+            className="w-full rounded-xl bg-[var(--background)] border px-3 pt-3 pb-2"
             style={{ borderColor: "var(--color-super-light-gray)" }}
             role="group"
             aria-label={item.title}
@@ -94,11 +94,11 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
             <div className="flex items-start justify-between mb-2.5">
                 <div className="flex flex-col items-start min-w-0 w-full">
                     {/* 이모지 */}
-                    <div className="p-1.5 bg-[var(--color-opu-yellow)] rounded-2xl mb-1">
+                    <div className="p-1 bg-[var(--color-opu-yellow)] rounded-2xl mb-1">
                         <span
                             className="flex items-center justify-center"
                             style={{
-                                fontSize: "var(--text-h3)",
+                                fontSize: "var(--text-h2)",
                                 width: 30,
                                 height: 30,
                             }}
@@ -108,7 +108,6 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
                     </div>
 
                     {/* 제목 */}
-
                     <span
                         className="flex items-center gap-0.5 line-clamp-2 mb-1 w-full"
                         style={{
@@ -139,26 +138,24 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
                     </div>
                 </div>
 
-                <div className="flex items-center mt-1 gap-1 flex-shrink-0">
-                    <button
-                        type="button"
-                        onClick={handleLikeClick}
-                        aria-pressed={liked}
-                        className="inline-flex"
-                        title="찜하기"
-                    >
-                        <Icon
-                            icon={liked ? "mdi:heart" : "mdi:heart-outline"}
-                            width={20}
-                            height={20}
-                            style={{
-                                color: liked
-                                    ? "var(--color-like-pink)"
-                                    : "var(--color-dark-gray)",
-                            }}
-                        />
-                    </button>
-                </div>
+                <button
+                    type="button"
+                    onClick={handleLikeClick}
+                    aria-pressed={liked}
+                    className="inline-flex"
+                    title="찜하기"
+                >
+                    <Icon
+                        icon={liked ? "mdi:heart" : "mdi:heart-outline"}
+                        width={20}
+                        height={20}
+                        style={{
+                            color: liked
+                                ? "var(--color-like-pink)"
+                                : "var(--color-dark-gray)",
+                        }}
+                    />
+                </button>
             </div>
 
             {/* 설명 */}

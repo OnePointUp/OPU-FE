@@ -6,7 +6,7 @@ import MyPage from "@/features/user/pages/MyPage";
 export default function Page() {
     return (
         <div>
-            <Header title="찜" />
+            <Header title="마이페이지" />
             <MyPage />
         </div>
     );

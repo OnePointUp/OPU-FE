@@ -30,24 +30,22 @@ export default function ProfileEditPage() {
         !dupError;
 
     return (
-        <div className="app-page overflow-hidden overscroll-none mx-2">
-            <main className="app-container pt-app-header pb-40">
-                <ProfileAvatarPicker
-                    nickname={nickname}
-                    previewUrl={profileImgUrl}
-                    onPick={handlePickImage}
-                />
-                <NicknameField
-                    value={nickname}
-                    onChange={(v) => {
-                        setNickname(v);
-                    }}
-                    onBlurCheck={handleBlurNickname}
-                    error={dupError}
-                    checking={checking}
-                />
-                <IntroField value={bio} onChange={setBio} max={introMax} />
-            </main>
+        <div className="app-container pt-app-header pb-40 px-6">
+            <ProfileAvatarPicker
+                nickname={nickname}
+                previewUrl={profileImgUrl}
+                onPick={handlePickImage}
+            />
+            <NicknameField
+                value={nickname}
+                onChange={(v) => {
+                    setNickname(v);
+                }}
+                onBlurCheck={handleBlurNickname}
+                error={dupError}
+                checking={checking}
+            />
+            <IntroField value={bio} onChange={setBio} max={introMax} />
 
             <OpuActionButton
                 label="저장"

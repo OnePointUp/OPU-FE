@@ -8,7 +8,7 @@ type Item =
 
 export default function SettingsSection({ items }: { items: Item[] }) {
     return (
-        <div className="w-full">
+        <div className="app-container pt-app-header pb-40 px-6">
             <SettingsList items={items} />
         </div>
     );
