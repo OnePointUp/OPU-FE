@@ -32,22 +32,18 @@ function BottomSheetInner({
     const [dragY, setDragY] = useState(0);
     const [dragging, setDragging] = useState(false);
 
-    // 바디 스크롤 잠금 (가로 이동 유발하는 paddingRight, left/right 설정 제거)
     useEffect(() => {
-        const body = document.body;
+        const wrapper = document.querySelector(".app-container") as HTMLElement;
         const scrollY = window.scrollY;
 
-        const prev = {
-            position: body.style.position,
-            top: body.style.top,
-            width: body.style.width,
-            overflow: body.style.overflow,
-        };
+        if (!wrapper) return;
 
-        body.style.position = "fixed";
-        body.style.top = `-${scrollY}px`;
-        body.style.width = "100%";
-        body.style.overflow = "hidden";
+        wrapper.style.position = "fixed";
+        wrapper.style.top = `-${scrollY}px`;
+        wrapper.style.left = "0";
+        wrapper.style.right = "0";
+        wrapper.style.overflow = "hidden";
+        wrapper.style.width = "min(100%, var(--app-max))";
 
         const onKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") onClose();
@@ -57,18 +53,17 @@ function BottomSheetInner({
         return () => {
             document.removeEventListener("keydown", onKeyDown);
 
-            body.style.position = prev.position;
-            body.style.top = prev.top;
-            body.style.width = prev.width;
-            body.style.overflow = prev.overflow;
+            wrapper.style.position = "";
+            wrapper.style.top = "";
+            wrapper.style.left = "";
+            wrapper.style.right = "";
+            wrapper.style.overflow = "";
+            wrapper.style.width = "";
 
-            const y =
-                parseInt((prev.top || "0").replace("-", ""), 10) || scrollY;
-            window.scrollTo(0, y);
+            window.scrollTo(0, scrollY);
         };
     }, [onClose]);
 
-    // 드래그 시작/이동/끝
     const beginDrag = (y: number) => {
         startY.current = y;
         setDragging(true);
@@ -88,13 +83,12 @@ function BottomSheetInner({
 
         if (dragY >= dismissThreshold) {
             setDragY(window.innerHeight);
-            setTimeout(onClose, 160); // 내려가는 애니메이션 후 닫기
+            setTimeout(onClose, 160);
         } else {
             setDragY(0);
         }
     };
 
-    // 포인터(마우스/펜)
     const onHandlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
         e.currentTarget.setPointerCapture?.(e.pointerId);
         beginDrag(e.clientY);
@@ -145,7 +139,7 @@ function BottomSheetInner({
 
     return (
         <div
-            className="fixed inset-0 z-[100] flex items-end justify-center"
+            className="fixed inset-0 z-[1000] flex items-end justify-center"
             onClick={onClose}
         >
             {/* 백드롭 */}
