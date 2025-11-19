@@ -8,6 +8,7 @@ import OpuFilterSheet from "@/features/opu/components/OpuFilterSheet";
 import OpuToolbar from "@/features/opu/components/OpuToolbar";
 
 import type { OpuCardModel } from "@/features/opu/domain";
+import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
 import type { PeriodCode } from "@/features/opu/utils/period";
 import {
     getSortLabel,
@@ -19,16 +20,16 @@ import {
     getCategoryFilterLabel,
     getPeriodFilterLabel,
 } from "@/features/opu/utils/filter";
-import MyOpuList from "../components/MyOpuList";
-import OnlyLikedToggle from "../components/LikedOpuFilter";
+import OpuList from "../components/OpuList";
 
 type FilterMode = "period" | "category";
 
 type Props = {
     items: OpuCardModel[];
+    contextType?: "my" | "shared";
 };
 
-export default function MyOpuPage({ items }: Props) {
+export default function OpuListPage({ items, contextType }: Props) {
     const [q, setQ] = useState("");
     const [filterMode, setFilterMode] = useState<FilterMode>("period");
     const [filterSheetOpen, setFilterSheetOpen] = useState(false);
@@ -36,10 +37,11 @@ export default function MyOpuPage({ items }: Props) {
     const [categoryIds, setCategoryIds] = useState<number[]>([]);
     const [sortOption, setSortOption] = useState<SortOption>("name");
     const [showSortSheet, setShowSortSheet] = useState(false);
+
     const [data, setData] = useState<OpuCardModel[]>([]);
     const [loading, setLoading] = useState(true);
+
     const [sheetId, setSheetId] = useState<number | null>(null);
-    const [onlyLiked, setOnlyLiked] = useState(false);
 
     // 목데이터로 로딩 시뮬레이션
     useEffect(() => {
@@ -58,15 +60,15 @@ export default function MyOpuPage({ items }: Props) {
     );
 
     // 검색 + 필터
-    const filtered = useMemo(() => {
-        const base = filterOpuList(sortedItems, {
-            q,
-            periods,
-            categoryIds,
-        });
-
-        return onlyLiked ? base.filter((item) => item.liked) : base;
-    }, [sortedItems, q, periods, categoryIds, onlyLiked]);
+    const filtered = useMemo(
+        () =>
+            filterOpuList(sortedItems, {
+                q,
+                periods,
+                categoryIds,
+            }),
+        [sortedItems, q, periods, categoryIds]
+    );
 
     const periodLabel = useMemo(() => getPeriodFilterLabel(periods), [periods]);
     const categoryLabel = useMemo(
@@ -121,37 +123,38 @@ export default function MyOpuPage({ items }: Props) {
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
                     onSubmit={(v) => setQ(v)}
-                    placeholder="나의 OPU 검색"
+                    placeholder={
+                        contextType === "shared"
+                            ? "공유 OPU 검색"
+                            : "나의 OPU 검색"
+                    }
                     className="mt-5 mb-6"
                 />
             </div>
 
             {/* 정렬 / 필터 툴바 */}
-            <div className="w-full pl-1 flex items-center justify-between">
-                <OnlyLikedToggle checked={onlyLiked} onChange={setOnlyLiked} />
-
-                <OpuToolbar
-                    sortLabel={sortLabel}
-                    periodLabel={periodLabel}
-                    categoryLabel={categoryLabel}
-                    onClickSort={() => setShowSortSheet(true)}
-                    onClickPeriod={() => {
-                        setFilterMode("period");
-                        setFilterSheetOpen(true);
-                    }}
-                    onClickCategory={() => {
-                        setFilterMode("category");
-                        setFilterSheetOpen(true);
-                    }}
-                />
-            </div>
+            <OpuToolbar
+                sortLabel={sortLabel}
+                periodLabel={periodLabel}
+                categoryLabel={categoryLabel}
+                onClickSort={() => setShowSortSheet(true)}
+                onClickPeriod={() => {
+                    setFilterMode("period");
+                    setFilterSheetOpen(true);
+                }}
+                onClickCategory={() => {
+                    setFilterMode("category");
+                    setFilterSheetOpen(true);
+                }}
+            />
 
             {/* 카드 리스트 */}
             <div className="mt-3">
-                <MyOpuList
+                <OpuList
                     items={filtered}
                     loading={loading}
                     onMore={(id) => setSheetId(id)}
+                    contextType={contextType}
                 />
             </div>
 
@@ -237,12 +240,34 @@ function MoreActionsSheet({ open, onClose, target }: MoreActionsSheetProps) {
         return null;
     }
 
-    const items = [
-        { label: "투두리스트 추가", onClick: () => {} },
-        { label: "루틴 추가", onClick: () => {} },
-        { label: "수정", onClick: () => {} },
-        { label: "삭제", danger: true, onClick: () => {} },
-    ];
+    const isMine = target.creatorId === CURRENT_MEMBER_ID;
+
+    const items = isMine
+        ? [
+              {
+                  label: "투두리스트 추가",
+                  onClick: () => {},
+              },
+              { label: "루틴 추가", onClick: () => {} },
+              { label: "수정", onClick: () => {} },
+              {
+                  label: "삭제",
+                  danger: true,
+                  onClick: () => {},
+              },
+          ]
+        : [
+              {
+                  label: "투두리스트 추가",
+                  onClick: () => {},
+              },
+              { label: "루틴 추가", onClick: () => {} },
+              {
+                  label: "차단하기",
+                  danger: true,
+                  onClick: () => {},
+              },
+          ];
 
     return (
         <BottomSheet open={open} onClose={onClose}>
