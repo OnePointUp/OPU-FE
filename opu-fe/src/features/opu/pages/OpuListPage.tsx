@@ -21,6 +21,8 @@ import {
     getPeriodFilterLabel,
 } from "@/features/opu/utils/filter";
 import OpuList from "../components/OpuList";
+import LikedOpuFilter from "../components/LikedOpuFilter";
+import PlusButton from "@/components/common/PlusButton";
 
 type FilterMode = "period" | "category";
 
@@ -33,6 +35,7 @@ export default function OpuListPage({ items, contextType }: Props) {
     const [q, setQ] = useState("");
     const [filterMode, setFilterMode] = useState<FilterMode>("period");
     const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+    const [onlyLiked, setOnlyLiked] = useState(false);
     const [periods, setPeriods] = useState<PeriodCode[]>([]);
     const [categoryIds, setCategoryIds] = useState<number[]>([]);
     const [sortOption, setSortOption] = useState<SortOption>("name");
@@ -60,15 +63,15 @@ export default function OpuListPage({ items, contextType }: Props) {
     );
 
     // 검색 + 필터
-    const filtered = useMemo(
-        () =>
-            filterOpuList(sortedItems, {
-                q,
-                periods,
-                categoryIds,
-            }),
-        [sortedItems, q, periods, categoryIds]
-    );
+    const filtered = useMemo(() => {
+        const base = filterOpuList(sortedItems, {
+            q,
+            periods,
+            categoryIds,
+        });
+
+        return onlyLiked ? base.filter((item) => item.liked) : base;
+    }, [sortedItems, q, periods, categoryIds, onlyLiked]);
 
     const periodLabel = useMemo(() => getPeriodFilterLabel(periods), [periods]);
     const categoryLabel = useMemo(
@@ -133,20 +136,23 @@ export default function OpuListPage({ items, contextType }: Props) {
             </div>
 
             {/* 정렬 / 필터 툴바 */}
-            <OpuToolbar
-                sortLabel={sortLabel}
-                periodLabel={periodLabel}
-                categoryLabel={categoryLabel}
-                onClickSort={() => setShowSortSheet(true)}
-                onClickPeriod={() => {
-                    setFilterMode("period");
-                    setFilterSheetOpen(true);
-                }}
-                onClickCategory={() => {
-                    setFilterMode("category");
-                    setFilterSheetOpen(true);
-                }}
-            />
+            <div className="w-full pl-1 flex items-center justify-between">
+                <LikedOpuFilter checked={onlyLiked} onChange={setOnlyLiked} />
+                <OpuToolbar
+                    sortLabel={sortLabel}
+                    periodLabel={periodLabel}
+                    categoryLabel={categoryLabel}
+                    onClickSort={() => setShowSortSheet(true)}
+                    onClickPeriod={() => {
+                        setFilterMode("period");
+                        setFilterSheetOpen(true);
+                    }}
+                    onClickCategory={() => {
+                        setFilterMode("category");
+                        setFilterSheetOpen(true);
+                    }}
+                />
+            </div>
 
             {/* 카드 리스트 */}
             <div className="mt-3">
@@ -186,6 +192,8 @@ export default function OpuListPage({ items, contextType }: Props) {
                 onToggleCategory={handleToggleCategory}
                 onReset={handleResetFilter}
             />
+
+            <PlusButton />
         </div>
     );
 }
