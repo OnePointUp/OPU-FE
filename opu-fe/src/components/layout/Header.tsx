@@ -2,11 +2,13 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     getHeaderConfig,
     type Tooltip,
 } from "@/components/layout/headerConfig";
+import { fetchNotificationFeed } from "@/features/notification/services";
+import { NotificationFeedItem } from "@/features/notification/types";
 
 type Props = {
     titleOverride?: string;
@@ -26,21 +28,45 @@ export default function Header({
     const pathname = usePathname();
     const router = useRouter();
     const [visible, setVisible] = useState(false);
-
+    const [hasUnread, setHasUnread] = useState(false);
     const { title, tooltip, hide, defaultShowBack } = getHeaderConfig(pathname);
+
+    const handleBack = () => {
+        if (onBack) return onBack();
+        router.back();
+    };
+
+    const handleGoNotification = () => {
+        router.push("/notification");
+    };
+
+    useEffect(() => {
+        async function loadUnread() {
+            try {
+                const items: NotificationFeedItem[] =
+                    await fetchNotificationFeed();
+                setHasUnread(items.some((item) => !item.isRead));
+            } catch {
+                setHasUnread(false);
+            }
+        }
+
+        loadUnread();
+    }, [pathname]);
 
     if (!show || hide) return null;
 
     const finalTitle = titleOverride ?? title;
     const finalTooltip = tooltipOverride ?? tooltip;
     const backVisible = showBack ?? defaultShowBack;
+    const showNotificationIcon = pathname !== "/notification";
 
     return (
         <header className="app-header">
             <div className="app-header__inner">
                 {backVisible ? (
                     <button
-                        className="app-header__back"
+                        className="app-header__icon"
                         aria-label="뒤로가기"
                         onClick={onBack ?? (() => router.back())}
                     >
@@ -103,7 +129,28 @@ export default function Header({
                     )}
                 </div>
 
-                <span className="app-header__spacer" />
+                {showNotificationIcon ? (
+                    <div className="app-header__icon relative flex items-center justify-center">
+                        <button
+                            type="button"
+                            aria-label="알림 보기"
+                            onClick={handleGoNotification}
+                            className="relative"
+                        >
+                            <Icon
+                                icon="mingcute:notification-line"
+                                width={26}
+                                height={26}
+                            />
+
+                            {hasUnread && (
+                                <span className="absolute top-[2px] right-[3px] w-2 h-2 rounded-full bg-[var(--color-like-pink)]" />
+                            )}
+                        </button>
+                    </div>
+                ) : (
+                    <span className="app-header__spacer" />
+                )}
             </div>
         </header>
     );

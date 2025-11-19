@@ -18,6 +18,8 @@ export const TITLE_MAP: Record<string, string> = {
     "/signup": "회원가입",
     "/signup/check-email": "회원가입",
     "/signup/email-confirmed": "회원가입",
+    "/notification": "알림",
+    // 추가하시면 됩니다!
 };
 
 export const TOOLTIP_MAP: Record<string, Tooltip> = {
@@ -28,9 +30,13 @@ export const TOOLTIP_MAP: Record<string, Tooltip> = {
         ],
         position: "bottom",
     },
+    // 추가하시면 됩니다!
 };
 
-export const HIDDEN_HEADER_PATHS = ["/signup/email-confirmed"];
+export const HIDDEN_HEADER_PATHS = [
+    "/signup/email-confirmed",
+    // 추가하시면 됩니다!
+];
 
 export function getHeaderConfig(pathname: string) {
     const title = TITLE_MAP[pathname] ?? "OPU";
