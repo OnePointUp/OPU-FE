@@ -56,7 +56,7 @@ export default function BlockedOpuList(props: Props) {
                 />
 
                 <div className="flex items-center justify-between mt-4">
-                    <label className="inline-flex items-center gap-2 text-sm mx-2">
+                    <label className="inline-flex items-center gap-2 text-sm mx-1">
                         <input
                             type="checkbox"
                             className="custom-checkbox shrink-0"
@@ -100,7 +100,7 @@ export default function BlockedOpuList(props: Props) {
             <div className="h-[1px] bg-[var(--color-super-light-gray)] -mx-6" />
 
             {/* 리스트 */}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2.5">
                 {filtered.map((item) => (
                     <BlockedOpuCard
                         key={item.id}
@@ -114,7 +114,7 @@ export default function BlockedOpuList(props: Props) {
 
                 {filtered.length === 0 && (
                     <div
-                        className="text-center text-sm text-zinc-500 py-10"
+                        className="text-center text-sm py-10"
                         style={{
                             fontSize: "var(--text-sub)",
                             color: "var(--color-light-gray)",
