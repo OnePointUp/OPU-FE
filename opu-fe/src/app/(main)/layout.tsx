@@ -17,7 +17,7 @@ export default function MainLayout({
 
     return (
         <div className="flex flex-col min-h-[100svh]">
-            <Header title="홈" show={showHeader} showBack />
+            <Header title="홈" show={showHeader} showBack={false} />
             <main className="flex-1">{children}</main>
             <Menu />
         </div>
