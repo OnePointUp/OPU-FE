@@ -21,6 +21,7 @@ import {
     getCategoryFilterLabel,
     getPeriodFilterLabel,
 } from "@/features/opu/utils/filter";
+import PlusButton from "@/components/common/PlusButton";
 
 type FilterMode = "period" | "category";
 
@@ -180,6 +181,8 @@ export default function LikedOpuPage({ items }: Props) {
                 onToggleCategory={handleToggleCategory}
                 onReset={handleResetFilter}
             />
+
+            <PlusButton />
         </div>
     );
 }

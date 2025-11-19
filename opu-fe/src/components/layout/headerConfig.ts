@@ -6,24 +6,29 @@ export type Tooltip = {
 export const TITLE_MAP: Record<string, string> = {
     "/": "홈",
     "/login": "로그인",
-    "/opu": "OPU",
-    "/me": "마이페이지",
-    "/me/blocked-opu": "차단 OPU 관리",
-    "/me/liked-opu": "찜",
-    "/me/profile": "프로필 편집",
-    "/me/password": "비밀번호 변경",
-    "/calendar": "캘린더",
-    "/stats": "통계",
+
     "/social-signup": "회원가입",
     "/signup": "회원가입",
     "/signup/check-email": "회원가입",
     "/signup/email-confirmed": "회원가입",
+
+    "/me": "마이페이지",
+    "/me/profile": "프로필 편집",
+    "/me/password": "비밀번호 변경",
+
+    "/opu": "OPU",
+    "/opu/my": "내 OPU",
+    "/opu/blocked": "차단 OPU 관리",
+    "/opu/liked": "찜한 OPU",
+
+    "/calendar": "캘린더",
+    "/stats": "통계",
     "/notification": "알림",
     // 추가하시면 됩니다!
 };
 
 export const TOOLTIP_MAP: Record<string, Tooltip> = {
-    "/me/blocked-opu": {
+    "/opu/blocked": {
         message: [
             "차단을 해제한 OPU는 랜덤 뽑기 시",
             "다시 나타날 수 있으니 참고하시기 바랍니다.",

@@ -7,9 +7,15 @@ type Props = {
     items: OpuCardModel[];
     onMore?: (id: number) => void;
     loading?: boolean;
+    contextType?: "shared" | "my";
 };
 
-export default function MyOpuList({ items, onMore, loading = false }: Props) {
+export default function SharedOpuList({
+    items,
+    onMore,
+    loading = false,
+    contextType,
+}: Props) {
     const cardList: OpuCardModel[] = loading
         ? Array.from({ length: 4 }).map((_, idx) => ({
               id: -idx - 1,
@@ -22,6 +28,11 @@ export default function MyOpuList({ items, onMore, loading = false }: Props) {
         : items;
 
     if (!loading && items.length === 0) {
+        const emptyMessage =
+            contextType === "my"
+                ? "내가 만든 OPU가 없습니다"
+                : "공유된 OPU가 없습니다";
+
         return (
             <div
                 className="text-center py-10 w-full"
@@ -30,7 +41,7 @@ export default function MyOpuList({ items, onMore, loading = false }: Props) {
                     color: "var(--color-light-gray)",
                 }}
             >
-                나의 OPU가 없습니다
+                {emptyMessage}
             </div>
         );
     }

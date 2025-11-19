@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@iconify/react";
 import Image from "next/image";
 
 type Props = {
@@ -24,97 +25,84 @@ export default function UserInfo({
 
     if (loading) {
         return (
-            <section
-                className="`w-full px-2 mt-4"
-                style={{ width: "min(100%, var(--app-max))" }}
-            >
-                <div className="flex items-center gap-4">
-                    <div className="size-16 rounded-full skeleton" />
-                    <div className="flex-1 space-y-2">
-                        <div className="h-4 w-20 rounded skeleton" />
-                        <div className="h-3 w-36 rounded skeleton" />
-                        <div className="h-3 w-52 rounded skeleton" />
+            <section className="w-full px-2 mt-4 mb-6">
+                <div className="flex items-center gap-4 justify-between cursor-default">
+                    <div className="flex gap-5 flex-1">
+                        <div className="size-16 rounded-full skeleton" />
+                        <div className="flex flex-col flex-1 justify-center space-y-2">
+                            <div className="h-4 w-20 rounded skeleton" />
+                            <div className="h-3 w-36 rounded skeleton" />
+                            <div className="h-3 w-52 rounded skeleton" />
+                        </div>
                     </div>
+                    <div className="w-6 h-6 skeleton rounded" />
                 </div>
-
-                <button
-                    disabled
-                    className="mt-5 h-10 w-full rounded-xl border border-[var(--color-super-light-gray)] bg-[var(--background)] text-[var(--color-light-gray)]"
-                    style={{ fontSize: "var(--text-sub)" }}
-                >
-                    프로필 편집
-                </button>
-                <div className="mt-5 h-2 bg-[#F3F5F8] -mx-8" />
             </section>
         );
     }
 
     return (
-        <section
-            className="w-full px-2 mt-4"
-            style={{ width: "min(100%, var(--app-max))" }}
-        >
-            <div className="flex items-center gap-4">
-                <div className="relative size-16 overflow-hidden rounded-full border border-[var(--color-super-light-gray)] bg-[var(--background)]">
-                    {profileImageUrl ? (
-                        <Image
-                            src={profileImageUrl}
-                            alt={`${nickname} profileImage`}
-                            fill
-                            sizes="56px"
-                            className="object-cover"
-                        />
-                    ) : (
-                        <div className="grid h-full w-full place-items-center text-[var(--color-light-gray)] font-[var(--weight-semibold)]">
-                            {initial}
-                        </div>
-                    )}
-                </div>
-                <div className="min-w-0 flex-1">
-                    <p
-                        className="truncate text-[var(--color-dark-navy)]"
-                        style={{
-                            fontSize: "var(--text-h3)",
-                            fontWeight: "var(--weight-bold)",
-                        }}
-                    >
-                        {nickname}
-                    </p>
-
-                    <p
-                        className="truncate text-[var(--color-light-gray)]"
-                        style={{
-                            fontSize: "var(--text-caption)",
-                            fontWeight: "var(--weight-regular)",
-                        }}
-                    >
-                        {email}
-                    </p>
-                    <p
-                        className="truncate text-[var(--color-dark-navy)]"
-                        style={{
-                            fontSize: "var(--text-caption)",
-                            fontWeight: "var(--weight-regular)",
-                        }}
-                    >
-                        {bio}
-                    </p>
-                </div>
-            </div>
-
-            <button
-                type="button"
+        <section className="w-full px-1 mt-4 mb-6">
+            <div
+                className="flex items-center gap-4 justify-between cursor-pointer active:opacity-80 transition"
                 onClick={handleEdit}
-                className="mt-5 h-10 w-full rounded-xl border bg-[var(--background)]"
-                style={{
-                    borderColor: "var(--color-super-light-gray)",
-                    fontWeight: "var(--weight-semibold)",
-                    fontSize: "var(--text-sub)",
-                }}
             >
-                프로필 편집
-            </button>
-            <div className="mt-5 h-2 bg-[#F3F5F8] -mx-7" />
+                <div className="flex gap-5">
+                    <div className="relative size-16 overflow-hidden rounded-full border border-[var(--color-super-light-gray)] bg-[var(--background)]">
+                        {profileImageUrl ? (
+                            <Image
+                                src={profileImageUrl}
+                                alt={`${nickname} profileImage`}
+                                fill
+                                sizes="56px"
+                                className="object-cover"
+                            />
+                        ) : (
+                            <div className="grid h-full w-full place-items-center text-[var(--color-light-gray)] font-[var(--weight-semibold)]">
+                                {initial}
+                            </div>
+                        )}
+                    </div>
+                    <div className="flex flex-col">
+                        <p
+                            className="truncate text-[var(--color-dark-navy)]"
+                            style={{
+                                fontSize: "var(--text-h3)",
+                                fontWeight: "var(--weight-bold)",
+                            }}
+                        >
+                            {nickname}
+                        </p>
+
+                        <p
+                            className="truncate text-[var(--color-light-gray)]"
+                            style={{
+                                fontSize: "var(--text-caption)",
+                                fontWeight: "var(--weight-regular)",
+                            }}
+                        >
+                            {email}
+                        </p>
+                        <p
+                            className="truncate text-[var(--color-dark-navy)]"
+                            style={{
+                                fontSize: "var(--text-caption)",
+                                fontWeight: "var(--weight-regular)",
+                            }}
+                        >
+                            {bio}
+                        </p>
+                    </div>
+                </div>
+                <button type="button" onClick={handleEdit}>
+                    <Icon
+                        icon="mdi:chevron-right"
+                        width={25}
+                        height={25}
+                        className="text-[var(--color-dark-navy)]"
+                    />
+                </button>
+            </div>
         </section>
     );
 }

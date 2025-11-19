@@ -30,8 +30,8 @@ export default function SettingsList({
             <button
                 type="button"
                 onClick={onWithdraw}
-                className="h-12 w-full text-left text-[var(--color-light-gray)] opacity-70 hover:opacity-90 focus:opacity-90 focus:outline-none"
-                style={{ fontSize: "var(--text-sub)" }}
+                className="h-12 w-full mx-1 text-left text-[var(--color-light-gray)] opacity-70 hover:opacity-90 focus:opacity-90 focus:outline-none"
+                style={{ fontSize: "var(--text-caption)" }}
             >
                 회원 탈퇴
             </button>
