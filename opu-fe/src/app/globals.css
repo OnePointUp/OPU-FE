@@ -63,7 +63,7 @@
     --color-toggle-on: #a1d152;
     --color-toggle-off: #dfe4ea;
 
-    --color-modal-bg: rgba(0, 0, 0, 0.9);
+    --color-modal-bg: rgba(0, 0, 0, 0.8);
 
     /* 폰트 패밀리 */
     --font-sans: "Pretendard Variable", Pretendard, -apple-system,
@@ -385,7 +385,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        z-index: 9999;
+        z-index: 99;
         height: 72px;
         background: #fff;
         border-top: 1px solid var(--color-super-light-gray);
@@ -398,7 +398,7 @@
     .app-header {
         position: fixed;
         top: 0;
-        z-index: 50;
+        z-index: 99;
 
         left: 50%;
         transform: translateX(-50%);
@@ -444,7 +444,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        z-index: 999;
+        z-index: 99;
         height: 55px;
         background: #fff;
         border: none;
@@ -490,85 +490,68 @@
 
     /* ---------------- 플러스 버튼 ---------------- */
     .plus-button__container {
-        position: absolute;
-        bottom: 24px;
-        right: 24px;
+        width: min(100%, var(--app-max));
+        transform: translateX(-50%);
+        position: fixed;
+        bottom: 0;
+        right: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
-        z-index: 10;
+        z-index: 999;
+    }
+
+    /* ---------------- 플러스 버튼 ---------------- */
+    .plus-button__container {
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: max(80px, var(--safe-bottom, 80px)); /* 메뉴바 위 여백 */
+        width: min(100%, var(--app-max));
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+
+        display: flex;
+        flex-direction: column; /* 위: 메뉴, 아래: 버튼 */
+        align-items: flex-end; /* 오른쪽 끝 정렬 */
+        gap: 10px;
+
+        z-index: 999;
     }
 
     /* 메뉴 */
     .plus-menu {
-        position: absolute;
         display: flex;
         flex-direction: column;
         align-items: flex-end;
-        gap: 12px;
-        transform: translateY(0);
-        opacity: 1;
-        pointer-events: none;
-        margin-left: 60px;
-    }
+        gap: 10px;
 
-    /* 메뉴 아이템 (한 줄 단위) */
-    .plus-menu__item-wrapper {
+        max-height: 0;
         opacity: 0;
-        transform: translateY(0); /* 기본적으로 플러스 버튼 위치 */
-        position: absolute;
-        transition: opacity 0.1s ease, transform 0.1s ease;
+        overflow: hidden;
+        transform: translateY(4px);
+        pointer-events: none;
+
+        transition: max-height 0.15s ease, opacity 0.15s ease,
+            transform 0.15s ease;
     }
 
-    /* 열림 애니메이션 */
+    /* 열렸을 때 */
     .plus-menu--open {
+        max-height: 500px;
+        opacity: 1;
+        transform: translateY(0);
         pointer-events: auto;
     }
 
-    .plus-menu--open .plus-menu__item-wrapper {
-        opacity: 1;
-    }
-
-    /* 메뉴가 열릴 때 각 항목이 위로 순차적으로 이동 */
-    .plus-menu--open .plus-menu__item-wrapper:nth-child(1) {
-        transform: translateY(-210px);
-        transition-delay: 0.12s;
-    }
-    .plus-menu--open .plus-menu__item-wrapper:nth-child(2) {
-        transform: translateY(-140px);
-        transition-delay: 0.08s;
-    }
-    .plus-menu--open .plus-menu__item-wrapper:nth-child(3) {
-        transform: translateY(-70px);
-        transition-delay: 0.05s;
-    }
-
-    /* 닫힘 애니메이션 */
-    .plus-menu--closed .plus-menu__item-wrapper {
-        opacity: 0;
-        transform: translateY(0);
-    }
-
-    /* 닫힐 때는 반대로 순차적으로 사라짐 */
-    .plus-menu--closed .plus-menu__item-wrapper:nth-child(1) {
-        transition-delay: 0.05s;
-    }
-    .plus-menu--closed .plus-menu__item-wrapper:nth-child(2) {
-        transition-delay: 0.08s;
-    }
-    .plus-menu--closed .plus-menu__item-wrapper:nth-child(3) {
-        transition-delay: 0.12s;
-    }
-
-    /* 플로팅 메뉴 안의 한 줄 구조: [텍스트] [동그란 버튼] */
     .plus-menu__item-wrapper {
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        gap: 20px;
+        gap: 12px;
     }
 
-    /* 각 메뉴 아이템 */
+    /* 각 메뉴 아이템 버튼 */
     .plus-menu__item {
         width: 63px;
         height: 63px;
@@ -580,6 +563,7 @@
         transition: transform 0.15s ease;
         flex-shrink: 0;
     }
+
     .plus-menu__item:hover {
         transform: scale(1.05);
     }
@@ -591,23 +575,15 @@
     .plus-menu__overlay {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.35);
+        background: var(--color-modal-bg);
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s ease;
-        z-index: 5;
+        z-index: 998;
     }
-
-    /* 메뉴가 열렸을 때 오버레이 보이기 */
     .plus-menu__overlay--visible {
         opacity: 1;
         pointer-events: auto;
-    }
-
-    /* 메뉴와 버튼이 오버레이 위에 오게 */
-    .plus-button__container {
-        position: relative;
-        z-index: 10;
     }
 
     /* 메뉴 라벨 */
@@ -628,7 +604,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0px 0.5px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 0.5px 20px rgba(0, 0, 0, 0.2);
         transition: transform 0.2s ease;
     }
     .plus-button:active {
