@@ -8,13 +8,13 @@ type Props =
 
 export default function SettingRow({ label, href, onClick, disabled }: Props) {
     const cls =
-        "flex items-center justify-between h-13 w-full font-[var(--weight-semibold)]";
+        "flex items-center justify-between h-13 w-full font-[var(--weight-semibold)] mx-1";
     const right = (
         <Icon
             icon="mdi:chevron-right"
             width={20}
             height={20}
-            className="text-[var(--color-light-gray)] mx-2"
+            className="text-[var(--color-light-gray)] mx-1.5"
         />
     );
 
