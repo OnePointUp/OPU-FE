@@ -35,7 +35,7 @@ export default function RootLayout({
                     position="bottom-center"
                     gutter={6}
                     containerStyle={{
-                        bottom: "100px",
+                        bottom: "80px",
                         zIndex: 10000,
                     }}
                     toastOptions={{
