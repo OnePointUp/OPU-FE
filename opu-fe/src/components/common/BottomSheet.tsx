@@ -135,18 +135,13 @@ function BottomSheetInner({
         };
     }, [dragging]);
 
-    const backdropOpacity = Math.max(0, 0.5 - Math.min(dragY, 300) / 600);
-
     return (
         <div
             className="fixed inset-0 z-[1000] flex items-end justify-center"
             onClick={onClose}
         >
             {/* 백드롭 */}
-            <div
-                className="absolute inset-0 bg-black transition-opacity"
-                style={{ opacity: backdropOpacity }}
-            />
+            <div className="absolute inset-0 bg-[var(--color-modal-bg)]" />
 
             {/* 시트 래퍼 */}
             <div
