@@ -27,6 +27,8 @@
 
     /* 브랜드 컬러 */
     --color-opu-pink: #ffb6c5;
+    --color-light-pink: #ffd4d4;
+    --color-super-light-pink: #fff6f9;
     --color-opu-dark-pink: #f38ba0;
     --color-opu-dark-pink-30: rgba(243, 139, 160, 0.3);
 
@@ -53,13 +55,11 @@
     --color-blue-gray: #94a3b8;
     --color-dark-navy: #0f172a;
 
-    --color-like-pink: #ff575d;
-    --color-light-pink: #ffd4d4;
-
     --color-dark-yellow: #d7d7b4;
     --color-light-yellow: #ffffe8;
-    --color-kakao-yellow: #FEE500;
+    --color-kakao-yellow: #fee500;
 
+    --color-like-pink: #ff575d;
     --color-toggle-on: #a1d152;
     --color-toggle-off: #dfe4ea;
 
@@ -359,8 +359,8 @@
         accent-color: initial;
         box-sizing: border-box;
         display: inline-block;
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
         border: 1px solid var(--color-dark-gray, #6f6f6f);
         border-radius: 4px;
         background: #fff;
@@ -376,7 +376,7 @@
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="white"><path d="m24.768 9.64-10.7 12.842-6.775-6.775 1.414-1.414 5.226 5.226 9.299-11.16z"/></svg>');
         background-repeat: no-repeat;
         background-position: center;
-        background-size: 17px 17px;
+        background-size: 16px 16px;
     }
 
     /* 헤더 */
@@ -418,7 +418,7 @@
         align-items: center;
     }
 
-    .app-header__back {
+    .app-header__icon {
         width: 56px;
         height: 56px;
         display: grid;
@@ -445,17 +445,16 @@
         right: 0;
         bottom: 0;
         z-index: 9999;
-        height: 72px;
+        height: 55px;
         background: #fff;
-        border-top: 1px solid var(--color-super-light-gray);
-
+        border: none;
         left: 50%;
         transform: translateX(-50%);
         width: min(100%, var(--app-max));
     }
 
     .menu-bar__list {
-        height: 72px;
+        height: 55px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -487,17 +486,6 @@
     /* 활성 상태 */
     .menu-bar__item.is-active {
         color: #000000;
-    }
-    .menu-bar__item.is-active::after {
-        content: "";
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: -6px;
-        width: 28px;
-        height: 2px;
-        border-radius: 2px;
-        background: currentColor;
     }
 
     /* ---------------- 플러스 버튼 ---------------- */

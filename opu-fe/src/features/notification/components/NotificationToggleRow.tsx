@@ -19,7 +19,7 @@ export default function ToggleRow({
     disabled,
 }: Props) {
     return (
-        <div className="flex items-center justify-between px-2 py-4 gap-3">
+        <div className="flex items-center justify-between px-2 py-3">
             {/* 왼쪽 텍스트 영역 */}
             <div className="min-w-0 flex-1">
                 <p

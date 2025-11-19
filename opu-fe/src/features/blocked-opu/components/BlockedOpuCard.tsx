@@ -54,65 +54,68 @@ export default function BlockedOpuCard({
 
     return (
         <div
-            className="flex items-start gap-2 cursor-pointer"
-            onClick={toggleChecked} // ← 카드 전체 클릭 토글
+            className="flex items-start gap-1 cursor-pointer"
+            onClick={toggleChecked}
         >
             {selectable && (
                 <input
                     type="checkbox"
-                    className="custom-checkbox shrink-0 ml-2"
+                    className="custom-checkbox shrink-0 ml-1"
                     checked={checked}
                     onChange={(e) =>
                         onCheckedChange?.(item.id, e.target.checked)
                     }
-                    onClick={(e) => e.stopPropagation()} // ← 카드 클릭 방지
+                    onClick={(e) => e.stopPropagation()} // 카드 클릭 방지
                     aria-label={`${item.title} 선택`}
                 />
             )}
 
             <div className="w-full bg-[var(--background)]">
-                <div className="ml-2">
-                    <div className="grid grid-cols-[50px_1fr_auto] items-start gap-4">
-                        <div
-                            className="flex items-center justify-center rounded-md"
-                            style={{
-                                width: 50,
-                                height: 50,
-                                backgroundColor: "#F1F1F1",
-                            }}
-                        >
-                            {item.emoji ?? "❓"}
+                <div className="ml-1">
+                    <div className="flex items-start gap-3">
+                        <div className="flex items-center justify-center p-1 bg-[var(--color-opu-yellow)] rounded-2xl mb-1">
+                            <span
+                                className="flex items-center justify-center shrink-0"
+                                style={{
+                                    fontSize: "var(--text-h2)",
+                                    width: 30,
+                                    height: 30,
+                                }}
+                            >
+                                {item.emoji ?? "❓"}
+                            </span>
                         </div>
 
-                        <div className="min-w-0">
-                            <div className="flex justify-between">
-                                <p className="text-[var(--text-body)] font-[var(--weight-medium)]">
+                        <div className="w-full flex flex-col gap-1">
+                            <div className="flex items-start justify-between">
+                                <p
+                                    style={{
+                                        fontSize: "var(--text-sub)",
+                                        fontWeight: "var(--weight-medium)",
+                                    }}
+                                >
                                     {item.title}
                                 </p>
-
-                                <div className="relative">
-                                    <button
-                                        type="button"
-                                        aria-haspopup="menu"
-                                        aria-expanded={menuOpen}
-                                        onClick={(e) => {
-                                            e.stopPropagation(); // ← 카드 선택 방지
-                                            onMore?.(item.id);
-                                            setMenuOpen((v) => !v);
+                                <button
+                                    type="button"
+                                    aria-haspopup="menu"
+                                    aria-expanded={menuOpen}
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // ← 카드 선택 방지
+                                        onMore?.(item.id);
+                                        setMenuOpen((v) => !v);
+                                    }}
+                                    title="더보기"
+                                >
+                                    <Icon
+                                        icon="lucide:ellipsis"
+                                        width={17}
+                                        height={17}
+                                        style={{
+                                            color: "var(--color-super-dark-gray)",
                                         }}
-                                        className="inline-flex shrink-0 -mx-2"
-                                        title="더보기"
-                                    >
-                                        <Icon
-                                            icon="lucide:ellipsis"
-                                            width={17}
-                                            height={17}
-                                            style={{
-                                                color: "var(--color-super-dark-gray)",
-                                            }}
-                                        />
-                                    </button>
-                                </div>
+                                    />
+                                </button>
                             </div>
 
                             <div className="mt-1 flex items-center justify-between gap-2">
@@ -131,7 +134,7 @@ export default function BlockedOpuCard({
 
                                 {dateLabel && (
                                     <span
-                                        className="shrink-0 text-[var(--color-light-gray)] text-right -mx-2"
+                                        className="shrink-0 text-[var(--color-light-gray)] text-right"
                                         style={{ fontSize: "var(--text-mini)" }}
                                     >
                                         차단일 {dateLabel}
@@ -141,7 +144,7 @@ export default function BlockedOpuCard({
                         </div>
                     </div>
 
-                    <div className="h-[1px] bg-[var(--color-super-light-gray)] mt-4" />
+                    <div className="h-[1px] bg-[var(--color-super-light-gray)] mt-3" />
                 </div>
             </div>
         </div>

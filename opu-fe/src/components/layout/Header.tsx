@@ -1,40 +1,72 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Icon } from "@iconify/react";
-import { useState } from "react";
-
-type Tooltip = {
-    message: string | string[];
-    position?: "top" | "bottom" | "right";
-};
+import { useEffect, useState } from "react";
+import {
+    getHeaderConfig,
+    type Tooltip,
+} from "@/components/layout/headerConfig";
+import { fetchNotificationFeed } from "@/features/notification/services";
+import { NotificationFeedItem } from "@/features/notification/types";
 
 type Props = {
-    title?: string;
+    titleOverride?: string;
     show?: boolean;
     showBack?: boolean;
     onBack?: () => void;
-    tooltip?: Tooltip;
+    tooltipOverride?: Tooltip;
 };
 
 export default function Header({
-    title = "",
+    titleOverride,
     show = true,
-    showBack = true,
+    showBack,
     onBack,
-    tooltip,
+    tooltipOverride,
 }: Props) {
+    const pathname = usePathname();
     const router = useRouter();
     const [visible, setVisible] = useState(false);
+    const [hasUnread, setHasUnread] = useState(false);
+    const { title, tooltip, hide, defaultShowBack } = getHeaderConfig(pathname);
 
-    if (!show) return null;
+    const handleBack = () => {
+        if (onBack) return onBack();
+        router.back();
+    };
+
+    const handleGoNotification = () => {
+        router.push("/notification");
+    };
+
+    useEffect(() => {
+        async function loadUnread() {
+            try {
+                const items: NotificationFeedItem[] =
+                    await fetchNotificationFeed();
+                setHasUnread(items.some((item) => !item.isRead));
+            } catch {
+                setHasUnread(false);
+            }
+        }
+
+        loadUnread();
+    }, [pathname]);
+
+    if (!show || hide) return null;
+
+    const finalTitle = titleOverride ?? title;
+    const finalTooltip = tooltipOverride ?? tooltip;
+    const backVisible = showBack ?? defaultShowBack;
+    const showNotificationIcon = pathname !== "/notification";
 
     return (
         <header className="app-header">
             <div className="app-header__inner">
-                {showBack ? (
+                {backVisible ? (
                     <button
-                        className="app-header__back"
+                        className="app-header__icon"
                         aria-label="뒤로가기"
                         onClick={onBack ?? (() => router.back())}
                     >
@@ -48,11 +80,10 @@ export default function Header({
                     <span className="app-header__spacer" />
                 )}
 
-                {/* 제목 + 툴팁 */}
                 <div className="flex items-center justify-center gap-1 relative">
-                    <h1 className="app-header__title">{title}</h1>
+                    <h1 className="app-header__title">{finalTitle}</h1>
 
-                    {tooltip && (
+                    {finalTooltip && (
                         <div
                             className="relative group"
                             onMouseEnter={() => setVisible(true)}
@@ -72,11 +103,12 @@ export default function Header({
                                 <div
                                     className={`absolute z-50 text-center border border-[var(--color-light-gray)] 
                                                bg-[var(--background)] text-[11px] text-[var(--color-dark-gray)] 
-                                               rounded-md px-3 py-2 shadow-sm whitespace-nowrap
+                                               rounded-md px-3 py-2 shadow-sm
                                                ${
-                                                   tooltip.position === "top"
+                                                   finalTooltip.position ===
+                                                   "top"
                                                        ? "bottom-full mb-2 left-1/2 -translate-x-1/2"
-                                                       : tooltip.position ===
+                                                       : finalTooltip.position ===
                                                          "right"
                                                        ? "left-full ml-2 top-1/2 -translate-y-1/2"
                                                        : "top-full mt-2 left-1/2 -translate-x-1/2"
@@ -88,16 +120,37 @@ export default function Header({
                                         wordBreak: "keep-all",
                                     }}
                                 >
-                                    {Array.isArray(tooltip.message)
-                                        ? tooltip.message.join("\n")
-                                        : tooltip.message}
+                                    {Array.isArray(finalTooltip.message)
+                                        ? finalTooltip.message.join("\n")
+                                        : finalTooltip.message}
                                 </div>
                             )}
                         </div>
                     )}
                 </div>
 
-                <span className="app-header__spacer" />
+                {showNotificationIcon ? (
+                    <div className="app-header__icon relative flex items-center justify-center">
+                        <button
+                            type="button"
+                            aria-label="알림 보기"
+                            onClick={handleGoNotification}
+                            className="relative"
+                        >
+                            <Icon
+                                icon="mingcute:notification-line"
+                                width={26}
+                                height={26}
+                            />
+
+                            {hasUnread && (
+                                <span className="absolute top-[2px] right-[3px] w-2 h-2 rounded-full bg-[var(--color-like-pink)]" />
+                            )}
+                        </button>
+                    </div>
+                ) : (
+                    <span className="app-header__spacer" />
+                )}
             </div>
         </header>
     );

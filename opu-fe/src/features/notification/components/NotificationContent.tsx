@@ -2,10 +2,10 @@
 
 import Toggle from "@/components/common/Toggle";
 import { useNotificationSettings } from "@/features/notification/hooks/useNotificationSettings";
-import Group from "./Group";
-import ToggleRow from "./ToggleRow";
+import NotificationToggleRow from "./NotificationToggleRow";
+import NotificationToggleList from "./NotificationToggleList";
 
-export default function NotificationSettingsContent() {
+export default function NotificationContent() {
     const { settings, loading, toggleAll, toggleOne } =
         useNotificationSettings();
 
@@ -20,7 +20,7 @@ export default function NotificationSettingsContent() {
 
     return (
         <div className="app-container pt-app-header pb-40">
-            <div className="flex h-13 items-center justify-between px-2 mb-2 mt-3">
+            <div className="flex h-10 items-center justify-between px-2 mb-2 mt-4">
                 <span
                     style={{
                         fontWeight: "var(--weight-regular)",
@@ -34,9 +34,9 @@ export default function NotificationSettingsContent() {
             <div className="h-[1px] bg-[var(--color-super-light-gray)] -mx-6 mt-3" />
 
             {settings.sections.map((section) => (
-                <Group key={section.id} title={section.type}>
+                <NotificationToggleList key={section.id} title={section.type}>
                     {section.items.map((item) => (
-                        <ToggleRow
+                        <NotificationToggleRow
                             key={item.key}
                             label={item.label}
                             description={item.description}
@@ -44,7 +44,7 @@ export default function NotificationSettingsContent() {
                             onChange={(v) => toggleOne(item.key, v)}
                         />
                     ))}
-                </Group>
+                </NotificationToggleList>
             ))}
         </div>
     );

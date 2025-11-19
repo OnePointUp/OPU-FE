@@ -18,28 +18,21 @@ export default function PasswordChange2Page() {
     } = useSetNewPassword();
 
     return (
-        <div className="app-page">
-            <main className="app-container pt-app-header pb-40">
-                <section
-                    className="w-full px-2 pb-24"
-                    style={{ width: "min(100%, var(--app-max))" }}
-                >
-                    <PasswordInput
-                        label="새 비밀번호"
-                        value={next}
-                        onChange={handleChangeNext}
-                        placeholder="@LwEoLgXgU7"
-                        error={errNext}
-                    />
-                    <PasswordInput
-                        label="비밀번호 확인"
-                        value={confirm}
-                        onChange={handleChangeConfirm}
-                        placeholder="@LwEoLgXgU7"
-                        error={errConfirm}
-                    />
-                </section>
-            </main>
+        <div className="app-container pt-app-header pb-40 px-6">
+            <PasswordInput
+                label="새 비밀번호"
+                value={next}
+                onChange={handleChangeNext}
+                placeholder="@LwEoLgXgU7"
+                error={errNext}
+            />
+            <PasswordInput
+                label="비밀번호 확인"
+                value={confirm}
+                onChange={handleChangeConfirm}
+                placeholder="@LwEoLgXgU7"
+                error={errConfirm}
+            />
 
             <OpuActionButton
                 label="저장"
