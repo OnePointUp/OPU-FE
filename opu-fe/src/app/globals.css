@@ -27,6 +27,8 @@
 
     /* 브랜드 컬러 */
     --color-opu-pink: #ffb6c5;
+    --color-light-pink: #ffd4d4;
+    --color-super-light-pink: #fff6f9;
     --color-opu-dark-pink: #f38ba0;
     --color-opu-dark-pink-30: rgba(243, 139, 160, 0.3);
 
@@ -53,13 +55,11 @@
     --color-blue-gray: #94a3b8;
     --color-dark-navy: #0f172a;
 
-    --color-like-pink: #ff575d;
-    --color-light-pink: #ffd4d4;
-
     --color-dark-yellow: #d7d7b4;
     --color-light-yellow: #ffffe8;
     --color-kakao-yellow: #fee500;
 
+    --color-like-pink: #ff575d;
     --color-toggle-on: #a1d152;
     --color-toggle-off: #dfe4ea;
 
@@ -418,7 +418,7 @@
         align-items: center;
     }
 
-    .app-header__back {
+    .app-header__icon {
         width: 56px;
         height: 56px;
         display: grid;
@@ -445,17 +445,16 @@
         right: 0;
         bottom: 0;
         z-index: 9999;
-        height: 72px;
+        height: 55px;
         background: #fff;
-        border-top: 1px solid var(--color-super-light-gray);
-
+        border: none;
         left: 50%;
         transform: translateX(-50%);
         width: min(100%, var(--app-max));
     }
 
     .menu-bar__list {
-        height: 72px;
+        height: 55px;
         display: flex;
         justify-content: space-between;
         align-items: center;
