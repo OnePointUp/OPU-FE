@@ -25,7 +25,7 @@ export default function PasswordInput({
     return (
         <section className={`mt-6 ${className}`}>
             <label
-                className="block mb-2 ml-1"
+                className="block mb-2"
                 style={{
                     fontSize: "var(--text-sub)",
                     fontWeight: "var(--weight-semibold)",

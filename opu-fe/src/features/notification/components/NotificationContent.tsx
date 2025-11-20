@@ -11,15 +11,11 @@ export default function NotificationContent() {
 
     if (loading || !settings) {
         // 추후 skeleton 추가
-        return (
-            <div className="app-container pt-app-header pb-40 px-2">
-                {/* 로딩 상태 UI */}
-            </div>
-        );
+        return <div className="px-2">{/* 로딩 상태 UI */}</div>;
     }
 
     return (
-        <div className="app-container pt-app-header pb-40">
+        <div>
             <div className="flex h-10 items-center justify-between px-2 mb-2 mt-4">
                 <span
                     style={{

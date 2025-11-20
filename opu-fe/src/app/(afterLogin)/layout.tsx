@@ -18,6 +18,8 @@ export default function AfterLoginLayout({
         "/me/notification",
         "/notification",
         "/opu/blocked",
+        "/opu/register",
+        "/opu/edit",
         "/login",
         "/signup",
         "/social-signup",
@@ -26,9 +28,11 @@ export default function AfterLoginLayout({
     const hideMenu = HIDDEN_MENU_PATHS.some((p) => pathname.startsWith(p));
 
     return (
-        <div className="flex flex-col min-h-[100svh]">
+        <div className="app-page flex flex-col">
             <Header />
-            <main className="flex-1">{children}</main>
+            <main className="app-container pt-app-header pb-40">
+                {children}
+            </main>
 
             {!hideMenu && <Menu />}
         </div>

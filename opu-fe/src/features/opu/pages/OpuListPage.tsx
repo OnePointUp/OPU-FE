@@ -9,7 +9,7 @@ import OpuToolbar from "@/features/opu/components/OpuToolbar";
 
 import type { OpuCardModel } from "@/features/opu/domain";
 import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
-import type { PeriodCode } from "@/features/opu/utils/period";
+import type { TimeCode } from "@/features/opu/utils/time";
 import {
     getSortLabel,
     type SortOption,
@@ -18,13 +18,13 @@ import {
 import {
     filterOpuList,
     getCategoryFilterLabel,
-    getPeriodFilterLabel,
+    getTimeFilterLabel,
 } from "@/features/opu/utils/filter";
 import OpuList from "../components/OpuList";
 import LikedOpuFilter from "../components/LikedOpuFilter";
 import PlusButton from "@/components/common/PlusButton";
 
-type FilterMode = "period" | "category";
+type FilterMode = "time" | "category";
 
 type Props = {
     items: OpuCardModel[];
@@ -33,10 +33,10 @@ type Props = {
 
 export default function OpuListPage({ items, contextType }: Props) {
     const [q, setQ] = useState("");
-    const [filterMode, setFilterMode] = useState<FilterMode>("period");
+    const [filterMode, setFilterMode] = useState<FilterMode>("time");
     const [filterSheetOpen, setFilterSheetOpen] = useState(false);
     const [onlyLiked, setOnlyLiked] = useState(false);
-    const [periods, setPeriods] = useState<PeriodCode[]>([]);
+    const [times, setTimes] = useState<TimeCode[]>([]);
     const [categoryIds, setCategoryIds] = useState<number[]>([]);
     const [sortOption, setSortOption] = useState<SortOption>("name");
     const [showSortSheet, setShowSortSheet] = useState(false);
@@ -66,27 +66,27 @@ export default function OpuListPage({ items, contextType }: Props) {
     const filtered = useMemo(() => {
         const base = filterOpuList(sortedItems, {
             q,
-            periods,
+            times,
             categoryIds,
         });
 
         return onlyLiked ? base.filter((item) => item.liked) : base;
-    }, [sortedItems, q, periods, categoryIds, onlyLiked]);
+    }, [sortedItems, q, times, categoryIds, onlyLiked]);
 
-    const periodLabel = useMemo(() => getPeriodFilterLabel(periods), [periods]);
+    const timeLabel = useMemo(() => getTimeFilterLabel(times), [times]);
     const categoryLabel = useMemo(
         () => getCategoryFilterLabel(categoryIds),
         [categoryIds]
     );
     const sortLabel = getSortLabel(sortOption);
 
-    const handleTogglePeriod = (value: PeriodCode) => {
+    const handleToggleTime = (value: TimeCode) => {
         if (value === "ALL") {
-            setPeriods([]);
+            setTimes([]);
             return;
         }
 
-        setPeriods((prev) => {
+        setTimes((prev) => {
             const filtered = prev.filter((p) => p !== "ALL");
             if (filtered.includes(value)) {
                 return filtered.filter((p) => p !== value);
@@ -106,7 +106,7 @@ export default function OpuListPage({ items, contextType }: Props) {
     };
 
     const handleResetFilter = () => {
-        setPeriods([]);
+        setTimes([]);
         setCategoryIds([]);
     };
 
@@ -140,11 +140,11 @@ export default function OpuListPage({ items, contextType }: Props) {
                 <LikedOpuFilter checked={onlyLiked} onChange={setOnlyLiked} />
                 <OpuToolbar
                     sortLabel={sortLabel}
-                    periodLabel={periodLabel}
+                    timeLabel={timeLabel}
                     categoryLabel={categoryLabel}
                     onClickSort={() => setShowSortSheet(true)}
-                    onClickPeriod={() => {
-                        setFilterMode("period");
+                    onClickTime={() => {
+                        setFilterMode("time");
                         setFilterSheetOpen(true);
                     }}
                     onClickCategory={() => {
@@ -184,11 +184,11 @@ export default function OpuListPage({ items, contextType }: Props) {
                 open={filterSheetOpen}
                 onClose={() => setFilterSheetOpen(false)}
                 mode={filterMode}
-                selectedPeriods={periods}
+                selectedTimes={times}
                 selectedCategoryIds={categoryIds}
                 resultCount={filtered.length}
                 onChangeMode={setFilterMode}
-                onTogglePeriod={handleTogglePeriod}
+                onToggleTime={handleToggleTime}
                 onToggleCategory={handleToggleCategory}
                 onReset={handleResetFilter}
             />

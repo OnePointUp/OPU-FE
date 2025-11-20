@@ -18,7 +18,7 @@ export default function PasswordChange2Page() {
     } = useSetNewPassword();
 
     return (
-        <div className="app-container pt-app-header pb-40 px-6">
+        <div className="px-2">
             <PasswordInput
                 label="새 비밀번호"
                 value={next}

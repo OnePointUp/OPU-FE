@@ -9,7 +9,7 @@ export default function VerifyCurrentPasswordPage() {
         useVerifyCurrentPassword();
 
     return (
-        <div className="app-container pt-app-header pb-40 px-6">
+        <div className="px-2">
             <PasswordInput
                 label="현재 비밀번호"
                 value={cur}
