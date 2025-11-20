@@ -623,6 +623,42 @@
     .plus-button--rotated .plus-button__icon {
         transform: rotate(45deg);
     }
+
+    /* ============= 이모지 선택 시트 ============= */
+    /* 전체 배경, 모서리, 그림자 제거/조정 */
+    .EmojiPickerReact {
+        box-shadow: none !important;
+        border: none !important;
+
+        /* 배경/텍스트/호버 정도만 변수로 커스텀 */
+        --epr-bg-color: var(--background);
+        --epr-category-label-bg-color: transparent;
+        --epr-text-color: var(--color-dark-gray);
+        --epr-hover-bg-color: rgba(0, 0, 0, 0.04);
+    }
+
+    /* 카테고리 탭 아이콘 하이라이트 색 */
+    .EmojiPickerReact .epr-category-nav .epr-active {
+        color: var(--color-opu-green) !important;
+    }
+
+    /* 카테고리 레이블 숨기기 */
+    .EmojiPickerReact .epr-emoji-category-label {
+        display: none !important;
+    }
+
+    /* 카테고리 네비 줄 간격 조정 */
+    .EmojiPickerReact .epr-category-nav {
+        padding-inline: 8px !important;
+    }
+
+    /* 이모지 버튼 사이즈, hover */
+    .EmojiPickerReact .epr-emoji {
+        border-radius: 12px;
+    }
+    .EmojiPickerReact .epr-emoji:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+    }
 }
 
 /* Shimmer skeleton */
