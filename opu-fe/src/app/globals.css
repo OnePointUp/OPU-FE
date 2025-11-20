@@ -64,6 +64,7 @@
     --color-toggle-off: #dfe4ea;
 
     --color-modal-bg: rgba(0, 0, 0, 0.8);
+    --color-input-border: #e8ebf0;
 
     /* 폰트 패밀리 */
     --font-sans: "Pretendard Variable", Pretendard, -apple-system,
@@ -110,6 +111,10 @@
     background: #fff;
 }
 
+.toast-card.is-info {
+    color: var(--color-opu-dark-pink);
+}
+
 .toast-card.is-success {
     color: var(--toast-success);
 }
@@ -146,6 +151,7 @@
 @layer components {
     /* 페이지 전체를 감싸는 div에 적용!!!!!! */
     .app-page {
+        width: min(100%, var(--app-max));
         min-height: 100vh;
         display: flex;
         flex-direction: column;
@@ -214,7 +220,7 @@
         width: 355px;
         height: 50px;
 
-        border: 1px solid #e8ebf0;
+        border: 1px solid var(--color-input-border);
         border-radius: 12px;
 
         background-color: #ffffff;
@@ -224,6 +230,12 @@
         font-size: var(--text-body);
         line-height: 1.5;
         padding-left: 15px;
+    }
+
+    .input-box::placeholder {
+        color: var(--color-placeholder);
+        font-size: var(--text-sub);
+        font-weight: var(--weight-medium);
     }
 
     .input-box--field {
@@ -397,14 +409,10 @@
 
     .app-header {
         position: fixed;
-        top: 0;
         z-index: 99;
-
         left: 50%;
         transform: translateX(-50%);
-        width: 100%;
-        max-width: var(--app-max);
-
+        width: min(100%, var(--app-max));
         height: var(--app-header-h);
         padding-top: var(--safe-top);
         background: var(--background);
@@ -524,8 +532,7 @@
         display: flex;
         flex-direction: column;
         align-items: flex-end;
-        gap: 10px;
-
+        gap: 12px;
         max-height: 0;
         opacity: 0;
         overflow: hidden;
@@ -615,6 +622,42 @@
     }
     .plus-button--rotated .plus-button__icon {
         transform: rotate(45deg);
+    }
+
+    /* ============= 이모지 선택 시트 ============= */
+    /* 전체 배경, 모서리, 그림자 제거/조정 */
+    .EmojiPickerReact {
+        box-shadow: none !important;
+        border: none !important;
+
+        /* 배경/텍스트/호버 정도만 변수로 커스텀 */
+        --epr-bg-color: var(--background);
+        --epr-category-label-bg-color: transparent;
+        --epr-text-color: var(--color-dark-gray);
+        --epr-hover-bg-color: rgba(0, 0, 0, 0.04);
+    }
+
+    /* 카테고리 탭 아이콘 하이라이트 색 */
+    .EmojiPickerReact .epr-category-nav .epr-active {
+        color: var(--color-opu-green) !important;
+    }
+
+    /* 카테고리 레이블 숨기기 */
+    .EmojiPickerReact .epr-emoji-category-label {
+        display: none !important;
+    }
+
+    /* 카테고리 네비 줄 간격 조정 */
+    .EmojiPickerReact .epr-category-nav {
+        padding-inline: 8px !important;
+    }
+
+    /* 이모지 버튼 사이즈, hover */
+    .EmojiPickerReact .epr-emoji {
+        border-radius: 12px;
+    }
+    .EmojiPickerReact .epr-emoji:hover {
+        background-color: rgba(0, 0, 0, 0.04);
     }
 }
 

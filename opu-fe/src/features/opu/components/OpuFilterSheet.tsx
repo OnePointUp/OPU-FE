@@ -3,60 +3,51 @@
 import { Icon } from "@iconify/react";
 import BottomSheet from "@/components/common/BottomSheet";
 import { CATEGORY_MAP, type OpuEntity } from "@/features/opu/domain";
+import { TIME_OPTIONS } from "../utils/time";
 
-type FilterMode = "period" | "category";
+type FilterMode = "time" | "category";
 
-type PeriodCode = OpuEntity["required_time"] | "ALL";
+type TimeCode = OpuEntity["required_time"] | "ALL";
 
 type Props = {
     open: boolean;
     mode: FilterMode;
 
-    selectedPeriods: PeriodCode[];
+    selectedTimes: TimeCode[];
     selectedCategoryIds: number[];
     resultCount: number;
 
     onClose: () => void;
     onChangeMode: (mode: FilterMode) => void;
-    onTogglePeriod: (value: PeriodCode) => void;
+    onToggleTime: (value: TimeCode) => void;
     onToggleCategory: (id: number) => void;
     onReset: () => void;
 };
 
-const PERIOD_OPTIONS: { code: PeriodCode; label: string }[] = [
-    { code: "ALL", label: "소요시간 전체" },
-    { code: "1M", label: "1분" },
-    { code: "5M", label: "5분" },
-    { code: "30M", label: "30분" },
-    { code: "1H", label: "1시간" },
-    { code: "DAILY", label: "1일" },
-];
-
 export default function OpuFilterSheet({
     open,
     mode,
-    selectedPeriods,
+    selectedTimes,
     selectedCategoryIds,
     resultCount,
     onClose,
     onChangeMode,
-    onTogglePeriod,
+    onToggleTime,
     onToggleCategory,
     onReset,
 }: Props) {
-    const periodTags =
-        selectedPeriods.length === 0
+    const timeTags =
+        selectedTimes.length === 0
             ? [
                   {
-                      code: "ALL" as PeriodCode,
+                      code: "ALL" as TimeCode,
                       label: "소요시간 전체",
                       removable: false,
                   },
               ]
-            : selectedPeriods.map((code) => ({
+            : selectedTimes.map((code) => ({
                   code,
-                  label:
-                      PERIOD_OPTIONS.find((p) => p.code === code)?.label ?? "",
+                  label: TIME_OPTIONS.find((p) => p.code === code)?.label ?? "",
                   removable: true,
               }));
 
@@ -83,9 +74,9 @@ export default function OpuFilterSheet({
                         <div className="px-3 pt-3 flex gap-4 text-[var(--text-sub)] font-[var(--weight-semibold)]">
                             <button
                                 type="button"
-                                onClick={() => onChangeMode("period")}
+                                onClick={() => onChangeMode("time")}
                                 className={
-                                    mode === "period"
+                                    mode === "time"
                                         ? "text-[var(--text-sub)]"
                                         : "text-[var(--color-light-gray)]"
                                 }
@@ -107,13 +98,12 @@ export default function OpuFilterSheet({
 
                         {/* 선택된 필터 태그들 */}
                         <div className="mt-4 px-3 flex flex-wrap gap-2 text-[12px]">
-                            {periodTags.map((tag) => (
+                            {timeTags.map((tag) => (
                                 <button
                                     key={`p-${tag.code}`}
                                     type="button"
                                     onClick={() =>
-                                        tag.removable &&
-                                        onTogglePeriod(tag.code)
+                                        tag.removable && onToggleTime(tag.code)
                                     }
                                     className="inline-flex items-center gap-1 px-2 py-1 rounded-full border-[1.5px] border-[var(--color-opu-green)] bg-[var(--background)]"
                                     style={{
@@ -168,10 +158,10 @@ export default function OpuFilterSheet({
                     </div>
 
                     <div className="border-t border-[var(--color-super-light-gray)] pb-16">
-                        {mode === "period" ? (
-                            <PeriodList
-                                selected={selectedPeriods}
-                                onToggle={onTogglePeriod}
+                        {mode === "time" ? (
+                            <TimeList
+                                selected={selectedTimes}
+                                onToggle={onToggleTime}
                             />
                         ) : (
                             <CategoryList
@@ -216,18 +206,18 @@ export default function OpuFilterSheet({
     );
 }
 
-function PeriodList({
+function TimeList({
     selected,
     onToggle,
 }: {
-    selected: PeriodCode[];
-    onToggle: (value: PeriodCode) => void;
+    selected: TimeCode[];
+    onToggle: (value: TimeCode) => void;
 }) {
     const isAll = selected.length === 0 || selected.includes("ALL");
 
     return (
         <ul>
-            {PERIOD_OPTIONS.map((opt, index) => {
+            {TIME_OPTIONS.map((opt, index) => {
                 const checked =
                     opt.code === "ALL"
                         ? isAll

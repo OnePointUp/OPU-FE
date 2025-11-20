@@ -12,7 +12,6 @@ type BottomSheetProps = {
     dismissThreshold?: number;
 };
 
-// 바깥 래퍼: open 아닐 땐 아예 마운트 안 함
 export default function BottomSheet(props: BottomSheetProps) {
     if (!props.open) return null;
     return createPortal(<BottomSheetInner {...props} />, document.body);
@@ -33,7 +32,7 @@ function BottomSheetInner({
     const [dragging, setDragging] = useState(false);
 
     useEffect(() => {
-        const wrapper = document.querySelector(".app-container") as HTMLElement;
+        const wrapper = document.querySelector(".app-page") as HTMLElement;
         const scrollY = window.scrollY;
 
         if (!wrapper) return;

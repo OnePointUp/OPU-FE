@@ -20,11 +20,11 @@ export const TITLE_MAP: Record<string, string> = {
     "/opu/my": "내 OPU",
     "/opu/blocked": "차단 OPU 관리",
     "/opu/liked": "찜한 OPU",
+    "/opu/register": "OPU 등록",
 
     "/calendar": "캘린더",
     "/stats": "통계",
     "/notification": "알림",
-    // 추가하시면 됩니다!
 };
 
 export const TOOLTIP_MAP: Record<string, Tooltip> = {
@@ -35,15 +35,20 @@ export const TOOLTIP_MAP: Record<string, Tooltip> = {
         ],
         position: "bottom",
     },
-    // 추가하시면 됩니다!
 };
 
-export const HIDDEN_HEADER_PATHS = [
-    "/signup/email-confirmed",
-    // 추가하시면 됩니다!
-];
+export const HIDDEN_HEADER_PATHS = ["/signup/email-confirmed"];
 
 export function getHeaderConfig(pathname: string) {
+    if (pathname.startsWith("/opu/edit/")) {
+        return {
+            title: "OPU 수정",
+            tooltip: undefined,
+            hide: false,
+            defaultShowBack: true,
+        };
+    }
+
     const title = TITLE_MAP[pathname] ?? "OPU";
     const tooltip = TOOLTIP_MAP[pathname];
     const hide = HIDDEN_HEADER_PATHS.includes(pathname);

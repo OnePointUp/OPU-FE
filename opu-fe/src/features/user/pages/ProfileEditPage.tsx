@@ -30,7 +30,7 @@ export default function ProfileEditPage() {
         !dupError;
 
     return (
-        <div className="app-container pt-app-header pb-40 px-6">
+        <div className="px-2">
             <ProfileAvatarPicker
                 nickname={nickname}
                 previewUrl={profileImgUrl}

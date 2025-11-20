@@ -42,29 +42,27 @@ export default function MyPageScreen() {
     }, []);
 
     return (
-        <div className="app-page overflow-hidden">
-            <main className="app-container pt-app-header pb-40">
-                <UserInfo
-                    nickname={profile?.nickname ?? ""}
-                    email={profile?.email ?? ""}
-                    bio={profile?.bio}
-                    profileImageUrl={profile?.profileImageUrl}
-                    handleEdit={handleEdit}
-                    loading={loading}
-                />
+        <div className="overflow-hidden">
+            <UserInfo
+                nickname={profile?.nickname ?? ""}
+                email={profile?.email ?? ""}
+                bio={profile?.bio}
+                profileImageUrl={profile?.profileImageUrl}
+                handleEdit={handleEdit}
+                loading={loading}
+            />
 
-                <OpuManagement
-                    likedCount={likedCount}
-                    myCount={myCount}
-                    loading={opuLoading}
-                />
+            <OpuManagement
+                likedCount={likedCount}
+                myCount={myCount}
+                loading={opuLoading}
+            />
 
-                <div className="mt-5 border-t border-[#F3F5F8]" />
+            <div className="mt-5 border-t border-[#F3F5F8]" />
 
-                <div className="w-full mt-1.5">
-                    <SettingsList items={items} />
-                </div>
-            </main>
+            <div className="w-full mt-1.5">
+                <SettingsList items={items} />
+            </div>
 
             <Menu />
         </div>

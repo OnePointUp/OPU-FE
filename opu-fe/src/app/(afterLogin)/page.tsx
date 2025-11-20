@@ -1,3 +1,7 @@
 export default function Home() {
-    return <h1>홈화면</h1>;
+    return (
+        <div className="app-container">
+            <div className="">홈화면</div>
+        </div>
+    );
 }

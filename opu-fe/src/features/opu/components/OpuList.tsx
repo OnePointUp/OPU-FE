@@ -22,7 +22,7 @@ export default function SharedOpuList({
               title: "",
               emoji: "",
               categoryId: 0,
-              periodLabel: "",
+              timeLabel: "",
               liked: false,
           }))
         : items;
