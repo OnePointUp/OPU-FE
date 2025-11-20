@@ -4,6 +4,7 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import Toggle from "@/components/common/Toggle";
 import { Icon } from "@iconify/react";
 import OpuActionButton from "@/components/common/OpuActionButton";
+import { toastInfo } from "@/lib/toast";
 
 type OpuFormValues = {
     title: string;
@@ -24,6 +25,8 @@ type Props = {
     disabled?: boolean;
 };
 
+const MAX_TITLE_LENGTH = 30;
+
 export default function OpuForm({
     mode,
     initialValues,
@@ -34,17 +37,22 @@ export default function OpuForm({
     submitting = false,
     disabled = false,
 }: Props) {
-    // 폼 내부에서만 관리할 애들
     const [title, setTitle] = useState(initialValues?.title ?? "");
     const [isPublic, setIsPublic] = useState(initialValues?.isPublic ?? true);
 
-    // 부모에서 내려오는 현재 선택 상태
     const currentEmoji = initialValues?.emoji ?? "";
     const currentTimeLabel = initialValues?.timeLabel ?? "";
     const currentCategoryLabel = initialValues?.categoryLabel ?? "";
 
     const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.target.value);
+        const value = e.target.value;
+
+        if (value.length > MAX_TITLE_LENGTH) {
+            toastInfo("제목은 30글자까지만 입력할 수 있어요!");
+            return;
+        }
+
+        setTitle(value);
     };
 
     const handleToggleChange = (v: boolean) => {
@@ -69,6 +77,8 @@ export default function OpuForm({
     const isSubmitDisabled =
         disabled || submitting || title.trim().length === 0;
 
+    const titleLength = title.length;
+
     return (
         <form onSubmit={handleSubmit}>
             <div className="flex flex-col mx-2">
@@ -84,20 +94,33 @@ export default function OpuForm({
                     제목
                 </label>
 
-                <div className="flex items-center gap-2">
-                    <input
-                        placeholder="OPU 제목을 입력하세요"
-                        className="input-box input-box--field flex-1 px-3"
-                        value={title}
-                        onChange={handleTitleChange}
-                        disabled={disabled}
-                    />
+                <div className="flex items-start gap-2">
+                    {/* 인풋 + 글자수 */}
+                    <div className="flex-1">
+                        <input
+                            placeholder="OPU 제목을 입력하세요"
+                            className="input-box input-box--field w-full px-3"
+                            value={title}
+                            onChange={handleTitleChange}
+                            disabled={disabled}
+                        />
+                        <div
+                            className="mt-1 text-right"
+                            style={{
+                                fontSize: "12px",
+                                color: "var(--color-light-gray)",
+                            }}
+                        >
+                            {titleLength}/{MAX_TITLE_LENGTH}
+                        </div>
+                    </div>
 
+                    {/* 이모지 버튼 */}
                     <button
                         type="button"
                         disabled={disabled}
                         onClick={onClickEmoji}
-                        className="px-2 py-2 flex items-center justify-between rounded-xl border border-[var(--color-input-border)] bg-[--background] text-2xl"
+                        className="mt-[2px] px-2 py-2 flex items-center justify-between rounded-xl border border-[var(--color-input-border)] bg-[--background] text-2xl"
                     >
                         {currentEmoji || "😀"}
                         <Icon
