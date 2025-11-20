@@ -20,7 +20,7 @@ export default function LikedOpuList({
               title: "",
               emoji: "",
               categoryId: 0,
-              periodLabel: "",
+              timeLabel: "",
               liked: false,
           }))
         : items;

@@ -1,12 +1,8 @@
 import { COMPLETED_COUNT, LIKE } from "@/mocks/api/db/opu.db";
 
 import { CURRENT_MEMBER_ID, MEMBER_NICKNAME } from "@/mocks/api/db/member.db";
-import {
-    OpuCardModel,
-    OpuEntity,
-    toCategoryName,
-    toPeriodLabelFromCode,
-} from "./domain";
+import { OpuCardModel, OpuEntity, toCategoryName } from "./domain";
+import { mapTimeToLabel } from "./utils/time";
 
 export const toShareLabel = (isShared: OpuEntity["is_shared"]) =>
     isShared === "Y" ? "공유됨" : "비공유";
@@ -36,7 +32,7 @@ export function toOpuCardModelFromEntity(
         description: o.description,
         categoryId: o.category_id,
         categoryName: toCategoryName(o.category_id),
-        periodLabel: toPeriodLabelFromCode(o.required_time),
+        timeLabel: mapTimeToLabel(o.required_time),
         completedCount: COMPLETED_COUNT[o.id],
         locked: isLocked(o),
         liked,

@@ -1,11 +1,7 @@
 import { listBlockedOpu, unblock } from "@/mocks/api/handler/blockedOpu";
-import {
-    OpuCardModel,
-    OpuEntity,
-    toCategoryName,
-    toPeriodLabelFromCode,
-} from "@/features/opu/domain";
+import { OpuCardModel, OpuEntity, toCategoryName } from "@/features/opu/domain";
 import { COMPLETED_COUNT } from "@/mocks/api/db/opu.db";
+import { mapTimeToLabel } from "../opu/utils/time";
 
 // 차단 OPU 조인 결과 타입
 type BlockedJoin = {
@@ -27,7 +23,7 @@ function toOpuCardModelFromBlockedJoin(j: BlockedJoin): OpuCardModel {
         categoryName: j.opu_category_id
             ? toCategoryName(j.opu_category_id)
             : "기타",
-        periodLabel: toPeriodLabelFromCode(j.opu_required_time),
+        timeLabel: mapTimeToLabel(j.opu_required_time),
         completedCount: COMPLETED_COUNT[j.opu_id] ?? 0,
         locked: !j.opu_is_shared,
         liked: false,

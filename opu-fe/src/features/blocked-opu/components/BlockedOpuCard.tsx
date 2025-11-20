@@ -126,7 +126,7 @@ export default function BlockedOpuCard({
                                         color={text}
                                     />
                                     <Badge
-                                        label={item.periodLabel}
+                                        label={item.timeLabel}
                                         bg="#F3F3F3"
                                         color="#959595"
                                     />

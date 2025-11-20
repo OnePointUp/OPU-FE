@@ -20,6 +20,7 @@ export const TITLE_MAP: Record<string, string> = {
     "/opu/my": "내 OPU",
     "/opu/blocked": "차단 OPU 관리",
     "/opu/liked": "찜한 OPU",
+    "/opu/register": "OPU 등록",
 
     "/calendar": "캘린더",
     "/stats": "통계",

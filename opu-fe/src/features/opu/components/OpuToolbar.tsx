@@ -5,29 +5,29 @@ import { Icon } from "@iconify/react";
 type Props = {
     sortLabel?: string;
     categoryLabel?: string;
-    periodLabel?: string;
+    timeLabel?: string;
     onClickSort?: () => void;
     onClickCategory?: () => void;
-    onClickPeriod?: () => void;
+    onClickTime?: () => void;
 };
 
 export default function OpuToolbar({
-    periodLabel = "시간",
+    timeLabel = "시간",
     categoryLabel = "카테고리",
     sortLabel = "정렬",
     onClickSort,
     onClickCategory,
-    onClickPeriod,
+    onClickTime,
 }: Props) {
     return (
         <div className="flex justify-end items-center px-1 py-1 gap-2.5">
             <button
                 type="button"
-                onClick={onClickPeriod}
+                onClick={onClickTime}
                 className="flex items-center justify-center gap-1"
                 style={{ fontSize: "var(--text-caption)" }}
             >
-                <span>{periodLabel}</span>
+                <span>{timeLabel}</span>
                 <Icon
                     icon="ic:round-keyboard-arrow-down"
                     width={16}
