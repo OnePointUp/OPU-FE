@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import clsx from "clsx";
 
 export default function PlusButton() {
+    const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const toggleMenu = () => setIsOpen((prev) => !prev);
     const closeMenu = () => setIsOpen(false);
@@ -22,8 +24,7 @@ export default function PlusButton() {
             ),
             bgColor: "var(--color-opu-green)",
             onClick: () => {
-                alert("직접 생성 클릭");
-                closeMenu();
+                router.push("/opu/register");
             },
         },
         {
