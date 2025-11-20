@@ -30,7 +30,7 @@ export default function ProfileEditPage() {
         !dupError;
 
     return (
-        <div className="px-2">
+        <section>
             <ProfileAvatarPicker
                 nickname={nickname}
                 previewUrl={profileImgUrl}
@@ -53,6 +53,6 @@ export default function ProfileEditPage() {
                 loading={saving}
                 onClick={handleSave}
             />
-        </div>
+        </section>
     );
 }
