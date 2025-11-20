@@ -22,3 +22,6 @@ export const toastError = (msg: string) =>
 
 export const toastWarn = (msg: string) =>
     showSingleToast(<ToastCard message={msg} variant="warn" />);
+
+export const toastInfo = (msg: string) =>
+    showSingleToast(<ToastCard message={msg} variant="info" />);
