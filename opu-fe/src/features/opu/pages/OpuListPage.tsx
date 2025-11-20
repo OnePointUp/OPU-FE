@@ -23,6 +23,7 @@ import {
 import OpuList from "../components/OpuList";
 import LikedOpuFilter from "../components/LikedOpuFilter";
 import PlusButton from "@/components/common/PlusButton";
+import { useRouter } from "next/navigation";
 
 type FilterMode = "time" | "category";
 
@@ -244,6 +245,8 @@ type MoreActionsSheetProps = {
 };
 
 function MoreActionsSheet({ open, onClose, target }: MoreActionsSheetProps) {
+    const router = useRouter();
+
     if (!target) {
         return null;
     }
@@ -257,7 +260,10 @@ function MoreActionsSheet({ open, onClose, target }: MoreActionsSheetProps) {
                   onClick: () => {},
               },
               { label: "루틴 추가", onClick: () => {} },
-              { label: "수정", onClick: () => {} },
+              {
+                  label: "수정",
+                  onClick: () => router.push(`/opu/edit/${target.id}`),
+              },
               {
                   label: "삭제",
                   danger: true,

@@ -72,7 +72,7 @@ export default function OpuForm({
         });
     };
 
-    const submitLabel = mode === "create" ? "등록" : "수정 완료";
+    const submitLabel = mode === "create" ? "등록" : "수정";
 
     const isSubmitDisabled =
         disabled || submitting || title.trim().length === 0;
@@ -81,7 +81,7 @@ export default function OpuForm({
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="flex flex-col mx-2">
+            <div className="flex flex-col">
                 {/* 제목 */}
                 <label
                     className="block mb-2 mt-6"
