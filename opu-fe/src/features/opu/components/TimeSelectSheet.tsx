@@ -21,6 +21,17 @@ export default function TimeSelectSheet({
         <BottomSheet open={open} onClose={onClose}>
             <div className="-my-2">
                 <div className="max-h-[min(70vh,480px)] overflow-y-auto bg-[var(--background)]">
+                    <div className="sticky top-0 z-10 bg-[var(--background)] px-3 pt-2 pb-2">
+                        <span
+                            style={{
+                                fontSize: "var(--text-sub)",
+                                fontWeight: "var(--weight-semibold)",
+                                color: "var(--color-dark-navy)",
+                            }}
+                        >
+                            소요시간 선택
+                        </span>
+                    </div>
                     <ul>
                         {TIME_OPTIONS.filter((o) => o.code !== "ALL").map(
                             (opt, index) => {
