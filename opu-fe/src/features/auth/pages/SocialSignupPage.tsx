@@ -24,36 +24,34 @@ export default function SocialSignupPage() {
     } = useSocialSignupForm();
 
     return (
-        <div className="app-page overflow-hidden overscroll-none">
-            <main className="app-container pt-app-header pb-40 px-6">
-                <ProfileAvatarPicker
-                    nickname={nickname}
-                    previewUrl={profileImgUrl}
-                    onPick={handlePickImage}
-                />
+        <section className="pt-12 px-2 overflow-hidden overscroll-none">
+            <ProfileAvatarPicker
+                nickname={nickname}
+                previewUrl={profileImgUrl}
+                onPick={handlePickImage}
+            />
 
-                <NicknameField
-                    value={nickname}
-                    onChange={(v) => {
-                        setNickname(v);
-                    }}
-                    onBlurCheck={handleBlurNickname}
-                    error={dupError}
-                    checking={checking}
-                />
+            <NicknameField
+                value={nickname}
+                onChange={(v) => {
+                    setNickname(v);
+                }}
+                onBlurCheck={handleBlurNickname}
+                error={dupError}
+                checking={checking}
+            />
 
-                <AgreementsField
-                    value={agreements}
-                    onChangeAll={handleCheckAll}
-                    onChangeItem={handleCheckItem}
-                />
-            </main>
+            <AgreementsField
+                value={agreements}
+                onChangeAll={handleCheckAll}
+                onChangeItem={handleCheckItem}
+            />
 
             <OpuActionButton
                 label="다음"
                 disabled={!canSubmit}
                 onClick={handleSubmit}
             />
-        </div>
+        </section>
     );
 }
