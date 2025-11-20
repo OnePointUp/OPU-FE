@@ -84,7 +84,7 @@ export default function OpuForm({
             <div className="flex flex-col">
                 {/* 제목 */}
                 <label
-                    className="block mb-2 mt-6"
+                    className="block mb-2"
                     style={{
                         fontSize: "var(--text-sub)",
                         fontWeight: "var(--weight-semibold)",
