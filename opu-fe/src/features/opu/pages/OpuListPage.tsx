@@ -120,7 +120,7 @@ export default function OpuListPage({ items, contextType }: Props) {
         sheetId !== null ? data.find((i) => i.id === sheetId) : undefined;
 
     return (
-        <section className="px-1">
+        <section>
             {/* 검색 */}
             <SearchBar
                 value={q}
@@ -129,7 +129,7 @@ export default function OpuListPage({ items, contextType }: Props) {
                 placeholder={
                     contextType === "shared" ? "공유 OPU 검색" : "나의 OPU 검색"
                 }
-                className="mt-5 mb-6"
+                className="mb-6"
             />
 
             {/* 정렬 / 필터 툴바 */}
@@ -152,7 +152,7 @@ export default function OpuListPage({ items, contextType }: Props) {
             </div>
 
             {/* 카드 리스트 */}
-            <div className="mt-3">
+            <div className="mt-3 -mx-1">
                 <OpuList
                     items={filtered}
                     loading={loading}
