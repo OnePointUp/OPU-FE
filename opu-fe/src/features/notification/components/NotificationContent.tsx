@@ -16,11 +16,11 @@ export default function NotificationContent() {
 
     return (
         <div>
-            <div className="flex h-10 items-center justify-between px-2 mb-2 mt-4">
+            <div className="flex h-8 items-center justify-between -mt-2">
                 <span
                     style={{
-                        fontWeight: "var(--weight-regular)",
-                        fontSize: "var(--text-body)",
+                        fontWeight: "var(--weight-semibold)",
+                        fontSize: "var(--text-sub)",
                     }}
                 >
                     전체 알림

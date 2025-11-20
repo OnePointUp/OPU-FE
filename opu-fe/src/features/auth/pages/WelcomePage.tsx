@@ -8,7 +8,7 @@ export default function IntroPage() {
     const router = useRouter();
 
     return (
-        <div className="app-page">
+        <section className="overflow-hidden overscroll-none">
             {/* ---------- 상단: 로고 & 문구 ---------- */}
             <header className="flex flex-col items-center mt-20 text-center">
                 <h1 className="text-h1 font-bold text-[color:var(--color-dark-navy)] text-[length:var(--text-h1)]">
@@ -21,7 +21,7 @@ export default function IntroPage() {
             </header>
 
             {/* ---------- 중앙: 캐릭터 ---------- */}
-            <section className="flex justify-center my-10">
+            <div className="flex justify-center my-10">
                 <Image
                     src="/images/cabit_hello.png"
                     alt="OPU mascot"
@@ -29,7 +29,7 @@ export default function IntroPage() {
                     height={230}
                     priority
                 />
-            </section>
+            </div>
 
             {/* ---------- 하단: 버튼 영역 ---------- */}
             <footer className="flex flex-col gap-[14px] items-center w-full mb-10">
@@ -59,6 +59,6 @@ export default function IntroPage() {
                     </span>
                 </div>
             </footer>
-        </div>
+        </section>
     );
 }
