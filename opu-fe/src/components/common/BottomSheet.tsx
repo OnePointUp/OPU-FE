@@ -32,7 +32,7 @@ function BottomSheetInner({
     const [dragging, setDragging] = useState(false);
 
     useEffect(() => {
-        const wrapper = document.querySelector(".app-container") as HTMLElement;
+        const wrapper = document.querySelector(".app-page") as HTMLElement;
         const scrollY = window.scrollY;
 
         if (!wrapper) return;
