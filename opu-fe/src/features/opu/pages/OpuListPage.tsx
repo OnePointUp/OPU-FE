@@ -120,21 +120,17 @@ export default function OpuListPage({ items, contextType }: Props) {
         sheetId !== null ? data.find((i) => i.id === sheetId) : undefined;
 
     return (
-        <div className="app-container pt-app-header pb-40">
+        <section className="px-1">
             {/* 검색 */}
-            <div className="px-2">
-                <SearchBar
-                    value={q}
-                    onChange={(e) => setQ(e.target.value)}
-                    onSubmit={(v) => setQ(v)}
-                    placeholder={
-                        contextType === "shared"
-                            ? "공유 OPU 검색"
-                            : "나의 OPU 검색"
-                    }
-                    className="mt-5 mb-6"
-                />
-            </div>
+            <SearchBar
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                onSubmit={(v) => setQ(v)}
+                placeholder={
+                    contextType === "shared" ? "공유 OPU 검색" : "나의 OPU 검색"
+                }
+                className="mt-5 mb-6"
+            />
 
             {/* 정렬 / 필터 툴바 */}
             <div className="w-full pl-1 flex items-center justify-between">
@@ -195,7 +191,7 @@ export default function OpuListPage({ items, contextType }: Props) {
             />
 
             <PlusButton />
-        </div>
+        </section>
     );
 }
 

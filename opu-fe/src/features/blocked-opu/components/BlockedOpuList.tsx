@@ -44,7 +44,7 @@ export default function BlockedOpuList(props: Props) {
     ];
 
     return (
-        <div className="flex flex-col gap-3 px-1">
+        <div className="flex flex-col gap-3">
             {/* 검색 + 선택바 */}
             <div className="flex flex-col gap-3">
                 <SearchBar
@@ -81,7 +81,7 @@ export default function BlockedOpuList(props: Props) {
                     <button
                         type="button"
                         onClick={() => setShowConfirm(true)}
-                        className="h-7 px-2 rounded-md bg-[var(--color-opu-dark-green)] text-[12px] font-[var(--weight-medium)] text-white disabled:opacity-50 mx-1"
+                        className="h-7 px-2 rounded-md bg-[var(--color-opu-dark-green)] text-[12px] font-[var(--weight-medium)] text-white disabled:opacity-50"
                         disabled={selected.size === 0}
                         title="선택 삭제"
                     >

@@ -116,7 +116,7 @@ export default function LikedOpuPage({ items }: Props) {
         sheetId !== null ? data.find((i) => i.id === sheetId) : undefined;
 
     return (
-        <div className="app-container pt-app-header pb-40">
+        <section>
             {/* 검색 */}
             <div className="px-2">
                 <SearchBar
@@ -183,7 +183,7 @@ export default function LikedOpuPage({ items }: Props) {
             />
 
             <PlusButton />
-        </div>
+        </section>
     );
 }
 
