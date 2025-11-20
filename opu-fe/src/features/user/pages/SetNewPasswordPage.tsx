@@ -18,7 +18,7 @@ export default function PasswordChange2Page() {
     } = useSetNewPassword();
 
     return (
-        <div className="px-2">
+        <section>
             <PasswordInput
                 label="새 비밀번호"
                 value={next}
@@ -41,6 +41,6 @@ export default function PasswordChange2Page() {
                 onClick={handleSubmit}
                 className="px-2"
             />
-        </div>
+        </section>
     );
 }
