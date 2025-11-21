@@ -24,7 +24,7 @@ export default function SocialSignupPage() {
     } = useSocialSignupForm();
 
     return (
-        <section className="pt-12 px-2 overflow-hidden overscroll-none">
+        <section className="overflow-hidden overscroll-none">
             <ProfileAvatarPicker
                 nickname={nickname}
                 previewUrl={profileImgUrl}
