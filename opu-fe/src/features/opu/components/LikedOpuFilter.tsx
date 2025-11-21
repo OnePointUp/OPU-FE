@@ -17,7 +17,7 @@ export default function LikedOpuFilter({
                 className="inline-flex items-center gap-1.5"
                 style={{
                     fontSize: "var(--text-caption)",
-                    color: "var(--color-dark-gray)",
+                    color: "var(--color-dark-navy)",
                 }}
             >
                 <input

@@ -131,7 +131,7 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
                     <div className="flex items-center gap-1 flex-wrap">
                         <Badge label={categoryKey} bg={bg} color={text} />
                         <Badge
-                            label={item.periodLabel}
+                            label={item.timeLabel}
                             bg="#E3E3E3"
                             color="#6F6F6F"
                         />

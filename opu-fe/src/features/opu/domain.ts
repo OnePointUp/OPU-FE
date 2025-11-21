@@ -22,7 +22,7 @@ export type OpuCardModel = {
     emoji?: string;
     categoryId: number;
     categoryName?: string;
-    periodLabel: string;
+    timeLabel: string;
     completedCount?: number;
     locked?: boolean;
     liked: boolean;
@@ -69,15 +69,3 @@ export const CATEGORY_BADGE: Record<string, CategoryBadgeStyle> = {
 };
 
 export const toCategoryName = (id: number) => CATEGORY_MAP[id] ?? "기타";
-
-const PERIOD_LABEL_MAP: Record<OpuEntity["required_time"], string> = {
-    "1M": "1분",
-    "5M": "5분",
-    "30M": "30분",
-    "1H": "1시간",
-    DAILY: "1일",
-};
-
-export function toPeriodLabelFromCode(rt: OpuEntity["required_time"]) {
-    return PERIOD_LABEL_MAP[rt] ?? "기타";
-}

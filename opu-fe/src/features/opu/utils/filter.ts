@@ -1,28 +1,28 @@
 import type { OpuCardModel } from "../domain";
 import { CATEGORY_MAP } from "../domain";
-import { type PeriodCode, mapPeriodToLabel } from "./period";
+import { type TimeCode, mapTimeToLabel } from "./time";
 
 export type OpuFilterState = {
     q: string;
-    periods: PeriodCode[];
+    times: TimeCode[];
     categoryIds: number[];
 };
 
 export function filterOpuList(
     items: OpuCardModel[],
-    { q, periods, categoryIds }: OpuFilterState
+    { q, times, categoryIds }: OpuFilterState
 ): OpuCardModel[] {
     const text = q.trim().toLowerCase();
-    const hasPeriodFilter = periods.length > 0;
+    const hasTimeFilter = times.length > 0;
 
     return items.filter((item) => {
         // 검색어
         if (text && !item.title.toLowerCase().includes(text)) return false;
 
         // 기간 필터
-        if (hasPeriodFilter) {
-            const matched = periods.some(
-                (p) => mapPeriodToLabel(p) === item.periodLabel
+        if (hasTimeFilter) {
+            const matched = times.some(
+                (p) => mapTimeToLabel(p) === item.timeLabel
             );
             if (!matched) return false;
         }
@@ -36,9 +36,9 @@ export function filterOpuList(
     });
 }
 
-export function getPeriodFilterLabel(periods: PeriodCode[]): string {
-    if (periods.length === 0) return "시간";
-    const labels = periods.map((p) => mapPeriodToLabel(p));
+export function getTimeFilterLabel(times: TimeCode[]): string {
+    if (times.length === 0) return "시간";
+    const labels = times.map((p) => mapTimeToLabel(p));
     if (labels.length <= 2) return labels.join(", ");
     return `${labels[0]} 외 ${labels.length - 1}개`;
 }

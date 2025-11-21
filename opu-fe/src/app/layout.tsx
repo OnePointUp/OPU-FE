@@ -25,7 +25,6 @@ export default function RootLayout({
                     className="
                         mx-auto w-full max-w-[600px] min-h-dvh bg-white
                         pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]
-                        overflow-y-auto
                     "
                 >
                     {children}

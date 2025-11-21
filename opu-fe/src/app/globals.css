@@ -65,7 +65,8 @@
     --color-toggle-on: #a1d152;
     --color-toggle-off: #dfe4ea;
 
-    --color-modal-bg: rgba(0, 0, 0, 0.9);
+    --color-modal-bg: rgba(0, 0, 0, 0.8);
+    --color-input-border: #e8ebf0;
 
     /* 폰트 패밀리 */
     --font-sans: "Pretendard Variable", Pretendard, -apple-system,
@@ -112,6 +113,10 @@
     background: #fff;
 }
 
+.toast-card.is-info {
+    color: var(--color-opu-dark-pink);
+}
+
 .toast-card.is-success {
     color: var(--toast-success);
 }
@@ -148,6 +153,7 @@
 @layer components {
     /* 페이지 전체를 감싸는 div에 적용!!!!!! */
     .app-page {
+        width: min(100%, var(--app-max));
         min-height: 100vh;
         display: flex;
         flex-direction: column;
@@ -216,7 +222,7 @@
         width: 355px;
         height: 50px;
 
-        border: 1px solid #e8ebf0;
+        border: 1px solid var(--color-input-border);
         border-radius: 12px;
 
         background-color: #ffffff;
@@ -226,6 +232,12 @@
         font-size: var(--text-body);
         line-height: 1.5;
         padding-left: 15px;
+    }
+
+    .input-box::placeholder {
+        color: var(--color-placeholder);
+        font-size: var(--text-sub);
+        font-weight: var(--weight-medium);
     }
 
     .input-box--field {
@@ -387,7 +399,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        z-index: 9999;
+        z-index: 99;
         height: 72px;
         background: #fff;
         border-top: 1px solid var(--color-super-light-gray);
@@ -399,14 +411,10 @@
 
     .app-header {
         position: fixed;
-        top: 0;
-        z-index: 50;
-
+        z-index: 99;
         left: 50%;
         transform: translateX(-50%);
-        width: 100%;
-        max-width: var(--app-max);
-
+        width: min(100%, var(--app-max));
         height: var(--app-header-h);
         padding-top: var(--safe-top);
         background: var(--background);
@@ -446,7 +454,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        z-index: 9999;
+        z-index: 99;
         height: 55px;
         background: #fff;
         border: none;
@@ -492,85 +500,67 @@
 
     /* ---------------- 플러스 버튼 ---------------- */
     .plus-button__container {
-        position: absolute;
-        bottom: 24px;
-        right: 24px;
+        width: min(100%, var(--app-max));
+        transform: translateX(-50%);
+        position: fixed;
+        bottom: 0;
+        right: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
-        z-index: 10;
+        z-index: 999;
+    }
+
+    /* ---------------- 플러스 버튼 ---------------- */
+    .plus-button__container {
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: max(80px, var(--safe-bottom, 80px)); /* 메뉴바 위 여백 */
+        width: min(100%, var(--app-max));
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+
+        display: flex;
+        flex-direction: column; /* 위: 메뉴, 아래: 버튼 */
+        align-items: flex-end; /* 오른쪽 끝 정렬 */
+        gap: 10px;
+
+        z-index: 999;
     }
 
     /* 메뉴 */
     .plus-menu {
-        position: absolute;
         display: flex;
         flex-direction: column;
         align-items: flex-end;
         gap: 12px;
-        transform: translateY(0);
-        opacity: 1;
-        pointer-events: none;
-        margin-left: 60px;
-    }
-
-    /* 메뉴 아이템 (한 줄 단위) */
-    .plus-menu__item-wrapper {
+        max-height: 0;
         opacity: 0;
-        transform: translateY(0); /* 기본적으로 플러스 버튼 위치 */
-        position: absolute;
-        transition: opacity 0.1s ease, transform 0.1s ease;
+        overflow: hidden;
+        transform: translateY(4px);
+        pointer-events: none;
+
+        transition: max-height 0.15s ease, opacity 0.15s ease,
+            transform 0.15s ease;
     }
 
-    /* 열림 애니메이션 */
+    /* 열렸을 때 */
     .plus-menu--open {
+        max-height: 500px;
+        opacity: 1;
+        transform: translateY(0);
         pointer-events: auto;
     }
 
-    .plus-menu--open .plus-menu__item-wrapper {
-        opacity: 1;
-    }
-
-    /* 메뉴가 열릴 때 각 항목이 위로 순차적으로 이동 */
-    .plus-menu--open .plus-menu__item-wrapper:nth-child(1) {
-        transform: translateY(-210px);
-        transition-delay: 0.12s;
-    }
-    .plus-menu--open .plus-menu__item-wrapper:nth-child(2) {
-        transform: translateY(-140px);
-        transition-delay: 0.08s;
-    }
-    .plus-menu--open .plus-menu__item-wrapper:nth-child(3) {
-        transform: translateY(-70px);
-        transition-delay: 0.05s;
-    }
-
-    /* 닫힘 애니메이션 */
-    .plus-menu--closed .plus-menu__item-wrapper {
-        opacity: 0;
-        transform: translateY(0);
-    }
-
-    /* 닫힐 때는 반대로 순차적으로 사라짐 */
-    .plus-menu--closed .plus-menu__item-wrapper:nth-child(1) {
-        transition-delay: 0.05s;
-    }
-    .plus-menu--closed .plus-menu__item-wrapper:nth-child(2) {
-        transition-delay: 0.08s;
-    }
-    .plus-menu--closed .plus-menu__item-wrapper:nth-child(3) {
-        transition-delay: 0.12s;
-    }
-
-    /* 플로팅 메뉴 안의 한 줄 구조: [텍스트] [동그란 버튼] */
     .plus-menu__item-wrapper {
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        gap: 20px;
+        gap: 12px;
     }
 
-    /* 각 메뉴 아이템 */
+    /* 각 메뉴 아이템 버튼 */
     .plus-menu__item {
         width: 63px;
         height: 63px;
@@ -582,6 +572,7 @@
         transition: transform 0.15s ease;
         flex-shrink: 0;
     }
+
     .plus-menu__item:hover {
         transform: scale(1.05);
     }
@@ -593,23 +584,15 @@
     .plus-menu__overlay {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.35);
+        background: var(--color-modal-bg);
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s ease;
-        z-index: 5;
+        z-index: 998;
     }
-
-    /* 메뉴가 열렸을 때 오버레이 보이기 */
     .plus-menu__overlay--visible {
         opacity: 1;
         pointer-events: auto;
-    }
-
-    /* 메뉴와 버튼이 오버레이 위에 오게 */
-    .plus-button__container {
-        position: relative;
-        z-index: 10;
     }
 
     /* 메뉴 라벨 */
@@ -630,7 +613,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0px 0.5px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 0.5px 20px rgba(0, 0, 0, 0.2);
         transition: transform 0.2s ease;
     }
     .plus-button:active {
@@ -641,6 +624,42 @@
     }
     .plus-button--rotated .plus-button__icon {
         transform: rotate(45deg);
+    }
+
+    /* ============= 이모지 선택 시트 ============= */
+    /* 전체 배경, 모서리, 그림자 제거/조정 */
+    .EmojiPickerReact {
+        box-shadow: none !important;
+        border: none !important;
+
+        /* 배경/텍스트/호버 정도만 변수로 커스텀 */
+        --epr-bg-color: var(--background);
+        --epr-category-label-bg-color: transparent;
+        --epr-text-color: var(--color-dark-gray);
+        --epr-hover-bg-color: rgba(0, 0, 0, 0.04);
+    }
+
+    /* 카테고리 탭 아이콘 하이라이트 색 */
+    .EmojiPickerReact .epr-category-nav .epr-active {
+        color: var(--color-opu-green) !important;
+    }
+
+    /* 카테고리 레이블 숨기기 */
+    .EmojiPickerReact .epr-emoji-category-label {
+        display: none !important;
+    }
+
+    /* 카테고리 네비 줄 간격 조정 */
+    .EmojiPickerReact .epr-category-nav {
+        padding-inline: 8px !important;
+    }
+
+    /* 이모지 버튼 사이즈, hover */
+    .EmojiPickerReact .epr-emoji {
+        border-radius: 12px;
+    }
+    .EmojiPickerReact .epr-emoji:hover {
+        background-color: rgba(0, 0, 0, 0.04);
     }
 }
 
