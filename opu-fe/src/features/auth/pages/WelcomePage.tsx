@@ -9,7 +9,7 @@ export default function IntroPage() {
 
     return (
         <section className="overflow-hidden overscroll-none">
-            <div className="flex flex-col justify-between min-h-screen pb-app-bottom">
+            <div className="flex flex-col gap-12">
                 {/* ---------- 상단: 로고 & 문구 ---------- */}
                 <header className="flex flex-col gap-3 items-center text-center">
                     <h1 className="text-h1 font-bold text-[color:var(--color-dark-navy)] text-[length:var(--text-h1)]">
