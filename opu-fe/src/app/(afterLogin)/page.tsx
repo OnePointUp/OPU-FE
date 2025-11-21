@@ -1,3 +1,5 @@
-export default function Home() {
-    return <h1>홈화면</h1>;
+import MainPage from "@/features/main/pages/MainPage";
+
+export default function Page() {
+    return <MainPage />;
 }
