@@ -9,7 +9,7 @@ type Props = {
 
 export default function BlockedOpuManagePage({ initialItems }: Props) {
     return (
-        <section className="px-2">
+        <section>
             <BlockedOpuList initialItems={initialItems} />
         </section>
     );

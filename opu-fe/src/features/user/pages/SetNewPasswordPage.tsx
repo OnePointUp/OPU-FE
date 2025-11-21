@@ -18,21 +18,23 @@ export default function PasswordChange2Page() {
     } = useSetNewPassword();
 
     return (
-        <div className="px-2">
-            <PasswordInput
-                label="새 비밀번호"
-                value={next}
-                onChange={handleChangeNext}
-                placeholder="@LwEoLgXgU7"
-                error={errNext}
-            />
-            <PasswordInput
-                label="비밀번호 확인"
-                value={confirm}
-                onChange={handleChangeConfirm}
-                placeholder="@LwEoLgXgU7"
-                error={errConfirm}
-            />
+        <section>
+            <div className="flex flex-col gap-5">
+                <PasswordInput
+                    label="새 비밀번호"
+                    value={next}
+                    onChange={handleChangeNext}
+                    placeholder="@LwEoLgXgU7"
+                    error={errNext}
+                />
+                <PasswordInput
+                    label="비밀번호 확인"
+                    value={confirm}
+                    onChange={handleChangeConfirm}
+                    placeholder="@LwEoLgXgU7"
+                    error={errConfirm}
+                />
+            </div>
 
             <OpuActionButton
                 label="저장"
@@ -41,6 +43,6 @@ export default function PasswordChange2Page() {
                 onClick={handleSubmit}
                 className="px-2"
             />
-        </div>
+        </section>
     );
 }

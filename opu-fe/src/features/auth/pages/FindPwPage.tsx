@@ -15,27 +15,25 @@ export default function FindPasswordPage() {
     } = useFindPassword();
 
     return (
-        <div className="app-page overflow-hidden overscroll-none">
-            <main className="app-container pt-app-header pb-40 px-6 flex flex-col items-center">
+        <section className="pt-8 overflow-hidden overscroll-none">
+            <main className="flex flex-col items-center">
                 {/* 설명 */}
-                <div className="mt-[62px]">
-                    <p
-                        className="text-center"
-                        style={{
-                            font: "var(--text-sub)",
-                            color: "var(--color-dark-gray)",
-                            fontWeight: "var(--weight-semibold)",
-                        }}
-                    >
-                        비밀번호 재설정을 위해
-                        <br />
-                        가입하신 이메일 주소를 입력해주세요.
-                    </p>
-                </div>
+                <span
+                    className="text-center"
+                    style={{
+                        font: "var(--text-sub)",
+                        color: "var(--color-dark-gray)",
+                        fontWeight: "var(--weight-semibold)",
+                    }}
+                >
+                    비밀번호 재설정을 위해
+                    <br />
+                    가입하신 이메일 주소를 입력해주세요.
+                </span>
 
                 {/* 입력 폼 */}
                 <form
-                    className="w-full flex flex-col gap-[17px]"
+                    className="w-full flex flex-col gap-5"
                     onSubmit={(e) => e.preventDefault()}
                 >
                     <EmailField
@@ -54,6 +52,6 @@ export default function FindPasswordPage() {
                     />
                 </form>
             </main>
-        </div>
+        </section>
     );
 }

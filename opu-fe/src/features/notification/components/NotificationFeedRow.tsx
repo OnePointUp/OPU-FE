@@ -24,7 +24,7 @@ export default function NotificationFeedRow({ item, onRead }: Props) {
     return (
         <li
             onClick={() => onRead(item.id)}
-            className="cursor-pointer flex gap-4 px-2 py-3"
+            className="cursor-pointer flex gap-4 py-3"
             style={{
                 background: "var(--color-background)",
                 opacity: isDimmed ? 0.5 : 1,

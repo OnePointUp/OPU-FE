@@ -35,7 +35,7 @@ export default function OpuEditPage({ id }: Props) {
     const notFound = !existing;
 
     return (
-        <div className="mt-3 mx-2">
+        <section>
             {notFound ? (
                 <div
                     className="text-center text-sm py-10"
@@ -106,6 +106,6 @@ export default function OpuEditPage({ id }: Props) {
                     />
                 </>
             )}
-        </div>
+        </section>
     );
 }

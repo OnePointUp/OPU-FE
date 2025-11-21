@@ -8,23 +8,21 @@ export default function PasswordEmailSentPage() {
         usePasswordEmailSent();
 
     return (
-        <div className="app-page overflow-hidden overscroll-none">
-            <main className="app-container pt-app-header pb-40 px-6 flex flex-col items-center gap-[22px]">
+        <div className="pt-8 overflow-hidden overscroll-none">
+            <main className="flex flex-col items-center gap-5">
                 {/* 설명 */}
-                <div className="mt-[62px]">
-                    <p
-                        className="text-center"
-                        style={{
-                            font: "var(--text-sub)",
-                            color: "var(--color-dark-gray)",
-                            fontWeight: "var(--weight-semibold)",
-                        }}
-                    >
-                        비밀번호 재설정 링크가
-                        <br />
-                        가입하신 이메일로 발송되었습니다.
-                    </p>
-                </div>
+                <span
+                    className="text-center"
+                    style={{
+                        font: "var(--text-sub)",
+                        color: "var(--color-dark-gray)",
+                        fontWeight: "var(--weight-semibold)",
+                    }}
+                >
+                    비밀번호 재설정 링크가
+                    <br />
+                    가입하신 이메일로 발송되었습니다.
+                </span>
 
                 {/* 확인 버튼 */}
                 <OpuActionButton

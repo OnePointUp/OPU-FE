@@ -9,36 +9,36 @@ type Props = {
 };
 
 export default function EmailField({
-  value,
-  onChange,
-  className = "",
-  isLabeled = true,
-  error
+    value,
+    onChange,
+    className = "",
+    isLabeled = true,
+    error,
 }: Props) {
-  return (
-    <section className={`mt-6 ${className}`}>
-      {isLabeled && (
-        <label
-          className="block mb-2 ml-1"
-          style={{
-            fontSize: "var(--text-sub)",
-            fontWeight: "var(--weight-semibold)",
-            color: "var(--color-dark-navy)",
-          }}
-        >
-          이메일
-        </label>
-      )}
+    return (
+        <section className={`mt-6 ${className}`}>
+            {isLabeled && (
+                <label
+                    className="block mb-2 ml-1"
+                    style={{
+                        fontSize: "var(--text-sub)",
+                        fontWeight: "var(--weight-semibold)",
+                        color: "var(--color-dark-navy)",
+                    }}
+                >
+                    이메일
+                </label>
+            )}
 
-      <input
-        type="email"
-        placeholder="example@opu.com"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="input-box input-box--field"
-      />
+            <input
+                type="email"
+                placeholder="example@opu.com"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                className="input-box input-box--field"
+            />
 
-      {error ? (
+            {error ? (
                 <p
                     className="mt-2 ml-1"
                     style={{
@@ -50,6 +50,6 @@ export default function EmailField({
                     {error}
                 </p>
             ) : null}
-    </section>
-  );
+        </section>
+    );
 }
