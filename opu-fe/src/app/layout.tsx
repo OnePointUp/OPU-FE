@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import ScrollToTop from "@/components/common/ScrollToTop";
 
 export const metadata: Metadata = {
     title: "One Point Up",
@@ -25,8 +26,10 @@ export default function RootLayout({
                     className="
                         mx-auto w-full max-w-[600px] min-h-dvh bg-white
                         pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]
-                        "
+                        relative
+                    "
                 >
+                    <ScrollToTop />
                     {children}
                 </div>
 
@@ -38,7 +41,7 @@ export default function RootLayout({
                         zIndex: 10000,
                     }}
                     toastOptions={{
-                        duration: 2000,
+                        duration: 1500,
                     }}
                 />
             </body>

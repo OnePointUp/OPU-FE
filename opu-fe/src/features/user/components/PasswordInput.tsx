@@ -18,6 +18,7 @@ export default function PasswordInput({
     onChange,
     placeholder = "",
     error,
+    className,
 }: Props) {
     const [show, setShow] = useState(false);
 

@@ -11,7 +11,7 @@ type Props = {
     className?: string;
 };
 
-export default function BottomActionBar({
+export default function OpuActionButton({
     label = "저장",
     disabled,
     loading = false,
@@ -25,15 +25,15 @@ export default function BottomActionBar({
         <div
             className={
                 positionFixed
-                ? `fixed left-0 right-0 bottom-0 px-5 pt-3 pb-[max(16px,var(--safe-bottom))] flex justify-center bg-[var(--background)] ${className}`
-                : `${className}`
+                    ? `fixed left-0 right-0 bottom-0 px-5 pt-3 pb-[max(16px,var(--safe-bottom))] flex justify-center bg-[var(--background)] ${className}`
+                    : `${className}`
             }
             style={
                 positionFixed
-                ? { width: "min(100%, var(--app-max))", margin: "0 auto" }
-                : undefined
+                    ? { width: "min(100%, var(--app-max))", margin: "0 auto" }
+                    : undefined
             }
-            >
+        >
             <button
                 type="button"
                 onClick={onClick}

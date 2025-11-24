@@ -28,7 +28,7 @@
     /* 브랜드 컬러 */
     --color-opu-pink: #ffb6c5;
     --color-light-pink: #ffd4d4;
-    --color-super-light-pink: #fff6f9;
+    --color-super-light-pink: #fff8fb;
     --color-opu-dark-pink: #f38ba0;
     --color-opu-dark-pink-30: rgba(243, 139, 160, 0.3);
 
@@ -157,7 +157,6 @@
         flex-direction: column;
         align-items: center;
         background: var(--background);
-        overflow: hidden;
     }
 
     /* 헤더 만큼 위 패딩 */
@@ -168,7 +167,7 @@
     /* 페이지 폭 + 가운데 정렬 + 좌우 패딩 */
     .app-container {
         width: min(100%, var(--app-max));
-        margin-inline: auto;
+        padding-top: 1.5rem;
         padding-left: max(1rem, env(safe-area-inset-left));
         padding-right: max(1rem, env(safe-area-inset-right));
         overflow: hidden;
@@ -685,6 +684,57 @@
         transparent
     );
     animation: shimmer 1.2s infinite;
+}
+
+/* 로딩 효과 */
+@keyframes bounce-slow {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.animate-bounce-slow {
+    animation: bounce-slow 1.4s infinite ease-in-out;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 9999px;
+    display: inline-block;
+    animation: dotBlink 1.4s infinite ease-in-out;
+    transform-origin: center;
+}
+
+@keyframes dotBlink {
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(0.7); /* 작게 */
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2); /* 크게 */
+    }
+}
+
+.dot:nth-child(2) {
+    animation-delay: 0.15s;
+}
+.dot:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@font-face {
+    font-family: "Cafe24Oneprettynight";
+    src: url("/fonts/Cafe24Oneprettynight-v2.0.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
 }
 
 /* ---------------- 다크모드 ---------------- */
