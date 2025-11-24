@@ -35,7 +35,7 @@ export default function RegisterEmailPage() {
     } = useSignupEmail();
 
     return (
-        <section className="overflow-hidden overscroll-none">
+        <section>
             <ProfileAvatarPicker
                 nickname={nickname}
                 previewUrl={profileImgUrl}
