@@ -47,6 +47,8 @@ export default function OpuListPage({ items, contextType }: Props) {
 
     const [sheetId, setSheetId] = useState<number | null>(null);
 
+    const router = useRouter();
+
     // 목데이터로 로딩 시뮬레이션
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -190,7 +192,7 @@ export default function OpuListPage({ items, contextType }: Props) {
                 onReset={handleResetFilter}
             />
 
-            <PlusButton />
+            <PlusButton onDirectCreate={() => router.push("/opu/register")} />
         </section>
     );
 }
