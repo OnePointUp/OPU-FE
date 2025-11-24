@@ -22,15 +22,15 @@ export default function LoginPage() {
     } = useLogin();
 
     return (
-        <div className="app-page overflow-hidden overscroll-none">
-            <main className="app-container pt-app-header pb-40 px-6 flex flex-col items-center">
+        <section className="pt-8">
+            <main className="flex flex-col items-center">
                 {/* 로고 */}
-                <div className="mt-14 flex justify-center">
+                <div className="flex justify-center">
                     <Image
                         src="/images/cabit_logo3.png"
                         alt="OPU mascot"
-                        width={160}
-                        height={160}
+                        width={120}
+                        height={120}
                         priority
                     />
                 </div>
@@ -40,18 +40,20 @@ export default function LoginPage() {
                     className="w-full flex flex-col"
                     onSubmit={(e) => e.preventDefault()}
                 >
-                    <EmailField
-                        value={email}
-                        onChange={handleEmailChange}
-                        error={emailError}
-                    />
+                    <div className="flex flex-col gap-5">
+                        <EmailField
+                            value={email}
+                            onChange={handleEmailChange}
+                            error={emailError}
+                        />
 
-                    <PasswordInput
-                        label="비밀번호"
-                        value={password}
-                        onChange={setPassword}
-                        placeholder="비밀번호를 입력하세요"
-                    />
+                        <PasswordInput
+                            label="비밀번호"
+                            value={password}
+                            onChange={setPassword}
+                            placeholder="비밀번호를 입력하세요"
+                        />
+                    </div>
 
                     <OpuActionButton
                         label="로그인"
@@ -59,7 +61,7 @@ export default function LoginPage() {
                         loading={loading}
                         onClick={handleSubmit}
                         positionFixed={false}
-                        className="mt-6"
+                        className="mt-5"
                     />
                 </form>
 
@@ -80,6 +82,6 @@ export default function LoginPage() {
                     </span>
                 </div>
             </main>
-        </div>
+        </section>
     );
 }

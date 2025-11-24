@@ -35,51 +35,47 @@ export default function RegisterEmailPage() {
     } = useSignupEmail();
 
     return (
-        <div className="app-page overflow-hidden overscroll-none">
-            <main className="app-container pt-app-header pb-40 px-6">
-                <ProfileAvatarPicker
-                    nickname={nickname}
-                    previewUrl={profileImgUrl}
-                    onPick={handlePickImage}
-                />
+        <section className="overflow-hidden overscroll-none">
+            <ProfileAvatarPicker
+                nickname={nickname}
+                previewUrl={profileImgUrl}
+                onPick={handlePickImage}
+            />
 
-                <EmailField
-                    value={email}
-                    onChange={handleEmailChange}
-                    error={emailError}
-                />
+            <EmailField
+                value={email}
+                onChange={handleEmailChange}
+                error={emailError}
+            />
 
-                <PasswordInput
-                    label="비밀번호"
-                    value={password}
-                    onChange={setPassword}
-                />
+            <PasswordInput
+                label="비밀번호"
+                value={password}
+                onChange={setPassword}
+            />
 
-                <PasswordInput
-                    label="비밀번호 확인"
-                    value={confirmPassword}
-                    onChange={setConfirmPassword}
-                    error={
-                        isPwMismatch
-                            ? "일치하지 않는 비밀번호입니다."
-                            : undefined
-                    }
-                />
+            <PasswordInput
+                label="비밀번호 확인"
+                value={confirmPassword}
+                onChange={setConfirmPassword}
+                error={
+                    isPwMismatch ? "일치하지 않는 비밀번호입니다." : undefined
+                }
+            />
 
-                <NicknameField
-                    value={nickname}
-                    onChange={(v) => setNickname(v)}
-                    onBlurCheck={handleBlurNickname}
-                    error={dupError}
-                    checking={checking}
-                />
+            <NicknameField
+                value={nickname}
+                onChange={(v) => setNickname(v)}
+                onBlurCheck={handleBlurNickname}
+                error={dupError}
+                checking={checking}
+            />
 
-                <AgreementsField
-                    value={agreements}
-                    onChangeAll={handleCheckAll}
-                    onChangeItem={handleCheckItem}
-                />
-            </main>
+            <AgreementsField
+                value={agreements}
+                onChangeAll={handleCheckAll}
+                onChangeItem={handleCheckItem}
+            />
 
             <OpuActionButton
                 label="다음"
@@ -87,6 +83,6 @@ export default function RegisterEmailPage() {
                 loading={loading}
                 onClick={handleSubmit}
             />
-        </div>
+        </section>
     );
 }

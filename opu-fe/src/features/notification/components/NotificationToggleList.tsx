@@ -8,12 +8,12 @@ type Props = {
 export default function Group({ title, children }: Props) {
     return (
         <section className="w-full">
-            <div className="px-2 mt-5 mb-1">
+            <div className="mt-4 mb-1">
                 <h3
-                    className="text-[var(--color-dark-navy)]"
                     style={{
                         fontWeight: "var(--weight-semibold)",
-                        fontSize: "12px",
+                        fontSize: "var(--text-sub)",
+                        color: "var(--color-dark-navy)]",
                     }}
                 >
                     {title}

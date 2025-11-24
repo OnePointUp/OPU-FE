@@ -65,65 +65,63 @@ export default function NotificationListPage() {
     const groups = groupByDate(items);
 
     return (
-        <div className="app-page">
-            <main className="app-container pt-app-header pb-40">
-                <div className="flex justify-end mt-3 mx-2">
-                    <button
-                        type="button"
-                        className="underline underline-offset-[3px] decoration-[1px]"
-                        style={{
-                            fontSize: "var(--text-caption)",
-                            color: "var(--color-light-gray)",
-                        }}
-                        onClick={markAllRead}
-                    >
-                        모두 읽음
-                    </button>
-                </div>
+        <section>
+            <div className="flex justify-end -mt-2">
+                <button
+                    type="button"
+                    className="underline underline-offset-[3px] decoration-[1px]"
+                    style={{
+                        fontSize: "var(--text-caption)",
+                        color: "var(--color-light-gray)",
+                    }}
+                    onClick={markAllRead}
+                >
+                    모두 읽음
+                </button>
+            </div>
 
-                {loading ? (
-                    <ul className="flex flex-col">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                            <NotificationFeedRowSkeleton key={i} />
-                        ))}
-                    </ul>
-                ) : groups.length === 0 ? (
-                    <div
-                        className="text-center py-10 w-full"
-                        style={{
-                            fontSize: "var(--text-sub)",
-                            color: "var(--color-light-gray)",
-                        }}
-                    >
-                        아직 알림이 없어요.
-                    </div>
-                ) : (
-                    <div className="flex flex-col">
-                        {groups.map((group) => (
-                            <section key={group.label}>
-                                <h2
-                                    className="px-2 pt-3"
-                                    style={{
-                                        fontSize: "var(--text-caption)",
-                                        color: "var(--color-dark-gray)",
-                                    }}
-                                >
-                                    {group.label}
-                                </h2>
-                                <ul className="flex flex-col">
-                                    {group.items.map((item) => (
-                                        <NotificationFeedRow
-                                            key={item.id + item.createdAt}
-                                            item={item}
-                                            onRead={markAsRead}
-                                        />
-                                    ))}
-                                </ul>
-                            </section>
-                        ))}
-                    </div>
-                )}
-            </main>
-        </div>
+            {loading ? (
+                <ul className="flex flex-col">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <NotificationFeedRowSkeleton key={i} />
+                    ))}
+                </ul>
+            ) : groups.length === 0 ? (
+                <div
+                    className="text-center py-10 w-full"
+                    style={{
+                        fontSize: "var(--text-sub)",
+                        color: "var(--color-light-gray)",
+                    }}
+                >
+                    아직 알림이 없어요.
+                </div>
+            ) : (
+                <div className="flex flex-col">
+                    {groups.map((group) => (
+                        <section key={group.label}>
+                            <h2
+                                className="pt-3"
+                                style={{
+                                    fontSize: "var(--text-caption)",
+                                    color: "var(--color-dark-gray)",
+                                }}
+                            >
+                                {group.label}
+                            </h2>
+                            <ul className="flex flex-col">
+                                {group.items.map((item) => (
+                                    <NotificationFeedRow
+                                        key={item.id + item.createdAt}
+                                        item={item}
+                                        onRead={markAsRead}
+                                    />
+                                ))}
+                            </ul>
+                        </section>
+                    ))}
+                </div>
+            )}
+        </section>
     );
 }
