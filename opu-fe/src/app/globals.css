@@ -685,58 +685,55 @@
     animation: shimmer 1.2s infinite;
 }
 
-/* 후광 효과 */
-@keyframes glow {
-    0% {
+/* 로딩 효과 */
+@keyframes bounce-slow {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.animate-bounce-slow {
+    animation: bounce-slow 1.4s infinite ease-in-out;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 9999px;
+    display: inline-block;
+    animation: dotBlink 1.4s infinite ease-in-out;
+    transform-origin: center;
+}
+
+@keyframes dotBlink {
+    0%,
+    100% {
         opacity: 0.3;
-        transform: scale(0.95);
-        box-shadow: 0 0 10px rgba(255, 182, 197, 0.6),
-            0 0 20px rgba(255, 182, 197, 0.3);
+        transform: scale(0.7); /* 작게 */
     }
     50% {
         opacity: 1;
-        transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(255, 182, 197, 0.8),
-            0 0 30px rgba(255, 182, 197, 0.4), 0 0 40px rgba(255, 182, 197, 0.2);
-    }
-    100% {
-        opacity: 0.3;
-        transform: scale(0.95);
-        box-shadow: 0 0 10px rgba(255, 182, 197, 0.6),
-            0 0 20px rgba(255, 182, 197, 0.3);
+        transform: scale(1.2); /* 크게 */
     }
 }
 
-.animate-glow {
-    animation: glow 2.2s ease-in-out infinite;
+.dot:nth-child(2) {
+    animation-delay: 0.15s;
+}
+.dot:nth-child(3) {
+    animation-delay: 0.3s;
 }
 
-/* 테두리 후광 효과 */
-@keyframes border-glow-ring {
-    0% {
-        background-position: 0% 50%;
-        box-shadow: 0 0 4px rgba(255, 182, 197, 0.5);
-    }
-    50% {
-        background-position: 100% 50%;
-        box-shadow: 0 0 12px rgba(255, 182, 197, 0.9);
-    }
-    100% {
-        background-position: 0% 50%;
-        box-shadow: 0 0 4px rgba(255, 182, 197, 0.5);
-    }
-}
-
-.animate-border-glow-ring {
-    background: linear-gradient(
-        120deg,
-        rgba(255, 182, 197, 1),
-        rgba(255, 220, 235, 0.6),
-        rgba(255, 182, 197, 1)
-    );
-    background-size: 200% 200%;
-    animation: border-glow-ring 2.2s ease-in-out infinite;
-    border-radius: 9999px; /* or 18px, 버튼 모양에 맞춰 */
+@font-face {
+    font-family: "Cafe24Oneprettynight";
+    src: url("/fonts/Cafe24Oneprettynight-v2.0.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
 }
 
 /* ---------------- 다크모드 ---------------- */

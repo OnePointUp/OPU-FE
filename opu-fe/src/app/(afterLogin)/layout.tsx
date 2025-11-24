@@ -33,7 +33,7 @@ export default function AfterLoginLayout({
     const bottomOffset = hideMenu ? 0 : 55;
 
     return (
-        <div className="app-page relative">
+        <div className="app-page">
             <Header />
 
             <main

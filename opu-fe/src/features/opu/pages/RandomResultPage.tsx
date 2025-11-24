@@ -1,7 +1,7 @@
 import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
 import { drawRandomOpu, type RandomScope } from "@/features/opu/random";
 import type { TimeCode } from "@/features/opu/utils/time";
-import RandomResultView from "../components/RandomResultView";
+import RandomResultClient from "./RandomResultClient";
 
 type RawSearchParams = {
     scope?: string;
@@ -39,5 +39,5 @@ export default async function RandomResultPage({ searchParams }: Props) {
         );
     }
 
-    return <RandomResultView item={opu} />;
+    return <RandomResultClient item={opu} delayMs={1100} />;
 }
