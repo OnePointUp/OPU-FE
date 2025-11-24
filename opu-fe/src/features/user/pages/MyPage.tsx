@@ -41,7 +41,7 @@ export default function MyPageScreen() {
     }, []);
 
     return (
-        <section className="-my-2">
+        <section>
             <UserInfo
                 nickname={profile?.nickname ?? ""}
                 email={profile?.email ?? ""}
