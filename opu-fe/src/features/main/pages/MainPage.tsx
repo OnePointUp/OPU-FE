@@ -30,7 +30,7 @@ export default function MainPage() {
     }
   }, [year, month]);
 
-  // 날짜 선택
+  /** 날짜 선택시 MainPage에서 year/month를 업데이트까지 수행 */
   const handleSelectDay = (day: DailyTodoStats) => {
     const date = new Date(day.date);
 
@@ -39,7 +39,7 @@ export default function MainPage() {
     setMonth(date.getMonth() + 1);
   };
 
-  // TODO 체크 토글
+  /** TODO 체크 토글 */
   const handleToggleTodo = (todoId: number) => {
     if (!selectedDay) return;
 
@@ -66,14 +66,7 @@ export default function MainPage() {
         else if (ratio >= 0.2) intensity = 2;
         else intensity = 1;
 
-        return {
-          ...day,
-          todos,
-          doneCount,
-          total,
-          ratio,
-          intensity,
-        };
+        return { ...day, todos, doneCount, total, ratio, intensity };
       });
 
       setCalendarMatrix(buildCalendarMatrix(updated));
@@ -85,7 +78,7 @@ export default function MainPage() {
     });
   };
 
-  // TODO 제목 수정
+  /** TODO 제목 수정 */
   const handleEditTodo = (todoId: number, newTitle: string) => {
     if (!selectedDay) return;
 
@@ -97,10 +90,7 @@ export default function MainPage() {
           todo.id === todoId ? { ...todo, title: newTitle } : todo
         );
 
-        return {
-          ...day,
-          todos,
-        };
+        return { ...day, todos };
       });
 
       setCalendarMatrix(buildCalendarMatrix(updated));
@@ -114,7 +104,7 @@ export default function MainPage() {
     setEditingTodoId(null);
   };
 
-  // TODO 삭제
+  /** TODO 삭제 */
   const handleDeleteTodo = (todoId: number) => {
     if (!selectedDay) return;
 
@@ -136,14 +126,7 @@ export default function MainPage() {
         else if (ratio >= 0.2) intensity = 2;
         else intensity = 1;
 
-        return {
-          ...day,
-          todos,
-          total,
-          doneCount,
-          ratio,
-          intensity,
-        };
+        return { ...day, todos, total, doneCount, ratio, intensity };
       });
 
       setCalendarMatrix(buildCalendarMatrix(updated));
@@ -155,7 +138,7 @@ export default function MainPage() {
     });
   };
 
-  // 🔥 새 Todo 생성
+  /** 새 Todo 생성 */
   const handleAddTodo = () => {
     if (!selectedDay) return;
 
@@ -163,15 +146,9 @@ export default function MainPage() {
       const updated = prev.map(day => {
         if (day.date !== selectedDay.date) return day;
 
-        const newId =
-          day.todos.length > 0 ? Math.max(...day.todos.map(t => t.id)) + 1 : 1;
+        const newId = day.todos.length > 0 ? Math.max(...day.todos.map(t => t.id)) + 1 : 1;
 
-        const newTodo = {
-          id: newId,
-          title: "",
-          done: false,
-        };
-
+        const newTodo = { id: newId, title: "", done: false };
         const todos = [...day.todos, newTodo];
 
         const doneCount = todos.filter(t => t.done).length;
@@ -186,24 +163,17 @@ export default function MainPage() {
         else if (ratio >= 0.2) intensity = 2;
         else intensity = 1;
 
-        return {
-          ...day,
-          todos,
-          total,
-          doneCount,
-          ratio,
-          intensity,
-        };
+        return { ...day, todos, total, doneCount, ratio, intensity };
       });
 
       setCalendarMatrix(buildCalendarMatrix(updated));
+
       const newSelected = updated.find(d => d.date === selectedDay.date) ?? null;
       setSelectedDay(newSelected);
 
       return updated;
     });
 
-    // 방금 만든 todo를 editing 상태로 만들기
     const newId =
       selectedDay.todos.length > 0
         ? Math.max(...selectedDay.todos.map(t => t.id)) + 1
@@ -215,10 +185,9 @@ export default function MainPage() {
   return (
     <div className="app-page">
       <main className="app-container pt-app-header pb-40 px-4">
-
         <Calendar
           selectedDay={selectedDay}
-          onSelectDay={setSelectedDay}
+          onSelectDay={handleSelectDay}
         />
 
         <TodoList
@@ -229,7 +198,7 @@ export default function MainPage() {
           editingTodoId={editingTodoId}
         />
 
-       <PlusButton onDirectCreate={handleAddTodo} />
+        <PlusButton onDirectCreate={handleAddTodo} />
       </main>
     </div>
   );
