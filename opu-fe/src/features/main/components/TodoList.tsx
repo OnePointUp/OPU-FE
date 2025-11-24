@@ -3,22 +3,42 @@
 import { DailyTodoStats } from "@/mocks/api/db/calendar.db";
 import { Icon } from "@iconify/react";
 import TodoActionSheet from "./TodoActionSheet";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   selectedDay: DailyTodoStats | null;
   onToggleTodo: (todoId: number) => void;
   onEditTodo: (todoId: number, newTitle: string) => void;
   onDeleteTodo: (todoId: number) => void;
+  editingTodoId: number | null;
 };
 
-export default function TodoList({ selectedDay, onToggleTodo, onEditTodo, onDeleteTodo }: Props) {
+export default function TodoList({
+  selectedDay,
+  onToggleTodo,
+  onEditTodo,
+  onDeleteTodo,
+  editingTodoId,
+}: Props) {
+
   const [openSheet, setOpenSheet] = useState(false);
   const [targetTodo, setTargetTodo] =
     useState<DailyTodoStats["todos"][number] | null>(null);
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
+
+  // 🔥 PlusButton으로 새 Todo 생성되면 자동 편집 모드로
+  useEffect(() => {
+    if (!selectedDay) return;
+    if (editingTodoId === null) return;
+
+    const todo = selectedDay.todos.find(t => t.id === editingTodoId);
+    if (!todo) return;
+
+    setEditingId(todo.id);
+    setEditText(todo.title);
+  }, [editingTodoId, selectedDay]);
 
   if (!selectedDay) return null;
 
