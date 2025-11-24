@@ -6,10 +6,12 @@ export default function MonthView({
   calendarMatrix,
   selectedDay,
   onSelectDay,
+  todayStr,
 }: {
   calendarMatrix: (DailyTodoStats | null)[][];
   selectedDay: DailyTodoStats | null;
   onSelectDay: (d: DailyTodoStats) => void;
+  todayStr: string; // ← 추가
 }) {
   return (
     <div className="grid grid-cols-7 gap-2 inline-grid mx-auto">
@@ -19,7 +21,11 @@ export default function MonthView({
             <button
               key={day.date}
               onClick={() => onSelectDay(day)}
-              className="w-10 h-10 rounded-lg flex items-center justify-center text-agreement-optional"
+              className={`
+                w-10 h-10 rounded-lg flex items-center justify-center
+                text-agreement-optional text-[var(--color-dark-blue-gray)]
+                ${day.date === todayStr ? "font-bold underline text-[var(--color-dark-navy)]" : ""}
+              `}
               style={{
                 backgroundColor: CALENDAR_COLORS[day.intensity],
                 border:

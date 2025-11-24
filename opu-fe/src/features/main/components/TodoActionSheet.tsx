@@ -28,7 +28,7 @@ export default function TodoActionSheet({
         <button
           className="w-full py-3 mb-2 text-agreement-optional"
           onClick={() => onEdit(todo)}
-        >
+          >
           수정하기
         </button>
 

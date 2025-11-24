@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Icon } from "@iconify/react";
-import CalendarPicker from "./CalendarPicker";
+import CalendarPicker from "./CalendarPicker"; // ← dynamic 제거
 
 type Props = {
   year: number;
@@ -25,10 +25,8 @@ export default function MonthSelector({
 }: Props) {
   const [open, setOpen] = useState(false);
 
-  /** Picker로 넘길 초기 선택 날짜 */
   const initialDate = new Date(year, month - 1, day);
 
-  /** Picker에서 날짜 선택 후 MonthSelector로 다시 전달 */
   const handleSelect = (date: Date) => {
     onSelect(date.getFullYear(), date.getMonth() + 1, date.getDate());
     setOpen(false);
@@ -36,9 +34,7 @@ export default function MonthSelector({
 
   return (
     <div className={className}>
-      {/* 상단 Year/Month + View Toggle */}
       <div className="flex justify-between items-center w-full mt-[10px] mb-[20px]">
-        {/* 날짜 표시 버튼 (클릭 시 Modal Picker 열림) */}
         <button
           onClick={() => setOpen(true)}
           className="flex items-center gap-1 text-xl font-semibold"
@@ -47,16 +43,16 @@ export default function MonthSelector({
           <Icon icon="iconamoon:arrow-down-2-thin" width={20} height={20} />
         </button>
 
-        {/* Month/Week 전환 버튼 */}
         <button
           onClick={onToggleView}
-          className="px-3 py-[2px] rounded-full bg-[var(--color-light-blue-gray)] text-[var(--text-mini)] text-gray-600 font-medium"
+          className="px-3 py-[2px] rounded-full bg-[var(--color-light-blue-gray)] 
+                     text-[var(--text-mini)] text-gray-600 font-medium"
         >
           {viewMode === "month" ? "월" : "주"}
         </button>
       </div>
 
-      {/* CalendarPicker 모달 (단일 컴포넌트) */}
+      {/* 항상 렌더링, visibility만 제어 */}
       <CalendarPicker
         open={open}
         onClose={() => setOpen(false)}
