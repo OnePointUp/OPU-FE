@@ -500,19 +500,6 @@
 
     /* ---------------- 플러스 버튼 ---------------- */
     .plus-button__container {
-        width: min(100%, var(--app-max));
-        transform: translateX(-50%);
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        z-index: 999;
-    }
-
-    /* ---------------- 플러스 버튼 ---------------- */
-    .plus-button__container {
         position: fixed;
         left: 50%;
         transform: translateX(-50%);
@@ -573,13 +560,10 @@
         flex-shrink: 0;
     }
 
-    .plus-menu__item:hover {
-        transform: scale(1.05);
-    }
     .plus-menu__item:active {
-        transform: scale(0.95);
+        transform: scale(0.9);
     }
-
+    
     /* 버튼 클릭 시 배경 어둡게 */
     .plus-menu__overlay {
         position: fixed;
