@@ -7,6 +7,7 @@ import { buildCalendarMatrix } from "@/lib/calendar";
 
 import Calendar from "../components/Calendar";
 import TodoList from "../components/TodoList";
+import PlusButton from "@/components/common/PlusButton";
 
 export default function MainPage() {
   const [year, setYear] = useState(2025);
@@ -173,6 +174,7 @@ const handleDeleteTodo = (todoId: number) => {
           onDeleteTodo={handleDeleteTodo}
         />
 
+        <PlusButton />
       </main>
     </div>
   );
