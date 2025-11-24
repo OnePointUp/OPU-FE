@@ -32,36 +32,32 @@ function BottomSheetInner({
     const [dragging, setDragging] = useState(false);
 
     useEffect(() => {
-        const wrapper = document.querySelector(".app-page") as HTMLElement;
-        const scrollY = window.scrollY;
+    const scrollY = window.scrollY;
 
-        if (!wrapper) return;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
 
-        wrapper.style.position = "fixed";
-        wrapper.style.top = `-${scrollY}px`;
-        wrapper.style.left = "0";
-        wrapper.style.right = "0";
-        wrapper.style.overflow = "hidden";
-        wrapper.style.width = "min(100%, var(--app-max))";
+      const onKeyDown = (e: KeyboardEvent) => {
+          if (e.key === "Escape") onClose();
+      };
+      document.addEventListener("keydown", onKeyDown);
 
-        const onKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onClose();
-        };
-        document.addEventListener("keydown", onKeyDown);
+      return () => {
+          document.removeEventListener("keydown", onKeyDown);
 
-        return () => {
-            document.removeEventListener("keydown", onKeyDown);
+          document.body.style.position = '';
+          document.body.style.top = '';
+          document.body.style.left = '';
+          document.body.style.right = '';
+          document.body.style.width = '';
 
-            wrapper.style.position = "";
-            wrapper.style.top = "";
-            wrapper.style.left = "";
-            wrapper.style.right = "";
-            wrapper.style.overflow = "";
-            wrapper.style.width = "";
-
-            window.scrollTo(0, scrollY);
-        };
+          window.scrollTo(0, scrollY);
+      };
     }, [onClose]);
+
 
     const beginDrag = (y: number) => {
         startY.current = y;
