@@ -52,7 +52,9 @@
     --color-dark-gray: #667085;
     --color-super-dark-gray: #595959;
 
+    --color-light-blue-gray: #F1F5F9;
     --color-blue-gray: #94a3b8;
+    --color-dark-blue-gray: #64758B;
     --color-dark-navy: #0f172a;
 
     --color-dark-yellow: #d7d7b4;
@@ -498,44 +500,32 @@
 
     /* ---------------- 플러스 버튼 ---------------- */
     .plus-button__container {
-        width: min(100%, var(--app-max));
-        transform: translateX(-50%);
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        z-index: 999;
-    }
-
-    /* ---------------- 플러스 버튼 ---------------- */
-    .plus-button__container {
         position: fixed;
         left: 50%;
         transform: translateX(-50%);
-        bottom: max(80px, var(--safe-bottom, 80px)); /* 메뉴바 위 여백 */
+        bottom: max(80px, var(--safe-bottom, 80px));
         width: min(100%, var(--app-max));
         padding-left: max(1rem, env(safe-area-inset-left));
         padding-right: max(1rem, env(safe-area-inset-right));
 
         display: flex;
-        flex-direction: column; /* 위: 메뉴, 아래: 버튼 */
-        align-items: flex-end; /* 오른쪽 끝 정렬 */
+        flex-direction: column;
+        align-items: flex-end;
         gap: 10px;
 
         z-index: 999;
     }
 
-    /* 메뉴 */
+    /* ---------------- 메뉴 ---------------- */
     .plus-menu {
         display: flex;
         flex-direction: column;
         align-items: flex-end;
         gap: 12px;
+
         max-height: 0;
         opacity: 0;
-        overflow: hidden;
+        overflow: visible; /* ← 필수 (translateY로 올라오는 div가 잘리지 않도록) */
         transform: translateY(4px);
         pointer-events: none;
 
@@ -551,14 +541,57 @@
         pointer-events: auto;
     }
 
+    /* ---------------- 메뉴 아이템 ---------------- */
     .plus-menu__item-wrapper {
         display: flex;
         align-items: center;
         justify-content: flex-end;
         gap: 12px;
+
+        position: relative;  /* ← 필수 (translateY를 고정된 기준으로 적용) */
+        overflow: visible;   /* ← hover 확장 시 잘림 방지 */
+
+        opacity: 0;
+        transform: translateY(0);
+        transition: transform 0.18s ease, opacity 0.18s ease;
     }
 
-    /* 각 메뉴 아이템 버튼 */
+    /* ★ 열릴 때 opacity 반드시 1로 만들어야 화면에 보임 */
+    .plus-menu--open .plus-menu__item-wrapper {
+        opacity: 1;
+    }
+
+    /* ---------------- 순차 등장 애니메이션 ---------------- */
+    .plus-menu--open .plus-menu__item-wrapper:nth-child(1) {
+        transform: translateY(-30px);
+        transition-delay: 0.12s;
+    }
+    .plus-menu--open .plus-menu__item-wrapper:nth-child(2) {
+        transform: translateY(-20px);
+        transition-delay: 0.08s;
+    }
+    .plus-menu--open .plus-menu__item-wrapper:nth-child(3) {
+        transform: translateY(-10px);
+        transition-delay: 0.05s;
+    }
+
+    /* ---------------- 닫힐 때 애니메이션 ---------------- */
+    .plus-menu--closed .plus-menu__item-wrapper {
+        opacity: 0;
+        transform: translateY(0);
+    }
+
+    .plus-menu--closed .plus-menu__item-wrapper:nth-child(1) {
+        transition-delay: 0.05s;
+    }
+    .plus-menu--closed .plus-menu__item-wrapper:nth-child(2) {
+        transition-delay: 0.08s;
+    }
+    .plus-menu--closed .plus-menu__item-wrapper:nth-child(3) {
+        transition-delay: 0.12s;
+    }
+
+    /* ---------------- 아이템 버튼 ---------------- */
     .plus-menu__item {
         width: 63px;
         height: 63px;
@@ -567,6 +600,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+
         transition: transform 0.15s ease;
         flex-shrink: 0;
     }
@@ -574,6 +608,7 @@
     .plus-menu__item:hover {
         transform: scale(1.05);
     }
+
     .plus-menu__item:active {
         transform: scale(0.95);
     }
@@ -603,7 +638,23 @@
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
     }
 
-    /* 플러스 버튼 본체 */
+    /* ---------------- 오버레이 ---------------- */
+    .plus-menu__overlay {
+        position: fixed;
+        inset: 0;
+        background: var(--color-modal-bg);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        z-index: 998;
+    }
+
+    .plus-menu__overlay--visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* ---------------- 플러스 버튼 ---------------- */
     .plus-button {
         width: 63px;
         height: 63px;
@@ -614,12 +665,15 @@
         box-shadow: 0px 0.5px 20px rgba(0, 0, 0, 0.2);
         transition: transform 0.2s ease;
     }
+
     .plus-button:active {
         transform: scale(0.95);
     }
+
     .plus-button__icon {
         transition: transform 0.3s ease;
     }
+
     .plus-button--rotated .plus-button__icon {
         transform: rotate(45deg);
     }

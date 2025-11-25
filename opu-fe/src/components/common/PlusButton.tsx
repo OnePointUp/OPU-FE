@@ -1,14 +1,16 @@
-"use client";
+'use client';
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import clsx from "clsx";
 
-export default function PlusButton() {
-    const router = useRouter();
+type PlusButtonProps = {
+    onDirectCreate: () => void;
+};
+
+export default function PlusButton({ onDirectCreate }: PlusButtonProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const toggleMenu = () => setIsOpen((prev) => !prev);
+    const toggleMenu = () => setIsOpen(prev => !prev);
     const closeMenu = () => setIsOpen(false);
 
     const menuItems = [
@@ -24,7 +26,8 @@ export default function PlusButton() {
             ),
             bgColor: "var(--color-opu-green)",
             onClick: () => {
-                router.push("/opu/register");
+                onDirectCreate();
+                closeMenu();
             },
         },
         {
@@ -63,7 +66,6 @@ export default function PlusButton() {
 
     return (
         <>
-            {/* 어두운 오버레이 */}
             <div
                 className={clsx(
                     "plus-menu__overlay",
@@ -72,9 +74,7 @@ export default function PlusButton() {
                 onClick={closeMenu}
             />
 
-            {/* 화면 하단 고정 + app-max 안에서 정렬 */}
             <div className="plus-button__container">
-                {/* 메뉴 */}
                 <div
                     className={clsx(
                         "plus-menu",
@@ -83,9 +83,7 @@ export default function PlusButton() {
                 >
                     {menuItems.map((item, index) => (
                         <div key={index} className="plus-menu__item-wrapper">
-                            <span className="plus-menu__label">
-                                {item.label}
-                            </span>
+                            <span className="plus-menu__label">{item.label}</span>
                             <button
                                 onClick={item.onClick}
                                 className="plus-menu__item"
@@ -96,7 +94,7 @@ export default function PlusButton() {
                         </div>
                     ))}
                 </div>
-
+                
                 {/* 플러스 버튼 */}
                 <button
                     onClick={toggleMenu}

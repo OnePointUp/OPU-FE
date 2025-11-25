@@ -1,7 +1,5 @@
-export default function Home() {
-    return (
-        <div className="app-container">
-            <div className="">홈화면</div>
-        </div>
-    );
+import MainPage from "@/features/main/pages/MainPage";
+
+export default function Page() {
+    return <MainPage />;
 }
