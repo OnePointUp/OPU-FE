@@ -7,7 +7,7 @@ type Props = {
     initialItems: OpuCardModel[];
 };
 
-export default function BlockedOpuPage({ initialItems }: Props) {
+export default function BlockedOpuManagePage({ initialItems }: Props) {
     return (
         <section>
             <BlockedOpuList initialItems={initialItems} />
