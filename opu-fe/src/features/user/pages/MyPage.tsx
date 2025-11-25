@@ -7,8 +7,9 @@ import { useMyProfile } from "../hooks/useMyProfile";
 import { myPageMenuItems } from "../constants/myPageMenu";
 import OpuManagement from "../components/OpuManagement";
 import { useEffect, useState } from "react";
-import { fetchMyOpuCards, fetchOpuCardsByMember } from "@/features/opu/service";
 import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
+import { fetchMyOpuCards } from "@/features/opu/service";
+import { fetchLikedOpuCards } from "@/features/liked-opu/services";
 
 export default function MyPageScreen() {
     const router = useRouter();
@@ -28,7 +29,7 @@ export default function MyPageScreen() {
             setOpuLoading(true);
 
             const [all, mine] = await Promise.all([
-                fetchOpuCardsByMember(CURRENT_MEMBER_ID),
+                fetchLikedOpuCards(CURRENT_MEMBER_ID),
                 fetchMyOpuCards(CURRENT_MEMBER_ID),
             ]);
 
