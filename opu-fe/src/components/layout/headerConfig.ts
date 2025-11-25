@@ -25,6 +25,8 @@ export const TITLE_MAP: Record<string, string> = {
     "/opu/random/time": "랜덤 뽑기",
     "/opu/random/result": "오늘의 랜덤 OPU",
 
+    "/routine": "루틴",
+
     "/calendar": "캘린더",
     "/stats": "통계",
     "/notification": "알림",
