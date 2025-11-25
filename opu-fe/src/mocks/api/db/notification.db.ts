@@ -53,7 +53,7 @@ export const notificationFeed: NotificationFeedItem[] = [
         message: "투두를 작성하고 하루를 시작해보세요.",
         linkedContentId: null,
         isRead: false,
-        createdAt: "2025-11-15T06:50:40.39107",
+        createdAt: "2025-11-20T06:50:40.39107",
     },
     {
         id: 7,
@@ -62,6 +62,6 @@ export const notificationFeed: NotificationFeedItem[] = [
         message: "마무리하지 못한 투두가 기다리고 있어요!",
         linkedContentId: null,
         isRead: false,
-        createdAt: "2025-11-16T06:50:40.39107",
+        createdAt: "2025-11-20T20:50:40.39107",
     },
 ];

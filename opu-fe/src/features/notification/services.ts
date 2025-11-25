@@ -45,8 +45,9 @@ export async function readAllNotificationFeed() {
 
 // 개별 알림 읽음
 export function readOneNotificationFeed(id: number) {
-    return requestJSON<NotificationFeedItem[]>(`${FEED_BASE}/${id}`, {
+    return requestJSON<NotificationFeedItem[]>(FEED_BASE, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "ONE_READ", id }),
     });
 }

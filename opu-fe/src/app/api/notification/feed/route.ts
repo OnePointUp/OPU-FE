@@ -18,6 +18,8 @@ export async function PATCH(req: Request) {
             ...n,
             isRead: true,
         }));
+    } else if (body.action === "ONE_READ" && typeof body.id === "number") {
+        feed = feed.map((n) => (n.id === body.id ? { ...n, isRead: true } : n));
     }
 
     await delay(120);

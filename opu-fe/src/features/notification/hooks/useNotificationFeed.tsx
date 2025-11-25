@@ -25,8 +25,13 @@ export function useNotificationFeed() {
             )
         );
 
-        const updated = await readOneNotificationFeed(id);
-        setItems(updated);
+        try {
+            const updated = await readOneNotificationFeed(id);
+            setItems(updated);
+        } catch (e) {
+            // setItems(prev => prev.map(... isRead false로 되돌리기))
+            console.error(e);
+        }
     };
 
     const markAllRead = async () => {
