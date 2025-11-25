@@ -190,7 +190,7 @@ export default function OpuListPage({ items, contextType }: Props) {
                 onReset={handleResetFilter}
             />
 
-            <PlusButton />
+            <PlusButton showMenu={false} />
         </section>
     );
 }

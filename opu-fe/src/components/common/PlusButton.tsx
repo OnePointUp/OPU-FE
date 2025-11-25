@@ -1,18 +1,22 @@
 'use client';
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import clsx from "clsx";
 
 type PlusButtonProps = {
-    onDirectCreate: () => void;
+    showMenu: boolean; // ← true면 메뉴 열림, false면 바로 생성
 };
 
-export default function PlusButton({ onDirectCreate }: PlusButtonProps) {
+export default function PlusButton({ showMenu }: PlusButtonProps) {
+    const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
+
     const toggleMenu = () => setIsOpen(prev => !prev);
     const closeMenu = () => setIsOpen(false);
 
+    // 메뉴 모드일 때만 사용됨
     const menuItems = [
         {
             label: "직접 생성",
@@ -26,9 +30,9 @@ export default function PlusButton({ onDirectCreate }: PlusButtonProps) {
             ),
             bgColor: "var(--color-opu-green)",
             onClick: () => {
-                onDirectCreate();
+                router.push("/opu/register"); // ← 하드코딩된 이동
                 closeMenu();
-            },
+            }
         },
         {
             label: "OPU에서 추가",
@@ -66,41 +70,52 @@ export default function PlusButton({ onDirectCreate }: PlusButtonProps) {
 
     return (
         <>
-            <div
-                className={clsx(
-                    "plus-menu__overlay",
-                    isOpen && "plus-menu__overlay--visible"
-                )}
-                onClick={closeMenu}
-            />
-
-            <div className="plus-button__container">
+            {/* 오버레이 — 메뉴 모드에서만 동작 */}
+            {showMenu && (
                 <div
                     className={clsx(
-                        "plus-menu",
-                        isOpen ? "plus-menu--open" : "plus-menu--closed"
+                        "plus-menu__overlay",
+                        isOpen && "plus-menu__overlay--visible"
                     )}
-                >
-                    {menuItems.map((item, index) => (
-                        <div key={index} className="plus-menu__item-wrapper">
-                            <span className="plus-menu__label">{item.label}</span>
-                            <button
-                                onClick={item.onClick}
-                                className="plus-menu__item"
-                                style={{ backgroundColor: item.bgColor }}
-                            >
-                                {item.icon}
-                            </button>
-                        </div>
-                    ))}
-                </div>
-                
+                    onClick={closeMenu}
+                />
+            )}
+
+            <div className="plus-button__container">
+
+                {/* 메뉴 (showMenu=true 일 때만 렌더링) */}
+                {showMenu && (
+                    <div
+                        className={clsx(
+                            "plus-menu",
+                            isOpen ? "plus-menu--open" : "plus-menu--closed"
+                        )}
+                    >
+                        {menuItems.map((item, index) => (
+                            <div key={index} className="plus-menu__item-wrapper">
+                                <span className="plus-menu__label">{item.label}</span>
+                                <button
+                                    onClick={item.onClick}
+                                    className="plus-menu__item"
+                                    style={{ backgroundColor: item.bgColor }}
+                                >
+                                    {item.icon}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
                 {/* 플러스 버튼 */}
                 <button
-                    onClick={toggleMenu}
+                    onClick={
+                        showMenu
+                            ? toggleMenu
+                            : () => router.push("/opu/register") // ← 메뉴 OFF일 때 바로 이동
+                    }
                     className={clsx(
                         "plus-button",
-                        isOpen && "plus-button--rotated"
+                        showMenu && isOpen && "plus-button--rotated"
                     )}
                     style={{ backgroundColor: "var(--color-opu-pink)" }}
                 >

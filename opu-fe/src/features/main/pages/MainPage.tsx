@@ -198,7 +198,7 @@ export default function MainPage() {
           editingTodoId={editingTodoId}
         />
 
-        <PlusButton onDirectCreate={handleAddTodo} />
+        <PlusButton showMenu={true} />
       </main>
     </div>
   );
