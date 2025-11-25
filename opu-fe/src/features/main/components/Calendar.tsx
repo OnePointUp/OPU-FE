@@ -25,8 +25,6 @@ export default function MonthlyCalendar({ selectedDay, onSelectDay }: Props) {
     (DailyTodoStats | null)[][]
   >([]);
 
-  const [loadingCalendar, setLoadingCalendar] = useState<boolean>(true);
-
   const [viewMode, setViewMode] = useState<"month" | "week">("month");
 
   const [tempSelectedDate, setTempSelectedDate] = useState<{
@@ -40,37 +38,37 @@ export default function MonthlyCalendar({ selectedDay, onSelectDay }: Props) {
     today.getMonth() + 1
   ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-  // 📌 월 바뀔 때 캘린더 로딩
+  // 📌 월이 바뀔 때 캘린더 즉시 생성
   useEffect(() => {
-    setLoadingCalendar(true);
-
-    setTimeout(() => {
-      const data = getMonthlyCalendar(year, month);
-      setCalendarData(data);
-      setCalendarMatrix(buildCalendarMatrix(data));
-      setLoadingCalendar(false);
-    }, 500); // (연출용)
+    const data = getMonthlyCalendar(year, month);
+    setCalendarData(data);
+    setCalendarMatrix(buildCalendarMatrix(data));
   }, [year, month]);
 
-  // 📌 임시 선택된 날짜 적용
+  // 📌 날짜 변경 반영
   useEffect(() => {
     if (!tempSelectedDate) return;
-    const { y, m, d } = tempSelectedDate;
 
-    const dateStr = `${y}-${String(m).padStart(2, "0")}-${String(
-      d
-    ).padStart(2, "0")}`;
+    const { y, m, d } = tempSelectedDate;
+    const dateStr = `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(
+      2,
+      "0"
+    )}`;
+
     const found = calendarData.find((day) => day.date === dateStr);
     if (found) onSelectDay(found);
-  }, [calendarData]);
+
+  }, [tempSelectedDate, calendarData]); // ← 핵심 로직 유지
 
   const handleDateSelect = (y: number, m: number, d: number) => {
+    setTempSelectedDate({ y, m, d });
     setYear(y);
     setMonth(m);
-    setTempSelectedDate({ y, m, d });
   };
 
-  const getWeekOf = (dateStr: string | undefined): (DailyTodoStats | null)[] => {
+  const getWeekOf = (
+    dateStr: string | undefined
+  ): (DailyTodoStats | null)[] => {
     if (!dateStr) return calendarMatrix[0] ?? [];
     for (const week of calendarMatrix) {
       if (week.some((d) => d?.date === dateStr)) return week;
@@ -78,28 +76,11 @@ export default function MonthlyCalendar({ selectedDay, onSelectDay }: Props) {
     return calendarMatrix[0] ?? [];
   };
 
-  /** ---------------------------
-   *  📌 Calendar Skeleton UI
-   * ---------------------------- */
-  const SkeletonCalendar = () => (
-    <div className="flex flex-col justify-center items-center rounded-[12px] border border-[var(--color-super-light-gray)] py-[10px]">
-      <div className="grid grid-cols-7 mb-2 gap-2 inline-grid w-full px-1">
-        {Array.from({ length: 7 }).map((_, i) => (
-          <div key={i} className="w-10 h-10 rounded-md skeleton" />
-        ))}
-      </div>
-
-      <div className="grid grid-cols-7 gap-2 px-1 w-full">
-        {Array.from({ length: 42 }).map((_, i) => (
-          <div key={i} className="w-10 h-10 rounded-md skeleton" />
-        ))}
-      </div>
-    </div>
-  );
-
   return (
     <div className="mb-8 flex flex-col items-center pb-[10px] rounded-[12px]">
       <div className="w-full max-w-[358px] mx-auto">
+
+        {/* 날짜 선택 헤더 */}
         <DaySelector
           year={year}
           month={month}
@@ -117,64 +98,49 @@ export default function MonthlyCalendar({ selectedDay, onSelectDay }: Props) {
           viewMode={viewMode}
         />
 
-        {loadingCalendar ? (
-          <SkeletonCalendar />
-        ) : (
-          <div className="flex flex-col justify-center items-center rounded-[12px] border border-[var(--color-super-light-gray)] py-[10px]">
-            {/* 요일 */}
-            <div className="grid grid-cols-7 mb-2 gap-2 inline-grid">
-              {WEEKDAYS.map((day) => (
-                <div
-                  key={day}
-                  className={`w-10 h-10 flex items-center justify-center text-sm ${
-                    day === "일"
-                      ? "text-red-500"
-                      : "text-[var(--color-dark-gray)]"
-                  }`}
-                >
-                  {day}
-                </div>
-              ))}
-            </div>
-
-            {/* Month / Week 전환 */}
-            <div
-              className={`overflow-hidden relative transition-all duration-300 ease-in-out ${
-                viewMode === "month" ? "max-h-[500px]" : "max-h-[120px]"
-              }`}
-            >
+        {/* Month / Week 뷰 */}
+        <div className="flex flex-col justify-center items-center rounded-[12px] border border-[var(--color-super-light-gray)] py-[10px]">
+          
+          {/* 요일 */}
+          <div className="grid grid-cols-7 mb-2 gap-2 inline-grid">
+            {WEEKDAYS.map((day) => (
               <div
-                className={`transition-all duration-300 ${
-                  viewMode === "month"
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 -translate-y-4 absolute inset-0 pointer-events-none"
+                key={day}
+                className={`w-10 h-10 flex items-center justify-center text-sm ${
+                  day === "일"
+                    ? "text-red-500"
+                    : "text-[var(--color-dark-gray)]"
                 }`}
               >
-                <MonthView
-                  calendarMatrix={calendarMatrix}
-                  selectedDay={selectedDay}
-                  onSelectDay={onSelectDay}
-                  todayStr={todayStr}
-                />
+                {day}
               </div>
-
-              <div
-                className={`transition-all duration-300 ${
-                  viewMode === "week"
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 translate-y-4 absolute inset-0 pointer-events-none"
-                }`}
-              >
-                <WeekView
-                  week={getWeekOf(selectedDay?.date)}
-                  selectedDay={selectedDay}
-                  onSelectDay={onSelectDay}
-                  todayStr={todayStr}
-                />
-              </div>
-            </div>
+            ))}
           </div>
-        )}
+
+          {/* 월 / 주 뷰 */}
+          <div
+            className={`overflow-hidden relative transition-all duration-300 ease-in-out ${
+              viewMode === "month" ? "max-h-[500px]" : "max-h-[120px]"
+            }`}
+          >
+            {viewMode === "month" ? (
+              <MonthView
+                calendarMatrix={calendarMatrix}
+                selectedDay={selectedDay}
+                onSelectDay={onSelectDay}
+                todayStr={todayStr}
+              />
+            ) : (
+              <WeekView
+                week={getWeekOf(selectedDay?.date)}
+                selectedDay={selectedDay}
+                onSelectDay={onSelectDay}
+                todayStr={todayStr}
+              />
+            )}
+          </div>
+
+        </div>
       </div>
     </div>
   );
