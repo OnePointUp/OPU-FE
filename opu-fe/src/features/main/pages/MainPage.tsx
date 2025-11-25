@@ -198,7 +198,7 @@ export default function MainPage() {
           editingTodoId={editingTodoId}
         />
 
-        <PlusButton showMenu={true} />
+        <PlusButton showMenu={true} onAddEvent={handleAddTodo} />
       </main>
     </div>
   );

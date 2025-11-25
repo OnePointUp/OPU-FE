@@ -7,14 +7,24 @@ import clsx from "clsx";
 
 type PlusButtonProps = {
     showMenu: boolean; // ← true면 메뉴 열림, false면 바로 생성
+    onAddEvent?: () => void;
 };
 
-export default function PlusButton({ showMenu }: PlusButtonProps) {
+export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleMenu = () => setIsOpen(prev => !prev);
     const closeMenu = () => setIsOpen(false);
+
+    const handleDefaultAdd = () => {
+        router.push("/opu/register");
+    };
+
+    const runAddEvent = () => {
+        if (onAddEvent) onAddEvent();
+        else handleDefaultAdd();
+    };
 
     // 메뉴 모드일 때만 사용됨
     const menuItems = [
@@ -30,7 +40,7 @@ export default function PlusButton({ showMenu }: PlusButtonProps) {
             ),
             bgColor: "var(--color-opu-green)",
             onClick: () => {
-                router.push("/opu/register"); // ← 하드코딩된 이동
+                runAddEvent();
                 closeMenu();
             }
         },
