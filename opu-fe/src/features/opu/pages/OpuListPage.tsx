@@ -129,9 +129,7 @@ export default function OpuListPage({ items, contextType }: Props) {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 onSubmit={(v) => setQ(v)}
-                placeholder={
-                    contextType === "shared" ? "공유 OPU 검색" : "나의 OPU 검색"
-                }
+                placeholder={"OPU의 키워드를 검색해보세요"}
                 className="mb-6"
             />
 
