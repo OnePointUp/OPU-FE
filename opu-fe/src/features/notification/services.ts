@@ -13,11 +13,11 @@ export function fetchNotificationSettings() {
     return requestJSON<NotificationSettings>(SETTINGS_BASE);
 }
 
-export function patchNotificationItem(key: NotificationCode, enabled: boolean) {
+export function patchNotificationItem(code: NotificationCode, enabled: boolean) {
     return requestJSON<NotificationSettings>(SETTINGS_BASE, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key, enabled }),
+        body: JSON.stringify({ code, enabled }),
     });
 }
 
