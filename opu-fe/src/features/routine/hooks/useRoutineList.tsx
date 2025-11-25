@@ -15,7 +15,11 @@ export function useRoutineList() {
                 const list = await fetchRoutineList();
                 setItems(list);
             } catch (e) {
-                setError(e as Error);
+                if (e instanceof Error) {
+                    setError(e);
+                } else {
+                    setError(new Error(String(e)));
+                }
             } finally {
                 setLoading(false);
             }

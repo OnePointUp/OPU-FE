@@ -1,8 +1,5 @@
 import { NextResponse } from "next/server";
-import type {
-    RoutineEntity,
-    RoutineFrequency,
-} from "@/features/routine/domain";
+import type { RoutineEntity } from "@/features/routine/domain";
 
 const now = new Date().toISOString();
 

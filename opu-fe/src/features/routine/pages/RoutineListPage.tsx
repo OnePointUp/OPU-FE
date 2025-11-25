@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import RoutineListItem from "../components/RoutineListItem";
 import { getRoutineStatus } from "../domain";
 import { useRoutineList } from "../hooks/useRoutineList";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Icon } from "@iconify/react";
 import BottomSheet from "@/components/common/BottomSheet";
 import ActionList, { type ActionItem } from "@/components/common/ActionList";
@@ -19,16 +19,20 @@ export default function RoutineListPage() {
     const [selectedId, setSelectedId] = useState<number | null>(null);
     const [confirmOpen, setConfirmOpen] = useState(false);
 
-    const filtered = items.filter((it) => {
-        const status = getRoutineStatus(it);
-        if (onlyOngoing) return status === "ONGOING";
-        return true;
-    });
+    const filtered = useMemo(
+        () =>
+            items.filter((it) => {
+                const status = getRoutineStatus(it);
+                if (onlyOngoing) return status === "ONGOING";
+                return true;
+            }),
+        [items, onlyOngoing]
+    );
 
-    const onClickItem = (id: number) => {
+    const onClickItem = useCallback((id: number) => {
         setSelectedId(id);
         setOpenSheet(true);
-    };
+    }, []);
 
     const onCloseSheet = () => {
         setOpenSheet(false);
@@ -94,7 +98,7 @@ export default function RoutineListPage() {
                             <RoutineListItem
                                 key={item.id}
                                 item={item}
-                                onClick={() => onClickItem(item.id)}
+                                onClick={onClickItem}
                             />
                         ))}
                     </div>
