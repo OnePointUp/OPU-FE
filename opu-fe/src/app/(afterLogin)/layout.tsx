@@ -30,8 +30,6 @@ export default function AfterLoginLayout({
 
     const hideMenu = HIDDEN_MENU_PATHS.some((p) => pathname.startsWith(p));
 
-    const bottomOffset = hideMenu ? 0 : 55;
-
     return (
         <div className="app-page">
             <Header />
