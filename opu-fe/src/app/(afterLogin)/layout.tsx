@@ -39,9 +39,6 @@ export default function AfterLoginLayout({
                     app-container pt-app-header px-6 py-20
                     overflow-y-auto overflow-x-hidden
                 `}
-                style={{
-                    maxHeight: `calc(100dvh - var(--app-header-h)`,
-                }}
             >
                 {children}
             </main>
