@@ -12,7 +12,7 @@ export async function fetchLikedOpuCards(
     );
     const likedSet = new Set(likedOpuIds);
 
-    const blockedRows = listBlockedOpu(memberId, "") as BlockedJoin[];
+    const blockedRows = listBlockedOpu("") as BlockedJoin[];
     const blockedSet = new Set(blockedRows.map((b) => b.opu_id));
 
     return OPU.filter((o) => likedSet.has(o.id))

@@ -23,7 +23,7 @@ export async function fetchSharedOpuCardsByMember(
         LIKE.filter((l) => l.member_id === memberId).map((l) => l.opu_id)
     );
 
-    const blockedRows = listBlockedOpu(memberId, "") as BlockedJoin[];
+    const blockedRows = listBlockedOpu("") as BlockedJoin[];
     const blockedSet = new Set(blockedRows.map((b) => b.opu_id));
 
     return OPU.filter((o) => o.is_shared === "Y")
