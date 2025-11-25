@@ -35,7 +35,7 @@ export default function LikedOpuPage({ items }: Props) {
     const [filterSheetOpen, setFilterSheetOpen] = useState(false);
     const [times, setTimes] = useState<TimeCode[]>([]);
     const [categoryIds, setCategoryIds] = useState<number[]>([]);
-    const [sortOption, setSortOption] = useState<SortOption>("name");
+    const [sortOption, setSortOption] = useState<SortOption>("liked");
     const [showSortSheet, setShowSortSheet] = useState(false);
 
     const [data, setData] = useState<OpuCardModel[]>([]);
