@@ -4,41 +4,14 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { CATEGORY_BADGE, type OpuCardModel } from "@/features/opu/domain";
 import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
+import Badge from "@/components/common/Badge";
 
 type Props = {
     item: OpuCardModel;
     onAddTodo?: (id: number) => void;
-    loading?: boolean;
 };
 
-function Badge({
-    label,
-    bg,
-    color,
-}: {
-    label: string;
-    bg: string;
-    color: string;
-}) {
-    return (
-        <span
-            className="inline-flex items-center justify-center h-5 px-2 rounded-full font-medium leading-[16px]"
-            style={{
-                backgroundColor: bg,
-                color,
-                fontSize: 11,
-            }}
-        >
-            {label}
-        </span>
-    );
-}
-
-export default function RandomOpuCard({
-    item,
-    onAddTodo,
-    loading = false,
-}: Props) {
+export default function RandomOpuCard({ item, onAddTodo }: Props) {
     const [liked, setLiked] = useState(item.liked);
 
     const categoryKey = item.categoryName ?? "기타";
@@ -57,36 +30,6 @@ export default function RandomOpuCard({
         if (!onAddTodo) return;
         onAddTodo(item.id);
     };
-
-    // 스켈레톤
-    if (loading) {
-        return (
-            <div
-                className="w-full rounded-xl bg-[var(--background)] border px-3 pt-3 pb-2"
-                style={{ borderColor: "var(--color-super-light-gray)" }}
-            >
-                <div className="flex justify-between mb-1">
-                    {/* <div
-                            className="rounded-xl skeleton"
-                            style={{ width: 35, height: 35 }}
-                        /> */}
-                    <div className="flex flex-col gap-1 mb-1">
-                        <div className="h-4 w-24 rounded-md skeleton" />
-                        <div className="h-4 w-20 rounded-md skeleton" />
-                    </div>
-                    <div className="h-5 w-5 rounded-full skeleton" />
-                </div>
-
-                <div className="h-3 w-36 rounded-md skeleton mt-1" />
-                <div className="h-3 w-24 rounded-md skeleton mt-1" />
-
-                <div className="flex items-end justify-between mt-2">
-                    <div className="h-3 w-18 rounded-md skeleton" />
-                    <div className="h-3 w-12 rounded-md skeleton" />
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div
@@ -140,11 +83,21 @@ export default function RandomOpuCard({
 
                 {/* 배지 */}
                 <div className="flex items-center justify-center gap-1 flex-wrap">
-                    <Badge label={categoryKey} bg={bg} color={text} />
+                    <Badge
+                        label={categoryKey}
+                        bg={bg}
+                        color={text}
+                        height={22}
+                        px={8}
+                        fontSize={"var(--text-caption)"}
+                    />
                     <Badge
                         label={item.timeLabel}
                         bg="#E3E3E3"
                         color="#6F6F6F"
+                        height={22}
+                        px={8}
+                        fontSize={"var(--text-caption)"}
                     />
                 </div>
 
