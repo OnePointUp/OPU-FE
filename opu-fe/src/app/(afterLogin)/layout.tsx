@@ -20,6 +20,9 @@ export default function AfterLoginLayout({
         "/opu/blocked",
         "/opu/register",
         "/opu/edit",
+        "/opu/random/scope",
+        "/opu/random/time",
+        "/opu/random/result",
         "/login",
         "/signup",
         "/social-signup",
@@ -27,10 +30,21 @@ export default function AfterLoginLayout({
 
     const hideMenu = HIDDEN_MENU_PATHS.some((p) => pathname.startsWith(p));
 
+    const bottomOffset = hideMenu ? 0 : 55;
+
     return (
-        <div className="app-page flex flex-col">
+        <div className="app-page">
             <Header />
-            <main className="app-container pt-app-header pb-40">
+
+            <main
+                className={`
+                    app-container pt-app-header px-6 py-20
+                    overflow-y-auto overflow-x-hidden
+                `}
+                style={{
+                    maxHeight: `calc(100dvh - var(--app-header-h) - ${bottomOffset}px)`,
+                }}
+            >
                 {children}
             </main>
 

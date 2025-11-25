@@ -47,7 +47,7 @@ export default function OpuListPage({ items, contextType }: Props) {
 
     const [sheetId, setSheetId] = useState<number | null>(null);
 
-    const router = useRouter();
+     const router = useRouter();
 
     // 목데이터로 로딩 시뮬레이션
     useEffect(() => {
@@ -122,7 +122,7 @@ export default function OpuListPage({ items, contextType }: Props) {
         sheetId !== null ? data.find((i) => i.id === sheetId) : undefined;
 
     return (
-        <section className="px-1">
+        <section>
             {/* 검색 */}
             <SearchBar
                 value={q}
@@ -131,7 +131,8 @@ export default function OpuListPage({ items, contextType }: Props) {
                 placeholder={
                     contextType === "shared" ? "공유 OPU 검색" : "나의 OPU 검색"
                 }
-                className="mt-5 mb-6"
+
+                className="mb-6"
             />
 
             {/* 정렬 / 필터 툴바 */}
@@ -154,7 +155,8 @@ export default function OpuListPage({ items, contextType }: Props) {
             </div>
 
             {/* 카드 리스트 */}
-            <div className="mt-3">
+
+            <div className="mt-3 -mx-1">
                 <OpuList
                     items={filtered}
                     loading={loading}
@@ -191,7 +193,6 @@ export default function OpuListPage({ items, contextType }: Props) {
                 onToggleCategory={handleToggleCategory}
                 onReset={handleResetFilter}
             />
-
             <PlusButton onDirectCreate={() => router.push("/opu/register")} />
         </section>
     );

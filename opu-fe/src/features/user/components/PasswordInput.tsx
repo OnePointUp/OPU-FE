@@ -18,12 +18,12 @@ export default function PasswordInput({
     onChange,
     placeholder = "",
     error,
-    className = "",
+    className,
 }: Props) {
     const [show, setShow] = useState(false);
 
     return (
-        <section className={`mt-6 ${className}`}>
+        <section>
             <label
                 className="block mb-2"
                 style={{

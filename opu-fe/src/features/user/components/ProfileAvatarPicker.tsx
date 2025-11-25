@@ -23,9 +23,7 @@ export default function ProfileAvatarPicker({
         nickname && nickname.trim().length > 0 ? nickname.trim().charAt(0) : "";
 
     return (
-        <section
-            className={`w-full flex justify-center pt-6 pb-2 ${className}`}
-        >
+        <section className={`w-full flex justify-center pb-3 ${className}`}>
             <div className="relative inline-block">
                 <div className="size-24 overflow-hidden rounded-full border border-[var(--color-super-light-gray)] bg-[var(--background)] relative">
                     {previewUrl ? (

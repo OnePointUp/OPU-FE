@@ -8,9 +8,9 @@ export default function EmailVerifyPage() {
     const { isSending, handleResendEmail, handleNext } = useEmailVerify();
 
     return (
-        <div className="app-page overflow-hidden overscroll-none">
+        <section className="overflow-hidden overscroll-none pt-8">
             {/* 메인 콘텐츠 */}
-            <main className="app-container pt-app-header pb-40 mt-14">
+            <main>
                 {/* 안내 문구 */}
                 <p
                     className="leading-relaxed text-center"
@@ -26,7 +26,7 @@ export default function EmailVerifyPage() {
                 </p>
 
                 {/* 마스코트 이미지 */}
-                <section className="flex justify-center my-10">
+                <div className="flex justify-center my-10">
                     <Image
                         src="/images/cabit_letter2.png"
                         alt="OPU mascot"
@@ -34,7 +34,7 @@ export default function EmailVerifyPage() {
                         height={210}
                         priority
                     />
-                </section>
+                </div>
 
                 {/* 재전송 링크 */}
                 <div className="text-center mb-8">
@@ -54,6 +54,6 @@ export default function EmailVerifyPage() {
 
             {/* 하단 버튼 */}
             <OpuActionButton label="다음" onClick={handleNext} />
-        </div>
+        </section>
     );
 }

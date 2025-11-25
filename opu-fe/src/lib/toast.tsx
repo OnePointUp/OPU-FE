@@ -6,7 +6,7 @@ import { JSX } from "react";
 
 const baseOption = {
     position: "bottom-center" as const,
-    duration: 5000,
+    duration: 1500,
 };
 
 function showSingleToast(element: JSX.Element) {

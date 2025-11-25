@@ -118,15 +118,13 @@ export default function LikedOpuPage({ items }: Props) {
     return (
         <section>
             {/* 검색 */}
-            <div className="px-2">
-                <SearchBar
-                    value={q}
-                    onChange={(e) => setQ(e.target.value)}
-                    onSubmit={(v) => setQ(v)}
-                    placeholder="찜한 OPU 검색"
-                    className="mt-5 mb-6"
-                />
-            </div>
+            <SearchBar
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                onSubmit={(v) => setQ(v)}
+                placeholder="찜한 OPU 검색"
+                className="mb-6"
+            />
 
             {/* 정렬 / 필터 툴바 */}
             <OpuToolbar
@@ -145,7 +143,7 @@ export default function LikedOpuPage({ items }: Props) {
             />
 
             {/* 카드 리스트 */}
-            <div className="mt-3">
+            <div className="mt-3 -mx-1">
                 <LikedOpuList
                     items={filtered}
                     loading={loading}

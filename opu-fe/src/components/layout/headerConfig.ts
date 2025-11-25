@@ -21,6 +21,9 @@ export const TITLE_MAP: Record<string, string> = {
     "/opu/blocked": "차단 OPU 관리",
     "/opu/liked": "찜한 OPU",
     "/opu/register": "OPU 등록",
+    "/opu/random/scope": "랜덤 뽑기",
+    "/opu/random/time": "랜덤 뽑기",
+    "/opu/random/result": "오늘의 랜덤 OPU",
 
     "/calendar": "캘린더",
     "/stats": "통계",
