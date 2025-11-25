@@ -1,85 +1,12 @@
 import { NextResponse } from "next/server";
+import { notificationFeed } from "@/mocks/api/db/notification.db";
 
-type NotificationCode = "MORNING" | "EVENING" | "ROUTINE" | "TODO" | "RANDOM";
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-type NotificationApiItem = {
-    id: number | null;
-    code: NotificationCode;
-    title: string;
-    message: string;
-    linkedContentId: number | null;
-    isRead: boolean | null;
-    createdAt: string;
-};
-
-let feed: NotificationApiItem[] = [
-    {
-        id: 1,
-        code: "MORNING",
-        title: "아침이에요! 오늘 할 일을 적어볼까요?",
-        message: "투두를 작성하고 하루를 시작해보세요.",
-        linkedContentId: null,
-        isRead: false,
-        createdAt: "2025-11-15T06:50:40.39107",
-    },
-    {
-        id: 2,
-        code: "EVENING",
-        title: "오늘 하루를 마무리해볼까요?",
-        message: "마무리하지 못한 투두가 기다리고 있어요!",
-        linkedContentId: null,
-        isRead: false,
-        createdAt: "2025-11-16T06:50:40.39107",
-    },
-    {
-        id: 3,
-        code: "ROUTINE",
-        title: "돌아오는 주 월, 수, 금에 '코딩테스트 1문제 풀기' 일정이 있어요!",
-        message: "한 주가 시작되기 전 미리 마음을 다잡아보아요.",
-        linkedContentId: null,
-        isRead: false,
-        createdAt: "2025-11-18T06:50:40.39107",
-    },
-    {
-        id: 4,
-        code: "TODO",
-        title: "'물 2L 마시기' 일정이 얼마 남지 않았어요!",
-        message: "오늘 하루가 가기 전에 실행해보아요.",
-        linkedContentId: 1,
-        isRead: true,
-        createdAt: "2025-11-19T06:50:40.39107",
-    },
-    {
-        id: 5,
-        code: "RANDOM",
-        title: "오늘의 랜덤 뽑기가 기다리고 있어요!",
-        message: "OPU를 뽑고 실천하며 오늘도 한발짝 나아가보아요.",
-        linkedContentId: null,
-        isRead: true,
-        createdAt: "2025-11-19T06:50:40.39107",
-    },
-    {
-        id: 6,
-        code: "MORNING",
-        title: "아침이에요! 오늘 할 일을 적어볼까요?",
-        message: "투두를 작성하고 하루를 시작해보세요.",
-        linkedContentId: null,
-        isRead: false,
-        createdAt: "2025-11-15T06:50:40.39107",
-    },
-    {
-        id: 7,
-        code: "EVENING",
-        title: "오늘 하루를 마무리해볼까요?",
-        message: "마무리하지 못한 투두가 기다리고 있어요!",
-        linkedContentId: null,
-        isRead: false,
-        createdAt: "2025-11-16T06:50:40.39107",
-    },
-];
+let feed = [...notificationFeed];
 
 export async function GET() {
-    await new Promise((r) => setTimeout(r, 120));
+    await delay(120);
     return NextResponse.json(feed);
 }
 
@@ -87,9 +14,12 @@ export async function PATCH(req: Request) {
     const body = await req.json().catch(() => ({} as { action?: string }));
 
     if (body.action === "ALL_READ") {
-        feed = feed.map((n) => ({ ...n, read: true }));
+        feed = feed.map((n) => ({
+            ...n,
+            isRead: true,
+        }));
     }
 
-    await new Promise((r) => setTimeout(r, 120));
+    await delay(120);
     return NextResponse.json(feed);
 }
