@@ -1,4 +1,3 @@
-// 날짜를 "YYYY.MM.DD" 형식으로 변환
 export function formatDate(iso?: string): string {
     if (!iso) return "";
     try {
