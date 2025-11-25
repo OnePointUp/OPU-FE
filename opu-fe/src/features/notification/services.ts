@@ -5,15 +5,16 @@ import type {
     NotificationFeedItem,
 } from "./types";
 
-const BASE = "/notification";
+const SETTINGS_BASE = "/notification";
+const FEED_BASE = "/notification/feed";
 
 // ===== 알림 설정 =====
 export function fetchNotificationSettings() {
-    return requestJSON<NotificationSettings>(BASE);
+    return requestJSON<NotificationSettings>(SETTINGS_BASE);
 }
 
 export function patchNotificationItem(key: NotificationCode, enabled: boolean) {
-    return requestJSON<NotificationSettings>(BASE, {
+    return requestJSON<NotificationSettings>(SETTINGS_BASE, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ key, enabled }),
@@ -21,7 +22,7 @@ export function patchNotificationItem(key: NotificationCode, enabled: boolean) {
 }
 
 export function setAllNotifications(enabled: boolean) {
-    return requestJSON<NotificationSettings>(BASE, {
+    return requestJSON<NotificationSettings>(SETTINGS_BASE, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ key: "ALL", enabled }),
@@ -29,19 +30,23 @@ export function setAllNotifications(enabled: boolean) {
 }
 
 // ===== 알림 목록 =====
-
-const FEED_BASE = "/notification/feed";
-
-// 알림 목록 조회
-export function fetchNotificationFeed() {
+export async function fetchNotificationFeed() {
     return requestJSON<NotificationFeedItem[]>(FEED_BASE);
 }
 
 // 알림 모두 읽음
-export function readAllNotificationFeed() {
+export async function readAllNotificationFeed() {
     return requestJSON<NotificationFeedItem[]>(FEED_BASE, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "ALL_READ" }),
+    });
+}
+
+// 개별 알림 읽음
+export function readOneNotificationFeed(id: number) {
+    return requestJSON<NotificationFeedItem[]>(`${FEED_BASE}/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
     });
 }

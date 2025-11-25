@@ -1,11 +1,24 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+// src/lib/request.ts
+const API_ORIGIN =
+    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3000";
+const API_PATH = "/api";
 
 export async function requestJSON<T>(
     path: string,
     init?: RequestInit
 ): Promise<T> {
     const isAbsolute = /^https?:\/\//.test(path);
-    const url = isAbsolute ? path : `${API_BASE}${path}`;
+    const isServer = typeof window === "undefined";
+
+    let url: string;
+
+    if (isAbsolute) {
+        url = path;
+    } else {
+        const apiPath = `${API_PATH}${path}`;
+
+        url = isServer ? `${API_ORIGIN}${apiPath}` : apiPath;
+    }
 
     const res = await fetch(url, { cache: "no-store", ...init });
     if (!res.ok) {
