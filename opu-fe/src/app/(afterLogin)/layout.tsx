@@ -42,7 +42,7 @@ export default function AfterLoginLayout({
                     overflow-y-auto overflow-x-hidden
                 `}
                 style={{
-                    maxHeight: `calc(100dvh - var(--app-header-h) - ${bottomOffset}px)`,
+                    maxHeight: `calc(100dvh - var(--app-header-h)`,
                 }}
             >
                 {children}
