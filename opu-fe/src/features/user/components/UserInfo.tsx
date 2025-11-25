@@ -33,7 +33,6 @@ export default function UserInfo({
                         <div className="h-3 w-36 rounded skeleton" />
                         <div className="h-3 w-52 rounded skeleton" />
                     </div>
-                    <div className="w-6 h-6 skeleton rounded" />
                 </div>
                 <div className="w-6 h-6 skeleton rounded" />
             </div>
