@@ -14,7 +14,7 @@ export default function SettingRow({ label, href, onClick, disabled }: Props) {
             icon="mdi:chevron-right"
             width={20}
             height={20}
-            className="text-[var(--color-light-gray)] mx-1.5"
+            className="text-[var(--color-light-gray)]"
         />
     );
 

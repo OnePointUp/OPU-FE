@@ -9,7 +9,7 @@ export default function VerifyCurrentPasswordPage() {
         useVerifyCurrentPassword();
 
     return (
-        <div className="px-2">
+        <section>
             <PasswordInput
                 label="현재 비밀번호"
                 value={cur}
@@ -24,6 +24,6 @@ export default function VerifyCurrentPasswordPage() {
                 loading={loading}
                 onClick={handleNext}
             />
-        </div>
+        </section>
     );
 }

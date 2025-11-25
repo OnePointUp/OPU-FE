@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import UserInfo from "@/features/user/components/UserInfo";
 import SettingsList from "@/features/user/components/SettingsList";
-import Menu from "@/components/layout/Menu";
 import { useMyProfile } from "../hooks/useMyProfile";
 import { myPageMenuItems } from "../constants/myPageMenu";
 import OpuManagement from "../components/OpuManagement";
@@ -42,7 +41,7 @@ export default function MyPageScreen() {
     }, []);
 
     return (
-        <div className="overflow-hidden">
+        <section>
             <UserInfo
                 nickname={profile?.nickname ?? ""}
                 email={profile?.email ?? ""}
@@ -63,8 +62,6 @@ export default function MyPageScreen() {
             <div className="w-full mt-1.5">
                 <SettingsList items={items} />
             </div>
-
-            <Menu />
-        </div>
+        </section>
     );
 }

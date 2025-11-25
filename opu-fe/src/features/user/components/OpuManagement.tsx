@@ -32,33 +32,33 @@ export default function OpuManagement({
 
     if (loading) {
         return (
-            <div className="flex px-1 border border-[var(--color-super-light-gray)] rounded-xl overflow-hidden relative">
+            <div className="flex border border-[var(--color-super-light-gray)] rounded-xl overflow-hidden relative">
                 {/* 첫 번째 스켈레톤 버튼 */}
-                <div className="flex-1 flex items-center justify-between px-6 py-4 bg-gray-50">
+                <div className="flex-1 flex items-center justify-between px-5 py-4 bg-gray-50">
                     <div className="flex items-center gap-2">
                         <div className="skeleton w-[22px] h-[22px] rounded" />
                         <div className="skeleton w-16 h-4 rounded" />
                     </div>
-                    <div className="skeleton w-6 h-4 rounded" />
+                    <div className="skeleton w-6 h-6 rounded" />
                 </div>
 
                 {/* 세로선 */}
                 <div className="w-px h-[60%] bg-gray-200 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2" />
 
                 {/* 두 번째 스켈레톤 버튼 */}
-                <div className="flex-1 flex items-center justify-between px-6 py-4 bg-gray-50">
+                <div className="flex-1 flex items-center justify-between px-5 py-4 bg-gray-50">
                     <div className="flex items-center gap-2">
                         <div className="skeleton w-[22px] h-[22px] rounded" />
                         <div className="skeleton w-16 h-4 rounded" />
                     </div>
-                    <div className="skeleton w-6 h-4 rounded" />
+                    <div className="skeleton w-6 h-6 rounded" />
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="flex mx-1 border border-[var(--color-super-light-gray)] rounded-xl overflow-hidden relative">
+        <div className="flex border border-[var(--color-super-light-gray)] rounded-xl overflow-hidden relative">
             {/* 첫 번째 버튼 */}
             <button
                 onClick={cards[0].onClick}

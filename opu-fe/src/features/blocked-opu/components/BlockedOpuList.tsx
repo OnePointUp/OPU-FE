@@ -52,10 +52,10 @@ export default function BlockedOpuList(props: Props) {
                     onChange={(e) => setQInput(e.target.value)}
                     onSubmit={(v) => setQInput(v)}
                     placeholder="차단 OPU 검색"
-                    className="mt-5"
+                    className="mb-6"
                 />
 
-                <div className="flex items-center justify-between mt-4">
+                <div className="flex items-center justify-between">
                     <label className="inline-flex items-center gap-2 text-sm mx-1">
                         <input
                             type="checkbox"

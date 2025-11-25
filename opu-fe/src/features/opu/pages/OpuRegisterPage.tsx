@@ -20,7 +20,7 @@ export default function OpuRegisterPage() {
     const [categoryId, setCategoryId] = useState<number | undefined>(undefined);
 
     return (
-        <div className="pt-5">
+        <section>
             <OpuForm
                 mode="create"
                 initialValues={{
@@ -70,6 +70,6 @@ export default function OpuRegisterPage() {
                     setCategorySheetOpen(false);
                 }}
             />
-        </div>
+        </section>
     );
 }
