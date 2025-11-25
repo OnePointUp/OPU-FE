@@ -4,7 +4,7 @@ import { COMPLETED_COUNT } from "@/mocks/api/db/opu.db";
 import { mapTimeToLabel } from "../opu/utils/time";
 
 // 차단 OPU 조인 결과 타입
-type BlockedJoin = {
+export type BlockedJoin = {
     opu_id: number;
     opu_title: string;
     opu_category_id: number | null;
