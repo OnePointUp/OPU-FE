@@ -33,19 +33,22 @@ type Props = {
 };
 
 export default function OpuListPage({ items, contextType }: Props) {
-    const [q, setQ] = useState("");
-    const [filterMode, setFilterMode] = useState<FilterMode>("time");
-    const [filterSheetOpen, setFilterSheetOpen] = useState(false);
-    const [onlyLiked, setOnlyLiked] = useState(false);
-    const [times, setTimes] = useState<TimeCode[]>([]);
-    const [categoryIds, setCategoryIds] = useState<number[]>([]);
-    const [sortOption, setSortOption] = useState<SortOption>("name");
-    const [showSortSheet, setShowSortSheet] = useState(false);
-
     const [data, setData] = useState<OpuCardModel[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const [q, setQ] = useState("");
+
+    const [times, setTimes] = useState<TimeCode[]>([]);
+    const [categoryIds, setCategoryIds] = useState<number[]>([]);
+
+    const [filterMode, setFilterMode] = useState<FilterMode>("time");
+    const [filterSheetOpen, setFilterSheetOpen] = useState(false);
     const [sheetId, setSheetId] = useState<number | null>(null);
+
+    const [sortOption, setSortOption] = useState<SortOption>("liked");
+    const [showSortSheet, setShowSortSheet] = useState(false);
+
+    const [onlyLiked, setOnlyLiked] = useState(false);
 
     // 목데이터로 로딩 시뮬레이션
     useEffect(() => {
@@ -213,20 +216,20 @@ function SortSheet({ open, onClose, onChange }: SortSheetProps) {
             <ActionList
                 items={[
                     {
-                        label: "이름순",
-                        onClick: handleSelect("name"),
-                    },
-                    {
-                        label: "최신순",
-                        onClick: handleSelect("latest"),
+                        label: "인기순",
+                        onClick: handleSelect("liked"),
                     },
                     {
                         label: "완료순",
                         onClick: handleSelect("completed"),
                     },
                     {
-                        label: "찜 많은 순",
-                        onClick: handleSelect("liked"),
+                        label: "이름순",
+                        onClick: handleSelect("name"),
+                    },
+                    {
+                        label: "최신순",
+                        onClick: handleSelect("latest"),
                     },
                 ]}
             />
