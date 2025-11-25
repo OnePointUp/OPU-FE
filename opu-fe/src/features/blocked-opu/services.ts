@@ -1,7 +1,9 @@
-import { listBlockedOpu, unblock } from "@/mocks/api/handler/blockedOpu";
 import { OpuCardModel, OpuEntity, toCategoryName } from "@/features/opu/domain";
-import { COMPLETED_COUNT } from "@/mocks/api/db/opu.db";
+import { COMPLETED_COUNT } from "@/mocks/api/db/opu.db"; // 실제 API에서 내려주면 이 부분도 나중에 제거 가능
 import { mapTimeToLabel } from "../opu/utils/time";
+import { requestJSON } from "@/lib/request";
+
+const BASE = "/api/me/blocked-opu";
 
 // 차단 OPU 조인 결과 타입
 export type BlockedJoin = {
@@ -14,7 +16,7 @@ export type BlockedJoin = {
     emoji: string;
 };
 
-// 차단 OPU 조인 결과 → 카드 뷰 모델 변환
+// 차단 OPU 조인 결과 -> 카드 뷰 모델 변환
 function toOpuCardModelFromBlockedJoin(j: BlockedJoin): OpuCardModel {
     return {
         id: j.opu_id,
@@ -33,16 +35,17 @@ function toOpuCardModelFromBlockedJoin(j: BlockedJoin): OpuCardModel {
     };
 }
 
-// 차단 OPU 목록 조회
-export async function getBlockedOpuList(
-    memberId: number,
-    q = ""
-): Promise<OpuCardModel[]> {
-    const rows = listBlockedOpu(memberId, q) as BlockedJoin[];
+// ==== 차단 OPU 목록 조회 ====
+export async function getBlockedOpuList(q = ""): Promise<OpuCardModel[]> {
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+
+    const url = params.toString() ? `${BASE}?${params.toString()}` : BASE;
+    const rows = await requestJSON<BlockedJoin[]>(url);
     return rows.map(toOpuCardModelFromBlockedJoin);
 }
 
-// 차단 해제
-export function deleteBlockedOpu(memberId: number, opuId: number) {
-    unblock(memberId, opuId);
+export function deleteBlockedOpu(opuId: number) {
+    const url = `${BASE}/${opuId}`;
+    return requestJSON<void>(url, { method: "DELETE" });
 }
