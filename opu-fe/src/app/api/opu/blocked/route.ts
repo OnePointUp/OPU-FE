@@ -5,9 +5,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
     const sp = new URL(req.url).searchParams;
-    const memberId = Number(sp.get("memberId") ?? "0");
-    const q = (sp.get("q") ?? "").trim();
-
-    const items = listBlockedOpu(memberId, q);
-    return NextResponse.json({ items, total: items.length });
+    const q = sp.get("q") ?? "";
+    const items = listBlockedOpu(q);
+    return NextResponse.json(items);
 }

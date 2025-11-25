@@ -1,9 +1,9 @@
 import { OpuCardModel, OpuEntity, toCategoryName } from "@/features/opu/domain";
-import { COMPLETED_COUNT } from "@/mocks/api/db/opu.db"; // 실제 API에서 내려주면 이 부분도 나중에 제거 가능
-import { mapTimeToLabel } from "../opu/utils/time";
+import { COMPLETED_COUNT } from "@/mocks/api/db/opu.db";
 import { requestJSON } from "@/lib/request";
+import { mapTimeToLabel } from "../opu/utils/time";
 
-const BASE = "/api/me/blocked-opu";
+const BASE = "/opu/blocked";
 
 // 차단 OPU 조인 결과 타입
 export type BlockedJoin = {
@@ -29,7 +29,6 @@ function toOpuCardModelFromBlockedJoin(j: BlockedJoin): OpuCardModel {
         completedCount: COMPLETED_COUNT[j.opu_id] ?? 0,
         locked: !j.opu_is_shared,
         liked: false,
-        shareLabel: j.opu_is_shared ? "공유됨" : "비공유",
         createdAt: j.blocked_at,
         emoji: j.emoji,
     };
@@ -45,6 +44,7 @@ export async function getBlockedOpuList(q = ""): Promise<OpuCardModel[]> {
     return rows.map(toOpuCardModelFromBlockedJoin);
 }
 
+// ==== 차단 해제 ====
 export function deleteBlockedOpu(opuId: number) {
     const url = `${BASE}/${opuId}`;
     return requestJSON<void>(url, { method: "DELETE" });

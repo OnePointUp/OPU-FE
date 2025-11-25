@@ -19,7 +19,7 @@ export default function SearchBar({
     className = "",
 }: Props) {
     const id = useId();
-    console.log("render SearchBar");
+
     return (
         <form
             onSubmit={(e) => {

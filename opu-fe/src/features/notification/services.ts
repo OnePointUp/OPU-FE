@@ -5,7 +5,7 @@ import type {
     NotificationFeedItem,
 } from "./types";
 
-const BASE = "/api/notification";
+const BASE = "/notification";
 
 // ===== 알림 설정 =====
 export function fetchNotificationSettings() {
@@ -30,7 +30,7 @@ export function setAllNotifications(enabled: boolean) {
 
 // ===== 알림 목록 =====
 
-const FEED_BASE = "/api/notification/feed";
+const FEED_BASE = "/notification/feed";
 
 // 알림 목록 조회
 export function fetchNotificationFeed() {
