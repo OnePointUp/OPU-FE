@@ -4,13 +4,20 @@ import { useRouter } from "next/navigation";
 import RoutineListItem from "../components/RoutineListItem";
 import { getRoutineStatus } from "../domain";
 import { useRoutineList } from "../hooks/useRoutineList";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Icon } from "@iconify/react";
+import BottomSheet from "@/components/common/BottomSheet";
+import ActionList, { type ActionItem } from "@/components/common/ActionList";
+import ConfirmModal from "@/components/common/ConfirmModal";
 
 export default function RoutineListPage() {
     const router = useRouter();
     const { items, loading } = useRoutineList();
-    const [onlyOngoing, setOnlyOngoing] = useState(true);
+    const [onlyOngoing, setOnlyOngoing] = useState(false);
+
+    const [openSheet, setOpenSheet] = useState(false);
+    const [selectedId, setSelectedId] = useState<number | null>(null);
+    const [confirmOpen, setConfirmOpen] = useState(false);
 
     const filtered = items.filter((it) => {
         const status = getRoutineStatus(it);
@@ -18,8 +25,41 @@ export default function RoutineListPage() {
         return true;
     });
 
+    const onClickItem = (id: number) => {
+        setSelectedId(id);
+        setOpenSheet(true);
+    };
+
+    const onCloseSheet = () => {
+        setOpenSheet(false);
+        setSelectedId(null);
+    };
+
+    const actionItems: ActionItem[] = useMemo(
+        () => [
+            {
+                label: "수정",
+                onClick: () => {
+                    if (!selectedId) return;
+                    router.push(`/routine/edit/${selectedId}`);
+                    onCloseSheet();
+                },
+            },
+            {
+                label: "삭제",
+                danger: true,
+                onClick: () => {
+                    if (!selectedId) return;
+                    setConfirmOpen(true);
+                    onCloseSheet();
+                },
+            },
+        ],
+        [router, selectedId]
+    );
+
     return (
-        <div className="flex flex-col bg-white">
+        <section>
             {/* 진행중인 루틴 필터 */}
             <div className="py-3 border-b border-[var(--color-super-light-gray)]">
                 <label
@@ -54,9 +94,7 @@ export default function RoutineListPage() {
                             <RoutineListItem
                                 key={item.id}
                                 item={item}
-                                onClick={
-                                    (id) => router.push(`/routine/${id}`) // 추후 상세 페이지 만들면 수정
-                                }
+                                onClick={() => onClickItem(item.id)}
                             />
                         ))}
                     </div>
@@ -73,6 +111,24 @@ export default function RoutineListPage() {
                     <Icon icon="ic:baseline-plus" width="30" height="30" />
                 </button>
             </div>
-        </div>
+
+            <BottomSheet open={openSheet} onClose={onCloseSheet}>
+                <ActionList items={actionItems} />
+            </BottomSheet>
+
+            <ConfirmModal
+                isOpen={confirmOpen}
+                message={"정말 삭제하시겠습니까?"}
+                onCancel={() => setConfirmOpen(false)}
+                onConfirm={() => {
+                    if (!selectedId) return;
+
+                    // TODO: 삭제 API 자리
+                    // await deleteRoutine(selectedId);
+
+                    setConfirmOpen(false);
+                }}
+            />
+        </section>
     );
 }

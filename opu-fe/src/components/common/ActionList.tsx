@@ -1,6 +1,6 @@
 "use client";
 
-type ActionItem = {
+export type ActionItem = {
     label: string;
     danger?: boolean;
     onClick?: () => void;

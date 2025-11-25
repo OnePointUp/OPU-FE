@@ -25,7 +25,7 @@ export default function ConfirmModal({
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-modal-bg)]"
+            className="fixed inset-0 z-500 flex items-center justify-center bg-[var(--color-modal-bg)]"
             onClick={onCancel}
         >
             <div
