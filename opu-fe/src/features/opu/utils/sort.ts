@@ -6,7 +6,7 @@ export const SORT_LABEL_MAP: Record<SortOption, string> = {
     name: "이름순",
     latest: "최신순",
     completed: "완료순",
-    liked: "찜 많은 순",
+    liked: "인기순",
 };
 
 export function getSortLabel(option: SortOption): string {

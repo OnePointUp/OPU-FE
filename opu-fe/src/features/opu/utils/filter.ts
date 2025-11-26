@@ -17,9 +17,14 @@ export function filterOpuList(
 
     return items.filter((item) => {
         // 검색어
-        if (text && !item.title.toLowerCase().includes(text)) return false;
+        if (text) {
+            const title = item.title?.toLowerCase() ?? "";
+            const description = item.description?.toLowerCase() ?? "";
+            const haystack = `${title} ${description}`;
 
-        // 기간 필터
+            if (!haystack.includes(text)) return false;
+        }
+        // 시간 필터
         if (hasTimeFilter) {
             const matched = times.some(
                 (p) => mapTimeToLabel(p) === item.timeLabel

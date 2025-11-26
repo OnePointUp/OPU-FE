@@ -15,11 +15,11 @@ export default function SearchBar({
     value,
     onChange,
     onSubmit,
-    placeholder = "OPU 제목 입력",
+    placeholder = "OPU 제목/설명 입력",
     className = "",
 }: Props) {
     const id = useId();
-    console.log("render SearchBar");
+
     return (
         <form
             onSubmit={(e) => {
@@ -51,7 +51,8 @@ export default function SearchBar({
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className="w-full h-full pl-10 pr-3 rounded-[38px] bg-[#F5F6F7] text-[14px] leading-[17px] font-medium placeholder-[#ACAEB5] text-zinc-700 outline-none focus:ring-2 focus:ring-black/5"
+                className="w-full h-full pl-10 pr-3 rounded-full bg-[#F5F6F7] leading-[17px] font-medium placeholder-[#ACAEB5] text-zinc-700 outline-none focus:ring-2 focus:ring-black/5"
+                style={{ fontSize: "var(--text-sub)" }}
             />
         </form>
     );

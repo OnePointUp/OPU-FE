@@ -3,7 +3,7 @@
 export default function NotificationFeedRowSkeleton() {
     return (
         <li
-            className="flex gap-4 px-2 mt-8"
+            className="flex gap-4 mt-6"
             style={{
                 background: "var(--color-background)",
             }}
@@ -11,26 +11,17 @@ export default function NotificationFeedRowSkeleton() {
             {/* 아이콘 스켈레톤 */}
             <div className="skeleton flex w-12 h-12 mt-4 rounded-full" />
 
-            <div className="flex flex-1 flex-col gap-2 mt-1">
+            <div className="flex flex-1 flex-col gap-2 mt-3">
                 {/* 제목 */}
                 <div
                     className="skeleton rounded-md"
                     style={{
-                        width: "70%",
+                        width: "35%",
                         height: "14px",
                     }}
                 />
 
                 {/* 메시지 1 */}
-                <div
-                    className="skeleton rounded-md"
-                    style={{
-                        width: "100%",
-                        height: "12px",
-                    }}
-                />
-
-                {/* 메시지 2 */}
                 <div
                     className="skeleton rounded-md"
                     style={{

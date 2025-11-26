@@ -33,11 +33,11 @@ export default function NotificationContent() {
                 <NotificationToggleList key={section.id} title={section.type}>
                     {section.items.map((item) => (
                         <NotificationToggleRow
-                            key={item.key}
+                            key={item.code}
                             label={item.label}
                             description={item.description}
                             checked={item.enabled}
-                            onChange={(v) => toggleOne(item.key, v)}
+                            onChange={(v) => toggleOne(item.code, v)}
                         />
                     ))}
                 </NotificationToggleList>

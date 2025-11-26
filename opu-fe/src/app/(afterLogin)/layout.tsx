@@ -30,8 +30,6 @@ export default function AfterLoginLayout({
 
     const hideMenu = HIDDEN_MENU_PATHS.some((p) => pathname.startsWith(p));
 
-    const bottomOffset = hideMenu ? 0 : 55;
-
     return (
         <div className="app-page">
             <Header />
@@ -41,9 +39,6 @@ export default function AfterLoginLayout({
                     app-container pt-app-header px-6 py-20
                     overflow-y-auto overflow-x-hidden
                 `}
-                style={{
-                    maxHeight: `calc(100dvh - var(--app-header-h) - ${bottomOffset}px)`,
-                }}
             >
                 {children}
             </main>

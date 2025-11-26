@@ -8,7 +8,7 @@ import {
 } from "@/features/notification/services";
 import type {
     NotificationSettings,
-    NotificationKey,
+    NotificationCode,
 } from "@/features/notification/types";
 import { toastError } from "@/lib/toast";
 
@@ -62,7 +62,7 @@ export function useNotificationSettings() {
     }, []);
 
     const toggleOne = useCallback(
-        async (key: NotificationKey, enabled: boolean) => {
+        async (code: NotificationCode, enabled: boolean) => {
             setSettings((prev) => {
                 if (!prev) return prev;
                 return {
@@ -70,14 +70,14 @@ export function useNotificationSettings() {
                     sections: prev.sections.map((sec) => ({
                         ...sec,
                         items: sec.items.map((it) =>
-                            it.key === key ? { ...it, enabled } : it
+                            it.code === code ? { ...it, enabled } : it
                         ),
                     })),
                 };
             });
 
             try {
-                const saved = await patchNotificationItem(key, enabled);
+                const saved = await patchNotificationItem(code, enabled);
                 setSettings(saved);
             } catch (e) {
                 console.error(e);

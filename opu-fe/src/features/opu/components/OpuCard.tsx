@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { CATEGORY_BADGE, type OpuCardModel } from "@/features/opu/domain";
 import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
+import Badge from "@/components/common/Badge";
 
 type Props = {
     item: OpuCardModel;
@@ -11,29 +12,6 @@ type Props = {
     onMore?: (id: number) => void;
     loading?: boolean;
 };
-
-function Badge({
-    label,
-    bg,
-    color,
-}: {
-    label: string;
-    bg: string;
-    color: string;
-}) {
-    return (
-        <span
-            className="inline-flex items-center justify-center h-4 px-1 rounded-sm font-medium leading-[16px]"
-            style={{
-                backgroundColor: bg,
-                color,
-                fontSize: "var(--text-mini)",
-            }}
-        >
-            {label}
-        </span>
-    );
-}
 
 export default function OpuCard({ item, onMore, loading = false }: Props) {
     const [liked, setLiked] = useState(item.liked);
@@ -109,7 +87,7 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
 
                     {/* 제목 */}
                     <span
-                        className="flex items-center gap-0.5 line-clamp-2 mb-1 w-full"
+                        className="flex items-center gap-0.5 line-clamp-2 w-full"
                         style={{
                             fontSize: "var(--text-sub)",
                             fontWeight: "var(--weight-semibold)",

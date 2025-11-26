@@ -9,17 +9,17 @@ type Props = {
     onRead: (id: number) => void;
 };
 
-const ICON_MAP: Record<NotificationFeedItem["key"], string> = {
-    morning: "twemoji:sun",
-    evening: "fxemoji:crescentmoon",
-    routine: "devicon:cosmosdb",
-    todo: "catppuccin:todo",
-    random: "fluent-emoji-flat:magic-wand",
+const ICON_MAP: Record<NotificationFeedItem["code"], string> = {
+    MORNING: "twemoji:sun",
+    EVENING: "fxemoji:crescentmoon",
+    ROUTINE: "devicon:cosmosdb",
+    TODO: "catppuccin:todo",
+    RANDOM: "fluent-emoji-flat:magic-wand",
 };
 
 export default function NotificationFeedRow({ item, onRead }: Props) {
     const isDimmed = item.isRead;
-    const icon = ICON_MAP[item.key];
+    const icon = ICON_MAP[item.code];
 
     return (
         <li

@@ -5,29 +5,7 @@ import { CATEGORY_BADGE } from "@/features/opu/domain";
 import { type OpuCardModel } from "@/features/opu/domain";
 import { formatDate } from "@/utils/formatDate";
 import { useState } from "react";
-
-function Badge({
-    label,
-    bg,
-    color,
-}: {
-    label: string;
-    bg: string;
-    color: string;
-}) {
-    return (
-        <span
-            className="inline-flex items-center justify-center h-5 px-1 rounded-md font-medium leading-[16px]"
-            style={{
-                fontSize: "var(--text-mini)",
-                backgroundColor: bg,
-                color: color,
-            }}
-        >
-            {label}
-        </span>
-    );
-}
+import Badge from "@/components/common/Badge";
 
 export default function BlockedOpuCard({
     item,
@@ -73,25 +51,25 @@ export default function BlockedOpuCard({
             <div className="w-full bg-[var(--background)]">
                 <div className="ml-1">
                     <div className="flex items-start gap-3">
-                        <div className="flex items-center justify-center p-1 bg-[var(--color-opu-yellow)] rounded-2xl mb-1">
+                        <div className="flex items-center justify-center p-1 bg-[var(--color-opu-yellow)] rounded-2xl mt-0.5">
                             <span
                                 className="flex items-center justify-center shrink-0"
                                 style={{
                                     fontSize: "var(--text-h2)",
-                                    width: 30,
-                                    height: 30,
+                                    width: 35,
+                                    height: 35,
                                 }}
                             >
                                 {item.emoji ?? "❓"}
                             </span>
                         </div>
 
-                        <div className="w-full flex flex-col gap-1">
+                        <div className="w-full flex flex-col">
                             <div className="flex items-start justify-between">
                                 <p
                                     style={{
                                         fontSize: "var(--text-sub)",
-                                        fontWeight: "var(--weight-medium)",
+                                        fontWeight: "var(--weight-semibold)",
                                     }}
                                 >
                                     {item.title}
@@ -101,7 +79,7 @@ export default function BlockedOpuCard({
                                     aria-haspopup="menu"
                                     aria-expanded={menuOpen}
                                     onClick={(e) => {
-                                        e.stopPropagation(); // ← 카드 선택 방지
+                                        e.stopPropagation();
                                         onMore?.(item.id);
                                         setMenuOpen((v) => !v);
                                     }}
