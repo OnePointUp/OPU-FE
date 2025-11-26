@@ -5,6 +5,11 @@ export type DailyTodoStats = {
     id: number;
     title: string;
     done: boolean;
+    time?: {
+      ampm: "AM" | "PM";
+      hour: number;
+      minute: number;
+    } | null;
   }[];
   total: number;       // 전체 투두 개수
   doneCount: number;   // 완료한 투두 개수
