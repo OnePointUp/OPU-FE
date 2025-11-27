@@ -31,13 +31,24 @@ function createMonthlyMockData(
     else intensity = 1;
 
     const todos =
-      total > 0
-        ? Array.from({ length: total }).map((_, idx) => ({
+    total > 0
+      ? Array.from({ length: total }).map((_, idx) => {
+          const ampm = Math.random() > 0.5 ? "AM" : "PM" as "AM" | "PM";
+          const hour = Math.floor(Math.random() * 12) + 1;
+          const minute = Math.floor(Math.random() * 60);
+
+          return {
             id: idx + 1,
             title: `투두 ${idx + 1}`,
             done: idx < doneCount,
-          }))
-        : [];
+            time: {
+              ampm,
+              hour,
+              minute,
+            },
+          };
+        })
+      : [];
 
     result.push({
       date: dateStr,

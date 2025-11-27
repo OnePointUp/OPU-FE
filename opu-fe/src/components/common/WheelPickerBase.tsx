@@ -2,29 +2,36 @@
 
 import { useLayoutEffect, useEffect, useRef } from "react";
 
-type WheelPickerBaseProps = {
-  items: number[];
-  value: number;
-  onChange: (v: number) => void;
+type WheelPickerBaseProps<T extends string | number> = {
+  items: readonly T[];
+  value: T;
+  onChange: (v: T) => void;
   height?: number;
   itemHeight?: number;
-  isItemDisabled?: (v: number) => boolean;
+  isItemDisabled?: (v: T) => boolean;
+  enableInfinite?: boolean;
 };
 
-export default function WheelPickerBase({
+export default function WheelPickerBase<T extends string | number>({
   items,
   value,
   onChange,
   height = 180,
   itemHeight = 42,
   isItemDisabled = () => false,
-}: WheelPickerBaseProps) {
+  enableInfinite = true,
+}: WheelPickerBaseProps<T>) {
   const ref = useRef<HTMLDivElement>(null);
   const prevItemsRef = useRef(items);
 
   const padding = (height - itemHeight) / 2;
-  const extended = [...items, ...items, ...items];
-  const middleOffset = items.length;
+
+  // enableInfinite 여부에 따라 확장 배열 지정
+  const extended = enableInfinite
+    ? ([...items, ...items, ...items] as T[])
+    : ([...items] as T[]);
+
+  const middleOffset = enableInfinite ? items.length : 0;
 
   const getIndexFromScroll = () =>
     Math.round((ref.current?.scrollTop ?? 0) / itemHeight);
@@ -38,22 +45,17 @@ export default function WheelPickerBase({
 
   const getExtendedIndexForValue = () => {
     const idx = items.indexOf(value);
-    return idx + middleOffset;
+    return enableInfinite ? idx + middleOffset : idx;
   };
 
-  // -------------------------------------------
-  // 0) value가 items 범위 바깥이면 즉시 보정
-  // -------------------------------------------
+  // value가 items에 포함되지 않으면 보정
   useEffect(() => {
     if (!items.includes(value)) {
-      const last = items[items.length - 1];
-      onChange(last);
+      onChange(items[items.length - 1]);
     }
   }, [items, value]);
 
-  // -------------------------------------------
-  // 1) items 변경 시 scrollTop 튐 제거 (layoutEffect)
-  // -------------------------------------------
+  // items 변경 시 scroll 튐 방지
   useLayoutEffect(() => {
     const prev = prevItemsRef.current;
     const curr = items;
@@ -62,14 +64,12 @@ export default function WheelPickerBase({
       const el = ref.current;
       if (!el) return;
 
-      // 스냅, 애니메이션 즉시 제거
       el.style.scrollSnapType = "none";
       el.style.scrollBehavior = "auto";
 
       const idx = getExtendedIndexForValue();
-      el.scrollTop = idx * itemHeight; // 즉시 위치 복원
+      el.scrollTop = idx * itemHeight;
 
-      // 다음 프레임에서 스냅 복구
       requestAnimationFrame(() => {
         el.style.scrollSnapType = "y mandatory";
         el.style.scrollBehavior = "smooth";
@@ -79,16 +79,12 @@ export default function WheelPickerBase({
     prevItemsRef.current = curr;
   }, [items]);
 
-  // -------------------------------------------
-  // 2) value 변경 → 자연스러운 smooth 이동
-  // -------------------------------------------
+  // value 변경 시 자동 스크롤 이동
   useEffect(() => {
     scrollToIndex(getExtendedIndexForValue(), true);
   }, [value]);
 
-  // -------------------------------------------
-  // 3) wheel 스크롤 (항상 1칸씩)
-  // -------------------------------------------
+  // wheel 스크롤
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -102,10 +98,20 @@ export default function WheelPickerBase({
 
       scrollToIndex(nextIndex, true);
 
-      const real =
-        ((nextIndex % items.length) + items.length) % items.length;
+      let realIndex: number;
 
-      const selected = items[real];
+      if (enableInfinite) {
+        realIndex =
+          ((nextIndex % items.length) + items.length) % items.length;
+      } else {
+        // finite 모드에서는 index 범위 고정
+        realIndex = Math.min(
+          Math.max(nextIndex, 0),
+          items.length - 1
+        );
+      }
+
+      const selected = items[realIndex];
 
       if (!isItemDisabled(selected)) {
         onChange(selected);
@@ -114,11 +120,9 @@ export default function WheelPickerBase({
 
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, [items, value]);
+  }, [items, value, enableInfinite]);
 
-  // -------------------------------------------
-  // 4) infinite scroll
-  // -------------------------------------------
+  // 터치/드래그 스크롤에서도 선택 반영
   let scrollTimeout: any;
 
   const onScroll = () => {
@@ -128,36 +132,53 @@ export default function WheelPickerBase({
       const el = ref.current;
       if (!el) return;
 
-      const block = items.length * itemHeight;
-      const curr = el.scrollTop;
+      // 무한 모드일 경우: 앵커 처리 + index 계산
+      if (enableInfinite) {
+        const block = items.length * itemHeight;
+        const curr = el.scrollTop;
 
-      if (curr < block) {
-        el.style.scrollBehavior = "auto";
-        el.scrollTop = curr + block;
-        el.style.scrollBehavior = "smooth";
-      } else if (curr >= block * 2) {
-        el.style.scrollBehavior = "auto";
-        el.scrollTop = curr - block;
-        el.style.scrollBehavior = "smooth";
-      }
+        if (curr < block) {
+          el.style.scrollBehavior = "auto";
+          el.scrollTop = curr + block;
+          el.style.scrollBehavior = "smooth";
+        } else if (curr >= block * 2) {
+          el.style.scrollBehavior = "auto";
+          el.scrollTop = curr - block;
+          el.style.scrollBehavior = "smooth";
+        }
 
-      const idx = getIndexFromScroll();
-      const real =
-        ((idx % items.length) + items.length) % items.length;
+        const idx = getIndexFromScroll();
+        const real =
+          ((idx % items.length) + items.length) % items.length;
 
-      const selected = items[real];
+        const selected = items[real];
 
-      if (!isItemDisabled(selected) && selected !== value) {
-        onChange(selected);
+        if (!isItemDisabled(selected) && selected !== value) {
+          onChange(selected);
+        }
+      } else {
+        // finite 모드일 경우: 그냥 가운데 index를 선택 값으로
+        const idx = getIndexFromScroll();
+        const clamped = Math.min(
+          Math.max(idx, 0),
+          items.length - 1
+        );
+        const selected = items[clamped];
+
+        if (!isItemDisabled(selected) && selected !== value) {
+          onChange(selected);
+        }
       }
     }, 30);
   };
 
   return (
     <div className="relative overflow-hidden" style={{ height }}>
+      {/* 상단/하단 그라데이션 */}
       <div className="absolute top-0 left-0 right-0 h-14 bg-gradient-to-b from-white to-transparent pointer-events-none" />
       <div className="absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-t from-white to-transparent pointer-events-none" />
 
+      {/* 중앙 선택 영역 */}
       <div
         className="absolute left-0 right-0 border-y border-gray-300 pointer-events-none"
         style={{
@@ -166,6 +187,7 @@ export default function WheelPickerBase({
         }}
       />
 
+      {/* 스크롤 영역 */}
       <div
         ref={ref}
         data-no-drag
