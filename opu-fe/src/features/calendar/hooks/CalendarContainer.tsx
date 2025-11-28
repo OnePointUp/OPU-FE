@@ -15,7 +15,7 @@ type Props = {
   collapsedHeight: number;
 };
 
-const DRAG_SPEED = 0.4; // 드래그 민감도
+const DRAG_SPEED = 0.4;
 
 export default function CalendarContainer({
   children,
@@ -28,14 +28,17 @@ export default function CalendarContainer({
   setCollapsedHeight,
 }: Props) {
   const startY = useRef<number | null>(null);
-
-  /** 화면 기반으로 펼쳐진 셀 높이 계산 */
+  const initialized = useRef(false);
   useEffect(() => {
+    if (initialized.current) return;
+    if (calendarMatrix.length === 0) return;
+
     const vh = window.innerHeight;
-    const weekCount = calendarMatrix.length; // 5 또는 6주
-    const weekdayArea = 40; // 요일 영역 높이
-    const margin = 40; // 여백
-    const reservedTodo = 200; // 투두 영역 확보
+    const weekCount = calendarMatrix.length;
+
+    const weekdayArea = 40;
+    const margin = 40;
+    const reservedTodo = 200;
 
     const dynamicHeight =
       (vh - weekdayArea - margin - reservedTodo) / weekCount;
@@ -44,10 +47,10 @@ export default function CalendarContainer({
 
     setExpandedHeight(finalHeight);
     setCollapsedHeight(finalHeight * 0.5);
-
-    // 최초 로드시 캘린더는 펼쳐진 상태
     setCellHeight(finalHeight);
-  }, [calendarMatrix]);
+
+    initialized.current = true; // 한 번만 실행됨
+  }, [calendarMatrix.length]);
 
   /** 터치 시작 */
   const handleStart = (e: React.TouchEvent) => {
@@ -71,7 +74,7 @@ export default function CalendarContainer({
     }
   };
 
-  /** 터치 종료 - 스냅 */
+  /** 터치 종료 */
   const handleEnd = () => {
     const mid = (expandedHeight + collapsedHeight) / 2;
 
@@ -88,7 +91,9 @@ export default function CalendarContainer({
       onTouchEnd={handleEnd}
       className="transition-[height] duration-200 w-full"
       style={{
-        height: cellHeight * calendarMatrix.length + 60, // 60은 위/아래 보정값
+        height: calendarMatrix.length
+          ? cellHeight * calendarMatrix.length + 60
+          : 0,
       }}
     >
       {children}

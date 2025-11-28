@@ -31,6 +31,8 @@ export default function MainPage() {
 
   const [editingTodoId, setEditingTodoId] = useState<number | null>(null);
 
+  const [todoHeight, setTodoHeight] = useState(0);
+
   /** 캘린더 셀 높이 관련 상태 */
   const [cellHeight, setCellHeight] = useState(90);
   const [expandedHeight, setExpandedHeight] = useState(90);
@@ -218,6 +220,22 @@ export default function MainPage() {
     setEditingTodoId(newId);
   };
 
+  // 투두 높이 계산
+  useEffect(() => {
+    if (!calendarMatrix.length) return;
+
+    const vh = window.innerHeight;
+
+    const calendarHeight = cellHeight * calendarMatrix.length + 60;
+
+    const headerHeight = 60;
+    const bottomPadding = 80;
+
+    const available = vh - calendarHeight - headerHeight - bottomPadding;
+
+    setTodoHeight(Math.max(0, available));
+    }, [cellHeight, calendarMatrix]);
+
   return (
     <div className="app-page">
       <main className="app-container pt-app-header pb-40 px-4">
@@ -253,7 +271,8 @@ export default function MainPage() {
             onEditTodo={handleEditTodo}
             onDeleteTodo={handleDeleteTodo}
             editingTodoId={editingTodoId}
-          />
+            maxHeight={todoHeight}
+        />
         </div>
 
         {/* 플러스 버튼 */}

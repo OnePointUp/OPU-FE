@@ -19,6 +19,7 @@ type Props = {
   onDeleteTodo: (todoId: number) => void;
   editingTodoId: number | null;
   loading?: boolean;
+  maxHeight?: number;
 };
 
 export default function TodoList({
@@ -28,6 +29,7 @@ export default function TodoList({
   onDeleteTodo,
   editingTodoId,
   loading = false,
+  maxHeight,
 }: Props) {
   const [openSheet, setOpenSheet] = useState(false);
   const [targetTodo, setTargetTodo] =
@@ -43,7 +45,6 @@ export default function TodoList({
     minute: 0,
   });
 
-  // 취소 시 복구를 위한 원본 저장
   const [originalTitle, setOriginalTitle] = useState("");
   const [originalTime, setOriginalTime] = useState<
     { ampm: "AM" | "PM"; hour: number; minute: number } | null
@@ -60,7 +61,6 @@ export default function TodoList({
     setEditingId(todo.id);
     setEditText(todo.title);
 
-    // 원본 백업
     setOriginalTitle(todo.title);
     setOriginalTime(todo.time ?? null);
 
@@ -68,7 +68,6 @@ export default function TodoList({
       setShowTimePicker(true);
       setTimeValue(todo.time);
     } else {
-      // 시간 없던 투두 또는 신규 투두 → 항상 9:00 AM 시작
       setShowTimePicker(false);
       setTimeValue({
         ampm: "AM",
@@ -83,7 +82,6 @@ export default function TodoList({
     e.stopPropagation();
   };
 
-  /** 저장 버튼 */
   const saveEditing = () => {
     if (!editingId) return;
 
@@ -95,23 +93,19 @@ export default function TodoList({
     }
 
     const time = showTimePicker ? timeValue : null;
-
     onEditTodo(editingId, title, time);
 
     setEditingId(null);
     setShowTimePicker(false);
   };
 
-  /** 취소 버튼 */
   const cancelEditing = () => {
     if (!editingId) return;
 
-    // 신규 생성 + 입력 없음 → 삭제
     if (originalTitle === "" && editText.trim() === "") {
       onDeleteTodo(editingId);
     }
 
-    // 기존 투두 → 원래 상태로 복구
     setEditText(originalTitle);
     setTimeValue(
       originalTime ?? {
@@ -120,7 +114,7 @@ export default function TodoList({
         minute: 0,
       }
     );
-    setShowTimePicker(originalTime ? true : false);
+    setShowTimePicker(!!originalTime);
 
     setEditingId(null);
   };
@@ -134,7 +128,6 @@ export default function TodoList({
     setEditingId(todo.id);
     setEditText(todo.title);
 
-    // 원본 저장
     setOriginalTitle(todo.title);
     setOriginalTime(todo.time ?? null);
 
@@ -153,9 +146,7 @@ export default function TodoList({
     setOpenSheet(false);
   };
 
-  const formatTime = (
-    time: { ampm: "AM" | "PM"; hour: number; minute: number } | null | undefined
-  ) => {
+  const formatTime = (time: any) => {
     if (!time) return null;
     const minute = String(time.minute).padStart(2, "0");
     return `${time.ampm} ${time.hour}:${minute}`;
@@ -171,8 +162,15 @@ export default function TodoList({
 
   return (
     <>
-      <div className="bg-white p-4 rounded-xl shadow-sm">
-        <div className="font-semibold mb-3">{formatDate(selectedDay.date)}</div>
+      <div
+        className={`bg-white p-4 rounded-xl shadow-sm ${
+          maxHeight ? "overflow-y-auto" : ""
+        }`}
+        style={maxHeight ? { maxHeight } : {}}
+      >
+        <div className="font-semibold mb-3">
+          {formatDate(selectedDay.date)}
+        </div>
 
         {selectedDay.todos.map((todo) => {
           const isEditing = editingId === todo.id;
@@ -180,7 +178,6 @@ export default function TodoList({
 
           return (
             <div key={todo.id} className="py-4">
-              {/* 체크 + 제목 */}
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -228,24 +225,30 @@ export default function TodoList({
                 )}
               </div>
 
-              {/* 편집 모드 */}
               {isEditing && (
                 <div className="mt-3 pl-7 pr-2 flex flex-col gap-4">
                   <div
                     className="flex items-center justify-between"
                     onMouseDown={stopBlur}
                   >
-                    <span className="text-sm text-gray-500">시작 시간 설정</span>
-                    <Toggle checked={showTimePicker} onChange={setShowTimePicker} />
+                    <span className="text-sm text-gray-500">
+                      시작 시간 설정
+                    </span>
+                    <Toggle
+                      checked={showTimePicker}
+                      onChange={setShowTimePicker}
+                    />
                   </div>
 
                   {showTimePicker && (
                     <div onMouseDown={stopBlur}>
-                      <WheelPickerTime value={timeValue} onChange={setTimeValue} />
+                      <WheelPickerTime
+                        value={timeValue}
+                        onChange={setTimeValue}
+                      />
                     </div>
                   )}
 
-                  {/* 버튼 */}
                   <div className="flex gap-3 mt-1">
                     <button
                       onClick={cancelEditing}
