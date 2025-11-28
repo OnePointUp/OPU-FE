@@ -17,6 +17,7 @@ export interface RoutineEntity {
     startDate: string;
     endDate: string | null;
     time: string | null;
+    color: string;
     isActive: boolean;
     createdAt: string;
     updatedAt: string;
@@ -71,6 +72,59 @@ export function getFrequencyLabel(frequency: RoutineFrequency): string {
         case "YEARLY":
             return "매년";
     }
+}
+
+const WEEK_LABELS = ["월", "화", "수", "목", "금", "토", "일"];
+
+export function parseNumberList(raw: string | null): number[] {
+    if (!raw) return [];
+    return raw
+        .split(",")
+        .map((v) => Number(v))
+        .filter((v) => !Number.isNaN(v));
+}
+
+export function buildFrequencyLabel(
+    frequency: RoutineFrequency,
+    days: number[],
+    months: number[],
+    last: boolean
+): string {
+    const base = getFrequencyLabel(frequency);
+
+    if (frequency === "WEEKLY" || frequency === "BIWEEKLY") {
+        if (!days.length) return base;
+        const names = days
+            .filter((d) => d >= 1 && d <= 7)
+            .map((d) => WEEK_LABELS[d - 1]);
+        return `${base} ${names.join(", ")}`;
+    }
+
+    if (frequency === "MONTHLY") {
+        if (last) return `${base} 매월 마지막 날`;
+        if (!days.length) return base;
+        const labels = days.map((d) => `${d}일`);
+        return `${base} ${labels.join(", ")}`;
+    }
+
+    if (frequency === "YEARLY") {
+        if (!months.length && !days.length && !last) return base;
+
+        const monthLabel = months.length
+            ? months.map((m) => `${m}월`).join(", ")
+            : "";
+
+        const dayLabel = last
+            ? "마지막 날"
+            : days.length
+            ? days.map((d) => `${d}일`).join(", ")
+            : "";
+
+        const combined = [monthLabel, dayLabel].filter(Boolean).join(" ");
+        return `${base} ${combined}`;
+    }
+
+    return base;
 }
 
 export function formatDateRange(startDate: string, endDate: string | null) {

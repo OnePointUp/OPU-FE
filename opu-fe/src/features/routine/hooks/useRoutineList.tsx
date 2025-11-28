@@ -10,22 +10,28 @@ export function useRoutineList() {
     const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
-        async function run() {
+        let cancelled = false;
+
+        (async () => {
             try {
-                const list = await fetchRoutineList();
-                setItems(list);
+                const data = await fetchRoutineList();
+                if (!cancelled) {
+                    setItems(data);
+                }
             } catch (e) {
-                if (e instanceof Error) {
-                    setError(e);
-                } else {
-                    setError(new Error(String(e)));
+                if (!cancelled) {
+                    setError(e as Error);
                 }
             } finally {
-                setLoading(false);
+                if (!cancelled) {
+                    setLoading(false);
+                }
             }
-        }
+        })();
 
-        run();
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
     return { items, loading, error };
