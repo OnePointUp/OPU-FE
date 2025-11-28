@@ -85,11 +85,25 @@ export default function RoutineListPage() {
 
             <main className="flex-1">
                 {loading ? (
-                    <div className="px-4 py-4 text-sm text-gray-400">
+                    <div
+                        className="text-center py-7 w-full"
+                        style={{
+                            fontSize: "var(--text-sub)",
+                            color: "var(--color-light-gray)",
+                        }}
+                    >
+                        {" "}
                         루틴 불러오는 중...
                     </div>
                 ) : filtered.length === 0 ? (
-                    <div className="px-4 py-6 text-sm text-gray-400">
+                    <div
+                        className="text-center py-7 w-full"
+                        style={{
+                            fontSize: "var(--text-sub)",
+                            color: "var(--color-light-gray)",
+                        }}
+                    >
+                        {" "}
                         표시할 루틴이 없어요
                     </div>
                 ) : (
