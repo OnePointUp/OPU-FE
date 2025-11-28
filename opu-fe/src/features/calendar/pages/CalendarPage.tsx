@@ -7,17 +7,15 @@ import {
 } from "@/mocks/api/handler/calendar.handler";
 import { DailyTodoStats } from "@/mocks/api/db/calendar.db";
 import { buildCalendarMatrix } from "@/lib/calendar";
-
-import Calendar from "@/features/main/components/Calendar";
 import TodoList from "@/features/main/components/TodoList";
 import PlusButton from "@/components/common/PlusButton";
 import CalendarFull from "../components/CalendarFull";
+import CalendarContainer from "../hooks/CalendarContainer";
 
-/** ⭐ 미완료 → 완료 순 정렬 */
 const sortTodos = (todos: DailyTodoStats["todos"]) => {
   return [...todos].sort((a, b) => {
-    if (a.done === b.done) return a.id - b.id; // 상태 같으면 id순
-    return a.done ? 1 : -1; // 완료(true)는 아래로
+    if (a.done === b.done) return a.id - b.id;
+    return a.done ? 1 : -1;
   });
 };
 
@@ -33,11 +31,15 @@ export default function MainPage() {
 
   const [editingTodoId, setEditingTodoId] = useState<number | null>(null);
 
-  /** 초기 로드 */
+  /** 캘린더 셀 높이 관련 상태 */
+  const [cellHeight, setCellHeight] = useState(90);
+  const [expandedHeight, setExpandedHeight] = useState(90);
+  const [collapsedHeight, setCollapsedHeight] = useState(45);
+
+  /** 초기 데이터 불러오기 */
   useEffect(() => {
     const data = getMonthlyCalendar(year, month);
 
-    // 날짜 로드 시에도 todos 정렬 적용
     const sorted = data.map((d) => ({
       ...d,
       todos: sortTodos(d.todos),
@@ -89,8 +91,9 @@ export default function MainPage() {
 
       setCalendarMatrix(buildCalendarMatrix(updated));
 
-      const newSelected =
-        updated.find((d) => d.date === selectedDay.date) ?? null;
+      const newSelected = updated.find(
+        (d) => d.date === selectedDay.date
+      ) ?? null;
 
       setSelectedDay(newSelected);
 
@@ -98,7 +101,7 @@ export default function MainPage() {
     });
   };
 
-  /** ⭐ 제목 + 시간 수정 */
+  /** 수정 */
   const handleEditTodo = (
     todoId: number,
     newTitle: string,
@@ -123,8 +126,9 @@ export default function MainPage() {
 
       setCalendarMatrix(buildCalendarMatrix(updated));
 
-      const newSelected =
-        updated.find((d) => d.date === selectedDay.date) ?? null;
+      const newSelected = updated.find(
+        (d) => d.date === selectedDay.date
+      ) ?? null;
 
       setSelectedDay(newSelected);
 
@@ -150,13 +154,14 @@ export default function MainPage() {
         const total = todos.length;
         const ratio = total > 0 ? doneCount / total : 0;
 
-        return { ...day, todos, total, doneCount, ratio };
+        return { ...day, todos, doneCount, total, ratio };
       });
 
       setCalendarMatrix(buildCalendarMatrix(updated));
 
-      const newSelected =
-        updated.find((d) => d.date === selectedDay.date) ?? null;
+      const newSelected = updated.find(
+        (d) => d.date === selectedDay.date
+      ) ?? null;
 
       setSelectedDay(newSelected);
 
@@ -164,7 +169,7 @@ export default function MainPage() {
     });
   };
 
-  /** 새 Todo 추가 */
+  /** 추가 */
   const handleAddTodo = () => {
     if (!selectedDay) return;
 
@@ -177,7 +182,12 @@ export default function MainPage() {
             ? Math.max(...day.todos.map((t) => t.id)) + 1
             : 1;
 
-        const newTodo = { id: newId, title: "", done: false, time: null };
+        const newTodo = {
+          id: newId,
+          title: "",
+          done: false,
+          time: null,
+        };
 
         let todos = [...day.todos, newTodo];
         todos = sortTodos(todos);
@@ -191,8 +201,9 @@ export default function MainPage() {
 
       setCalendarMatrix(buildCalendarMatrix(updated));
 
-      const newSelected =
-        updated.find((d) => d.date === selectedDay.date) ?? null;
+      const newSelected = updated.find(
+        (d) => d.date === selectedDay.date
+      ) ?? null;
 
       setSelectedDay(newSelected);
 
@@ -210,20 +221,42 @@ export default function MainPage() {
   return (
     <div className="app-page">
       <main className="app-container pt-app-header pb-40 px-4">
-        <CalendarFull
-        calendarMatrix={calendarMatrix}
-        selectedDay={selectedDay}
-        onSelectDay={handleSelectDay}
-        />
+        
+        {/* 캘린더 영역 */}
+        <CalendarContainer
+          calendarMatrix={calendarMatrix}
+          cellHeight={cellHeight}
+          setCellHeight={setCellHeight}
+          expandedHeight={expandedHeight}
+          collapsedHeight={collapsedHeight}
+          setExpandedHeight={setExpandedHeight}
+          setCollapsedHeight={setCollapsedHeight}
+        >
+          <CalendarFull
+            calendarMatrix={calendarMatrix}
+            selectedDay={selectedDay}
+            onSelectDay={handleSelectDay}
+            cellHeight={cellHeight}
+          />
+        </CalendarContainer>
 
-        <TodoList
-          selectedDay={selectedDay}
-          onToggleTodo={handleToggleTodo}
-          onEditTodo={handleEditTodo}
-          onDeleteTodo={handleDeleteTodo}
-          editingTodoId={editingTodoId}
-        />
+        {/* 셀 높이가 일정 이하일 때 TodoList 표시 */}
+        <div
+          className="transition-opacity duration-300"
+          style={{
+            opacity: cellHeight < expandedHeight * 0.8 ? 1 : 0,
+          }}
+        >
+          <TodoList
+            selectedDay={selectedDay}
+            onToggleTodo={handleToggleTodo}
+            onEditTodo={handleEditTodo}
+            onDeleteTodo={handleDeleteTodo}
+            editingTodoId={editingTodoId}
+          />
+        </div>
 
+        {/* 플러스 버튼 */}
         <PlusButton showMenu={true} onAddEvent={handleAddTodo} />
       </main>
     </div>
