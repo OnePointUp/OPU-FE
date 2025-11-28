@@ -29,6 +29,8 @@ export const TITLE_MAP: Record<string, string> = {
     "/notification/setting": "알림 설정",
 
     "/routine": "루틴",
+    "/routine/register": "루틴 설정",
+    "/routine/edit": "루틴 수정",
 
     "/calendar": "캘린더",
     "/stats": "통계",
