@@ -26,6 +26,9 @@ export default function AfterLoginLayout({
         "/login",
         "/signup",
         "/social-signup",
+        "/routine/register",
+        "/routine/edit",
+        "/routine/frequency",
     ];
 
     const hideMenu = HIDDEN_MENU_PATHS.some((p) => pathname.startsWith(p));
