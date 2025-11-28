@@ -8,10 +8,17 @@ type RoutineListResponse = {
 
 const BASE = "/routine";
 
+// 루틴 목록 조회
 export function fetchRoutineList(): Promise<RoutineEntity[]> {
     return requestJSON<RoutineListResponse>(BASE).then((data) => data.items);
 }
 
+// 개별 루틴 조회
+export function fetchRoutine(id: number): Promise<RoutineEntity> {
+    return requestJSON<RoutineEntity>(`${BASE}/${id}`);
+}
+
+// 루틴 등록
 export function createRoutine(payload: CreateRoutinePayload) {
     return requestJSON<RoutineEntity>(BASE, {
         method: "POST",
@@ -20,6 +27,7 @@ export function createRoutine(payload: CreateRoutinePayload) {
     });
 }
 
+// 루틴 수정
 export function updateRoutine(payload: UpdateRoutinePayload) {
     return requestJSON<RoutineEntity>(BASE, {
         method: "PUT",
