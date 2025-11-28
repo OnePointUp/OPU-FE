@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import RoutineForm from "../components/RoutineForm";
 import type { RoutineFormValue } from "../types";
@@ -20,6 +21,31 @@ const DEFAULT_FORM: RoutineFormValue = {
     color: "#FFFAA2",
 };
 
+const STORAGE_KEY = "routine-form:create";
+
+function loadFormFromStorage(freq: RoutineFrequency): RoutineFormValue {
+    if (typeof window === "undefined") {
+        return { ...DEFAULT_FORM, frequency: freq };
+    }
+
+    try {
+        const raw = window.sessionStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+            return { ...DEFAULT_FORM, frequency: freq };
+        }
+
+        const parsed = JSON.parse(raw) as Partial<RoutineFormValue>;
+
+        return {
+            ...DEFAULT_FORM,
+            ...parsed,
+            frequency: freq,
+        };
+    } catch {
+        return { ...DEFAULT_FORM, frequency: freq };
+    }
+}
+
 export default function RoutineRegisterPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -33,11 +59,6 @@ export default function RoutineRegisterPage() {
     const months = parseNumberList(searchParams.get("months"));
     const last = searchParams.get("last") === "true";
 
-    const initialValue: RoutineFormValue = {
-        ...DEFAULT_FORM,
-        frequency: freq,
-    };
-
     const frequencyLabelOverride = buildFrequencyLabel(
         freq,
         days,
@@ -45,16 +66,33 @@ export default function RoutineRegisterPage() {
         last
     );
 
+    const [initialFormValue, setInitialFormValue] =
+        useState<RoutineFormValue | null>(null);
+
+    useEffect(() => {
+        const restored = loadFormFromStorage(freq);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setInitialFormValue(restored);
+    }, [freq]);
+
     async function handleSubmit(form: RoutineFormValue) {
+        if (typeof window !== "undefined") {
+            window.sessionStorage.removeItem(STORAGE_KEY);
+        }
+
         const payload = toCreateRoutinePayload(form);
         await createRoutine(payload);
         router.push("/routine");
     }
 
+    if (!initialFormValue) {
+        return null;
+    }
+
     return (
         <RoutineForm
             mode="create"
-            initialValue={initialValue}
+            initialValue={initialFormValue}
             onSubmit={handleSubmit}
             frequencyLabelOverride={frequencyLabelOverride}
         />

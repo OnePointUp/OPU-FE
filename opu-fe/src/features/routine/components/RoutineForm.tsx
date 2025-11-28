@@ -36,15 +36,12 @@ function formatDateOrNone(date: string | null) {
 function formatTimeOrNone(time: string | null) {
     if (!time) return "없음";
 
-    // 1. 이미 '오전 HH:MM' 또는 '오후 HH:MM' 형태라면 그대로 반환
     if (time.includes("오전") || time.includes("오후")) {
         return time;
     }
 
-    // 2. 12시간제로 변환
     if (time.includes(":")) {
         const [h, m] = time.split(":").map(Number);
-
         if (isNaN(h) || isNaN(m)) return time;
 
         const ampm = h >= 12 ? "오후" : "오전";
@@ -75,14 +72,24 @@ export default function RoutineForm({
 
     const [form, setForm] = useState<RoutineFormValue>(initialValue);
 
+    useEffect(() => {
+        setForm(initialValue);
+    }, [initialValue]);
+
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
-
     const [activeDateField, setActiveDateField] = useState<
         "startDate" | "endDate" | null
     >(null);
-
     const [showTimeSheet, setShowTimeSheet] = useState(false);
+
+    const hasTitle = form.title.trim().length > 0;
+    const submitLabel = mode === "create" ? "등록" : "수정";
+
+    const isSubmitDisabled = !isClient || disabled || submitting || !hasTitle;
+
+    const frequencyLabel =
+        frequencyLabelOverride ?? getFrequencyLabel(form.frequency);
 
     const handleChange = <K extends keyof RoutineFormValue>(
         key: K,
@@ -102,13 +109,13 @@ export default function RoutineForm({
         setActiveDateField(null);
     };
 
-    const hasTitle = form.title.trim().length > 0;
-    const submitLabel = mode === "create" ? "등록" : "수정";
+    const handleFrequencyClick = () => {
+        if (typeof window !== "undefined") {
+            window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+        }
 
-    const isSubmitDisabled = !isClient || disabled || submitting || !hasTitle;
-
-    const frequencyLabel =
-        frequencyLabelOverride ?? getFrequencyLabel(form.frequency);
+        router.push(`/routine/frequency?frequency=${form.frequency}`);
+    };
 
     const handleSubmit = async () => {
         await onSubmit(form);
@@ -126,25 +133,6 @@ export default function RoutineForm({
         handleChange("time", value);
         setShowTimeSheet(false);
     };
-
-    useEffect(() => {
-        if (!isClient) return;
-
-        try {
-            const saved = window.sessionStorage.getItem(STORAGE_KEY);
-            if (!saved) return;
-
-            const parsed = JSON.parse(saved) as RoutineFormValue;
-
-            setForm((prevForm) => ({
-                ...prevForm,
-                ...parsed,
-            }));
-        } catch (error) {
-            console.error("Error restoring form from sessionStorage", error);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [STORAGE_KEY, mode]);
 
     useEffect(() => {
         if (!isClient) return;
@@ -325,11 +313,7 @@ export default function RoutineForm({
                     <div className="w-full relative">
                         <button
                             type="button"
-                            onClick={() =>
-                                router.push(
-                                    `/routine/frequency?frequency=${form.frequency}`
-                                )
-                            }
+                            onClick={handleFrequencyClick}
                             className="input-box input-box--field flex items-center justify-between overflow-hidden px-4"
                         >
                             <span
