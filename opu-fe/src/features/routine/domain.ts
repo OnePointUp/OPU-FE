@@ -21,6 +21,10 @@ export interface RoutineEntity {
     isActive: boolean;
     createdAt: string;
     updatedAt: string;
+
+    weekDays?: string | null;
+    monthDays?: string | null;
+    yearDays?: string | null;
 }
 
 export function getRoutineStatus(
@@ -68,7 +72,7 @@ export function getFrequencyLabel(frequency: RoutineFrequency): string {
         case "BIWEEKLY":
             return "격주";
         case "MONTHLY":
-            return "매달";
+            return "매월";
         case "YEARLY":
             return "매년";
     }
@@ -76,7 +80,7 @@ export function getFrequencyLabel(frequency: RoutineFrequency): string {
 
 const WEEK_LABELS = ["월", "화", "수", "목", "금", "토", "일"];
 
-export function parseNumberList(raw: string | null): number[] {
+export function parseNumberList(raw: string | null | undefined): number[] {
     if (!raw) return [];
     return raw
         .split(",")
@@ -101,27 +105,34 @@ export function buildFrequencyLabel(
     }
 
     if (frequency === "MONTHLY") {
-        if (last) return `${base} 매월 마지막 날`;
-        if (!days.length) return base;
-        const labels = days.map((d) => `${d}일`);
-        return `${base} ${labels.join(", ")}`;
+        const parts: string[] = [];
+
+        if (days.length) {
+            parts.push(...days.map((d) => `${d}일`));
+        }
+        if (last) {
+            parts.push("마지막 일");
+        }
+
+        if (!parts.length) return base;
+        return `${base} ${parts.join(", ")}`;
     }
 
     if (frequency === "YEARLY") {
-        if (!months.length && !days.length && !last) return base;
+        const pieces: string[] = [];
 
-        const monthLabel = months.length
-            ? months.map((m) => `${m}월`).join(", ")
-            : "";
+        if (months.length) {
+            pieces.push(months.map((m) => `${m}월`).join(", "));
+        }
 
-        const dayLabel = last
-            ? "마지막 날"
-            : days.length
-            ? days.map((d) => `${d}일`).join(", ")
-            : "";
+        if (last) {
+            pieces.push("마지막 일");
+        } else if (days.length) {
+            pieces.push(days.map((d) => `${d}일`).join(", "));
+        }
 
-        const combined = [monthLabel, dayLabel].filter(Boolean).join(" ");
-        return `${base} ${combined}`;
+        if (!pieces.length) return base;
+        return `${base} ${pieces.join(" ")}`;
     }
 
     return base;
@@ -130,4 +141,58 @@ export function buildFrequencyLabel(
 export function formatDateRange(startDate: string, endDate: string | null) {
     if (!endDate) return formatDate(startDate);
     return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+}
+
+export function getFrequencyPartsFromRoutine(routine: RoutineEntity): {
+    days: number[];
+    months: number[];
+    last: boolean;
+} {
+    let days: number[] = [];
+    let months: number[] = [];
+    let last = false;
+
+    if (routine.frequency === "WEEKLY" || routine.frequency === "BIWEEKLY") {
+        if (routine.weekDays) {
+            days = routine.weekDays
+                .split(",")
+                .map((s) => s.trim())
+                .map((s) => Number(s))
+                .filter((n) => !Number.isNaN(n))
+                .map((n) => n + 1);
+        }
+    } else if (routine.frequency === "MONTHLY") {
+        if (routine.monthDays) {
+            const tokens = routine.monthDays.split(",").map((s) => s.trim());
+            const numDays: number[] = [];
+            for (const t of tokens) {
+                if (t === "L") {
+                    last = true;
+                    continue;
+                }
+                const num = Number(t);
+                if (!Number.isNaN(num)) numDays.push(num);
+            }
+            days = numDays;
+        }
+    } else if (routine.frequency === "YEARLY") {
+        if (routine.yearDays) {
+            const tokens = routine.yearDays.split(",").map((s) => s.trim());
+            const mList: number[] = [];
+            const dList: number[] = [];
+            for (const t of tokens) {
+                const [mStr, dStr] = t.split("-");
+                const m = Number(mStr);
+                const d = Number(dStr);
+                if (!Number.isNaN(m) && !Number.isNaN(d)) {
+                    mList.push(m);
+                    dList.push(d);
+                }
+            }
+            months = mList;
+            days = dList;
+        }
+    }
+
+    return { days, months, last };
 }

@@ -8,9 +8,12 @@ export type RoutineFormValue = {
     startDate: string | null;
     endDate: string | null;
     time: string | null;
+
+    weekDays?: string | null;
+    monthDays?: string | null;
+    yearDays?: string | null;
 };
 
-// 백엔드로 보낼 생성/수정 DTO (mock 기준)
 export type CreateRoutinePayload = {
     title: string;
     frequency: RoutineFrequency;
@@ -18,8 +21,12 @@ export type CreateRoutinePayload = {
     endDate?: string | null;
     time?: string | null;
     color: string;
+
+    weekDays?: string | null;
+    monthDays?: string | null;
+    yearDays?: string | null;
 };
 
-export type UpdateRoutinePayload = Partial<CreateRoutinePayload> & {
+export type UpdateRoutinePayload = {
     id: number;
-};
+} & Partial<CreateRoutinePayload>;

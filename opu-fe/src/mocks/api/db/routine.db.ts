@@ -16,6 +16,10 @@ export const MOCK_ROUTINES: RoutineEntity[] = [
         isActive: true,
         createdAt: now,
         updatedAt: now,
+
+        weekDays: null,
+        monthDays: null,
+        yearDays: null,
     },
     {
         id: 2,
@@ -29,6 +33,10 @@ export const MOCK_ROUTINES: RoutineEntity[] = [
         isActive: true,
         createdAt: now,
         updatedAt: now,
+
+        weekDays: null,
+        monthDays: null,
+        yearDays: null,
     },
     {
         id: 3,
@@ -42,7 +50,13 @@ export const MOCK_ROUTINES: RoutineEntity[] = [
         isActive: true,
         createdAt: now,
         updatedAt: now,
+
+        weekDays: null,
+        monthDays: null,
+        yearDays: null,
     },
+
+    // WEEKLY 테스트용: 주 2회 (수, 금)
     {
         id: 4,
         memberId: CURRENT_MEMBER_ID,
@@ -55,7 +69,12 @@ export const MOCK_ROUTINES: RoutineEntity[] = [
         isActive: true,
         createdAt: now,
         updatedAt: now,
+
+        weekDays: "2,4",
+        monthDays: null,
+        yearDays: null,
     },
+
     {
         id: 5,
         memberId: CURRENT_MEMBER_ID,
@@ -68,19 +87,48 @@ export const MOCK_ROUTINES: RoutineEntity[] = [
         isActive: true,
         createdAt: now,
         updatedAt: now,
+
+        weekDays: null,
+        monthDays: null,
+        yearDays: null,
     },
+
+    // MONTHLY 테스트: 5일, 15일, 마지막날
     {
         id: 6,
         memberId: CURRENT_MEMBER_ID,
         title: "멍멍이 목욕 시키기",
         frequency: "MONTHLY",
         startDate: "2025-10-27",
-        endDate: null,
+        endDate: "2025-12-01",
         time: null,
         color: "#FFC99D",
         isActive: true,
         createdAt: now,
         updatedAt: now,
+
+        monthDays: "5,15,L",
+        weekDays: null,
+        yearDays: null,
+    },
+
+    // YEARLY 테스트: 3월 1일
+    {
+        id: 7,
+        memberId: CURRENT_MEMBER_ID,
+        title: "연례 보고서 작성",
+        frequency: "YEARLY",
+        startDate: "2025-01-01",
+        endDate: "2025-12-30",
+        time: null,
+        color: "#AABBFF",
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+
+        yearDays: "3-1",
+        weekDays: null,
+        monthDays: null,
     },
 ];
 
