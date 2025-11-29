@@ -36,9 +36,15 @@ function loadFormFromStorage(freq: RoutineFrequency): RoutineFormValue {
 
         const parsed = JSON.parse(raw) as Partial<RoutineFormValue>;
 
+        const titleToUse =
+            parsed.title === "" || parsed.title === undefined
+                ? DEFAULT_FORM.title
+                : parsed.title;
+
         return {
             ...DEFAULT_FORM,
             ...parsed,
+            title: titleToUse,
             frequency: freq,
         };
     } catch {
@@ -73,7 +79,11 @@ export default function RoutineRegisterPage() {
         const restored = loadFormFromStorage(freq);
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setInitialFormValue(restored);
-    }, [freq]);
+
+        if (searchParams.toString().includes("frequency")) {
+            router.replace(`/routine/register`, { scroll: false });
+        }
+    }, [freq, router, searchParams]);
 
     async function handleSubmit(form: RoutineFormValue) {
         if (typeof window !== "undefined") {
