@@ -27,8 +27,19 @@ export default function InlineCalendar({
 
     const [month, setMonth] = useState<number>(() => {
         const base = value ? new Date(value) : new Date();
-        return base.getMonth();
+        return base.getMonth(); // 0~11
     });
+
+    const [showMonthPicker, setShowMonthPicker] = useState(false);
+
+    const today = useMemo(() => {
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        return d;
+    }, []);
+
+    // 연도 섹션: 현재 연도 기준 -1, 현재, +1
+    const yearOptions = useMemo(() => [year - 1, year, year + 1], [year]);
 
     const { cells, selectedDay, monthLabel } = useMemo(() => {
         const first = new Date(year, month, 1);
@@ -77,11 +88,24 @@ export default function InlineCalendar({
         onSelect(next);
     };
 
+    const handleMonthLabelClick = () => {
+        setShowMonthPicker((prev) => !prev);
+    };
+
+    const handleSelectMonth = (targetYear: number, targetMonth: number) => {
+        setYear(targetYear);
+        setMonth(targetMonth);
+        setShowMonthPicker(false);
+    };
+
     return (
         <div className="bg-white px-3 pt-3 pb-5">
-            {/* 상단: 월 변경 */}
-            <div className="flex items-center justify-between mb-3 ml-1.5">
-                <span
+            {/* 상단: 월 변경 + 월 선택 패널 */}
+            <div className="flex items-center justify-between mb-3 ml-1.5 relative">
+                <button
+                    type="button"
+                    onClick={handleMonthLabelClick}
+                    className="text-left"
                     style={{
                         fontSize: "var(--text-sub)",
                         fontWeight: "var(--weight-semibold)",
@@ -89,8 +113,9 @@ export default function InlineCalendar({
                     }}
                 >
                     {monthLabel}
-                </span>
-                <div>
+                </button>
+
+                <div className="flex items-center gap-1">
                     <button type="button" onClick={() => moveMonth(-1)}>
                         <Icon
                             icon="mdi:chevron-left"
@@ -108,6 +133,59 @@ export default function InlineCalendar({
                         />
                     </button>
                 </div>
+
+                {showMonthPicker && (
+                    <div className="absolute left-0 top-6 z-10 rounded-xl border border-[var(--color-super-light-gray)] bg-white shadow-md py-2 max-h-72 overflow-y-auto min-w-[180px]">
+                        {yearOptions.map((y) => (
+                            <div
+                                key={y}
+                                className="px-4 py-2 border-b last:border-b-0 border-[var(--color-super-light-gray)]"
+                            >
+                                <div
+                                    className="mb-2"
+                                    style={{
+                                        fontSize: "var(--text-caption)",
+                                        color: "var(--color-dark-navy)",
+                                        fontWeight: "var(--weight-semibold)",
+                                    }}
+                                >
+                                    {y}년
+                                </div>
+                                <div className="grid grid-cols-6 gap-2">
+                                    {Array.from(
+                                        { length: 12 },
+                                        (_, i) => i
+                                    ).map((m) => {
+                                        const isCurrent =
+                                            y === year && m === month;
+                                        return (
+                                            <button
+                                                key={m}
+                                                type="button"
+                                                onClick={() =>
+                                                    handleSelectMonth(y, m)
+                                                }
+                                                className="w-8 h-8 rounded-full"
+                                                style={{
+                                                    fontSize:
+                                                        "var(--text-caption)",
+                                                    color: isCurrent
+                                                        ? "#ffffff"
+                                                        : "var(--color-dark-navy)",
+                                                    backgroundColor: isCurrent
+                                                        ? "#000000"
+                                                        : "var(--color-super-light-gray)",
+                                                }}
+                                            >
+                                                {m + 1}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* 요일 헤더 */}
@@ -137,6 +215,10 @@ export default function InlineCalendar({
 
                     const isSelected = selectedDay === day;
 
+                    const cellDate = new Date(year, month, day);
+                    cellDate.setHours(0, 0, 0, 0);
+                    const isToday = cellDate.getTime() === today.getTime();
+
                     return (
                         <button
                             key={idx}
@@ -146,6 +228,8 @@ export default function InlineCalendar({
                             style={{
                                 backgroundColor: isSelected
                                     ? "#000000"
+                                    : isToday
+                                    ? "var(--color-super-light-gray)"
                                     : "transparent",
                                 color: isSelected
                                     ? "#ffffff"
