@@ -39,7 +39,7 @@ export default function RoutineListItem({ item, onClick }: Props) {
                     {statusLabel}
                 </span>
 
-                <span className="text-[12px] text-[var(--color-light-gray)]">
+                <span className="text-[11px] text-[var(--color-light-gray)]">
                     |
                 </span>
                 <span
