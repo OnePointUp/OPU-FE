@@ -13,6 +13,7 @@ import InlineCalendar from "./InlineCalendar";
 import { useRouter } from "next/navigation";
 import BottomSheet from "@/components/common/BottomSheet";
 import TimePickerSheet from "./TimePickerSheet";
+import { toastWarn } from "@/lib/toast";
 
 type Props = {
     mode: "create" | "edit";
@@ -72,10 +73,6 @@ export default function RoutineForm({
 
     const [form, setForm] = useState<RoutineFormValue>(initialValue);
 
-    useEffect(() => {
-        setForm(initialValue);
-    }, [initialValue]);
-
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
     const [activeDateField, setActiveDateField] = useState<
@@ -105,6 +102,29 @@ export default function RoutineForm({
         field: "startDate" | "endDate",
         value: string
     ) => {
+        const picked = new Date(value);
+        picked.setHours(0, 0, 0, 0);
+
+        if (field === "startDate" && form.endDate) {
+            const end = new Date(form.endDate);
+            end.setHours(0, 0, 0, 0);
+            if (picked.getTime() > end.getTime()) {
+                toastWarn(
+                    "시작 날짜는 종료 날짜보다 이전 또는 같은 날이어야 해요"
+                );
+                return;
+            }
+        }
+
+        if (field === "endDate" && form.startDate) {
+            const start = new Date(form.startDate);
+            start.setHours(0, 0, 0, 0);
+            if (picked.getTime() < start.getTime()) {
+                toastWarn("종료 날짜는 시작 날짜 이후로 선택해주세요");
+                return;
+            }
+        }
+
         handleChange(field, value);
         setActiveDateField(null);
     };
@@ -114,7 +134,93 @@ export default function RoutineForm({
             window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
         }
 
-        router.push(`/routine/frequency?frequency=${form.frequency}`);
+        const params = new URLSearchParams();
+        params.set("frequency", form.frequency);
+        params.set("mode", mode);
+
+        if (mode === "edit" && form.id != null) {
+            params.set("routineId", String(form.id));
+
+            if (
+                (form.frequency === "WEEKLY" ||
+                    form.frequency === "BIWEEKLY") &&
+                form.weekDays
+            ) {
+                const nums = form.weekDays
+                    .split(",")
+                    .map((s) => s.trim())
+                    .filter(Boolean)
+                    .map((s) => Number(s))
+                    .filter((n) => !Number.isNaN(n))
+                    .map((n) => n + 1);
+
+                if (nums.length > 0) {
+                    params.set("days", nums.join(","));
+                }
+            }
+
+            if (form.frequency === "MONTHLY" && form.monthDays) {
+                const tokens = form.monthDays
+                    .split(",")
+                    .map((s) => s.trim())
+                    .filter(Boolean);
+
+                const days: number[] = [];
+                let last = false;
+
+                tokens.forEach((t) => {
+                    if (t === "L") {
+                        last = true;
+                        return;
+                    }
+                    const n = Number(t);
+                    if (!Number.isNaN(n)) days.push(n);
+                });
+
+                if (days.length > 0) {
+                    params.set("days", days.join(","));
+                }
+                if (last) {
+                    params.set("last", "true");
+                }
+            }
+
+            if (form.frequency === "YEARLY" && form.yearDays) {
+                const tokens = form.yearDays
+                    .split(",")
+                    .map((s) => s.trim())
+                    .filter(Boolean);
+
+                const months: number[] = [];
+                const days: number[] = [];
+                let last = false;
+
+                tokens.forEach((t) => {
+                    if (t === "L") {
+                        last = true;
+                        return;
+                    }
+                    const [mStr, dStr] = t.split("-");
+                    const m = Number(mStr);
+                    const d = dStr ? Number(dStr) : NaN;
+
+                    if (!Number.isNaN(m)) months.push(m);
+                    if (!Number.isNaN(d)) days.push(d);
+                });
+
+                if (months.length > 0) {
+                    params.set("months", months.join(","));
+                }
+                if (days.length > 0) {
+                    params.set("days", days.join(","));
+                }
+                if (last) {
+                    params.set("last", "true");
+                }
+            }
+        }
+
+        router.push(`/routine/frequency?${params.toString()}`);
     };
 
     const handleSubmit = async () => {
@@ -135,9 +241,16 @@ export default function RoutineForm({
     };
 
     useEffect(() => {
+        setForm(initialValue);
+    }, [initialValue]);
+
+    useEffect(() => {
         if (!isClient) return;
-        window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
-    }, [form, STORAGE_KEY, isClient]);
+
+        if (mode === "create") {
+            window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+        }
+    }, [form, STORAGE_KEY, isClient, mode]);
 
     return (
         <>
@@ -154,6 +267,10 @@ export default function RoutineForm({
                                 }
                                 placeholder="루틴 제목을 입력해주세요"
                                 className="input-box input-box--field w-full px-3"
+                                style={{
+                                    fontSize: "var(--text-sub)",
+                                    color: "var(--color-dark-navy)",
+                                }}
                             />
                         </div>
 
@@ -383,7 +500,7 @@ export default function RoutineForm({
                         <button
                             type="button"
                             onClick={() => setShowDeleteConfirm(true)}
-                            className="w-full h-11 rounded-2xl border bg-white text-center"
+                            className="w-full h-[50px] rounded-[12px] border bg-white text-center"
                             style={{
                                 borderColor: "var(--color-super-light-gray)",
                                 color: "#FF4A4A",
