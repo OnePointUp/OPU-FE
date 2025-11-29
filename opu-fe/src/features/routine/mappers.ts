@@ -14,6 +14,9 @@ export function toRoutineFormValue(e: RoutineEntity): RoutineFormValue {
         endDate: e.endDate,
         time: e.time,
         color: e.color,
+        weekDays: e.weekDays,
+        monthDays: e.monthDays,
+        yearDays: e.yearDays,
     };
 }
 

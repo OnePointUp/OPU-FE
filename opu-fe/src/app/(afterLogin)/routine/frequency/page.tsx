@@ -1,5 +1,8 @@
 import RoutineFrequencyPage from "@/features/routine/pages/RoutineFrequencyPage";
-import type { RoutineFrequency } from "@/features/routine/domain";
+import {
+    parseNumberList,
+    type RoutineFrequency,
+} from "@/features/routine/domain";
 
 type SearchParams = {
     frequency?: RoutineFrequency;
@@ -13,14 +16,6 @@ type SearchParams = {
 type Props = {
     searchParams: Promise<SearchParams>;
 };
-
-function parseNumberList(str: string | undefined): number[] {
-    if (!str) return [];
-    return str
-        .split(",")
-        .map(Number)
-        .filter((n) => !isNaN(n));
-}
 
 export default async function FrequencyPage({ searchParams }: Props) {
     const sp = await searchParams;

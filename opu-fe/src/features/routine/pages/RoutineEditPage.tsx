@@ -10,7 +10,7 @@ import {
     RoutineFrequency,
     parseNumberList,
     buildFrequencyLabel,
-    getFrequencyPartsFromRoutine, // 🔥 domain.ts에 추가한 헬퍼
+    getFrequencyPartsFromRoutine,
 } from "../domain";
 import { useRoutine } from "../hooks/useRoutine";
 
@@ -79,7 +79,6 @@ export default function RoutineEditPage({ id }: Props) {
             "frequency"
         ) as RoutineFrequency | null;
 
-        // 1) 반복선택 페이지에서 돌아온 경우 (쿼리 있음)
         if (frequencyParam) {
             const days = parseNumberList(searchParams.get("days"));
             const months = parseNumberList(searchParams.get("months"));
@@ -90,7 +89,6 @@ export default function RoutineEditPage({ id }: Props) {
                 routineBaseForm
             );
 
-            // 🔥 지금 작성중이던 값 + 새 frequency 반영
             setInitialFormValue({
                 ...storedForm,
                 frequency: frequencyParam,
@@ -104,16 +102,12 @@ export default function RoutineEditPage({ id }: Props) {
             );
             setFrequencyLabelOverride(freqLabel);
 
-            // 쿼리 제거 (두 번째 렌더) → 아래의 "쿼리 없음" 로직이 덮어쓰지 않도록 주의
             router.replace(`/routine/edit/${id}`, { scroll: false });
             return;
         }
 
-        // 2) 쿼리 없는 상태 (초기 진입 또는 replace 이후 두 번째 렌더)
-        //    이미 initialFormValue가 세팅되어 있으면 건드리지 않음
         setInitialFormValue((prev) => prev ?? routineBaseForm);
 
-        // 라벨도 한 번만 세팅 (이미 override 있으면 유지)
         setFrequencyLabelOverride((prev) => {
             if (prev) return prev;
 
