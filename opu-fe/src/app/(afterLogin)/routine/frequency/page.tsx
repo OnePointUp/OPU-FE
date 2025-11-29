@@ -1,13 +1,48 @@
 import RoutineFrequencyPage from "@/features/routine/pages/RoutineFrequencyPage";
 import type { RoutineFrequency } from "@/features/routine/domain";
 
-type Props = {
-    searchParams: { frequency?: string };
+type SearchParams = {
+    frequency?: RoutineFrequency;
+    days?: string;
+    months?: string;
+    last?: string;
+    routineId?: string;
+    mode?: string;
 };
 
-export default function Page({ searchParams }: Props) {
-    const initialFrequency: RoutineFrequency =
-        (searchParams?.frequency as RoutineFrequency | undefined) ?? "DAILY";
+type Props = {
+    searchParams: Promise<SearchParams>;
+};
 
-    return <RoutineFrequencyPage initialFrequency={initialFrequency} />;
+function parseNumberList(str: string | undefined): number[] {
+    if (!str) return [];
+    return str
+        .split(",")
+        .map(Number)
+        .filter((n) => !isNaN(n));
+}
+
+export default async function FrequencyPage({ searchParams }: Props) {
+    const sp = await searchParams;
+
+    const freq = (sp.frequency ?? "DAILY") as RoutineFrequency;
+    const days = parseNumberList(sp.days);
+    const months = parseNumberList(sp.months);
+    const last = sp.last === "true";
+
+    const routineIdParam = sp.routineId;
+    const routineId = routineIdParam ? parseInt(routineIdParam, 10) : undefined;
+
+    const mode = sp.mode;
+
+    return (
+        <RoutineFrequencyPage
+            initialFrequency={freq}
+            initialDays={days}
+            initialMonths={months}
+            initialLast={last}
+            routineId={routineId}
+            mode={mode}
+        />
+    );
 }

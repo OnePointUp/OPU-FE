@@ -9,6 +9,11 @@ import OpuActionButton from "@/components/common/OpuActionButton";
 
 type Props = {
     initialFrequency: RoutineFrequency;
+    initialDays: number[];
+    initialMonths: number[];
+    initialLast: boolean;
+    routineId?: number;
+    mode?: string;
 };
 
 type ChipProps = {
@@ -42,21 +47,46 @@ const WEEK_LABELS = ["월", "화", "수", "목", "금", "토", "일"];
 const MONTH_DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 
-export default function RoutineFrequencyPage({ initialFrequency }: Props) {
+export default function RoutineFrequencyPage({
+    initialFrequency,
+    initialDays,
+    initialMonths,
+    initialLast,
+    routineId,
+    mode,
+}: Props) {
     const router = useRouter();
 
-    const [open, setOpen] = useState<RoutineFrequency | null>(null);
-
+    const [open, setOpen] = useState<RoutineFrequency | null>(() => {
+        if (initialFrequency === "DAILY") return null;
+        return initialFrequency;
+    });
     const [selectedFrequency, setSelectedFrequency] =
         useState<RoutineFrequency>(initialFrequency);
 
-    const [weeklyDays, setWeeklyDays] = useState<number[]>([]);
-    const [biWeeklyDays, setBiWeeklyDays] = useState<number[]>([]);
-    const [monthlyDays, setMonthlyDays] = useState<number[]>([]);
-    const [monthlyLast, setMonthlyLast] = useState(false);
-    const [yearMonths, setYearMonths] = useState<number[]>([]);
-    const [yearDays, setYearDays] = useState<number[]>([]);
-    const [yearLast, setYearLast] = useState(false);
+    const [weeklyDays, setWeeklyDays] = useState<number[]>(
+        initialFrequency === "WEEKLY" ? initialDays : []
+    );
+    const [biWeeklyDays, setBiWeeklyDays] = useState<number[]>(
+        initialFrequency === "BIWEEKLY" ? initialDays : []
+    );
+
+    const [monthlyDays, setMonthlyDays] = useState<number[]>(
+        initialFrequency === "MONTHLY" ? initialDays : []
+    );
+    const [monthlyLast, setMonthlyLast] = useState(
+        initialFrequency === "MONTHLY" ? initialLast : false
+    );
+
+    const [yearMonths, setYearMonths] = useState<number[]>(
+        initialFrequency === "YEARLY" ? initialMonths : []
+    );
+    const [yearDays, setYearDays] = useState<number[]>(
+        initialFrequency === "YEARLY" ? initialDays : []
+    );
+    const [yearLast, setYearLast] = useState(
+        initialFrequency === "YEARLY" ? initialLast : false
+    );
 
     const toggleSection = (freq: RoutineFrequency) => {
         setSelectedFrequency(freq);
@@ -85,17 +115,33 @@ export default function RoutineFrequencyPage({ initialFrequency }: Props) {
         if (selectedFrequency === "BIWEEKLY") {
             params.set("days", biWeeklyDays.join(","));
         }
+
         if (selectedFrequency === "MONTHLY") {
-            if (monthlyLast) params.set("last", "true");
-            else params.set("days", monthlyDays.join(","));
-        }
-        if (selectedFrequency === "YEARLY") {
-            params.set("months", yearMonths.join(","));
-            if (yearLast) params.set("last", "true");
-            else params.set("days", yearDays.join(","));
+            if (monthlyDays.length > 0) {
+                params.set("days", monthlyDays.join(","));
+            }
+            if (monthlyLast) {
+                params.set("last", "true");
+            }
         }
 
-        router.push(`/routine/register?${params.toString()}`);
+        if (selectedFrequency === "YEARLY") {
+            if (yearMonths.length > 0) {
+                params.set("months", yearMonths.join(","));
+            }
+            if (yearDays.length > 0) {
+                params.set("days", yearDays.join(","));
+            }
+            if (yearLast) {
+                params.set("last", "true");
+            }
+        }
+
+        if (mode === "edit" && routineId && !isNaN(routineId)) {
+            router.push(`/routine/edit/${routineId}?${params.toString()}`);
+        } else {
+            router.push(`/routine/register?${params.toString()}`);
+        }
     };
 
     const labelStyle: React.CSSProperties = {
@@ -283,7 +329,7 @@ export default function RoutineFrequencyPage({ initialFrequency }: Props) {
 
                         <div className="mt-2">
                             <ToggleChip
-                                label="매월 마지막 일"
+                                label="마지막 일"
                                 selected={monthlyLast}
                                 fullWidth
                                 onClick={() => setMonthlyLast((v) => !v)}
@@ -383,7 +429,7 @@ export default function RoutineFrequencyPage({ initialFrequency }: Props) {
                             </div>
                             <div className="mt-2">
                                 <ToggleChip
-                                    label="매월 마지막 일"
+                                    label="마지막 일"
                                     selected={yearLast}
                                     fullWidth
                                     onClick={() => setYearLast((v) => !v)}
