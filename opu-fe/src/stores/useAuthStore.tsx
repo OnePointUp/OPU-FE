@@ -18,7 +18,7 @@ type AuthState = {
     setAuth: (payload: {
         accessToken: string;
         refreshToken: string;
-        member: AuthMember;
+        member?: AuthMember | null;
     }) => void;
     clearAuth: () => void;
     setMember: (user: AuthMember | null) => void;
@@ -32,12 +32,12 @@ export const useAuthStore = create<AuthState>()(
             member: null,
             isAuthenticated: false,
 
-            setAuth: ({ accessToken, refreshToken, member }) =>
+            setAuth: ({ accessToken, refreshToken, member = null }) =>
                 set({
                     accessToken,
                     refreshToken,
                     member,
-                    isAuthenticated: true,
+                    isAuthenticated: !!accessToken,
                 }),
 
             clearAuth: () =>
