@@ -2,9 +2,9 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { validateEmail } from "@/features/auth/services";
 import { login } from "@/features/auth/services";
 import { toastSuccess, toastError } from "@/lib/toast";
+import { validateEmail } from "@/utils/validation";
 
 export function useLogin() {
     const router = useRouter();

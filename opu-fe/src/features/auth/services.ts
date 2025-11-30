@@ -1,111 +1,178 @@
-// 이메일 검증
-export function validateEmail(value: string): string {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { apiClient } from "@/lib/apiClient";
+import { useAuthStore } from "@/stores/useAuthStore";
 
-  if (!value.trim()) return "";
-  if (!emailRegex.test(value)) return "이메일 형식에 맞게 입력해주세요.";
-  return "";
+import { extractErrorMessage } from "@/utils/api-helpers";
+import axios from "axios";
+import {
+    EmailSignupPayload,
+    LoginPayload,
+    PasswordCheckPayload,
+    ResetPasswordByTokenPayload,
+    TokenResponse,
+} from "./types";
+import { ApiResponse } from "@/types/api";
+
+// 이메일 회원가입 요청
+export async function requestEmailSignup(payload: EmailSignupPayload) {
+    try {
+        await apiClient.post("/auth/register", payload, { skipAuth: true });
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(extractErrorMessage(err, "회원가입에 실패했어요."));
+    }
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE?.replace(/\/$/, "");
-
-export async function requestEmailSignup(payload: {
-  email: string;
-  password: string;
-  nickname: string;
-}) {
-  await new Promise((r) => setTimeout(r, 500));
-
-  /*
-  const url = `${API_BASE}/auth/signup/email`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-s
-  if (!res.ok) {
-    const msg = await res.text().catch(() => "회원가입 실패");
-    throw new Error(msg);
-  }
-  */
-
-  return { ok: true };
+// 이메일 재전송
+export async function resendVerificationEmail(email: string) {
+    try {
+        await apiClient.post(
+            "/auth/verify/resend",
+            { email },
+            { skipAuth: true }
+        );
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "인증 메일 재전송에 실패했어요.")
+        );
+    }
 }
 
-// 이메일 인증 메일 재전송
-export async function resendVerificationEmail() {
-  await new Promise((r) => setTimeout(r, 1000));
+// 로그인 + JWT 저장
+export async function login(payload: LoginPayload) {
+    try {
+        const res = await apiClient.post<ApiResponse<TokenResponse>>(
+            "/auth/login",
+            payload,
+            { skipAuth: true }
+        );
 
-  /*
-  const url = `${API_BASE}/auth/signup/resend-email`;
+        const tokenData = res.data.data;
 
-  const res = await fetch(url, { method: "POST" });
+        useAuthStore.getState().setAuth({
+            accessToken: tokenData.accessToken,
+            refreshToken: tokenData.refreshToken,
+        });
 
-  if (!res.ok) {
-    const msg = await res.text().catch(() => "재전송 실패");
-    throw new Error(msg);
-  }
-  */
-
-  return { ok: true };
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "이메일 또는 비밀번호를 확인해 주세요.")
+        );
+    }
 }
 
-// 로그인 API (현재 Mock)
-export async function login(payload: { email: string; password: string }) {
-  await new Promise((r) => setTimeout(r, 500)); // Mock
+// 로그아웃
+export async function logout() {
+    const { clearAuth } = useAuthStore.getState();
 
-  /*
-  const url = `${API_BASE}/auth/login`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) {
-    const msg = await res.text().catch(() => "로그인 실패");
-    throw new Error(msg);
-  }
-  */
-
-  return { ok: true };
+    try {
+        await apiClient.post("/auth/logout");
+    } catch (err) {
+        console.error(
+            "Logout server request failed, but client state cleared:",
+            err
+        );
+    } finally {
+        clearAuth();
+    }
 }
 
-// 비밀번호 찾기: 이메일로 재설정 링크 전송 
+// 비밀번호 재설정 - 링크 요청
 export async function requestPasswordReset(email: string) {
-  await new Promise((r) => setTimeout(r, 600)); // Mock
-
-  /*
-  const url = `${API_BASE}/auth/password/reset-request`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email }),
-  });
-
-  if (!res.ok) {
-    const msg = await res.text().catch(() => "이메일 전송 실패");
-    throw new Error(msg);
-  }
-  */
-
-  return { ok: true };
+    try {
+        await apiClient.post(
+            "/auth/password/reset-request",
+            { email },
+            { skipAuth: true }
+        );
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "비밀번호 재설정 메일 전송에 실패했어요.")
+        );
+    }
 }
 
-// 비밀번호 찾기 이메일 재전송
+// 비밀번호 재설정 메일 재전송
 export async function resendPasswordEmail() {
-  await new Promise((r) => setTimeout(r, 800)); // mock
+    try {
+        await apiClient.post("/auth/password/reset-resend", undefined, {
+            skipAuth: true,
+        });
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(
+                err,
+                "비밀번호 재설정 메일 재전송에 실패했어요."
+            )
+        );
+    }
+}
 
-  /*
-  const url = `${API_BASE}/auth/password/reset-resend`;
-  const res = await fetch(url, { method: "POST" });
+// 비밀번호 재설정(토큰 기반)
+export async function resetPasswordByToken(
+    payload: ResetPasswordByTokenPayload
+) {
+    try {
+        await apiClient.post("/auth/password/reset", payload, {
+            skipAuth: true,
+        });
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(
+                err,
+                "비밀번호 재설정에 실패했어요. 링크를 다시 확인해 주세요."
+            )
+        );
+    }
+}
 
-  if (!res.ok) {
-    const msg = await res.text().catch(() => "재전송 실패");
-    throw new Error(msg);
-  }
-  */
+// 현재 비밀번호 검증
+export async function verifyCurrentPassword(password: string) {
+    try {
+        const payload: PasswordCheckPayload = { password };
+        await apiClient.post("/auth/password/check", payload);
+        return { ok: true };
+    } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+            const status = err.response?.status;
 
-  return { ok: true };
+            // 인증/권한 문제
+            if (status === 401 || status === 403) {
+                throw new Error(
+                    err.response?.data?.message ??
+                        "로그인이 필요합니다. 다시 로그인해 주세요."
+                );
+            }
+
+            // 그 외 (진짜 비밀번호 불일치 등)
+            throw new Error(
+                err.response?.data?.message ?? "비밀번호가 일치하지 않습니다."
+            );
+        }
+
+        throw new Error("비밀번호 확인 중 오류가 발생했어요.");
+    }
+}
+
+// 비밀번호 변경
+export async function changePassword(
+    currentPassword: string,
+    newPassword: string
+) {
+    try {
+        await apiClient.post("/auth/password/change", {
+            oldPassword: currentPassword,
+            newPassword,
+        });
+
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "비밀번호 변경에 실패했어요.")
+        );
+    }
 }

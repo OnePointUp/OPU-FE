@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { verifyCurrentPassword } from "@/features/user/services";
 import { toastError } from "@/lib/toast";
+import { verifyCurrentPassword } from "../services";
 
 const VERIFIED_KEY = "pw-verified";
 const CUR_CACHE_KEY = "pw-cur-cache";
@@ -32,7 +32,7 @@ export function useVerifyCurrentPassword() {
                 sessionStorage.setItem(CUR_CACHE_KEY, cur);
             }
 
-            router.push("/me/password/new");
+            router.push("/reset-password?mode=change");
         } catch (e: unknown) {
             console.error(e);
             const msg =

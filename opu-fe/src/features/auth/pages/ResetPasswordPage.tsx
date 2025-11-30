@@ -3,8 +3,12 @@
 import PasswordInput from "@/features/auth/components/PasswordInput";
 import OpuActionButton from "@/components/common/OpuActionButton";
 import { useSetNewPassword } from "@/features/auth/hooks/useSetNewPassword";
+import { useSearchParams } from "next/navigation";
 
-export default function PasswordChange2Page() {
+export default function ResetPasswordPage() {
+    const params = useSearchParams();
+    const token = params.get("token");
+
     const {
         next,
         confirm,
@@ -15,7 +19,9 @@ export default function PasswordChange2Page() {
         handleChangeNext,
         handleChangeConfirm,
         handleSubmit,
-    } = useSetNewPassword();
+    } = useSetNewPassword(
+        token ? { mode: "reset", resetToken: token } : { mode: "change" }
+    );
 
     return (
         <section>

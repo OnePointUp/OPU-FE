@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { changePassword2 } from "@/features/user/services";
 import { toastError, toastSuccess } from "@/lib/toast";
+import { changePassword, resetPasswordByToken } from "../services";
 
 const VERIFIED_KEY = "pw-verified";
 const CUR_CACHE_KEY = "pw-cur-cache";
@@ -11,8 +11,16 @@ function validateNew(pw: string): string {
     return "";
 }
 
-export function useSetNewPassword() {
+type UseSetNewPasswordOptions =
+    | { mode?: "change"; resetToken?: undefined }
+    | { mode: "reset"; resetToken: string };
+
+export function useSetNewPassword(options: UseSetNewPasswordOptions = {}) {
     const router = useRouter();
+
+    const mode = options.mode ?? "change";
+    const resetToken =
+        options.mode === "reset" ? options.resetToken : undefined;
 
     const [cur, setCur] = useState("");
     const [next, setNext] = useState("");
@@ -23,6 +31,7 @@ export function useSetNewPassword() {
 
     useEffect(() => {
         if (typeof window === "undefined") return;
+        if (mode === "reset") return;
 
         const ok = sessionStorage.getItem(VERIFIED_KEY) === "1";
         const cached = sessionStorage.getItem(CUR_CACHE_KEY) ?? "";
@@ -32,7 +41,7 @@ export function useSetNewPassword() {
             return;
         }
         setCur(cached);
-    }, [router]);
+    }, [router, mode]);
 
     const canSubmit = useMemo(
         () =>
@@ -81,15 +90,35 @@ export function useSetNewPassword() {
 
         try {
             setLoading(true);
-            await changePassword2(cur, next);
 
-            if (typeof window !== "undefined") {
-                sessionStorage.removeItem(VERIFIED_KEY);
-                sessionStorage.removeItem(CUR_CACHE_KEY);
+            if (mode === "reset") {
+                // 이메일 링크로 들어온 경우: 토큰 기반 재설정
+                if (!resetToken) {
+                    toastError("유효하지 않은 비밀번호 재설정 링크입니다.");
+                    return;
+                }
+
+                await resetPasswordByToken({
+                    token: resetToken,
+                    newPassword: next,
+                });
+
+                toastSuccess(
+                    "비밀번호가 재설정되었습니다. 다시 로그인해 주세요."
+                );
+                router.replace("/login");
+            } else {
+                // 마이페이지에서 들어온 경우: 현재 비번 검증된 상태에서 변경
+                await changePassword(cur, next);
+
+                if (typeof window !== "undefined") {
+                    sessionStorage.removeItem(VERIFIED_KEY);
+                    sessionStorage.removeItem(CUR_CACHE_KEY);
+                }
+
+                toastSuccess("비밀번호가 변경되었습니다");
+                setTimeout(() => router.replace("/me"), 1000);
             }
-
-            toastSuccess("비밀번호가 변경되었습니다");
-            setTimeout(() => router.replace("/me"), 1000);
         } catch (e: unknown) {
             console.error(e);
             if (process.env.NODE_ENV == "development") {
@@ -100,7 +129,7 @@ export function useSetNewPassword() {
         } finally {
             setLoading(false);
         }
-    }, [cur, next, confirm, router]);
+    }, [mode, resetToken, cur, next, confirm, router]);
 
     return {
         next,
