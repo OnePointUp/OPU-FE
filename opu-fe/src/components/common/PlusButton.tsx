@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
+import { createPortal } from "react-dom";
 import clsx from "clsx";
 
 type PlusButtonProps = {
-    showMenu: boolean; // ← true면 메뉴 열림, false면 바로 생성
+    showMenu: boolean;
     onAddEvent?: () => void;
 };
 
@@ -14,19 +15,20 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
 
+    const [portalTarget, setPortalTarget] = useState<Element | null>(null);
+
+    // 브라우저에서만 document.body 설정
+    useEffect(() => {
+        setPortalTarget(document.body);
+    }, []);
+
     const toggleMenu = () => setIsOpen(prev => !prev);
     const closeMenu = () => setIsOpen(false);
 
-    const handleDefaultAdd = () => {
-        router.push("/opu/register");
-    };
+    const handleDefaultAdd = () => router.push("/opu/register");
 
-    const runAddEvent = () => {
-        if (onAddEvent) onAddEvent();
-        else handleDefaultAdd();
-    };
+    const runAddEvent = () => onAddEvent ? onAddEvent() : handleDefaultAdd();
 
-    // 메뉴 모드일 때만 사용됨
     const menuItems = [
         {
             label: "직접 생성",
@@ -56,9 +58,9 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
             ),
             bgColor: "var(--color-light-yellow)",
             onClick: () => {
-                alert("OPU에서 추가 클릭");
+                router.push("/opu")
                 closeMenu();
-            },
+            }
         },
         {
             label: "랜덤 OPU 뽑기",
@@ -74,13 +76,16 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
             onClick: () => {
                 alert("랜덤 OPU 뽑기 클릭");
                 closeMenu();
-            },
-        },
+            }
+        }
     ];
 
-    return (
+    // 아직 portalTarget이 없으면 렌더하지 않음
+    if (!portalTarget) return null;
+
+    return createPortal(
         <>
-            {/* 오버레이 — 메뉴 모드에서만 동작 */}
+            {/* 기존 overlay */}
             {showMenu && (
                 <div
                     className={clsx(
@@ -91,9 +96,10 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
                 />
             )}
 
+            {/* 기존 container */}
             <div className="plus-button__container">
 
-                {/* 메뉴 (showMenu=true 일 때만 렌더링) */}
+                {/* 메뉴 */}
                 {showMenu && (
                     <div
                         className={clsx(
@@ -118,11 +124,7 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
 
                 {/* 플러스 버튼 */}
                 <button
-                    onClick={
-                        showMenu
-                            ? toggleMenu
-                            : () => router.push("/opu/register") // ← 메뉴 OFF일 때 바로 이동
-                    }
+                    onClick={showMenu ? toggleMenu : () => router.push("/opu/register")}
                     className={clsx(
                         "plus-button",
                         showMenu && isOpen && "plus-button--rotated"
@@ -138,6 +140,7 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
                     />
                 </button>
             </div>
-        </>
+        </>,
+        portalTarget
     );
 }
