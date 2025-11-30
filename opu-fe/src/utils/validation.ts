@@ -1,4 +1,3 @@
-// 이메일 검증
 export function validateEmail(value: string): string {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
