@@ -3,16 +3,17 @@
 import { useRouter } from "next/navigation";
 import RoutineListItem from "../components/RoutineListItem";
 import { getRoutineStatus } from "../domain";
-import { useRoutineList } from "../hooks/useRoutineList";
 import { useCallback, useMemo, useState } from "react";
 import { Icon } from "@iconify/react";
 import BottomSheet from "@/components/common/BottomSheet";
 import ActionList, { type ActionItem } from "@/components/common/ActionList";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import { useRoutineList } from "../hooks/useRoutineList";
+import { deleteRoutine } from "../services";
 
 export default function RoutineListPage() {
     const router = useRouter();
-    const { items, loading } = useRoutineList();
+    const { items, loading, removeById, reload } = useRoutineList();
     const [onlyOngoing, setOnlyOngoing] = useState(false);
 
     const [openSheet, setOpenSheet] = useState(false);
@@ -36,8 +37,26 @@ export default function RoutineListPage() {
 
     const onCloseSheet = () => {
         setOpenSheet(false);
-        setSelectedId(null);
     };
+
+    const handleConfirmDelete = useCallback(async () => {
+        if (!selectedId) return;
+
+        const id = selectedId;
+
+        setConfirmOpen(false);
+        setSelectedId(null);
+
+        // UI 먼저 반영
+        removeById(id);
+
+        try {
+            await deleteRoutine(id);
+        } catch (e) {
+            // 실패하면 서버 상태 다시 동기화
+            await reload();
+        }
+    }, [selectedId, removeById, reload]);
 
     const actionItems: ActionItem[] = useMemo(
         () => [
@@ -85,11 +104,23 @@ export default function RoutineListPage() {
 
             <main className="flex-1">
                 {loading ? (
-                    <div className="px-4 py-4 text-sm text-gray-400">
+                    <div
+                        className="text-center py-7 w-full"
+                        style={{
+                            fontSize: "var(--text-sub)",
+                            color: "var(--color-light-gray)",
+                        }}
+                    >
                         루틴 불러오는 중...
                     </div>
                 ) : filtered.length === 0 ? (
-                    <div className="px-4 py-6 text-sm text-gray-400">
+                    <div
+                        className="text-center py-7 w-full"
+                        style={{
+                            fontSize: "var(--text-sub)",
+                            color: "var(--color-light-gray)",
+                        }}
+                    >
                         표시할 루틴이 없어요
                     </div>
                 ) : (
@@ -123,15 +154,11 @@ export default function RoutineListPage() {
             <ConfirmModal
                 isOpen={confirmOpen}
                 message={"정말 삭제하시겠습니까?"}
-                onCancel={() => setConfirmOpen(false)}
-                onConfirm={() => {
-                    if (!selectedId) return;
-
-                    // TODO: 삭제 API 자리
-                    // await deleteRoutine(selectedId);
-
+                onCancel={() => {
                     setConfirmOpen(false);
+                    setSelectedId(null);
                 }}
+                onConfirm={handleConfirmDelete}
             />
         </section>
     );

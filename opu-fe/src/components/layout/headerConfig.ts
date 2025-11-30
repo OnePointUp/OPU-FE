@@ -29,6 +29,7 @@ export const TITLE_MAP: Record<string, string> = {
     "/notification/setting": "알림 설정",
 
     "/routine": "루틴",
+    "/routine/register": "루틴 설정",
 
     "/calendar": "캘린더",
     "/stats": "통계",
@@ -46,28 +47,22 @@ export const TOOLTIP_MAP: Record<string, Tooltip> = {
 
 export const HIDDEN_HEADER_PATHS = ["/signup/email-confirmed"];
 
+const ROOT_PATHS = ["/", "/opu", "/me", "/calendar", "/stats"];
+
 export function getHeaderConfig(pathname: string) {
+    // 동적 경로
+    let dynamicTitle: string | undefined;
+
     if (pathname.startsWith("/opu/edit/")) {
-        return {
-            title: "OPU 수정",
-            tooltip: undefined,
-            hide: false,
-            defaultShowBack: true,
-        };
+        dynamicTitle = "OPU 수정";
+    } else if (pathname.startsWith("/routine/edit/")) {
+        dynamicTitle = "루틴 수정";
     }
 
-    const title = TITLE_MAP[pathname] ?? "OPU";
+    const title = dynamicTitle ?? TITLE_MAP[pathname] ?? "OPU";
     const tooltip = TOOLTIP_MAP[pathname];
     const hide = HIDDEN_HEADER_PATHS.includes(pathname);
-
-    const isRoot =
-        pathname === "/" ||
-        pathname === "/opu" ||
-        pathname === "/me" ||
-        pathname === "/calendar" ||
-        pathname === "/stats";
-
-    const defaultShowBack = !isRoot;
+    const defaultShowBack = !ROOT_PATHS.includes(pathname);
 
     return {
         title,

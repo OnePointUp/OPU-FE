@@ -98,7 +98,7 @@ export default function OpuForm({
                     {/* 인풋 + 글자수 */}
                     <div className="flex-1">
                         <input
-                            placeholder="OPU 제목을 입력하세요"
+                            placeholder="OPU 제목을 입력해주세요"
                             className="input-box input-box--field w-full px-3"
                             value={title}
                             onChange={handleTitleChange}
