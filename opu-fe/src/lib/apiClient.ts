@@ -47,7 +47,6 @@ async function getNewAccessToken(instance: AxiosInstance): Promise<string> {
         useAuthStore.getState();
 
     if (!refreshToken) {
-        clearAuth();
         throw new Error("리프레시 토큰이 없습니다. 로그아웃 처리됩니다.");
     }
 
@@ -63,12 +62,11 @@ async function getNewAccessToken(instance: AxiosInstance): Promise<string> {
             { refreshToken },
             { skipAuth: true }
         );
-        const data = response.data;
 
+        const data = response.data;
         const nextMember = data.member ?? member;
 
         if (!nextMember) {
-            clearAuth();
             throw new Error("유저 정보를 찾을 수 없습니다.");
         }
 

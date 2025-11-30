@@ -40,13 +40,18 @@ export const useAuthStore = create<AuthState>()(
                     isAuthenticated: !!accessToken,
                 }),
 
-            clearAuth: () =>
+            clearAuth: () => {
                 set({
                     accessToken: null,
                     refreshToken: null,
                     member: null,
                     isAuthenticated: false,
-                }),
+                });
+
+                if (typeof window !== "undefined") {
+                    window.location.href = "/login";
+                }
+            },
 
             setMember: (member) =>
                 set((s) => ({
@@ -56,7 +61,7 @@ export const useAuthStore = create<AuthState>()(
                 })),
         }),
         {
-            name: "opu-auth", // localStorage 키
+            name: "opu-auth",
         }
     )
 );
