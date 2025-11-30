@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
 import {
@@ -25,12 +25,17 @@ export default function Header({
     onBack,
     tooltipOverride,
 }: Props) {
-    const pathname = usePathname();
     const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
     const [visible, setVisible] = useState(false);
     const [hasUnread, setHasUnread] = useState(false);
-    const { title, tooltip, hide, defaultShowBack } = getHeaderConfig(pathname);
 
+    const { title, tooltip, hide, defaultShowBack } = getHeaderConfig(
+        pathname,
+        searchParams
+    );
     const handleBack = () => {
         if (onBack) return onBack();
         router.back();
