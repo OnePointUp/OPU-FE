@@ -1,4 +1,3 @@
-// 현재 비밀번호 검증 훅
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { verifyCurrentPassword } from "@/features/user/services";

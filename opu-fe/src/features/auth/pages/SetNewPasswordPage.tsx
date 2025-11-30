@@ -1,8 +1,8 @@
 "use client";
 
-import PasswordInput from "@/features/user/components/PasswordInput";
+import PasswordInput from "@/features/auth/components/PasswordInput";
 import OpuActionButton from "@/components/common/OpuActionButton";
-import { useSetNewPassword } from "@/features/user/hooks/useSetNewPassword";
+import { useSetNewPassword } from "@/features/auth/hooks/useSetNewPassword";
 
 export default function PasswordChange2Page() {
     const {
@@ -19,7 +19,7 @@ export default function PasswordChange2Page() {
 
     return (
         <section>
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col">
                 <PasswordInput
                     label="새 비밀번호"
                     value={next}

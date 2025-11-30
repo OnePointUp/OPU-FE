@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import EmailField from "@/features/auth/components/EmailField";
-import PasswordInput from "@/features/user/components/PasswordInput";
+import PasswordInput from "@/features/auth/components/PasswordInput";
 import OpuActionButton from "@/components/common/OpuActionButton";
 import { useRouter } from "next/navigation";
 import { useLogin } from "@/features/auth/hooks/useLogin";

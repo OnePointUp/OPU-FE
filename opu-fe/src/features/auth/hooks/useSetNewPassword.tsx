@@ -1,5 +1,3 @@
-// 비밀번호 변경 검증 훅
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { changePassword2 } from "@/features/user/services";
