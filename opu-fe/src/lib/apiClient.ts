@@ -60,7 +60,8 @@ async function getNewAccessToken(instance: AxiosInstance): Promise<string> {
     try {
         const response = await instance.post<RefreshResponseData>(
             "/auth/refresh",
-            { refreshToken }
+            { refreshToken },
+            { skipAuth: true }
         );
         const data = response.data;
 

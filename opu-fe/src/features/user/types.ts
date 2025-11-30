@@ -1,0 +1,16 @@
+export type UserProfileSummary = {
+    nickname: string;
+    profileImageUrl: string | null;
+    email: string;
+    favoriteOpuCount: number;
+    myOpuCount: number;
+    bio: string;
+};
+
+export type UserProfileDetail = {
+    id: number;
+    email: string;
+    nickname: string;
+    bio: string | null;
+    profileImageUrl: string | null;
+};
