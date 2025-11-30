@@ -59,14 +59,7 @@ export default function ProfileAvatarPicker({
                     />
                 </div>
 
-                <div
-                    className="
-                        absolute bottom-0 right-0 
-                        grid place-items-center size-6 rounded-full
-                        bg-white shadow-sm ring-1 ring-[var(--color-super-light-gray)]
-                        pointer-events-none
-                    "
-                >
+                <div className="absolute bottom-0 right-0 grid place-items-center size-6 rounded-full bg-white shadow-sm ring-1 ring-[var(--color-super-light-gray)] pointer-events-none">
                     <Icon
                         icon="flowbite:pen-outline"
                         width="16"
