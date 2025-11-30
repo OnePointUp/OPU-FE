@@ -3,11 +3,10 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { checkNicknameDup } from "@/features/user/services";
 import { requestEmailSignup } from "@/features/auth/services";
 
 import { toastSuccess, toastError } from "@/lib/toast";
-import { validateEmail } from "@/utils/validation";
+import { checkNicknameDup, validateEmail } from "@/utils/validation";
 
 export function useSignupEmail() {
     const router = useRouter();
