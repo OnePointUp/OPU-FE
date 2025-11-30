@@ -14,3 +14,9 @@ export type UserProfileDetail = {
     bio: string | null;
     profileImageUrl: string | null;
 };
+
+export type EditProfilePayload = {
+    nickname: string;
+    bio: string | null;
+    profileImageUrl?: string | null;
+};
