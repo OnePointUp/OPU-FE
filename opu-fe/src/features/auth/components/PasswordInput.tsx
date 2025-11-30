@@ -23,7 +23,7 @@ export default function PasswordInput({
     const [show, setShow] = useState(false);
 
     return (
-        <section>
+        <section className="mb-6">
             <label
                 className="block mb-2"
                 style={{

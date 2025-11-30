@@ -16,7 +16,7 @@ export default function EmailField({
     error,
 }: Props) {
     return (
-        <section className={`mt-6 ${className}`}>
+        <section className={`mb-6 ${className}`}>
             {isLabeled && (
                 <label
                     className="block mb-2 ml-1"

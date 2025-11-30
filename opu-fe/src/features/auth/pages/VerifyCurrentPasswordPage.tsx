@@ -1,8 +1,8 @@
 "use client";
 
-import PasswordInput from "@/features/user/components/PasswordInput";
+import PasswordInput from "@/features/auth/components/PasswordInput";
 import OpuActionButton from "@/components/common/OpuActionButton";
-import { useVerifyCurrentPassword } from "@/features/user/hooks/useVerifyCurrentPassword";
+import { useVerifyCurrentPassword } from "@/features/auth/hooks/useVerifyCurrentPassword";
 
 export default function VerifyCurrentPasswordPage() {
     const { cur, err, loading, canNext, handleChangeCurrent, handleNext } =

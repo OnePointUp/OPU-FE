@@ -4,21 +4,22 @@ import { useRouter } from "next/navigation";
 import UserInfo from "@/features/user/components/UserInfo";
 import SettingsList from "@/features/user/components/SettingsList";
 import { useMyProfile } from "../hooks/useMyProfile";
-import { myPageMenuItems } from "../constants/myPageMenu";
-import OpuManagement from "../components/OpuManagement";
 import { useEffect, useState } from "react";
 import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
 import { fetchMyOpuCards } from "@/features/opu/service";
 import { fetchLikedOpuCards } from "@/features/liked-opu/services";
+import { useMyPageMenuData } from "../constants/myPageMenu";
+import OpuManagement from "../components/OpuManagement";
 
 export default function MyPageScreen() {
     const router = useRouter();
+
     const { profile, loading } = useMyProfile();
     const [likedCount, setLikedCount] = useState(0);
     const [myCount, setMyCount] = useState(0);
     const [opuLoading, setOpuLoading] = useState(true);
 
-    const items = myPageMenuItems;
+    const { myPageMenuItems: items } = useMyPageMenuData();
 
     function handleEdit() {
         router.push("/me/profile");
