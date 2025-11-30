@@ -12,17 +12,17 @@ import Calendar from "../components/Calendar";
 import TodoList from "../components/TodoList";
 import PlusButton from "@/components/common/PlusButton";
 
-/** ⭐ 미완료 → 완료 순 정렬 */
 const sortTodos = (todos: DailyTodoStats["todos"]) => {
   return [...todos].sort((a, b) => {
-    if (a.done === b.done) return a.id - b.id; // 상태 같으면 id순
-    return a.done ? 1 : -1; // 완료(true)는 아래로
+    if (a.done === b.done) return a.id - b.id;
+    return a.done ? 1 : -1;
   });
 };
 
 export default function MainPage() {
-  const [year, setYear] = useState(2025);
-  const [month, setMonth] = useState(11);
+  const today = new Date();
+  const [year, setYear] = useState(today.getFullYear());
+  const [month, setMonth] = useState(today.getMonth() + 1);
 
   const [calendarData, setCalendarData] = useState<DailyTodoStats[]>([]);
   const [calendarMatrix, setCalendarMatrix] = useState<
@@ -32,11 +32,10 @@ export default function MainPage() {
 
   const [editingTodoId, setEditingTodoId] = useState<number | null>(null);
 
-  /** 초기 로드 */
+  /** 초기 로드 + 월/년 변경 시 */
   useEffect(() => {
     const data = getMonthlyCalendar(year, month);
 
-    // 날짜 로드 시에도 todos 정렬 적용
     const sorted = data.map((d) => ({
       ...d,
       todos: sortTodos(d.todos),
@@ -46,20 +45,30 @@ export default function MainPage() {
     setCalendarMatrix(buildCalendarMatrix(sorted));
 
     if (!selectedDay) {
-      const today = sorted.find((d) => d.isToday);
-      if (today) setSelectedDay(today);
+      const todayStr = `${today.getFullYear()}-${String(
+        today.getMonth() + 1
+      ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+      const todayItem = sorted.find((d) => d.date === todayStr);
+
+      if (todayItem) {
+        setSelectedDay(todayItem);
+      }
     }
   }, [year, month]);
 
   /** 날짜 선택 */
   const handleSelectDay = (day: DailyTodoStats) => {
     const date = new Date(day.date);
+
     setSelectedDay({
       ...day,
       todos: sortTodos(day.todos),
     });
+
     setYear(date.getFullYear());
     setMonth(date.getMonth() + 1);
+    setEditingTodoId(null);
   };
 
   /** 체크 토글 */
@@ -79,25 +88,24 @@ export default function MainPage() {
 
         todos = sortTodos(todos);
 
-        const doneCount = todos.filter((t) => t.done).length;
-        const total = todos.length;
-        const ratio = total > 0 ? doneCount / total : 0;
-
-        return { ...day, todos, doneCount, total, ratio };
+        return {
+          ...day,
+          todos,
+          doneCount: todos.filter((t) => t.done).length,
+          total: todos.length,
+        };
       });
 
       setCalendarMatrix(buildCalendarMatrix(updated));
 
-      const newSelected =
-        updated.find((d) => d.date === selectedDay.date) ?? null;
-
-      setSelectedDay(newSelected);
+      setSelectedDay(
+        updated.find((d) => d.date === selectedDay.date) ?? null
+      );
 
       return updated;
     });
   };
 
-  /** ⭐ 제목 + 시간 수정 */
   const handleEditTodo = (
     todoId: number,
     newTitle: string,
@@ -122,10 +130,9 @@ export default function MainPage() {
 
       setCalendarMatrix(buildCalendarMatrix(updated));
 
-      const newSelected =
-        updated.find((d) => d.date === selectedDay.date) ?? null;
-
-      setSelectedDay(newSelected);
+      setSelectedDay(
+        updated.find((d) => d.date === selectedDay.date) ?? null
+      );
 
       return updated;
     });
@@ -133,7 +140,6 @@ export default function MainPage() {
     setEditingTodoId(null);
   };
 
-  /** 삭제 */
   const handleDeleteTodo = (todoId: number) => {
     if (!selectedDay) return;
 
@@ -142,68 +148,61 @@ export default function MainPage() {
         if (day.date !== selectedDay.date) return day;
 
         let todos = day.todos.filter((todo) => todo.id !== todoId);
-
         todos = sortTodos(todos);
 
-        const doneCount = todos.filter((t) => t.done).length;
-        const total = todos.length;
-        const ratio = total > 0 ? doneCount / total : 0;
-
-        return { ...day, todos, total, doneCount, ratio };
+        return {
+          ...day,
+          todos,
+          doneCount: todos.filter((t) => t.done).length,
+          total: todos.length,
+        };
       });
 
       setCalendarMatrix(buildCalendarMatrix(updated));
 
-      const newSelected =
-        updated.find((d) => d.date === selectedDay.date) ?? null;
-
-      setSelectedDay(newSelected);
+      setSelectedDay(
+        updated.find((d) => d.date === selectedDay.date) ?? null
+      );
 
       return updated;
     });
   };
 
-  /** 새 Todo 추가 */
   const handleAddTodo = () => {
     if (!selectedDay) return;
-
-    setCalendarData((prev) => {
-      const updated = prev.map((day) => {
-        if (day.date !== selectedDay.date) return day;
-
-        const newId =
-          day.todos.length > 0
-            ? Math.max(...day.todos.map((t) => t.id)) + 1
-            : 1;
-
-        const newTodo = { id: newId, title: "", done: false, time: null };
-
-        let todos = [...day.todos, newTodo];
-        todos = sortTodos(todos);
-
-        const doneCount = todos.filter((t) => t.done).length;
-        const total = todos.length;
-        const ratio = total > 0 ? doneCount / total : 0;
-
-        return { ...day, todos, total, doneCount, ratio };
-      });
-
-      setCalendarMatrix(buildCalendarMatrix(updated));
-
-      const newSelected =
-        updated.find((d) => d.date === selectedDay.date) ?? null;
-
-      setSelectedDay(newSelected);
-
-      return updated;
-    });
 
     const newId =
       selectedDay.todos.length > 0
         ? Math.max(...selectedDay.todos.map((t) => t.id)) + 1
         : 1;
 
+    setCalendarData((prev) => {
+      const updated = prev.map((day) => {
+        if (day.date !== selectedDay.date) return day;
+
+        const tempTodo = { id: newId, title: "", done: false, time: null };
+        let todos = [...day.todos, tempTodo];
+
+        todos = sortTodos(todos);
+
+        return { ...day, todos };
+      });
+
+      setCalendarMatrix(buildCalendarMatrix(updated));
+
+      setSelectedDay(
+        updated.find((d) => d.date === selectedDay.date) ?? null
+      );
+
+      return updated;
+    });
+
     setEditingTodoId(newId);
+  };
+
+  const handleConfirmNewTodo = (todoId: number, title: string, time: any) => {
+    if (!selectedDay) return;
+    handleEditTodo(todoId, title, time);
   };
 
   return (
@@ -216,6 +215,7 @@ export default function MainPage() {
           onToggleTodo={handleToggleTodo}
           onEditTodo={handleEditTodo}
           onDeleteTodo={handleDeleteTodo}
+          onConfirmNewTodo={handleConfirmNewTodo}
           editingTodoId={editingTodoId}
         />
 

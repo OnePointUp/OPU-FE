@@ -17,8 +17,9 @@ type Props = {
 };
 
 export default function MonthlyCalendar({ selectedDay, onSelectDay }: Props) {
-  const [year, setYear] = useState<number>(2025);
-  const [month, setMonth] = useState<number>(11);
+  const today = new Date();
+  const [year, setYear] = useState(today.getFullYear());
+  const [month, setMonth] = useState(today.getMonth() + 1);
 
   const [calendarData, setCalendarData] = useState<DailyTodoStats[]>([]);
   const [calendarMatrix, setCalendarMatrix] = useState<
@@ -33,7 +34,6 @@ export default function MonthlyCalendar({ selectedDay, onSelectDay }: Props) {
     d: number;
   } | null>(null);
 
-  const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(
     today.getMonth() + 1
   ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
