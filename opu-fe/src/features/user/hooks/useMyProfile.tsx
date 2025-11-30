@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchMyProfile, type UserProfile } from "@/features/user/services";
+import { fetchProfileSummary } from "../services";
+import { UserProfileSummary } from "../types";
 
 export function useMyProfile() {
-    const [profile, setProfile] = useState<UserProfile | null>(null);
+    const [profile, setProfile] = useState<UserProfileSummary | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchMyProfile()
+        fetchProfileSummary()
             .then(setProfile)
             .catch((err) => console.error("프로필 불러오기 실패: ", err))
             .finally(() => setLoading(false));

@@ -2,26 +2,24 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-    fetchMyProfile,
-    type UserProfile,
-    checkNicknameDup,
-    saveProfile,
-} from "@/features/user/services";
+
 import { toastSuccess, toastError } from "@/lib/toast";
+import { UserProfileDetail } from "../types";
+import { editProfile, fetchProfileDetail } from "../services";
+import { checkNicknameDup } from "@/utils/validation";
 
 const INTRO_MAX = 500;
 
 export function useProfileEdit() {
     const router = useRouter();
 
-    const [profile, setProfile] = useState<UserProfile | null>(null);
+    const [profile, setProfile] = useState<UserProfileDetail | null>(null);
     const [nickname, setNickname] = useState("");
     const [bio, setBio] = useState("");
     const [dupError, setDupError] = useState("");
     const [checking, setChecking] = useState(false);
 
-    const [profileImgUrl, setProfileImgUrl] = useState("");
+    const [profileImageUrl, setProfileImgUrl] = useState("");
     const [file, setFile] = useState<File | null>(null);
 
     const [loadingProfile, setLoadingProfile] = useState(true);
@@ -30,7 +28,7 @@ export function useProfileEdit() {
     useEffect(() => {
         const load = async () => {
             try {
-                const data = await fetchMyProfile();
+                const data = await fetchProfileDetail();
                 setProfile(data);
                 setNickname(data.nickname ?? "");
                 setBio(data.bio ?? "");
@@ -84,10 +82,10 @@ export function useProfileEdit() {
 
         try {
             setSaving(true);
-            await saveProfile({
+            await editProfile({
                 nickname: nickname.trim(),
                 bio,
-                profileFile: file,
+                profileImageUrl: profileImageUrl || null,
             });
             toastSuccess("프로필 수정이 완료되었습니다!");
             router.back();
@@ -97,14 +95,14 @@ export function useProfileEdit() {
         } finally {
             setSaving(false);
         }
-    }, [bio, canSubmit, file, nickname, router]);
+    }, [bio, canSubmit, nickname, profileImageUrl, router]);
 
     return {
         nickname,
         bio,
         dupError,
         checking,
-        profileImgUrl,
+        profileImageUrl,
         loadingProfile,
         saving,
         introMax: INTRO_MAX,

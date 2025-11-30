@@ -7,7 +7,7 @@ type Props = {
     nickname: string;
     email: string;
     bio?: string;
-    profileImageUrl?: string;
+    profileImageUrl?: string | null;
     handleEdit?: () => void;
     loading?: boolean;
 };
