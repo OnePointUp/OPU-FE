@@ -21,24 +21,25 @@ export default function CalendarFull({
   return (
     <div className="w-full select-none">
 
-      {/* 요일 */}
       <div className="grid grid-cols-7 text-sm text-gray-500 mb-2">
         {WEEKDAYS.map((day) => (
           <div
             key={day}
-            className="h-8 flex items-center justify-center text-[var(--color-dark-gray)]"
+            className={`h-10 flex items-center justify-center text-sm ${
+              day === "일"
+                ? "text-red-500"
+                : "text-[var(--color-dark-gray)]"
+            }`}
           >
             {day}
           </div>
         ))}
       </div>
 
-      {/* 날짜 그리드 */}
       {calendarMatrix.map((week, wi) => (
-        <div key={wi} className="grid grid-cols-7 w-full">
+        <div key={wi} className="grid grid-cols-7 w-full border-t border-[var(--color-super-light-gray)]">
 
           {week.map((day, di) => {
-            // 빈 칸(이전/다음달)
             if (!day) {
               return (
                 <div
@@ -49,28 +50,40 @@ export default function CalendarFull({
             }
 
             const isSelected = selectedDay?.date === day.date;
+            const isToday = day.isToday;
 
             return (
               <div
                 key={day.date}
-                style={{ height: cellHeight }}
                 onClick={() => onSelectDay(day)}
+                style={{
+                  height: cellHeight,
+                  borderColor: isSelected
+                    ? "var(--color-opu-pink)"
+                    : "transparent",
+                  borderWidth: 1,
+                  borderStyle: "solid",
+                }}
                 className={clsx(
                   "px-1 cursor-pointer flex flex-col transition-all rounded-md",
-                  isSelected && "border border-pink-300 bg-pink-50"
+                  "bg-white",
+                  "outline-none focus:outline-none active:outline-none"
                 )}
               >
-                {/* 날짜 숫자 */}
+
                 <div
                   className={clsx(
-                    "text-xs mb-1 flex justify-center",
-                    day.isToday && "text-pink-600 font-semibold"
+                    "text-xs mb-1 flex justify-center relative",
+                    isToday && "text-[var(--color-opu-pink)] font-semibold"
                   )}
                 >
                   {Number(day.date.split("-")[2])}
+
+                  {isToday && (
+                    <span className="absolute -bottom-[2px] left-1/2 -translate-x-1/2 w-4 h-[2px] rounded bg-[var(--color-opu-pink)]" />
+                  )}
                 </div>
 
-                {/* Todo 리스트 */}
                 <div className="relative overflow-hidden flex-1">
                   <div className="text-[10px] flex flex-col gap-[2px] leading-tight">
                     {day.todos.map((t) => (
@@ -88,20 +101,15 @@ export default function CalendarFull({
                     ))}
                   </div>
 
-                  {/* Fade-out 블러 */}
                   <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white/90 to-transparent pointer-events-none" />
                 </div>
+
               </div>
             );
           })}
 
         </div>
       ))}
-
-      {/* 마지막 아래선 */}
-      <div className="grid grid-cols-7">
-        <div className="col-span-7 border-b border-[var(--color-super-light-gray)]" />
-      </div>
     </div>
   );
 }

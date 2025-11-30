@@ -4,13 +4,8 @@ import { useEffect, useRef } from "react";
 
 type Props = {
   children: React.ReactNode;
-  calendarMatrix: any[][];
   cellHeight: number;
-  setCellHeight: (n: number) => void;
-
-  /** MainPage에게 계산된 높이 전달 */
-  setExpandedHeight: (n: number) => void;
-  setCollapsedHeight: (n: number) => void;
+  setCellHeight: React.Dispatch<React.SetStateAction<number>>;
   expandedHeight: number;
   collapsedHeight: number;
 };
@@ -19,62 +14,64 @@ const DRAG_SPEED = 0.4;
 
 export default function CalendarContainer({
   children,
-  calendarMatrix,
   cellHeight,
   setCellHeight,
   expandedHeight,
   collapsedHeight,
-  setExpandedHeight,
-  setCollapsedHeight,
 }: Props) {
   const startY = useRef<number | null>(null);
-  const initialized = useRef(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * ============================================================
+   *  🔥 마우스 휠 → 한 번에 접기/펴기
+   * ============================================================
+   */
   useEffect(() => {
-    if (initialized.current) return;
-    if (calendarMatrix.length === 0) return;
+    const el = containerRef.current;
+    if (!el) return;
 
-    const vh = window.innerHeight;
-    const weekCount = calendarMatrix.length;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
 
-    const weekdayArea = 40;
-    const margin = 40;
-    const reservedTodo = 200;
+      if (e.deltaY > 0) {
+        setCellHeight(collapsedHeight);
+      } else {
+        setCellHeight(expandedHeight);
+      }
+    };
 
-    const dynamicHeight =
-      (vh - weekdayArea - margin - reservedTodo) / weekCount;
+    el.addEventListener("wheel", onWheel, { passive: false });
 
-    const finalHeight = Math.max(75, Math.min(dynamicHeight, 130));
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [expandedHeight, collapsedHeight, setCellHeight]);
 
-    setExpandedHeight(finalHeight);
-    setCollapsedHeight(finalHeight * 0.5);
-    setCellHeight(finalHeight);
-
-    initialized.current = true; // 한 번만 실행됨
-  }, [calendarMatrix.length]);
-
-  /** 터치 시작 */
+  /**
+   * ============================================================
+   *  🔥 터치 스와이프
+   * ============================================================
+   */
   const handleStart = (e: React.TouchEvent) => {
     startY.current = e.touches[0].clientY;
   };
 
-  /** 터치 이동 */
   const handleMove = (e: React.TouchEvent) => {
     if (startY.current == null) return;
 
+    e.preventDefault();
     const delta = startY.current - e.touches[0].clientY;
 
     if (delta > 0) {
-      // 위 → 접힘
-      const next = Math.max(collapsedHeight, cellHeight - delta * DRAG_SPEED);
-      setCellHeight(next);
+      setCellHeight((prev) =>
+        Math.max(collapsedHeight, prev - delta * DRAG_SPEED)
+      );
     } else {
-      // 아래 → 펼침
-      const next = Math.min(expandedHeight, cellHeight - delta * DRAG_SPEED);
-      setCellHeight(next);
+      setCellHeight((prev) =>
+        Math.min(expandedHeight, prev - delta * DRAG_SPEED)
+      );
     }
   };
 
-  /** 터치 종료 */
   const handleEnd = () => {
     const mid = (expandedHeight + collapsedHeight) / 2;
 
@@ -86,14 +83,13 @@ export default function CalendarContainer({
 
   return (
     <div
+      ref={containerRef}
       onTouchStart={handleStart}
       onTouchMove={handleMove}
       onTouchEnd={handleEnd}
       className="transition-[height] duration-200 w-full"
       style={{
-        height: calendarMatrix.length
-          ? cellHeight * calendarMatrix.length + 60
-          : 0,
+        height: cellHeight * 6 + 40, // 6주 기준
       }}
     >
       {children}
