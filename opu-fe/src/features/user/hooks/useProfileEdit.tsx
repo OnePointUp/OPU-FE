@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 
 import { toastSuccess, toastError } from "@/lib/toast";
 import { UserProfileDetail } from "../types";
-import { editProfile, fetchProfileDetail } from "../services";
+import {
+    editProfile,
+    fetchProfileDetail,
+    getProfileImagePresignedUrl,
+} from "../services";
 import { checkNicknameDup } from "@/utils/validation";
 
 const INTRO_MAX = 500;
@@ -59,12 +63,13 @@ export function useProfileEdit() {
             setDupError(isDup ? "이미 존재하는 닉네임 입니다." : "");
         } catch (e) {
             console.error("닉네임 중복 체크 실패", e);
-            toastError("닉네임 중복 체크에 실패앴어요.");
+            toastError("닉네임 중복 체크에 실패했어요.");
         } finally {
             setChecking(false);
         }
     }, [nickname, profile]);
 
+    // 사진 선택: 파일만 기억 + 미리보기용 URL
     const handlePickImage = useCallback((f: File) => {
         setFile(f);
         setProfileImgUrl(URL.createObjectURL(f));
@@ -82,11 +87,46 @@ export function useProfileEdit() {
 
         try {
             setSaving(true);
+
+            let finalProfileImageUrl: string | null = profileImageUrl || null;
+
+            // 새 파일 선택된 경우에만 S3 업로드
+            if (file) {
+                const mime = file.type || "image/jpeg";
+                const ext = mime.startsWith("image/")
+                    ? mime.split("/")[1] || "jpeg"
+                    : "jpeg";
+
+                // presigned URL 발급
+                const { uploadUrl, finalUrl } =
+                    await getProfileImagePresignedUrl(ext);
+
+                const contentType = `image/${ext}`;
+
+                // S3 업로드
+                const uploadRes = await fetch(uploadUrl, {
+                    method: "PUT",
+                    body: file,
+                    headers: {
+                        "Content-Type": contentType,
+                    },
+                });
+
+                if (!uploadRes.ok) {
+                    throw new Error("이미지 업로드 실패");
+                }
+
+                // CloudFront 최종 URL 저장
+                finalProfileImageUrl = finalUrl;
+            }
+
+            // 프로필 업데이트
             await editProfile({
                 nickname: nickname.trim(),
                 bio,
-                profileImageUrl: profileImageUrl || null,
+                profileImageUrl: finalProfileImageUrl,
             });
+
             toastSuccess("프로필 수정이 완료되었습니다!");
             router.back();
         } catch (err) {
@@ -95,7 +135,7 @@ export function useProfileEdit() {
         } finally {
             setSaving(false);
         }
-    }, [bio, canSubmit, nickname, profileImageUrl, router]);
+    }, [bio, canSubmit, nickname, profileImageUrl, file, router]);
 
     return {
         nickname,

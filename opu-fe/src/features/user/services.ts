@@ -2,11 +2,13 @@ import { apiClient } from "@/lib/apiClient";
 import { ApiResponse } from "@/types/api";
 import {
     EditProfilePayload,
+    PresignedUrlResponse,
     UserProfileDetail,
     UserProfileSummary,
 } from "./types";
 import { extractErrorMessage } from "@/utils/api-helpers";
 
+/* ===== 프로필 요약 ===== */
 export async function fetchProfileSummary(): Promise<UserProfileSummary> {
     const res = await apiClient.get<ApiResponse<UserProfileSummary>>(
         "/members/me/summary"
@@ -15,6 +17,7 @@ export async function fetchProfileSummary(): Promise<UserProfileSummary> {
     return res.data.data;
 }
 
+/* ===== 프로필 상세 ===== */
 export async function fetchProfileDetail(): Promise<UserProfileDetail> {
     const res = await apiClient.get<ApiResponse<UserProfileDetail>>(
         "/members/me/profile"
@@ -23,8 +26,7 @@ export async function fetchProfileDetail(): Promise<UserProfileDetail> {
     return res.data.data;
 }
 
-// --- 프로필 수정 ---
-
+/* ===== 프로필 수정 ===== */
 export async function editProfile(payload: EditProfilePayload) {
     try {
         await apiClient.patch<
@@ -39,4 +41,17 @@ export async function editProfile(payload: EditProfilePayload) {
     } catch (err: unknown) {
         throw new Error(extractErrorMessage(err, "프로필 수정에 실패했어요."));
     }
+}
+
+/* ===== 프로필 이미지 등록 ===== */
+export async function getProfileImagePresignedUrl(
+    extension?: string
+): Promise<PresignedUrlResponse> {
+    const res = await apiClient.post<{
+        data: PresignedUrlResponse;
+    }>("/members/me/profile-image/presign", undefined, {
+        params: extension ? { extension } : undefined,
+    });
+
+    return res.data.data;
 }

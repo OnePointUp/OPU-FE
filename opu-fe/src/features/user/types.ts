@@ -20,3 +20,8 @@ export type EditProfilePayload = {
     bio: string | null;
     profileImageUrl?: string | null;
 };
+
+export type PresignedUrlResponse = {
+    uploadUrl: string;
+    finalUrl: string;
+};

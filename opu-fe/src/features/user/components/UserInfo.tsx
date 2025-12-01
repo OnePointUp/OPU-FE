@@ -53,6 +53,8 @@ export default function UserInfo({
                             fill
                             sizes="56px"
                             className="object-cover"
+                            loading="eager"
+                            priority
                         />
                     ) : (
                         <div className="grid h-full w-full place-items-center text-[var(--color-light-gray)] font-[var(--weight-semibold)]">
