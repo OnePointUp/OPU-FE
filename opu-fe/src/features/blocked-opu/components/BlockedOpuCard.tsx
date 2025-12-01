@@ -22,7 +22,7 @@ export default function BlockedOpuCard({
 }) {
     const categoryKey = item.categoryName ?? "기타";
     const { bg, text } = CATEGORY_BADGE[categoryKey] ?? CATEGORY_BADGE["기타"];
-    const dateLabel = item.createdAt ? formatDate(item.createdAt) : null;
+    const dateLabel = item.blockedAt ? formatDate(item.blockedAt) : null;
     const [menuOpen, setMenuOpen] = useState(false);
 
     const toggleChecked = () => {
