@@ -77,9 +77,10 @@ export default function CalendarFull({
         {WEEKDAYS.map((day) => (
           <div
             key={day}
-            className={`h-10 flex items-center justify-center text-sm ${
+            className={clsx(
+              "h-10 flex items-center justify-center text-sm",
               day === "일" ? "text-red-500" : "text-[var(--color-dark-gray)]"
-            }`}
+            )}
           >
             {day}
           </div>

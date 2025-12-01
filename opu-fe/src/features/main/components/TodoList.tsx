@@ -187,7 +187,7 @@ export default function TodoList({
     setOpenSheet(false);
   };
 
-  const formatTime = (time: any) => {
+  const formatTime = (time: DailyTodoStats['todos'][0]['time']) => {
     if (!time) return null;
     const minute = String(time.minute).padStart(2, "0");
     return `${time.ampm} ${time.hour}:${minute}`;

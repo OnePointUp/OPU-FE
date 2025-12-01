@@ -13,6 +13,18 @@ import PlusButton from "@/components/common/PlusButton";
 import CalendarFull from "../components/CalendarFull";
 import CalendarContainer from "../hooks/CalendarContainer";
 import DaySelector from "@/features/main/components/DaySelector";
+import {
+  DEFAULT_DAY_SELECTOR_HEIGHT,
+  BOTTOM_NAV_HEIGHT,
+  PLUS_BUTTON_SPACE,
+  TOP_PADDING,
+  CELL_MIN_HEIGHT,
+  CELL_MAX_HEIGHT,
+  CALENDAR_BOTTOM_MARGIN,
+  MENU_HEIGHT,
+  PLUS_BUTTON_AREA,
+  SAFE_PADDING
+} from "../layout/height";
 
 /** 미완 → 완료 순 정렬 */
 const sortTodos = (todos: DailyTodoStats["todos"]) => {
@@ -110,7 +122,7 @@ export default function CalendarPage() {
   };
 
   /** Todo 수정 */
-  const handleEditTodo = (todoId: number, newTitle: string, time: any) => {
+  const handleEditTodo = (todoId: number, newTitle: string, time: DailyTodoStats['todos'][0]['time']) => {
     if (!selectedDay) return;
 
     setCalendarData((prev) => {
@@ -199,7 +211,7 @@ export default function CalendarPage() {
     setCellHeight(collapsedHeight);
   };
 
-  const handleConfirmNewTodo = (newId: number, newTitle: string, time: any) => {
+  const handleConfirmNewTodo = (newId: number, newTitle: string, time: DailyTodoStats['todos'][0]['time']) => {
     if (!selectedDay) return;
 
     setCalendarData((prev) => {
@@ -237,29 +249,23 @@ export default function CalendarPage() {
 
     const vh = window.innerHeight;
 
-    const daySelectorH = daySelectorRef.current?.offsetHeight ?? 60;
-    const bottomNavH = 80;
-    const plusButtonSpace = 70;
-    const topPadding = 70;
+    const daySelectorH =
+      daySelectorRef.current?.offsetHeight ?? DEFAULT_DAY_SELECTOR_HEIGHT;
 
     const remained =
       vh -
       daySelectorH -
-      bottomNavH -
-      plusButtonSpace -
-      topPadding;
+      BOTTOM_NAV_HEIGHT -
+      PLUS_BUTTON_SPACE -
+      TOP_PADDING;
 
     const weekCount = calendarMatrix.length;
     const newCellHeight = remained / weekCount;
 
-    const minH = 55;
-    const maxH = 160;
-
-    const finalH = Math.max(minH, Math.min(newCellHeight, maxH));
+    const finalH = Math.max(CELL_MIN_HEIGHT, Math.min(newCellHeight, CELL_MAX_HEIGHT));
 
     setExpandedHeight(finalH);
     setCollapsedHeight(finalH * 0.55);
-
   }, [calendarMatrix.length]);
 
   /** TodoList 높이 계산 */
@@ -270,18 +276,15 @@ export default function CalendarPage() {
     const vh = window.innerHeight;
     const daySelectorH = daySelectorRef.current.offsetHeight;
 
-    const calendarHeight = cellHeight * calendarMatrix.length + 20;
-    const menuHeight = 55;
-    const plusButtonArea = 90;
-    const safePadding = 35;
+    const calendarHeight = cellHeight * calendarMatrix.length + CALENDAR_BOTTOM_MARGIN;
 
     const available =
       vh -
       daySelectorH -
       calendarHeight -
-      menuHeight -
-      plusButtonArea -
-      safePadding;
+      MENU_HEIGHT -
+      PLUS_BUTTON_AREA -
+      SAFE_PADDING;
 
     setTodoHeight(Math.max(0, available));
   }, [cellHeight, calendarMatrix.length]);
