@@ -60,9 +60,7 @@ export default function TodoList({
     { ampm: "AM" | "PM"; hour: number; minute: number } | null
   >(null);
 
-  /** -------------------------------
-   * 드래그 앤 드롭 훅 적용
-   ----------------------------------*/
+  // 드래그 앤 드롭 훅 적용
   const {
     items: reorderedItems,
     bindItemEvents,
@@ -83,9 +81,6 @@ export default function TodoList({
     }
   );
 
-  /** -------------------------------
-   * 편집 초기값 세팅
-   ----------------------------------*/
   useEffect(() => {
     if (!selectedDay) return;
     if (editingTodoId == null) return;
@@ -111,7 +106,7 @@ export default function TodoList({
     }
   }, [editingTodoId, selectedDay]);
 
-  /** 날짜 바뀌면 편집 종료 */
+  // 날짜 바뀌면 편집 종료
   useEffect(() => {
     setEditingId(null);
     setEditText("");
@@ -126,9 +121,7 @@ export default function TodoList({
     e.stopPropagation();
   };
 
-  /** -------------------------------
-   * 저장 처리
-   ----------------------------------*/
+  // 저장 처리
   const saveEditing = () => {
     if (!editingId) return;
 
@@ -148,9 +141,7 @@ export default function TodoList({
     setShowTimePicker(false);
   };
 
-  /** -------------------------------
-   * 취소 처리
-   ----------------------------------*/
+  // 취소 처리
   const cancelEditing = () => {
     if (!editingId) return;
 
@@ -206,10 +197,7 @@ export default function TodoList({
   };
 
   if (loading || !selectedDay) return <div>Loading...</div>;
-
-  /** -------------------------------
-   * 렌더링
-   ----------------------------------*/
+  
   return (
     <>
       <div
