@@ -11,6 +11,7 @@ import {
     getProfileImagePresignedUrl,
 } from "../services";
 import { checkNicknameDup } from "@/utils/validation";
+import { useProfileImagePicker } from "./useProfileImagePicker";
 
 const INTRO_MAX = 500;
 
@@ -23,11 +24,16 @@ export function useProfileEdit() {
     const [dupError, setDupError] = useState("");
     const [checking, setChecking] = useState(false);
 
-    const [profileImageUrl, setProfileImgUrl] = useState("");
-    const [file, setFile] = useState<File | null>(null);
-
     const [loadingProfile, setLoadingProfile] = useState(true);
     const [saving, setSaving] = useState(false);
+
+    const {
+        profileImageUrl,
+        file,
+        handlePickImage,
+        setProfileImgUrl,
+        setFile,
+    } = useProfileImagePicker();
 
     useEffect(() => {
         const load = async () => {
@@ -37,6 +43,7 @@ export function useProfileEdit() {
                 setNickname(data.nickname ?? "");
                 setBio(data.bio ?? "");
                 setProfileImgUrl(data.profileImageUrl ?? "");
+                setFile(null);
             } catch (e) {
                 console.error("프로필 로드 실패", e);
                 toastError("프로필 정보를 불러오지 못했어요.");
@@ -45,7 +52,7 @@ export function useProfileEdit() {
             }
         };
         load();
-    }, []);
+    }, [setProfileImgUrl, setFile]);
 
     const handleBlurNickname = useCallback(async () => {
         if (!profile) return;
@@ -68,12 +75,6 @@ export function useProfileEdit() {
             setChecking(false);
         }
     }, [nickname, profile]);
-
-    // 사진 선택: 파일만 기억 + 미리보기용 URL
-    const handlePickImage = useCallback((f: File) => {
-        setFile(f);
-        setProfileImgUrl(URL.createObjectURL(f));
-    }, []);
 
     const canSubmit =
         !saving &&

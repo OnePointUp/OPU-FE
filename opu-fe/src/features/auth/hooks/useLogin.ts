@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { login } from "@/features/auth/services";
 import { toastSuccess, toastError } from "@/lib/toast";
 import { validateEmail } from "@/utils/validation";
-import { useAuthStore } from "@/stores/useAuthStore";
 
 export function useLogin() {
     const router = useRouter();
@@ -15,8 +14,6 @@ export function useLogin() {
     const [emailError, setEmailError] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
-
-    const setAuth = useAuthStore((s) => s.setAuth);
 
     // 이메일 입력 시 즉시 검증
     const handleEmailChange = useCallback((v: string) => {
