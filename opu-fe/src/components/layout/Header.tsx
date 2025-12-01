@@ -26,6 +26,7 @@ const NOTIFICATION_DISABLED_PATHS = [
     "/signup/check-email",
     "/signup/email-confirmed",
     "/find-pw/email-confirmed",
+    "/signup/email-failed",
 ];
 
 export default function Header({
