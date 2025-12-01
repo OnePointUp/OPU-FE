@@ -5,6 +5,7 @@ import { extractErrorMessage } from "@/utils/api-helpers";
 import axios from "axios";
 import {
     EmailSignupPayload,
+    EmailVerifyStatusResponse,
     LoginPayload,
     LoginResponse,
     PasswordCheckPayload,
@@ -20,6 +21,19 @@ export async function requestEmailSignup(payload: EmailSignupPayload) {
     } catch (err: unknown) {
         throw new Error(extractErrorMessage(err, "회원가입에 실패했어요."));
     }
+}
+
+// 이메일 인증여부 조회
+export async function fetchEmailVerifyStatus(email: string): Promise<boolean> {
+    const res = await apiClient.get<ApiResponse<EmailVerifyStatusResponse>>(
+        "/auth/verify/status",
+        {
+            params: { email },
+            skipAuth: true,
+        }
+    );
+
+    return Boolean(res.data.data?.verified);
 }
 
 // 이메일 재전송

@@ -12,8 +12,8 @@ export default function EmailFailedPage() {
     const isExpired = reason === "expired";
     const isInvalid = reason === "invalid";
 
-    const handleNext = () => {
-        router.push("/login");
+    const handleReset = () => {
+        router.push("/welcome");
     };
 
     return (
@@ -39,7 +39,7 @@ export default function EmailFailedPage() {
                 <OpuActionButton
                     label="확인"
                     disabled={false}
-                    onClick={handleNext}
+                    onClick={handleReset}
                     positionFixed={false}
                     className="w-full"
                 />
