@@ -2,15 +2,17 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
+const AUTH_COOKIE_NAME = "opu_session";
+
 export default async function ProtectedLayout({
     children,
 }: {
     children: ReactNode;
 }) {
     const cookieStore = await cookies();
-    const accessToken = cookieStore.get("access_token")?.value;
+    const session = cookieStore.get(AUTH_COOKIE_NAME)?.value;
 
-    if (!accessToken) {
+    if (!session) {
         redirect("/login");
     }
 

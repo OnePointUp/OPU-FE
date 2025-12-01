@@ -18,27 +18,41 @@ type AuthState = {
     setAuth: (payload: {
         accessToken: string;
         refreshToken: string;
-        member?: AuthMember | null;
+        member: AuthMember;
     }) => void;
     clearAuth: () => void;
-    setMember: (user: AuthMember | null) => void;
+    setMember: (member: AuthMember | null) => void;
 };
+
+const AUTH_COOKIE_NAME = "opu_session";
+
+function setAuthCookie() {
+    if (typeof document === "undefined") return;
+    document.cookie = `${AUTH_COOKIE_NAME}=1; path=/; sameSite=lax`;
+}
+
+function clearAuthCookie() {
+    if (typeof document === "undefined") return;
+    document.cookie = `${AUTH_COOKIE_NAME}=; path=/; max-age=0; sameSite=lax`;
+}
 
 export const useAuthStore = create<AuthState>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             accessToken: null,
             refreshToken: null,
             member: null,
             isAuthenticated: false,
 
-            setAuth: ({ accessToken, refreshToken, member = null }) =>
+            setAuth: ({ accessToken, refreshToken, member }) => {
                 set({
                     accessToken,
                     refreshToken,
                     member,
-                    isAuthenticated: !!accessToken,
-                }),
+                    isAuthenticated: true,
+                });
+                setAuthCookie();
+            },
 
             clearAuth: () => {
                 set({
@@ -47,21 +61,29 @@ export const useAuthStore = create<AuthState>()(
                     member: null,
                     isAuthenticated: false,
                 });
-
-                if (typeof window !== "undefined") {
-                    window.location.href = "/login";
-                }
+                clearAuthCookie();
             },
 
-            setMember: (member) =>
-                set((s) => ({
-                    ...s,
+            setMember: (member) => {
+                const { accessToken } = get();
+                set({
                     member,
-                    isAuthenticated: !!member && !!s.accessToken,
-                })),
+                    isAuthenticated: !!member && !!accessToken,
+                });
+            },
         }),
         {
             name: "opu-auth",
+
+            onRehydrateStorage: () => (state, error) => {
+                if (error) return;
+
+                const hasToken = state?.accessToken && state?.refreshToken;
+
+                if (hasToken) {
+                    setAuthCookie();
+                }
+            },
         }
     )
 );

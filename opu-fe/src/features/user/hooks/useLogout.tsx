@@ -5,13 +5,8 @@ export function useLogout() {
     const router = useRouter();
 
     const handleLogout = async () => {
-        try {
-            await logout();
-        } catch (error) {
-            console.error("로그아웃 처리 중 오류 발생:", error);
-        } finally {
-            router.replace("/login");
-        }
+        await logout();
+        router.replace("/login");
     };
 
     return { handleLogout };

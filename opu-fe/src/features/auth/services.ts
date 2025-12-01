@@ -6,9 +6,9 @@ import axios from "axios";
 import {
     EmailSignupPayload,
     LoginPayload,
+    LoginResponse,
     PasswordCheckPayload,
     ResetPasswordByTokenPayload,
-    TokenResponse,
 } from "./types";
 import { ApiResponse } from "@/types/api";
 
@@ -39,27 +39,24 @@ export async function resendVerificationEmail(email: string) {
 }
 
 // 로그인 + JWT 저장
-export async function login(payload: LoginPayload) {
-    try {
-        const res = await apiClient.post<ApiResponse<TokenResponse>>(
-            "/auth/login",
-            payload,
-            { skipAuth: true }
-        );
+export async function login(payload: LoginPayload): Promise<LoginResponse> {
+    const res = await apiClient.post<ApiResponse<LoginResponse>>(
+        "/auth/login",
+        payload,
+        { skipAuth: true }
+    );
 
-        const tokenData = res.data.data;
+    const data = res.data.data;
 
-        useAuthStore.getState().setAuth({
-            accessToken: tokenData.accessToken,
-            refreshToken: tokenData.refreshToken,
-        });
+    useAuthStore.getState().setAuth({
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+        member: data.member,
+    });
 
-        return { ok: true };
-    } catch (err: unknown) {
-        throw new Error(
-            extractErrorMessage(err, "이메일 또는 비밀번호를 확인해 주세요.")
-        );
-    }
+    console.log("auth store after login", useAuthStore.getState());
+
+    return data;
 }
 
 // 로그아웃
@@ -70,7 +67,7 @@ export async function logout() {
         await apiClient.post("/auth/logout");
     } catch (err) {
         console.error(
-            "Logout server request failed, but client state cleared:",
+            "Logout request failed, client auth will still be cleared:",
             err
         );
     } finally {
