@@ -3,8 +3,7 @@ export type NotificationCode =
     | "MORNING"
     | "EVENING"
     | "ROUTINE"
-    | "TODO"
-    | "RANDOM";
+    | "RANDOM_PICK";
 
 /* ===== 백엔드 서버 구조 ===== */
 export type NotificationSettingItem = {

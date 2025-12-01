@@ -9,6 +9,15 @@ import type {
     NotificationFeedItem,
 } from "./types";
 
+const BASE = "/notifications";
+
+const ALL_CODES: NotificationCode[] = [
+    "MORNING",
+    "EVENING",
+    "ROUTINE",
+    "RANDOM_PICK",
+];
+
 function toNotificationItem(src: NotificationSettingItem): NotificationItem {
     return {
         code: src.code,
@@ -22,7 +31,7 @@ function buildSections(list: NotificationSettingItem[]): NotificationSettings {
     const allEnabled = list.length > 0 && list.every((it) => it.enabled);
 
     const basicCodes: NotificationCode[] = ["MORNING", "EVENING"];
-    const execCodes: NotificationCode[] = ["ROUTINE", "TODO", "RANDOM"];
+    const execCodes: NotificationCode[] = ["ROUTINE", "RANDOM_PICK"];
 
     const sections: NotificationSection[] = [
         {
@@ -47,15 +56,13 @@ function buildSections(list: NotificationSettingItem[]): NotificationSettings {
     };
 }
 
-const SETTINGS_BASE = "/notifications/settings";
-
 /* ===== 알림 설정 전체 조회 ===== */
 export async function fetchNotificationSettings(): Promise<NotificationSettings> {
     try {
         const res = await apiClient.get<{
             success: boolean;
             data: NotificationSettingItem[];
-        }>(SETTINGS_BASE);
+        }>(`${BASE}/settings`);
 
         const list = res.data.data;
         return buildSections(list);
@@ -72,7 +79,7 @@ export async function patchNotificationItem(
     enabled: boolean
 ): Promise<void> {
     try {
-        await apiClient.patch(`${SETTINGS_BASE}/${code}`, { enabled });
+        await apiClient.patch(`${BASE}/settings/${code}`, { enabled });
     } catch (err) {
         throw new Error(
             extractErrorMessage(err, "알림 설정 변경에 실패했어요.")
@@ -83,8 +90,12 @@ export async function patchNotificationItem(
 /* ===== 전체 on/off ===== */
 export async function setAllNotifications(enabled: boolean): Promise<void> {
     try {
-        await apiClient.patch(SETTINGS_BASE, { enabled });
-    } catch (err) {
+        await Promise.all(
+            ALL_CODES.map((code) =>
+                apiClient.patch(`${BASE}/settings/${code}`, { enabled })
+            )
+        );
+    } catch (err: unknown) {
         throw new Error(
             extractErrorMessage(err, "알림 전체 설정 변경에 실패했어요.")
         );
@@ -98,7 +109,7 @@ export async function fetchNotificationFeed(
     size = 20
 ): Promise<NotificationFeedItem[]> {
     try {
-        const res = await apiClient.get("/notifications", {
+        const res = await apiClient.get(BASE, {
             params: { onlyUnread, page, size },
         });
 
@@ -113,7 +124,7 @@ export async function readOneNotification(
     notificationId: number
 ): Promise<void> {
     try {
-        await apiClient.patch(`/notifications/${notificationId}/read`);
+        await apiClient.patch(`${BASE}/${notificationId}/read`);
     } catch (err) {
         throw new Error(
             extractErrorMessage(err, "알림을 읽음 처리하지 못했어요.")
@@ -124,7 +135,7 @@ export async function readOneNotification(
 /* ===== 전체 알림 읽음 ===== */
 export async function readAllNotifications(): Promise<void> {
     try {
-        await apiClient.patch(`/notifications/read-all`);
+        await apiClient.patch(`${BASE}/read-all`);
     } catch (err) {
         throw new Error(
             extractErrorMessage(err, "전체 알림 읽음 처리에 실패했어요.")
