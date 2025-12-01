@@ -8,7 +8,7 @@ export default function EmailVerifyPage() {
     const router = useRouter();
 
     const handleNext = () => {
-        router.push("/login");
+        router.push("/welcome");
     };
 
     return (
