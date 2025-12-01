@@ -28,11 +28,11 @@ export default function EmailFailedPage() {
                         fontWeight: "var(--weight-semibold)",
                     }}
                 >
-                    {isExpired && "이메일 인증 링크가 만료되었습니다."}
-                    {isInvalid && "회원가입에 실패하였습니다."}
-                    {!isExpired &&
-                        !isInvalid &&
-                        "이메일 인증에 실패하였습니다."}
+                    {isExpired
+                        ? "이메일 인증 링크가 만료되었습니다."
+                        : isInvalid
+                        ? "회원가입에 실패하였습니다."
+                        : "이메일 인증에 실패하였습니다."}
                 </span>
 
                 {/* 확인 버튼 */}
