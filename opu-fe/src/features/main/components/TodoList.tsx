@@ -7,6 +7,7 @@ import { useEffect, useState, MouseEvent } from "react";
 import Toggle from "@/components/common/Toggle";
 import WheelPickerTime from "./WheelPickerTime";
 import { toastError } from "@/lib/toast";
+import { useDragDrop } from "../hooks/useDragDrop";
 
 type Props = {
   selectedDay: DailyTodoStats | null;
@@ -17,6 +18,13 @@ type Props = {
     time?: { ampm: "AM" | "PM"; hour: number; minute: number } | null
   ) => void;
   onDeleteTodo: (todoId: number) => void;
+
+  onConfirmNewTodo: (
+    todoId: number,
+    newTitle: string,
+    time?: { ampm: "AM" | "PM"; hour: number; minute: number } | null
+  ) => void;
+
   editingTodoId: number | null;
   loading?: boolean;
   maxHeight?: number;
@@ -27,6 +35,8 @@ export default function TodoList({
   onToggleTodo,
   onEditTodo,
   onDeleteTodo,
+  onConfirmNewTodo,
+
   editingTodoId,
   loading = false,
   maxHeight,
@@ -50,7 +60,32 @@ export default function TodoList({
     { ampm: "AM" | "PM"; hour: number; minute: number } | null
   >(null);
 
-  /* 편집 초기값 세팅 */
+  /** -------------------------------
+   * 드래그 앤 드롭 훅 적용
+   ----------------------------------*/
+  const {
+    items: reorderedItems,
+    bindItemEvents,
+    dragItem,
+    isDragging,
+    ghostStyle,
+  } = useDragDrop(
+    selectedDay ? selectedDay.todos : [],
+    (updated) => {
+      /** 순서 변경을 부모에게 저장 요청 — newTitle / time 그대로 유지 */
+      updated.forEach((todo, idx) => {
+        // 필요하다면 order 필드를 저장하도록 수정 가능
+      });
+
+      if (selectedDay) {
+        selectedDay.todos.splice(0, selectedDay.todos.length, ...updated);
+      }
+    }
+  );
+
+  /** -------------------------------
+   * 편집 초기값 세팅
+   ----------------------------------*/
   useEffect(() => {
     if (!selectedDay) return;
     if (editingTodoId == null) return;
@@ -60,7 +95,6 @@ export default function TodoList({
 
     setEditingId(todo.id);
     setEditText(todo.title);
-
     setOriginalTitle(todo.title);
     setOriginalTime(todo.time ?? null);
 
@@ -77,34 +111,52 @@ export default function TodoList({
     }
   }, [editingTodoId, selectedDay]);
 
+  /** 날짜 바뀌면 편집 종료 */
+  useEffect(() => {
+    setEditingId(null);
+    setEditText("");
+    setOriginalTitle("");
+    setOriginalTime(null);
+    setShowTimePicker(false);
+    setOpenSheet(false);
+  }, [selectedDay?.date]);
+
   const stopBlur = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
+  /** -------------------------------
+   * 저장 처리
+   ----------------------------------*/
   const saveEditing = () => {
     if (!editingId) return;
 
     const title = editText.trim();
-
     if (title === "") {
       toastError("제목은 비워둘 수 없습니다.");
       return;
     }
 
     const time = showTimePicker ? timeValue : null;
-    onEditTodo(editingId, title, time);
+    const isNewTodo = originalTitle === "";
+
+    if (isNewTodo) onConfirmNewTodo(editingId, title, time);
+    else onEditTodo(editingId, title, time);
 
     setEditingId(null);
     setShowTimePicker(false);
   };
 
+  /** -------------------------------
+   * 취소 처리
+   ----------------------------------*/
   const cancelEditing = () => {
     if (!editingId) return;
 
-    if (originalTitle === "" && editText.trim() === "") {
-      onDeleteTodo(editingId);
-    }
+    const isNewTodo = originalTitle === "";
+
+    if (isNewTodo) onDeleteTodo(editingId);
 
     setEditText(originalTitle);
     setTimeValue(
@@ -127,7 +179,6 @@ export default function TodoList({
   const startEditing = (todo: DailyTodoStats["todos"][number]) => {
     setEditingId(todo.id);
     setEditText(todo.title);
-
     setOriginalTitle(todo.title);
     setOriginalTime(todo.time ?? null);
 
@@ -136,11 +187,7 @@ export default function TodoList({
       setTimeValue(todo.time);
     } else {
       setShowTimePicker(false);
-      setTimeValue({
-        ampm: "AM",
-        hour: 9,
-        minute: 0,
-      });
+      setTimeValue({ ampm: "AM", hour: 9, minute: 0 });
     }
 
     setOpenSheet(false);
@@ -160,6 +207,9 @@ export default function TodoList({
 
   if (loading || !selectedDay) return <div>Loading...</div>;
 
+  /** -------------------------------
+   * 렌더링
+   ----------------------------------*/
   return (
     <>
       <div
@@ -172,19 +222,31 @@ export default function TodoList({
           {formatDate(selectedDay.date)}
         </div>
 
-        {selectedDay.todos.map((todo) => {
+        {reorderedItems.map((todo, index) => {
           const isEditing = editingId === todo.id;
           const displayTime = formatTime(todo.time);
 
+          /** 드래그 중인 원본은 안 보이게 */
+          const hiddenWhileDragging =
+            isDragging && dragItem && dragItem.id === todo.id
+              ? "opacity-0"
+              : "";
+
           return (
-            <div key={todo.id} className="py-4">
+            <div
+              key={todo.id}
+              className={`py-4 transition-opacity ${hiddenWhileDragging}`}
+              {...(!isEditing ? bindItemEvents(todo, index) : {})}
+            >
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={todo.done}
-                  onChange={() => onToggleTodo(todo.id)}
-                  className="custom-checkbox cursor-pointer"
-                />
+                {!isEditing && (
+                  <input
+                    type="checkbox"
+                    checked={todo.done}
+                    onChange={() => onToggleTodo(todo.id)}
+                    className="custom-checkbox cursor-pointer"
+                  />
+                )}
 
                 <div className="flex-1">
                   {isEditing ? (
@@ -226,7 +288,7 @@ export default function TodoList({
               </div>
 
               {isEditing && (
-                <div className="mt-3 pl-7 pr-2 flex flex-col gap-4">
+                <div className="mt-3 flex flex-col gap-4">
                   <div
                     className="flex items-center justify-between"
                     onMouseDown={stopBlur}
@@ -270,6 +332,16 @@ export default function TodoList({
           );
         })}
       </div>
+
+      {/* 드래그 고스트 UI */}
+      {isDragging && dragItem && (
+        <div
+          className="fixed z-[9999] pointer-events-none shadow-lg rounded-xl bg-white px-4 py-3"
+          style={ghostStyle}
+        >
+          <div className="font-semibold">{dragItem.title}</div>
+        </div>
+      )}
 
       <TodoActionSheet
         open={openSheet}
