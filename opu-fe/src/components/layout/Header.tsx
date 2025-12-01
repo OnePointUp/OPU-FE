@@ -18,6 +18,16 @@ type Props = {
     tooltipOverride?: Tooltip;
 };
 
+const NOTIFICATION_DISABLED_PATHS = [
+    "/login",
+    "/find-pw",
+    "/social-signup",
+    "/signup",
+    "/signup/check-email",
+    "/signup/email-confirmed",
+    "/find-pw/email-confirmed",
+];
+
 export default function Header({
     titleOverride,
     show = true,
@@ -45,7 +55,15 @@ export default function Header({
         router.push("/notification");
     };
 
+    const notificationEnabled = !NOTIFICATION_DISABLED_PATHS.includes(pathname);
+
     useEffect(() => {
+        if (!notificationEnabled) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setHasUnread(false);
+            return;
+        }
+
         async function loadUnread() {
             try {
                 const items: NotificationFeedItem[] =
@@ -57,14 +75,15 @@ export default function Header({
         }
 
         loadUnread();
-    }, [pathname]);
+    }, [pathname, notificationEnabled]);
 
     if (!show || hide) return null;
 
     const finalTitle = titleOverride ?? title;
     const finalTooltip = tooltipOverride ?? tooltip;
     const backVisible = showBack ?? defaultShowBack;
-    const showNotificationIcon = pathname !== "/notification";
+    const showNotificationIcon =
+        notificationEnabled && pathname !== "/notification";
 
     return (
         <header className="app-header">
