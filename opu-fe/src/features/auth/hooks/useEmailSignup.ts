@@ -10,6 +10,7 @@ import { validateEmail } from "@/utils/validation";
 import { useNicknameField } from "./useNicknameField";
 import { useAgreements } from "./useAgreements";
 import { useProfileImagePicker } from "@/features/user/hooks/useProfileImagePicker";
+import { extractErrorMessage } from "@/utils/api-helpers";
 
 export function useSignupEmail() {
     const router = useRouter();
@@ -62,8 +63,10 @@ export function useSignupEmail() {
             router.push(
                 `/signup/check-email?email=${encodeURIComponent(email)}`
             );
-        } catch (err) {
-            toastError(String(err) || "인증 이메일 발송 중 문제가 발생했어요.");
+        } catch (e) {
+            toastError(
+                extractErrorMessage(e, "인증 이메일 발송 중 문제가 발생했어요.")
+            );
         } finally {
             setLoading(false);
         }
