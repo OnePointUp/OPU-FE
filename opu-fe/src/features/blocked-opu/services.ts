@@ -34,19 +34,15 @@ export async function deleteBlockedOpu(opuId: number): Promise<void> {
     }
 }
 
-// 다수 차단 해제
+// 다중 차단 해제
 export async function deleteBlockedOpuBulk(opuIds: number[]): Promise<void> {
-    if (opuIds.length === 0) return;
-
-    const results = await Promise.allSettled(
-        opuIds.map((id) => deleteBlockedOpu(id))
-    );
-
-    const failures = results
-        .map((r, i) => (r.status === "rejected" ? opuIds[i] : null))
-        .filter(Boolean) as number[];
-
-    if (failures.length > 0) {
-        throw new Error(`일부 차단 해제에 실패했어요: ${failures.join(", ")}`);
+    try {
+        await apiClient.delete("/opus/blocks", {
+            data: { opuIds },
+        });
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "OPU 차단 해제에 실패했어요.")
+        );
     }
 }
