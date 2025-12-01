@@ -6,13 +6,24 @@ import SettingsList from "@/features/user/components/SettingsList";
 import { useMyPageMenuData } from "../constants/myPageMenu";
 import OpuManagement from "../components/OpuManagement";
 import { useMyProfile } from "../hooks/useMyProfile";
+import ConfirmModal from "@/components/common/ConfirmModal";
+import { useLogout } from "../hooks/useLogout";
+import { useState } from "react";
 
 export default function MyPageScreen() {
     const router = useRouter();
 
     const { profile, loading } = useMyProfile();
 
-    const { myPageMenuItems: items } = useMyPageMenuData();
+    const { handleLogout } = useLogout();
+    const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+
+    const openLogoutConfirm = () => setLogoutModalOpen(true);
+    const closeLogoutConfirm = () => setLogoutModalOpen(false);
+
+    const { myPageMenuItems } = useMyPageMenuData({
+        onClickLogout: openLogoutConfirm,
+    });
 
     function handleEdit() {
         router.push("/me/profile");
@@ -38,8 +49,18 @@ export default function MyPageScreen() {
             <div className="mt-5 border-t border-[#F3F5F8]" />
 
             <div className="w-full mt-1.5">
-                <SettingsList items={items} />
+                <SettingsList items={myPageMenuItems} />
             </div>
+
+            <ConfirmModal
+                isOpen={logoutModalOpen}
+                message="정말 로그아웃 하시겠어요?"
+                onCancel={closeLogoutConfirm}
+                onConfirm={() => {
+                    closeLogoutConfirm();
+                    handleLogout();
+                }}
+            />
         </section>
     );
 }
