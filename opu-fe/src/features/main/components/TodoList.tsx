@@ -8,6 +8,7 @@ import Toggle from "@/components/common/Toggle";
 import WheelPickerTime from "./WheelPickerTime";
 import { toastError } from "@/lib/toast";
 import { useDragDrop } from "../hooks/useDragDrop";
+import { useRouter } from "next/navigation";
 
 type Props = {
   selectedDay: DailyTodoStats | null;
@@ -59,6 +60,8 @@ export default function TodoList({
   const [originalTime, setOriginalTime] = useState<
     { ampm: "AM" | "PM"; hour: number; minute: number } | null
   >(null);
+
+  const router = useRouter();
 
   // 드래그 앤 드롭 훅 적용
   const {
@@ -197,7 +200,7 @@ export default function TodoList({
   };
 
   if (loading || !selectedDay) return <div>Loading...</div>;
-  
+
   return (
     <>
       <div
@@ -336,7 +339,12 @@ export default function TodoList({
         todo={targetTodo}
         onClose={() => setOpenSheet(false)}
         onEdit={startEditing}
-        addRoutine={() => setOpenSheet(false)}
+        addRoutine={(todo) => {
+          if (!todo) return;
+          const encoded = encodeURIComponent(todo.title);
+          router.push(`/routine/register?title=${encoded}`);
+          setOpenSheet(false);
+        }}
         onDelete={(todo) => {
           onDeleteTodo(todo.id);
           setOpenSheet(false);

@@ -61,6 +61,7 @@ export default function RoutineRegisterPage() {
     ) as RoutineFrequency | null;
     const freq: RoutineFrequency = frequencyParam ?? "DAILY";
 
+    const titleParam = searchParams.get("title") ?? "";
     const days = parseNumberList(searchParams.get("days"));
     const months = parseNumberList(searchParams.get("months"));
     const last = searchParams.get("last") === "true";
@@ -75,16 +76,25 @@ export default function RoutineRegisterPage() {
     const [initialFormValue, setInitialFormValue] =
         useState<RoutineFormValue | null>(null);
 
+
     useEffect(() => {
-        const restored = loadFormFromStorage(freq);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+        let restored = loadFormFromStorage(freq);
+
+        // URL로 넘어온 제목이 있을 경우 sessionStorage 데이터보다 우선 적용
+        if (titleParam) {
+        restored = {
+            ...restored,
+            title: titleParam,
+        };
+        }
+
         setInitialFormValue(restored);
 
         if (searchParams.toString().includes("frequency")) {
-            router.replace(`/routine/register`, { scroll: false });
+        router.replace(`/routine/register`, { scroll: false });
         }
-    }, [freq, router, searchParams]);
-
+    }, [freq, router, searchParams, titleParam]);
+    
     async function handleSubmit(form: RoutineFormValue) {
         if (typeof window !== "undefined") {
             window.sessionStorage.removeItem(STORAGE_KEY);
