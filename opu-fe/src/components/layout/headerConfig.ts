@@ -5,40 +5,77 @@ export type Tooltip = {
     position?: "top" | "bottom" | "right";
 };
 
-export const TITLE_MAP: Record<string, string> = {
-    "/": "홈",
-    "/login": "로그인",
-
-    "/find-pw": "비밀번호 찾기",
-    "/social-signup": "회원가입",
-    "/signup": "회원가입",
-    "/signup/check-email": "회원가입",
-    "/signup/email-confirmed": "회원가입",
-    "/find-pw/email-confirmed": "비밀번호 찾기",
-
-    "/me": "마이페이지",
-    "/me/profile": "프로필 편집",
-    "/me/password": "비밀번호 확인",
-
-    "/opu": "OPU",
-    "/opu/my": "내 OPU",
-    "/opu/blocked": "차단 OPU 관리",
-    "/opu/liked": "찜한 OPU",
-    "/opu/register": "OPU 등록",
-    "/opu/random/scope": "랜덤 뽑기",
-    "/opu/random/time": "랜덤 뽑기",
-    "/opu/random/result": "오늘의 랜덤 OPU",
-
-    "/notification": "알림",
-    "/notification/setting": "알림 설정",
-
-    "/routine": "루틴",
-    "/routine/register": "루틴 설정",
-
-    "/calendar": "캘린더",
-    "/stats": "통계",
+/* ====== 공통 prefix 묶어서 계층 구조로 정리 ====== */
+const TITLE_GROUP = {
+    signup: {
+        base: "회원가입",
+        map: {
+            "/signup": "회원가입",
+            "/signup/check-email": "회원가입",
+            "/signup/email-confirmed": "회원가입",
+            "/signup/email-failed": "회원가입",
+        },
+    },
+    findPw: {
+        base: "비밀번호 찾기",
+        map: {
+            "/find-pw": "비밀번호 찾기",
+            "/find-pw/email-confirmed": "비밀번호 찾기",
+        },
+    },
+    me: {
+        base: "마이페이지",
+        map: {
+            "/me": "마이페이지",
+            "/me/profile": "프로필 편집",
+            "/me/password": "비밀번호 확인",
+        },
+    },
+    opu: {
+        base: "OPU",
+        map: {
+            "/opu": "OPU",
+            "/opu/my": "내 OPU",
+            "/opu/blocked": "차단 OPU 관리",
+            "/opu/liked": "찜한 OPU",
+            "/opu/register": "OPU 등록",
+            "/opu/random/scope": "랜덤 뽑기",
+            "/opu/random/time": "랜덤 뽑기",
+            "/opu/random/result": "오늘의 랜덤 OPU",
+        },
+    },
+    notification: {
+        base: "알림",
+        map: {
+            "/notification": "알림",
+            "/notification/setting": "알림 설정",
+        },
+    },
+    routine: {
+        base: "루틴",
+        map: {
+            "/routine": "루틴",
+            "/routine/register": "루틴 설정",
+        },
+    },
 };
 
+/* ====== 단일 맵으로 풀어서 통합 TITLE_MAP 생성 ====== */
+const TITLE_MAP: Record<string, string> = {
+    "/": "홈",
+    "/login": "로그인",
+    "/calendar": "캘린더",
+    "/stats": "통계",
+
+    ...TITLE_GROUP.signup.map,
+    ...TITLE_GROUP.findPw.map,
+    ...TITLE_GROUP.me.map,
+    ...TITLE_GROUP.opu.map,
+    ...TITLE_GROUP.notification.map,
+    ...TITLE_GROUP.routine.map,
+};
+
+/* ====== Tooltip, 숨김 경로, 루트 경로 ====== */
 export const TOOLTIP_MAP: Record<string, Tooltip> = {
     "/opu/blocked": {
         message: [
@@ -53,11 +90,11 @@ export const HIDDEN_HEADER_PATHS = ["/signup/email-confirmed"];
 
 const ROOT_PATHS = ["/", "/opu", "/me", "/calendar", "/stats"];
 
+/* ====== header config 생성 함수 ====== */
 export function getHeaderConfig(
     pathname: string,
     searchParams?: ReadonlyURLSearchParams
 ) {
-    // 동적 경로
     let dynamicTitle: string | undefined;
 
     if (pathname.startsWith("/opu/edit/")) {
