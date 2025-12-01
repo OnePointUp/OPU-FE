@@ -5,7 +5,12 @@ import { useRouter } from "next/navigation";
 import { resendVerificationEmail } from "@/features/auth/services";
 import { toastSuccess, toastError } from "@/lib/toast";
 
-export function useEmailVerify(email: string) {
+type UseEmailVerifyProps = {
+    email: string;
+    verified: boolean;
+};
+
+export function useEmailVerify({ email, verified }: UseEmailVerifyProps) {
     const router = useRouter();
     const [isSending, setIsSending] = useState(false);
 
@@ -31,8 +36,12 @@ export function useEmailVerify(email: string) {
 
     // 다음 버튼
     const handleNext = useCallback(() => {
+        if (!verified) {
+            toastError("이메일 인증을 먼저 완료해 주세요.");
+            return;
+        }
         router.push("/signup/email-confirmed");
-    }, [router]);
+    }, [router, verified]);
 
     return {
         isSending,

@@ -8,8 +8,12 @@ import { useSearchParams } from "next/navigation";
 export default function EmailVerifyPage() {
     const params = useSearchParams();
     const email = params.get("email") ?? "";
+    const verified = params.get("verified") === "true";
 
-    const { isSending, handleResendEmail, handleNext } = useEmailVerify(email);
+    const { handleNext, handleResendEmail, isSending } = useEmailVerify({
+        email,
+        verified,
+    });
 
     return (
         <section className="overflow-hidden overscroll-none pt-8">
