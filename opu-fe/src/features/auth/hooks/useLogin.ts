@@ -35,11 +35,7 @@ export function useLogin() {
             toastSuccess("로그인 완료!");
             router.replace("/");
         } catch (e) {
-            const msg =
-                e instanceof Error
-                    ? e.message
-                    : "이메일 또는 비밀번호를 다시 확인해주세요.";
-            toastError(msg);
+            toastError("이메일 또는 비밀번호를 다시 확인해주세요.");
         } finally {
             setLoading(false);
         }
