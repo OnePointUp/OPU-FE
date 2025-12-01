@@ -18,7 +18,7 @@ type AuthState = {
     setAuth: (payload: {
         accessToken: string;
         refreshToken: string;
-        member: AuthMember;
+        member?: AuthMember;
     }) => void;
     clearAuth: () => void;
     setMember: (member: AuthMember | null) => void;
