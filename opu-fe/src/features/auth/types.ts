@@ -20,6 +20,10 @@ export type EmailSignupPayload = {
     nickname: string;
 };
 
+export type EmailVerifyStatusResponse = {
+    verified: boolean;
+};
+
 export type LoginPayload = {
     email: string;
     password: string;
