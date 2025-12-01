@@ -9,7 +9,7 @@ export default async function ProtectedLayout({
 }: {
     children: ReactNode;
 }) {
-    const cookieStore = await cookies();
+    const cookieStore = cookies();
     const session = cookieStore.get(AUTH_COOKIE_NAME)?.value;
 
     if (!session) {
