@@ -1,84 +1,97 @@
 import { NextResponse } from "next/server";
-import type { RoutineEntity } from "@/features/routine/domain";
+import { MOCK_ROUTINES, nextRoutineId } from "@/mocks/api/db/routine.db";
+import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
+import type {
+    CreateRoutinePayload,
+    UpdateRoutinePayload,
+} from "@/features/routine/types";
 
-const now = new Date().toISOString();
+type RoutineListResponse = {
+    items: typeof MOCK_ROUTINES;
+};
 
-const MOCK_ROUTINES: RoutineEntity[] = [
-    {
-        id: 1,
-        memberId: 1,
-        title: "물 한 잔 마시기",
-        frequency: "DAILY",
-        startDate: "2025-10-27",
-        endDate: "2025-12-31",
-        time: "09:00:00",
-        isActive: true,
-        createdAt: now,
-        updatedAt: now,
-    },
-    {
-        id: 2,
-        memberId: 1,
-        title: "헬스장 가기",
-        frequency: "DAILY",
-        startDate: "2025-10-27",
-        endDate: "2025-12-31",
-        time: "20:00:00",
-        isActive: true,
-        createdAt: now,
-        updatedAt: now,
-    },
-    {
-        id: 3,
-        memberId: 1,
-        title: "미라클 모닝",
-        frequency: "DAILY",
-        startDate: "2025-11-30", // 미래 날짜 -> 시작 전
-        endDate: "2025-12-31",
-        time: "06:00:00",
-        isActive: true,
-        createdAt: now,
-        updatedAt: now,
-    },
-    {
-        id: 4,
-        memberId: 1,
-        title: "낙성대공원 산책",
-        frequency: "WEEKLY",
-        startDate: "2025-10-27",
-        endDate: "2025-12-31",
-        time: null,
-        isActive: true,
-        createdAt: now,
-        updatedAt: now,
-    },
-    {
-        id: 5,
-        memberId: 1,
-        title: "야옹이 츄르 주기",
-        frequency: "DAILY",
-        startDate: "2025-10-27",
-        endDate: "2025-12-31",
-        time: null,
-        isActive: true,
-        createdAt: now,
-        updatedAt: now,
-    },
-    {
-        id: 6,
-        memberId: 1,
-        title: "멍멍이 목욕 시키기",
-        frequency: "MONTHLY",
-        startDate: "2025-10-27",
-        endDate: null,
-        time: null,
-        isActive: true,
-        createdAt: now,
-        updatedAt: now,
-    },
-];
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+// 내 루틴 목록
 export async function GET() {
-    // 실제 백엔드 붙이면 여기서 DB 조회해서 같은 형태로 리턴하면 됨
-    return NextResponse.json({ items: MOCK_ROUTINES });
+    const items = MOCK_ROUTINES.filter((r) => r.memberId === CURRENT_MEMBER_ID);
+
+    await delay(120);
+
+    return NextResponse.json<RoutineListResponse>({
+        items,
+    });
+}
+
+// 루틴 생성
+export async function POST(req: Request) {
+    const body = (await req.json()) as CreateRoutinePayload;
+    const now = new Date().toISOString();
+
+    const newRoutine = {
+        id: nextRoutineId(),
+        memberId: CURRENT_MEMBER_ID,
+        title: body.title,
+        frequency: body.frequency,
+        startDate: body.startDate,
+        endDate: body.endDate ?? null,
+        time: body.time ?? null,
+        color: body.color,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+    };
+
+    MOCK_ROUTINES.push(newRoutine);
+    await delay(120);
+    return NextResponse.json(newRoutine, { status: 201 });
+}
+
+// 루틴 수정
+export async function PUT(req: Request) {
+    const body = (await req.json()) as UpdateRoutinePayload;
+    const idx = MOCK_ROUTINES.findIndex(
+        (r) => r.id === body.id && r.memberId === CURRENT_MEMBER_ID
+    );
+    if (idx < 0) {
+        return NextResponse.json(
+            { message: "루틴을 찾을 수 없습니다." },
+            { status: 404 }
+        );
+    }
+
+    const now = new Date().toISOString();
+    const prev = MOCK_ROUTINES[idx];
+
+    MOCK_ROUTINES[idx] = {
+        ...prev,
+        title: body.title ?? prev.title,
+        frequency: body.frequency ?? prev.frequency,
+        startDate: body.startDate ?? prev.startDate,
+        endDate:
+            body.endDate === undefined ? prev.endDate : body.endDate ?? null,
+        time: body.time === undefined ? prev.time : body.time ?? null,
+        color: body.color ?? prev.color,
+        updatedAt: now,
+    };
+
+    await delay(120);
+    return NextResponse.json(MOCK_ROUTINES[idx]);
+}
+
+// 루틴 삭제
+export async function DELETE(req: Request) {
+    const { id } = (await req.json()) as { id: number };
+    const idx = MOCK_ROUTINES.findIndex(
+        (r) => r.id === id && r.memberId === CURRENT_MEMBER_ID
+    );
+    if (idx < 0) {
+        return NextResponse.json(
+            { message: "루틴을 찾을 수 없습니다." },
+            { status: 404 }
+        );
+    }
+    MOCK_ROUTINES.splice(idx, 1);
+    await delay(120);
+    return NextResponse.json({ ok: true });
 }

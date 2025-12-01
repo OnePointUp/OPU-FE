@@ -1,7 +1,7 @@
 "use client";
 
 import EmailField from "@/features/auth/components/EmailField";
-import PasswordInput from "@/features/user/components/PasswordInput";
+import PasswordInput from "@/features/auth/components/PasswordInput";
 import NicknameField from "@/features/user/components/NicknameField";
 import AgreementsField from "@/features/auth/components/AgreementsField";
 import OpuActionButton from "@/components/common/OpuActionButton";

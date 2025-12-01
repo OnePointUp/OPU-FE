@@ -13,7 +13,6 @@ export default function AfterLoginLayout({
 
     const HIDDEN_MENU_PATHS = [
         "/me/password",
-        "/me/password/new",
         "/me/profile",
         "/me/notification",
         "/notification",
@@ -23,9 +22,15 @@ export default function AfterLoginLayout({
         "/opu/random/scope",
         "/opu/random/time",
         "/opu/random/result",
+
         "/login",
         "/signup",
         "/social-signup",
+        "/reset-password",
+
+        "/routine/register",
+        "/routine/edit",
+        "/routine/frequency",
     ];
 
     const hideMenu = HIDDEN_MENU_PATHS.some((p) => pathname.startsWith(p));

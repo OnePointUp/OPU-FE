@@ -52,9 +52,9 @@
     --color-dark-gray: #667085;
     --color-super-dark-gray: #595959;
 
-    --color-light-blue-gray: #F1F5F9;
+    --color-light-blue-gray: #f1f5f9;
     --color-blue-gray: #94a3b8;
-    --color-dark-blue-gray: #64758B;
+    --color-dark-blue-gray: #64758b;
     --color-dark-navy: #0f172a;
 
     --color-dark-yellow: #d7d7b4;
@@ -151,6 +151,15 @@
 /* ---------------- 컴포넌트 스타일 ---------------- */
 
 @layer components {
+    .no-scrollbar {
+        -ms-overflow-style: none; /* IE/Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
+    }
+
     /* 페이지 전체를 감싸는 div에 적용!!!!!! */
     .app-page {
         width: min(100%, var(--app-max));
@@ -548,8 +557,8 @@
         justify-content: flex-end;
         gap: 12px;
 
-        position: relative;  /* ← 필수 (translateY를 고정된 기준으로 적용) */
-        overflow: visible;   /* ← hover 확장 시 잘림 방지 */
+        position: relative; /* ← 필수 (translateY를 고정된 기준으로 적용) */
+        overflow: visible; /* ← hover 확장 시 잘림 방지 */
 
         opacity: 0;
         transform: translateY(0);

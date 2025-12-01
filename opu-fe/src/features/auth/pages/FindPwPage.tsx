@@ -19,7 +19,7 @@ export default function FindPasswordPage() {
             <main className="flex flex-col items-center">
                 {/* 설명 */}
                 <span
-                    className="text-center"
+                    className="text-center mb-5"
                     style={{
                         font: "var(--text-sub)",
                         color: "var(--color-dark-gray)",

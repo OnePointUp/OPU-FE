@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import EmailField from "@/features/auth/components/EmailField";
-import PasswordInput from "@/features/user/components/PasswordInput";
+import PasswordInput from "@/features/auth/components/PasswordInput";
 import OpuActionButton from "@/components/common/OpuActionButton";
 import { useRouter } from "next/navigation";
 import { useLogin } from "@/features/auth/hooks/useLogin";
@@ -40,20 +40,18 @@ export default function LoginPage() {
                     className="w-full flex flex-col"
                     onSubmit={(e) => e.preventDefault()}
                 >
-                    <div className="flex flex-col gap-5">
-                        <EmailField
-                            value={email}
-                            onChange={handleEmailChange}
-                            error={emailError}
-                        />
+                    <EmailField
+                        value={email}
+                        onChange={handleEmailChange}
+                        error={emailError}
+                    />
 
-                        <PasswordInput
-                            label="비밀번호"
-                            value={password}
-                            onChange={setPassword}
-                            placeholder="비밀번호를 입력하세요"
-                        />
-                    </div>
+                    <PasswordInput
+                        label="비밀번호"
+                        value={password}
+                        onChange={setPassword}
+                        placeholder="비밀번호를 입력하세요"
+                    />
 
                     <OpuActionButton
                         label="로그인"
@@ -61,7 +59,6 @@ export default function LoginPage() {
                         loading={loading}
                         onClick={handleSubmit}
                         positionFixed={false}
-                        className="mt-5"
                     />
                 </form>
 

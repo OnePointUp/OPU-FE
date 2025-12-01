@@ -1,10 +1,14 @@
 "use client";
 
-import PasswordInput from "@/features/user/components/PasswordInput";
+import PasswordInput from "@/features/auth/components/PasswordInput";
 import OpuActionButton from "@/components/common/OpuActionButton";
-import { useSetNewPassword } from "@/features/user/hooks/useSetNewPassword";
+import { useSetNewPassword } from "@/features/auth/hooks/useSetNewPassword";
+import { useSearchParams } from "next/navigation";
 
-export default function PasswordChange2Page() {
+export default function ResetPasswordPage() {
+    const params = useSearchParams();
+    const token = params.get("token");
+
     const {
         next,
         confirm,
@@ -15,11 +19,13 @@ export default function PasswordChange2Page() {
         handleChangeNext,
         handleChangeConfirm,
         handleSubmit,
-    } = useSetNewPassword();
+    } = useSetNewPassword(
+        token ? { mode: "reset", resetToken: token } : { mode: "change" }
+    );
 
     return (
         <section>
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col">
                 <PasswordInput
                     label="새 비밀번호"
                     value={next}

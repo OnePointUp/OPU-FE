@@ -1,3 +1,5 @@
+import { ReadonlyURLSearchParams } from "next/navigation";
+
 export type Tooltip = {
     message: string | string[];
     position?: "top" | "bottom" | "right";
@@ -7,14 +9,16 @@ export const TITLE_MAP: Record<string, string> = {
     "/": "홈",
     "/login": "로그인",
 
+    "/find-pw": "비밀번호 찾기",
     "/social-signup": "회원가입",
     "/signup": "회원가입",
     "/signup/check-email": "회원가입",
     "/signup/email-confirmed": "회원가입",
+    "/find-pw/email-confirmed": "비밀번호 찾기",
 
     "/me": "마이페이지",
     "/me/profile": "프로필 편집",
-    "/me/password": "비밀번호 변경",
+    "/me/password": "비밀번호 확인",
 
     "/opu": "OPU",
     "/opu/my": "내 OPU",
@@ -29,6 +33,7 @@ export const TITLE_MAP: Record<string, string> = {
     "/notification/setting": "알림 설정",
 
     "/routine": "루틴",
+    "/routine/register": "루틴 설정",
 
     "/calendar": "캘린더",
     "/stats": "통계",
@@ -46,28 +51,28 @@ export const TOOLTIP_MAP: Record<string, Tooltip> = {
 
 export const HIDDEN_HEADER_PATHS = ["/signup/email-confirmed"];
 
-export function getHeaderConfig(pathname: string) {
+const ROOT_PATHS = ["/", "/opu", "/me", "/calendar", "/stats"];
+
+export function getHeaderConfig(
+    pathname: string,
+    searchParams?: ReadonlyURLSearchParams
+) {
+    // 동적 경로
+    let dynamicTitle: string | undefined;
+
     if (pathname.startsWith("/opu/edit/")) {
-        return {
-            title: "OPU 수정",
-            tooltip: undefined,
-            hide: false,
-            defaultShowBack: true,
-        };
+        dynamicTitle = "OPU 수정";
+    } else if (pathname.startsWith("/routine/edit/")) {
+        dynamicTitle = "루틴 수정";
+    } else if (pathname.startsWith("/reset-password")) {
+        const token = searchParams?.get("token");
+        dynamicTitle = token ? "비밀번호 재설정" : "비밀번호 변경";
     }
 
-    const title = TITLE_MAP[pathname] ?? "OPU";
+    const title = dynamicTitle ?? TITLE_MAP[pathname] ?? "OPU";
     const tooltip = TOOLTIP_MAP[pathname];
     const hide = HIDDEN_HEADER_PATHS.includes(pathname);
-
-    const isRoot =
-        pathname === "/" ||
-        pathname === "/opu" ||
-        pathname === "/me" ||
-        pathname === "/calendar" ||
-        pathname === "/stats";
-
-    const defaultShowBack = !isRoot;
+    const defaultShowBack = !ROOT_PATHS.includes(pathname);
 
     return {
         title,
