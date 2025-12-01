@@ -1,58 +1,57 @@
-export type UserProfile = {
-    nickname: string;
-    email: string;
-    bio?: string;
-    profileImageUrl?: string;
-};
+import { apiClient } from "@/lib/apiClient";
+import { ApiResponse } from "@/types/api";
+import {
+    EditProfilePayload,
+    PresignedUrlResponse,
+    UserProfileDetail,
+    UserProfileSummary,
+} from "./types";
+import { extractErrorMessage } from "@/utils/api-helpers";
 
-// 공통 fetch 헬퍼 (토큰/에러처리 확장 가능)
-async function getJSON<T>(url: string, init?: RequestInit): Promise<T> {
-    const res = await fetch(url, { cache: "no-store", ...init });
-    if (!res.ok) {
-        const msg = await res.text().catch(() => "");
-        throw new Error(msg || `Request failed: ${res.status}`);
+/* ===== 프로필 요약 ===== */
+export async function fetchProfileSummary(): Promise<UserProfileSummary> {
+    const res = await apiClient.get<ApiResponse<UserProfileSummary>>(
+        "/members/me/summary"
+    );
+
+    return res.data.data;
+}
+
+/* ===== 프로필 상세 ===== */
+export async function fetchProfileDetail(): Promise<UserProfileDetail> {
+    const res = await apiClient.get<ApiResponse<UserProfileDetail>>(
+        "/members/me/profile"
+    );
+
+    return res.data.data;
+}
+
+/* ===== 프로필 수정 ===== */
+export async function editProfile(payload: EditProfilePayload) {
+    try {
+        await apiClient.patch<
+            UserProfileDetail | ApiResponse<UserProfileDetail>
+        >("/members/me/profile", {
+            nickname: payload.nickname,
+            bio: payload.bio,
+            profileImageUrl: payload.profileImageUrl,
+        });
+
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(extractErrorMessage(err, "프로필 수정에 실패했어요."));
     }
-    return res.json() as Promise<T>;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE?.replace(/\/$/, "");
-
-export async function fetchMyProfile(): Promise<UserProfile> {
-    const url = API_BASE ? `${API_BASE}/me` : `/api/me`;
-    return getJSON<UserProfile>(url);
-}
-
-// --- 닉네임 중복 검증 ---
-export async function checkNicknameDup(
-    nickname: string,
-    currentNickname?: string
-): Promise<boolean> {
-    const q = encodeURIComponent(nickname.trim());
-    const cur = encodeURIComponent(currentNickname?.trim() ?? "");
-    const url = `/api/nickname/check?nickname=${q}&current=${cur}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    return data.exists;
-}
-
-// --- 프로필 수정 ---
-export async function saveProfile(payload: {
-    nickname: string;
-    bio: string;
-    profileFile?: File | null;
-}) {
-    const url = API_BASE ? `${API_BASE}/me` : `/api/me`;
-
-    const fd = new FormData();
-    fd.append("nickname", payload.nickname);
-    fd.append("bio", payload.bio);
-    if (payload.profileFile) fd.append("profileImage", payload.profileFile);
-
-    const res = await fetch(url, {
-        method: API_BASE ? "PUT" : "POST",
-        body: fd,
+/* ===== 프로필 이미지 등록 ===== */
+export async function getProfileImagePresignedUrl(
+    extension?: string
+): Promise<PresignedUrlResponse> {
+    const res = await apiClient.post<{
+        data: PresignedUrlResponse;
+    }>("/members/me/profile-image/presign", undefined, {
+        params: extension ? { extension } : undefined,
     });
 
-    if (!res.ok) throw new Error("Save failed");
-    return { ok: true };
+    return res.data.data;
 }

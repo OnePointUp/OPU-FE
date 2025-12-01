@@ -18,7 +18,7 @@ const ICON_MAP: Record<NotificationFeedItem["code"], string> = {
 };
 
 export default function NotificationFeedRow({ item, onRead }: Props) {
-    const isDimmed = item.isRead;
+    const isDimmed = item.read;
     const icon = ICON_MAP[item.code];
 
     return (

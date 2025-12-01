@@ -12,7 +12,7 @@ export default function ProfileEditPage() {
         bio,
         dupError,
         checking,
-        profileImgUrl,
+        profileImageUrl,
         saving,
         introMax,
         setNickname,
@@ -33,7 +33,7 @@ export default function ProfileEditPage() {
         <section>
             <ProfileAvatarPicker
                 nickname={nickname}
-                previewUrl={profileImgUrl}
+                previewUrl={profileImageUrl}
                 onPick={handlePickImage}
             />
             <NicknameField

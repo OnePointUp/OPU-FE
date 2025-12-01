@@ -32,6 +32,8 @@ export type OpuCardModel = {
     shareLabel?: string;
     createdAt?: string;
     isMine?: boolean;
+
+    blockedAt?: string;
 };
 
 export const CATEGORY_MAP: Record<number, string> = {

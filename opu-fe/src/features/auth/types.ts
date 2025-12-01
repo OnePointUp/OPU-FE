@@ -1,9 +1,17 @@
+import { AuthMember } from "@/stores/useAuthStore";
+
 export type TokenResponse = {
     accessToken: string;
     refreshToken: string;
     tokenType: string;
     expiresInSeconds: number;
     refreshExpiresInSeconds: number;
+};
+
+export type LoginResponse = {
+    accessToken: string;
+    refreshToken: string;
+    member: AuthMember;
 };
 
 export type EmailSignupPayload = {

@@ -7,14 +7,21 @@ import BottomSheet from "@/components/common/BottomSheet";
 import BlockedOpuCard from "./BlockedOpuCard";
 import type { OpuCardModel } from "@/features/opu/domain";
 import { useBlockedOpuList } from "@/features/blocked-opu/hooks/useBlockedOpuList";
+import BlockedOpuCardSkeleton from "./BlockedOpuCardSkeleton";
 
 type Props = {
     initialItems: OpuCardModel[];
+    loading?: boolean;
     onDeleteSelected?: (ids: number[]) => Promise<void> | void;
     onUnblockOne?: (id: number) => Promise<void> | void;
 };
 
-export default function BlockedOpuList(props: Props) {
+export default function BlockedOpuList({
+    initialItems,
+    loading = false,
+    onDeleteSelected,
+    onUnblockOne,
+}: Props) {
     const {
         filtered,
         selected,
@@ -32,7 +39,11 @@ export default function BlockedOpuList(props: Props) {
         handleUnblockOne,
         openSheetFor,
         closeSheet,
-    } = useBlockedOpuList(props);
+    } = useBlockedOpuList({
+        initialItems,
+        onDeleteSelected,
+        onUnblockOne,
+    });
 
     const sheetOptions = (id: number) => [
         { label: "투두리스트에 추가", onClick: () => handleAddTodo(id) },
@@ -101,27 +112,37 @@ export default function BlockedOpuList(props: Props) {
 
             {/* 리스트 */}
             <div className="flex flex-col gap-2.5">
-                {filtered.map((item) => (
-                    <BlockedOpuCard
-                        key={item.id}
-                        item={item}
-                        selectable
-                        checked={selected.has(item.id)}
-                        onCheckedChange={toggleOne}
-                        onMore={openSheetFor}
-                    />
-                ))}
+                {loading ? (
+                    Array.from({ length: filtered.length || 4 }).map(
+                        (_, idx) => (
+                            <BlockedOpuCardSkeleton key={idx} selectable />
+                        )
+                    )
+                ) : (
+                    <>
+                        {filtered.map((item) => (
+                            <BlockedOpuCard
+                                key={item.id}
+                                item={item}
+                                selectable
+                                checked={selected.has(item.id)}
+                                onCheckedChange={toggleOne}
+                                onMore={openSheetFor}
+                            />
+                        ))}
 
-                {filtered.length === 0 && (
-                    <div
-                        className="text-center text-sm py-10"
-                        style={{
-                            fontSize: "var(--text-sub)",
-                            color: "var(--color-light-gray)",
-                        }}
-                    >
-                        차단한 OPU가 없습니다
-                    </div>
+                        {filtered.length === 0 && (
+                            <div
+                                className="text-center text-sm py-10"
+                                style={{
+                                    fontSize: "var(--text-sub)",
+                                    color: "var(--color-light-gray)",
+                                }}
+                            >
+                                차단한 OPU가 없습니다
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
 

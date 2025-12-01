@@ -14,8 +14,8 @@ function toDateString(year: number, month: number, day: number) {
     return `${year}-${mm}-${dd}`;
 }
 
-const WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"];
-
+// 일요일부터 시작
+const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 export default function InlineCalendar({
     value,
     onSelect,
@@ -43,8 +43,9 @@ export default function InlineCalendar({
 
     const { cells, selectedDay, monthLabel } = useMemo(() => {
         const first = new Date(year, month, 1);
-        const jsDay = first.getDay();
-        const startOffset = (jsDay + 6) % 7;
+        const jsDay = first.getDay(); // 0=일요일, 6=토요일
+
+        const startOffset = jsDay;
 
         const daysInMonth = new Date(year, month + 1, 0).getDate();
 

@@ -1,5 +1,14 @@
 import type { OpuEntity } from "../domain";
 
+export function toTimeLabel(minutes: number | null): string {
+    if (minutes == null) return "매일";
+
+    if (minutes === 60) return "1시간";
+    if (minutes === 1440) return "1일";
+
+    return `${minutes}분`;
+}
+
 export type TimeCode = OpuEntity["required_time"] | "ALL";
 
 export const TIME_LABEL_MAP: Record<TimeCode, string> = {
