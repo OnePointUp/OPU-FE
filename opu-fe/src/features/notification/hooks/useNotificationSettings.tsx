@@ -32,6 +32,7 @@ export function useNotificationSettings() {
         load();
     }, []);
 
+    // 전체 ON/OFF
     const toggleAll = useCallback(async (enabled: boolean) => {
         setSettings((prev) => {
             if (!prev) return prev;
@@ -49,18 +50,21 @@ export function useNotificationSettings() {
         });
 
         try {
-            const saved = await setAllNotifications(enabled);
-            setSettings(saved);
+            await setAllNotifications(enabled);
         } catch (e) {
             console.error(e);
             toastError("저장에 실패했어요.");
+
             try {
                 const data = await fetchNotificationSettings();
                 setSettings(data);
-            } catch {}
+            } catch {
+                // 무시
+            }
         }
     }, []);
 
+    // 개별 ON/OFF
     const toggleOne = useCallback(
         async (code: NotificationCode, enabled: boolean) => {
             setSettings((prev) => {
@@ -77,11 +81,11 @@ export function useNotificationSettings() {
             });
 
             try {
-                const saved = await patchNotificationItem(code, enabled);
-                setSettings(saved);
+                await patchNotificationItem(code, enabled);
             } catch (e) {
                 console.error(e);
                 toastError("저장에 실패했어요.");
+
                 try {
                     const data = await fetchNotificationSettings();
                     setSettings(data);

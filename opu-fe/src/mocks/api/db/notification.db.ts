@@ -7,7 +7,7 @@ export const notificationFeed: NotificationFeedItem[] = [
         title: "아침이에요! 오늘 할 일을 적어볼까요?",
         message: "투두를 작성하고 하루를 시작해보세요.",
         linkedContentId: null,
-        isRead: false,
+        read: false,
         createdAt: "2025-11-15T06:50:40.39107",
     },
     {
@@ -16,7 +16,7 @@ export const notificationFeed: NotificationFeedItem[] = [
         title: "오늘 하루를 마무리해볼까요?",
         message: "마무리하지 못한 투두가 기다리고 있어요!",
         linkedContentId: null,
-        isRead: false,
+        read: false,
         createdAt: "2025-11-16T06:50:40.39107",
     },
     {
@@ -25,7 +25,7 @@ export const notificationFeed: NotificationFeedItem[] = [
         title: "돌아오는 주 월, 수, 금에 '코딩테스트 1문제 풀기' 일정이 있어요!",
         message: "한 주가 시작되기 전 미리 마음을 다잡아보아요.",
         linkedContentId: null,
-        isRead: false,
+        read: false,
         createdAt: "2025-11-18T06:50:40.39107",
     },
     {
@@ -34,7 +34,7 @@ export const notificationFeed: NotificationFeedItem[] = [
         title: "'물 2L 마시기' 일정이 얼마 남지 않았어요!",
         message: "오늘 하루가 가기 전에 실행해보아요.",
         linkedContentId: 1,
-        isRead: true,
+        read: true,
         createdAt: "2025-11-19T06:50:40.39107",
     },
     {
@@ -43,7 +43,7 @@ export const notificationFeed: NotificationFeedItem[] = [
         title: "오늘의 랜덤 뽑기가 기다리고 있어요!",
         message: "OPU를 뽑고 실천하며 오늘도 한발짝 나아가보아요.",
         linkedContentId: null,
-        isRead: true,
+        read: true,
         createdAt: "2025-11-19T06:50:40.39107",
     },
     {
@@ -52,7 +52,7 @@ export const notificationFeed: NotificationFeedItem[] = [
         title: "아침이에요! 오늘 할 일을 적어볼까요?",
         message: "투두를 작성하고 하루를 시작해보세요.",
         linkedContentId: null,
-        isRead: false,
+        read: false,
         createdAt: "2025-11-20T06:50:40.39107",
     },
     {
@@ -61,7 +61,7 @@ export const notificationFeed: NotificationFeedItem[] = [
         title: "오늘 하루를 마무리해볼까요?",
         message: "마무리하지 못한 투두가 기다리고 있어요!",
         linkedContentId: null,
-        isRead: false,
+        read: false,
         createdAt: "2025-11-20T20:50:40.39107",
     },
 ];

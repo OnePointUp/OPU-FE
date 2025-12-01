@@ -50,7 +50,7 @@ export default function Header({
             try {
                 const items: NotificationFeedItem[] =
                     await fetchNotificationFeed();
-                setHasUnread(items.some((item) => !item.isRead));
+                setHasUnread(items.some((item) => !item.read));
             } catch {
                 setHasUnread(false);
             }
