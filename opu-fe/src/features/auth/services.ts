@@ -5,6 +5,8 @@ import { extractErrorMessage } from "@/utils/api-helpers";
 import axios from "axios";
 import {
     EmailSignupPayload,
+    EmailVerifyStatusResponse,
+    KakaoLoginResponse,
     LoginPayload,
     LoginResponse,
     PasswordCheckPayload,
@@ -20,6 +22,19 @@ export async function requestEmailSignup(payload: EmailSignupPayload) {
     } catch (err: unknown) {
         throw new Error(extractErrorMessage(err, "회원가입에 실패했어요."));
     }
+}
+
+// 이메일 인증여부 조회
+export async function fetchEmailVerifyStatus(email: string): Promise<boolean> {
+    const res = await apiClient.get<ApiResponse<EmailVerifyStatusResponse>>(
+        "/auth/verify/status",
+        {
+            params: { email },
+            skipAuth: true,
+        }
+    );
+
+    return Boolean(res.data.data?.verified);
 }
 
 // 이메일 재전송
@@ -172,4 +187,23 @@ export async function changePassword(
             extractErrorMessage(err, "비밀번호 변경에 실패했어요.")
         );
     }
+}
+
+// 카카오 로그인 요청
+export async function requestKakaoLogin(
+    code: string
+): Promise<KakaoLoginResponse> {
+    const res = await apiClient.get<ApiResponse<KakaoLoginResponse>>(
+        "/auth/kakao/login",
+        {
+            params: { code },
+            skipAuth: true,
+        }
+    );
+
+    if (!res.data || !res.data.data) {
+        throw new Error("카카오 로그인 응답 데이터가 유효하지 않습니다.");
+    }
+
+    return res.data.data;
 }

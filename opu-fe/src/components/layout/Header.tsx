@@ -9,6 +9,7 @@ import {
 } from "@/components/layout/headerConfig";
 import { fetchNotificationFeed } from "@/features/notification/services";
 import { NotificationFeedItem } from "@/features/notification/types";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 type Props = {
     titleOverride?: string;
@@ -17,17 +18,6 @@ type Props = {
     onBack?: () => void;
     tooltipOverride?: Tooltip;
 };
-
-const NOTIFICATION_DISABLED_PATHS = [
-    "/login",
-    "/find-pw",
-    "/social-signup",
-    "/signup",
-    "/signup/check-email",
-    "/signup/email-confirmed",
-    "/find-pw/email-confirmed",
-    "/signup/email-failed",
-];
 
 export default function Header({
     titleOverride,
@@ -47,6 +37,9 @@ export default function Header({
         pathname,
         searchParams
     );
+
+    const { accessToken } = useAuthStore();
+
     const handleBack = () => {
         if (onBack) return onBack();
         router.back();
@@ -56,10 +49,8 @@ export default function Header({
         router.push("/notification");
     };
 
-    const notificationEnabled = !NOTIFICATION_DISABLED_PATHS.includes(pathname);
-
     useEffect(() => {
-        if (!notificationEnabled) {
+        if (!accessToken) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setHasUnread(false);
             return;
@@ -76,15 +67,14 @@ export default function Header({
         }
 
         loadUnread();
-    }, [pathname, notificationEnabled]);
+    }, [pathname, accessToken]);
 
     if (!show || hide) return null;
 
     const finalTitle = titleOverride ?? title;
     const finalTooltip = tooltipOverride ?? tooltip;
     const backVisible = showBack ?? defaultShowBack;
-    const showNotificationIcon =
-        notificationEnabled && pathname !== "/notification";
+    const showNotificationIcon = pathname !== "/notification";
 
     return (
         <header className="app-header">

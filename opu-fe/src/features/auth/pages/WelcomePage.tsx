@@ -4,8 +4,31 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import SocialLoginButton from "@/features/auth/components/SocialLoginButton";
 
+const KAKAO_CLIENT_ID = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY;
+
 export default function IntroPage() {
     const router = useRouter();
+
+    const handleKakaoLogin = () => {
+        if (!KAKAO_CLIENT_ID) {
+            console.error(
+                "NEXT_PUBLIC_KAKAO_REST_API_KEY가 설정되지 않았습니다."
+            );
+            return;
+        }
+
+        // 카카오 로그인 후 돌아올 프론트 콜백 URL
+        const redirectUri = `${window.location.origin}/oauth/kakao/callback`;
+
+        const kakaoAuthUrl =
+            `https://kauth.kakao.com/oauth/authorize` +
+            `?client_id=${KAKAO_CLIENT_ID}` +
+            `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+            `&response_type=code`;
+
+        // 카카오 로그인 화면으로 이동
+        window.location.href = kakaoAuthUrl;
+    };
 
     return (
         <section className="overflow-hidden overscroll-none">
@@ -36,7 +59,7 @@ export default function IntroPage() {
                 <footer className="flex flex-col gap-2 items-center w-full">
                     <SocialLoginButton
                         provider="kakao"
-                        onClick={() => router.push("/social-signup")}
+                        onClick={handleKakaoLogin}
                     />
                     <SocialLoginButton
                         provider="google"

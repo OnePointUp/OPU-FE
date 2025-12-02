@@ -2,14 +2,16 @@
 
 import OpuActionButton from "@/components/common/OpuActionButton";
 import Image from "next/image";
-import { useEmailVerify } from "@/features/auth/hooks/useCheckEmail";
 import { useSearchParams } from "next/navigation";
+import { useCheckEmail } from "../hooks/useCheckEmail";
 
 export default function EmailVerifyPage() {
     const params = useSearchParams();
     const email = params.get("email") ?? "";
 
-    const { isSending, handleResendEmail, handleNext } = useEmailVerify(email);
+    const { handleNext, handleResendEmail, isSending } = useCheckEmail({
+        email,
+    });
 
     return (
         <section className="overflow-hidden overscroll-none pt-8">

@@ -4,46 +4,41 @@ import ProfileAvatarPicker from "@/features/user/components/ProfileAvatarPicker"
 import NicknameField from "@/features/user/components/NicknameField";
 import IntroField from "@/features/user/components/IntroField";
 import OpuActionButton from "@/components/common/OpuActionButton";
-import { useProfileEdit } from "@/features/user/hooks/useProfileEdit";
+import { useProfileEdit } from "../hooks/useProfileEdit";
+import { useState } from "react";
+import ConfirmModal from "@/components/common/ConfirmModal";
 
 export default function ProfileEditPage() {
     const {
         nickname,
         bio,
-        dupError,
-        checking,
         profileImageUrl,
         saving,
         introMax,
         setNickname,
         setBio,
-        handleBlurNickname,
+        handleDeleteImage,
         handlePickImage,
         handleSave,
+        canSubmit,
     } = useProfileEdit();
 
-    const canSubmit =
-        !saving &&
-        !checking &&
-        nickname.trim().length > 0 &&
-        bio.length <= introMax &&
-        !dupError;
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     return (
         <section>
             <ProfileAvatarPicker
                 nickname={nickname}
-                previewUrl={profileImageUrl}
+                previewUrl={profileImageUrl ?? undefined}
                 onPick={handlePickImage}
+                canDelete={!!profileImageUrl}
+                onClickDelete={() => setShowDeleteModal(true)}
             />
             <NicknameField
                 value={nickname}
                 onChange={(v) => {
                     setNickname(v);
                 }}
-                onBlurCheck={handleBlurNickname}
-                error={dupError}
-                checking={checking}
             />
             <IntroField value={bio} onChange={setBio} max={introMax} />
 
@@ -52,6 +47,16 @@ export default function ProfileEditPage() {
                 disabled={!canSubmit}
                 loading={saving}
                 onClick={handleSave}
+            />
+
+            <ConfirmModal
+                isOpen={showDeleteModal}
+                message={`프로필 사진을 삭제할까요?\n삭제하면 기본 이미지로 변경됩니다.`}
+                onConfirm={() => {
+                    handleDeleteImage();
+                    setShowDeleteModal(false);
+                }}
+                onCancel={() => setShowDeleteModal(false)}
             />
         </section>
     );

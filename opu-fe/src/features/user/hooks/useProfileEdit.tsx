@@ -10,9 +10,9 @@ import {
     fetchProfileDetail,
     getProfileImagePresignedUrl,
 } from "../services";
-import { checkNicknameDup } from "@/utils/validation";
+import { useProfileImagePicker } from "./useProfileImagePicker";
 
-const INTRO_MAX = 500;
+const INTRO_MAX = 100;
 
 export function useProfileEdit() {
     const router = useRouter();
@@ -20,14 +20,19 @@ export function useProfileEdit() {
     const [profile, setProfile] = useState<UserProfileDetail | null>(null);
     const [nickname, setNickname] = useState("");
     const [bio, setBio] = useState("");
-    const [dupError, setDupError] = useState("");
-    const [checking, setChecking] = useState(false);
-
-    const [profileImageUrl, setProfileImgUrl] = useState("");
-    const [file, setFile] = useState<File | null>(null);
+    // const [dupError, setDupError] = useState("");
+    // const [checking, setChecking] = useState(false);
 
     const [loadingProfile, setLoadingProfile] = useState(true);
     const [saving, setSaving] = useState(false);
+
+    const {
+        profileImageUrl,
+        file,
+        handlePickImage,
+        setProfileImageUrl,
+        setFile,
+    } = useProfileImagePicker();
 
     useEffect(() => {
         const load = async () => {
@@ -36,7 +41,8 @@ export function useProfileEdit() {
                 setProfile(data);
                 setNickname(data.nickname ?? "");
                 setBio(data.bio ?? "");
-                setProfileImgUrl(data.profileImageUrl ?? "");
+                setProfileImageUrl(data.profileImageUrl ?? "");
+                setFile(null);
             } catch (e) {
                 console.error("프로필 로드 실패", e);
                 toastError("프로필 정보를 불러오지 못했어요.");
@@ -45,65 +51,70 @@ export function useProfileEdit() {
             }
         };
         load();
-    }, []);
+    }, [setProfileImageUrl, setFile]);
 
-    const handleBlurNickname = useCallback(async () => {
-        if (!profile) return;
+    // const handleBlurNickname = useCallback(async () => {
+    //     if (!profile) return;
 
-        const v = nickname.trim();
-        if (!v) {
-            setDupError("닉네임을 입력해주세요.");
-            return;
-        }
+    //     const v = nickname.trim();
+    //     if (!v) {
+    //         setDupError("닉네임을 입력해주세요.");
+    //         return;
+    //     }
 
-        setChecking(true);
-        try {
-            const current = profile.nickname;
-            const isDup = await checkNicknameDup(v, current);
-            setDupError(isDup ? "이미 존재하는 닉네임 입니다." : "");
-        } catch (e) {
-            console.error("닉네임 중복 체크 실패", e);
-            toastError("닉네임 중복 체크에 실패했어요.");
-        } finally {
-            setChecking(false);
-        }
-    }, [nickname, profile]);
+    //     setChecking(true);
+    //     try {
+    //         const current = profile.nickname;
+    //         const isDup = await checkNicknameDup(v, current);
+    //         setDupError(isDup ? "이미 존재하는 닉네임 입니다." : "");
+    //     } catch (e) {
+    //         console.error("닉네임 중복 체크 실패", e);
+    //         toastError("닉네임 중복 체크에 실패했어요.");
+    //     } finally {
+    //         setChecking(false);
+    //     }
+    // }, [nickname, profile]);
 
-    // 사진 선택: 파일만 기억 + 미리보기용 URL
-    const handlePickImage = useCallback((f: File) => {
-        setFile(f);
-        setProfileImgUrl(URL.createObjectURL(f));
-    }, []);
+    const canSubmit = !saving;
 
-    const canSubmit =
-        !saving &&
-        !checking &&
-        nickname.trim().length > 0 &&
-        bio.length <= INTRO_MAX &&
-        !dupError;
+    const handleDeleteImage = useCallback(() => {
+        setProfileImageUrl("");
+        setFile(null);
+    }, [setProfileImageUrl, setFile]);
 
     const handleSave = useCallback(async () => {
         if (!canSubmit) return;
 
+        const trimmedNickname = nickname.trim();
+
+        // 닉네임 검증
+        if (trimmedNickname.length < 2) {
+            toastError("닉네임은 2글자 이상 입력해 주세요.");
+            return;
+        }
+
+        // 자기소개 검증
+        if (bio.length > INTRO_MAX) {
+            toastError(`자기소개는 ${INTRO_MAX}자 이내로 작성해 주세요.`);
+            return;
+        }
+
         try {
             setSaving(true);
 
-            let finalProfileImageUrl: string | null = profileImageUrl || null;
+            let finalProfileImageUrl: string | null = profileImageUrl;
 
-            // 새 파일 선택된 경우에만 S3 업로드
             if (file) {
                 const mime = file.type || "image/jpeg";
                 const ext = mime.startsWith("image/")
                     ? mime.split("/")[1] || "jpeg"
                     : "jpeg";
 
-                // presigned URL 발급
                 const { uploadUrl, finalUrl } =
                     await getProfileImagePresignedUrl(ext);
 
                 const contentType = `image/${ext}`;
 
-                // S3 업로드
                 const uploadRes = await fetch(uploadUrl, {
                     method: "PUT",
                     body: file,
@@ -116,15 +127,13 @@ export function useProfileEdit() {
                     throw new Error("이미지 업로드 실패");
                 }
 
-                // CloudFront 최종 URL 저장
                 finalProfileImageUrl = finalUrl;
             }
 
-            // 프로필 업데이트
             await editProfile({
                 nickname: nickname.trim(),
                 bio,
-                profileImageUrl: finalProfileImageUrl,
+                profileImageUrl: finalProfileImageUrl ?? "",
             });
 
             toastSuccess("프로필 수정이 완료되었습니다!");
@@ -140,16 +149,15 @@ export function useProfileEdit() {
     return {
         nickname,
         bio,
-        dupError,
-        checking,
         profileImageUrl,
         loadingProfile,
         saving,
         introMax: INTRO_MAX,
         setNickname,
         setBio,
-        handleBlurNickname,
+        handleDeleteImage,
         handlePickImage,
         handleSave,
+        canSubmit,
     };
 }

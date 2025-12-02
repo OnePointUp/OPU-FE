@@ -20,8 +20,8 @@ export default function UserInfo({
     handleEdit,
     loading = false,
 }: Props) {
-    const initial =
-        nickname && nickname.trim().length > 0 ? nickname.trim().charAt(0) : "";
+    const displayBio =
+        bio && bio.trim().length > 0 ? bio : "아직 자기소개가 없어요 😊";
 
     if (loading) {
         return (
@@ -41,28 +41,35 @@ export default function UserInfo({
 
     return (
         <div
-            className="flex items-center mb-6 gap-4 justify-between cursor-pointer active:opacity-80 transition"
+            className="flex items-center mb-6 justify-between cursor-pointer active:opacity-80 transition"
             onClick={handleEdit}
         >
             <div className="flex gap-5">
-                <div className="relative size-16 overflow-hidden rounded-full border border-[var(--color-super-light-gray)] bg-[var(--background)]">
+                <div className="relative w-16 h-16 overflow-hidden rounded-full border border-[var(--color-super-light-gray)] bg-[var(--background)]">
                     {profileImageUrl ? (
                         <Image
                             src={profileImageUrl}
                             alt={`${nickname} profileImage`}
                             fill
                             sizes="56px"
-                            className="object-cover"
+                            className="w-full h-full object-cover"
                             loading="eager"
                             priority
                         />
                     ) : (
-                        <div className="grid h-full w-full place-items-center text-[var(--color-light-gray)] font-[var(--weight-semibold)]">
-                            {initial}
+                        <div className="relative h-full w-full overflow-hidden rounded-full select-none">
+                            <Image
+                                src="/images/profile-image.png"
+                                alt="profile-default"
+                                fill
+                                sizes="96px"
+                                className="object-cover scale-130"
+                            />
+                            <span className="sr-only">{nickname}의 프로필</span>
                         </div>
                     )}
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col flex-1">
                     <p
                         className="truncate text-[var(--color-dark-navy)]"
                         style={{
@@ -82,25 +89,27 @@ export default function UserInfo({
                     >
                         {email}
                     </p>
-                    <p
-                        className="truncate text-[var(--color-dark-navy)]"
-                        style={{
-                            fontSize: "var(--text-caption)",
-                            fontWeight: "var(--weight-regular)",
-                        }}
-                    >
-                        {bio}
-                    </p>
+                    <div className="flex gap-2 w-full items-start">
+                        <p
+                            className="flex-1 text-[var(--color-dark-navy)] break-words whitespace-pre-line"
+                            style={{
+                                fontSize: "var(--text-caption)",
+                                fontWeight: "var(--weight-regular)",
+                            }}
+                        >
+                            {displayBio}
+                        </p>
+                        <button type="button" onClick={handleEdit}>
+                            <Icon
+                                icon="mdi:chevron-right"
+                                width={25}
+                                height={25}
+                                className="text-[var(--color-dark-navy)]"
+                            />
+                        </button>
+                    </div>
                 </div>
             </div>
-            <button type="button" onClick={handleEdit}>
-                <Icon
-                    icon="mdi:chevron-right"
-                    width={25}
-                    height={25}
-                    className="text-[var(--color-dark-navy)]"
-                />
-            </button>
         </div>
     );
 }

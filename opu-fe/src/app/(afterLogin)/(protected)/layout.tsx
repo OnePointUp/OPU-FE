@@ -13,7 +13,7 @@ export default async function ProtectedLayout({
     const session = cookieStore.get(AUTH_COOKIE_NAME)?.value;
 
     if (!session) {
-        redirect("/login");
+        redirect("/welcome");
     }
 
     return <>{children}</>;

@@ -20,6 +20,10 @@ export type EmailSignupPayload = {
     nickname: string;
 };
 
+export type EmailVerifyStatusResponse = {
+    verified: boolean;
+};
+
 export type LoginPayload = {
     email: string;
     password: string;
@@ -32,4 +36,19 @@ export type PasswordCheckPayload = {
 export type ResetPasswordByTokenPayload = {
     token: string;
     newPassword: string;
+};
+
+export type KakaoLoginToken = {
+    accessToken: string;
+    refreshToken: string;
+    tokenType: string;
+    expiresInSeconds: number;
+    refreshExpiresInSeconds: number;
+};
+
+export type KakaoLoginResponse = {
+    needAdditionalInfo: boolean;
+    providerId?: string;
+    token?: KakaoLoginToken;
+    member?: AuthMember;
 };

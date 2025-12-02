@@ -7,12 +7,17 @@ import {
     readAllNotifications,
     readOneNotification,
 } from "../services";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export function useNotificationFeed() {
     const [items, setItems] = useState<NotificationFeedItem[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const { accessToken } = useAuthStore();
+
     useEffect(() => {
+        if (!accessToken) return;
+
         const load = async () => {
             try {
                 const data = await fetchNotificationFeed();
@@ -23,7 +28,7 @@ export function useNotificationFeed() {
         };
 
         load();
-    }, []);
+    }, [accessToken]);
 
     const reload = useCallback(async () => {
         const data = await fetchNotificationFeed();

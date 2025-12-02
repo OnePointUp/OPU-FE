@@ -18,7 +18,7 @@ export type UserProfileDetail = {
 export type EditProfilePayload = {
     nickname: string;
     bio: string | null;
-    profileImageUrl?: string | null;
+    profileImageUrl?: string;
 };
 
 export type PresignedUrlResponse = {
