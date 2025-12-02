@@ -6,6 +6,7 @@ import axios from "axios";
 import {
     EmailSignupPayload,
     EmailVerifyStatusResponse,
+    KakaoLoginResponse,
     LoginPayload,
     LoginResponse,
     PasswordCheckPayload,
@@ -186,4 +187,20 @@ export async function changePassword(
             extractErrorMessage(err, "비밀번호 변경에 실패했어요.")
         );
     }
+}
+
+// 카카오 로그인 요청
+export async function requestKakaoLogin(
+    code: string
+): Promise<KakaoLoginResponse> {
+    const res = await apiClient.get<ApiResponse<KakaoLoginResponse>>(
+        "/auth/kakao/login",
+        {
+            params: { code },
+            skipAuth: true,
+        }
+    );
+
+    const body = res.data ?? ({} as ApiResponse<KakaoLoginResponse>);
+    return body.data ?? (body as unknown as KakaoLoginResponse);
 }
