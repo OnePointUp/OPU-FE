@@ -8,13 +8,9 @@ import { useSocialSignupForm } from "@/features/auth/hooks/useSocialSignup";
 export default function SocialSignupPage() {
     const {
         nickname,
-        dupError,
-        checking,
         agreements,
         canSubmit,
-
         setNickname,
-        handleBlurNickname,
         handleCheckAll,
         handleCheckItem,
         handleSubmit,
@@ -27,9 +23,6 @@ export default function SocialSignupPage() {
                 onChange={(v) => {
                     setNickname(v);
                 }}
-                onBlurCheck={handleBlurNickname}
-                error={dupError}
-                checking={checking}
             />
 
             <AgreementsField

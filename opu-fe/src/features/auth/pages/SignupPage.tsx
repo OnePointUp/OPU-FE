@@ -14,8 +14,6 @@ export default function RegisterEmailPage() {
         password,
         confirmPassword,
         nickname,
-        dupError,
-        checking,
         agreements,
         isPwMismatch,
         canSubmit,
@@ -25,7 +23,6 @@ export default function RegisterEmailPage() {
         setConfirmPassword,
         setNickname,
         handleEmailChange,
-        handleBlurNickname,
         handleCheckAll,
         handleCheckItem,
         handleSubmit,
@@ -54,13 +51,7 @@ export default function RegisterEmailPage() {
                 }
             />
 
-            <NicknameField
-                value={nickname}
-                onChange={(v) => setNickname(v)}
-                onBlurCheck={handleBlurNickname}
-                error={dupError}
-                checking={checking}
-            />
+            <NicknameField value={nickname} onChange={(v) => setNickname(v)} />
 
             <AgreementsField
                 value={agreements}
