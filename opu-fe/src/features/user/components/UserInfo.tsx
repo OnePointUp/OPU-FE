@@ -23,6 +23,9 @@ export default function UserInfo({
     const initial =
         nickname && nickname.trim().length > 0 ? nickname.trim().charAt(0) : "";
 
+    const displayBio =
+        bio && bio.trim().length > 0 ? bio : "아직 자기소개가 없어요 😊";
+
     if (loading) {
         return (
             <div className="flex items-center mb-6 gap-4 justify-between cursor-default">
@@ -89,7 +92,7 @@ export default function UserInfo({
                             fontWeight: "var(--weight-regular)",
                         }}
                     >
-                        {bio}
+                        {displayBio}
                     </p>
                 </div>
             </div>
