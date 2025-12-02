@@ -6,11 +6,9 @@ import NicknameField from "@/features/user/components/NicknameField";
 import AgreementsField from "@/features/auth/components/AgreementsField";
 import OpuActionButton from "@/components/common/OpuActionButton";
 import { useSignupEmail } from "@/features/auth/hooks/useEmailSignup";
-import ProfileAvatarPicker from "@/features/user/components/ProfileAvatarPicker";
 
 export default function RegisterEmailPage() {
     const {
-        profileImgUrl,
         email,
         emailError,
         password,
@@ -26,7 +24,6 @@ export default function RegisterEmailPage() {
         setPassword,
         setConfirmPassword,
         setNickname,
-        handlePickImage,
         handleEmailChange,
         handleBlurNickname,
         handleCheckAll,
@@ -36,12 +33,6 @@ export default function RegisterEmailPage() {
 
     return (
         <section>
-            <ProfileAvatarPicker
-                nickname={nickname}
-                previewUrl={profileImgUrl}
-                onPick={handlePickImage}
-            />
-
             <EmailField
                 value={email}
                 onChange={handleEmailChange}

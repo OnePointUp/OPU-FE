@@ -16,6 +16,12 @@ const TITLE_GROUP = {
             "/signup/email-failed": "회원가입",
         },
     },
+    socialSignup: {
+        base: "소셜 회원가입",
+        map: {
+            "/social-signup": "추가 정보 입력",
+        },
+    },
     findPw: {
         base: "비밀번호 찾기",
         map: {
@@ -68,6 +74,7 @@ const TITLE_MAP: Record<string, string> = {
     "/stats": "통계",
 
     ...TITLE_GROUP.signup.map,
+    ...TITLE_GROUP.socialSignup.map,
     ...TITLE_GROUP.findPw.map,
     ...TITLE_GROUP.me.map,
     ...TITLE_GROUP.opu.map,
