@@ -3,18 +3,12 @@
 type Props = {
     value: string;
     onChange: (v: string) => void;
-    onBlurCheck: () => void;
-    error?: string;
-    checking?: boolean;
     className?: string;
 };
 
 export default function NicknameField({
     value,
     onChange,
-    onBlurCheck,
-    error,
-    checking = false,
     className = "",
 }: Props) {
     return (
@@ -33,12 +27,11 @@ export default function NicknameField({
             <input
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                onBlur={onBlurCheck}
                 placeholder="닉네임을 입력하세요"
                 className="input-box input-box--field"
             />
 
-            {error ? (
+            {/* {error ? (
                 <p
                     className="mt-2 ml-1"
                     style={{
@@ -59,7 +52,7 @@ export default function NicknameField({
                 >
                     중복 확인 중...
                 </p>
-            ) : null}
+            ) : null} */}
         </section>
     );
 }

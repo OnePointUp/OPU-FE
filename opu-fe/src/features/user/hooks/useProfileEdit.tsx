@@ -10,10 +10,9 @@ import {
     fetchProfileDetail,
     getProfileImagePresignedUrl,
 } from "../services";
-import { checkNicknameDup } from "@/utils/validation";
 import { useProfileImagePicker } from "./useProfileImagePicker";
 
-const INTRO_MAX = 500;
+const INTRO_MAX = 100;
 
 export function useProfileEdit() {
     const router = useRouter();
@@ -21,8 +20,8 @@ export function useProfileEdit() {
     const [profile, setProfile] = useState<UserProfileDetail | null>(null);
     const [nickname, setNickname] = useState("");
     const [bio, setBio] = useState("");
-    const [dupError, setDupError] = useState("");
-    const [checking, setChecking] = useState(false);
+    // const [dupError, setDupError] = useState("");
+    // const [checking, setChecking] = useState(false);
 
     const [loadingProfile, setLoadingProfile] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -54,34 +53,29 @@ export function useProfileEdit() {
         load();
     }, [setProfileImageUrl, setFile]);
 
-    const handleBlurNickname = useCallback(async () => {
-        if (!profile) return;
+    // const handleBlurNickname = useCallback(async () => {
+    //     if (!profile) return;
 
-        const v = nickname.trim();
-        if (!v) {
-            setDupError("닉네임을 입력해주세요.");
-            return;
-        }
+    //     const v = nickname.trim();
+    //     if (!v) {
+    //         setDupError("닉네임을 입력해주세요.");
+    //         return;
+    //     }
 
-        setChecking(true);
-        try {
-            const current = profile.nickname;
-            const isDup = await checkNicknameDup(v, current);
-            setDupError(isDup ? "이미 존재하는 닉네임 입니다." : "");
-        } catch (e) {
-            console.error("닉네임 중복 체크 실패", e);
-            toastError("닉네임 중복 체크에 실패했어요.");
-        } finally {
-            setChecking(false);
-        }
-    }, [nickname, profile]);
+    //     setChecking(true);
+    //     try {
+    //         const current = profile.nickname;
+    //         const isDup = await checkNicknameDup(v, current);
+    //         setDupError(isDup ? "이미 존재하는 닉네임 입니다." : "");
+    //     } catch (e) {
+    //         console.error("닉네임 중복 체크 실패", e);
+    //         toastError("닉네임 중복 체크에 실패했어요.");
+    //     } finally {
+    //         setChecking(false);
+    //     }
+    // }, [nickname, profile]);
 
-    const canSubmit =
-        !saving &&
-        !checking &&
-        nickname.trim().length > 0 &&
-        bio.length <= INTRO_MAX &&
-        !dupError;
+    const canSubmit = !saving;
 
     const handleDeleteImage = useCallback(() => {
         setProfileImageUrl("");
@@ -90,6 +84,20 @@ export function useProfileEdit() {
 
     const handleSave = useCallback(async () => {
         if (!canSubmit) return;
+
+        const trimmedNickname = nickname.trim();
+
+        // 닉네임 검증
+        if (trimmedNickname.length < 2) {
+            toastError("닉네임은 2글자 이상 입력해 주세요.");
+            return;
+        }
+
+        // 자기소개 검증
+        if (bio.length > INTRO_MAX) {
+            toastError(`자기소개는 ${INTRO_MAX}자 이내로 작성해 주세요.`);
+            return;
+        }
 
         try {
             setSaving(true);
@@ -141,17 +149,15 @@ export function useProfileEdit() {
     return {
         nickname,
         bio,
-        dupError,
-        checking,
         profileImageUrl,
         loadingProfile,
         saving,
         introMax: INTRO_MAX,
         setNickname,
         setBio,
-        handleBlurNickname,
         handleDeleteImage,
         handlePickImage,
         handleSave,
+        canSubmit,
     };
 }

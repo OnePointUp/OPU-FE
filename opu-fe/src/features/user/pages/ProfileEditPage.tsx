@@ -12,27 +12,18 @@ export default function ProfileEditPage() {
     const {
         nickname,
         bio,
-        dupError,
-        checking,
         profileImageUrl,
         saving,
         introMax,
         setNickname,
         setBio,
-        handleBlurNickname,
         handleDeleteImage,
         handlePickImage,
         handleSave,
+        canSubmit,
     } = useProfileEdit();
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-    const canSubmit =
-        !saving &&
-        !checking &&
-        nickname.trim().length > 0 &&
-        bio.length <= introMax &&
-        !dupError;
 
     return (
         <section>
@@ -48,9 +39,6 @@ export default function ProfileEditPage() {
                 onChange={(v) => {
                     setNickname(v);
                 }}
-                onBlurCheck={handleBlurNickname}
-                error={dupError}
-                checking={checking}
             />
             <IntroField value={bio} onChange={setBio} max={introMax} />
 
