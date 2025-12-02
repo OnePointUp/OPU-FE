@@ -60,8 +60,15 @@ export default function UserInfo({
                             priority
                         />
                     ) : (
-                        <div className="grid h-full w-full place-items-center text-[var(--color-light-gray)] font-[var(--weight-semibold)]">
-                            {initial}
+                        <div className="relative h-full w-full overflow-hidden rounded-full select-none">
+                            <Image
+                                src="/images/profile-image.png"
+                                alt="profile-default"
+                                fill
+                                sizes="96px"
+                                className="object-cover scale-130"
+                            />
+                            <span className="sr-only">{nickname}의 프로필</span>
                         </div>
                     )}
                 </div>

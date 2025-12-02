@@ -19,13 +19,10 @@ export default function ProfileAvatarPicker({
 }: Props) {
     const fileRef = useRef<HTMLInputElement>(null);
 
-    const initial =
-        nickname && nickname.trim().length > 0 ? nickname.trim().charAt(0) : "";
-
     return (
         <section className={`w-full flex justify-center mb-6 ${className}`}>
             <div className="relative inline-block">
-                <div className="size-24 overflow-hidden rounded-full border border-[var(--color-super-light-gray)] bg-[var(--background)] relative">
+                <div className="size-22 overflow-hidden rounded-full border border-[var(--color-super-light-gray)] bg-[var(--background)] relative">
                     {previewUrl ? (
                         <Image
                             src={previewUrl}
@@ -35,18 +32,14 @@ export default function ProfileAvatarPicker({
                             className="object-cover"
                         />
                     ) : (
-                        <div className="grid h-full w-full place-items-center select-none">
-                            <span
-                                style={{
-                                    fontSize: "var(--text-h3)",
-                                    fontWeight: "var(--weight-semibold)",
-                                    color: "var(--color-light-gray)",
-                                    lineHeight: 1,
-                                }}
-                                aria-hidden
-                            >
-                                {initial}
-                            </span>
+                        <div className="relative h-full w-full overflow-hidden rounded-full select-none">
+                            <Image
+                                src="/images/profile-image.png"
+                                alt="profile-default"
+                                fill
+                                sizes="96px"
+                                className="object-cover scale-130"
+                            />
                             <span className="sr-only">{nickname}의 프로필</span>
                         </div>
                     )}
