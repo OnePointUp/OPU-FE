@@ -16,6 +16,7 @@ type KakaoRegisterResponse = {
     tokenType?: string;
     expiresInSeconds?: number;
     refreshExpiresInSeconds?: number;
+    member?: AuthMember;
 };
 
 export function useSocialSignupForm() {
@@ -71,18 +72,11 @@ export function useSocialSignupForm() {
             const data: KakaoRegisterResponse = res.data?.data ?? {};
 
             // 3) 토큰 내려오면 authStore에 저장
-            if (data.accessToken && data.refreshToken) {
-                const currentMember: AuthMember | null =
-                    useAuthStore.getState().member;
-
+            if (data.accessToken && data.refreshToken && data.member) {
                 useAuthStore.getState().setAuth({
                     accessToken: data.accessToken,
                     refreshToken: data.refreshToken,
-                    member: currentMember ?? {
-                        id: 0,
-                        email: "",
-                        nickname: nickname.trim(),
-                    },
+                    member: data.member,
                 });
             }
 

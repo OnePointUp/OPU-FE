@@ -201,6 +201,9 @@ export async function requestKakaoLogin(
         }
     );
 
-    const body = res.data ?? ({} as ApiResponse<KakaoLoginResponse>);
-    return body.data ?? (body as unknown as KakaoLoginResponse);
+    if (!res.data || !res.data.data) {
+        throw new Error("카카오 로그인 응답 데이터가 유효하지 않습니다.");
+    }
+
+    return res.data.data;
 }
