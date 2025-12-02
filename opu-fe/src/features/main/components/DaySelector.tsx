@@ -12,6 +12,7 @@ type Props = {
   onToggleView: () => void;
   viewMode: "month" | "week";
   className?: string;
+  hideViewToggle?: boolean; 
 };
 
 export default function MonthSelector({
@@ -22,6 +23,7 @@ export default function MonthSelector({
   onToggleView,
   viewMode,
   className = "",
+  hideViewToggle = false,
 }: Props) {
   const [open, setOpen] = useState(false);
 
@@ -34,7 +36,12 @@ export default function MonthSelector({
 
   return (
     <div className={className}>
-      <div className="flex justify-between items-center w-full mt-[10px] mb-[20px]">
+      <div
+        className={`
+          flex items-center w-full mt-[10px] mb-[20px]
+          ${hideViewToggle ? "justify-center" : "justify-between"}
+        `}
+      >
 
         <button
           onClick={() => setOpen(true)}
@@ -44,12 +51,14 @@ export default function MonthSelector({
           <Icon icon="iconamoon:arrow-down-2-thin" width={20} height={20} />
         </button>
 
-        <button
-          onClick={onToggleView}
-          className="px-3 py-[2px] rounded-full bg-[var(--color-light-blue-gray)] text-[var(--text-mini)] text-gray-600 font-medium"
-        >
-          {viewMode === "month" ? "월" : "주"}
-        </button>
+        {!hideViewToggle && (
+          <button
+            onClick={onToggleView}
+            className="px-3 py-[2px] rounded-full bg-[var(--color-light-blue-gray)] text-[var(--text-mini)] text-gray-600 font-medium"
+          >
+            {viewMode === "month" ? "월" : "주"}
+          </button>
+        )}
       </div>
 
       {open && (

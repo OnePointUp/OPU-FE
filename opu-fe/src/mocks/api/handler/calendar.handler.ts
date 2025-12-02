@@ -11,7 +11,8 @@ function createMonthlyMockData(
   const daysInMonth = new Date(year, month, 0).getDate();
   const result: DailyTodoStats[] = [];
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
   for (let day = 1; day <= daysInMonth; day++) {
     const dateStr = `${year}-${String(month).padStart(2, "0")}-${String(
