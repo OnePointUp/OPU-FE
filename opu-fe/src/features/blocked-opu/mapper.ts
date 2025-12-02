@@ -1,4 +1,4 @@
-import { toTimeLabel } from "../opu/utils/time";
+import { mapMinutesToLabel } from "../opu/utils/time";
 import { BlockedOpuSummaryDto } from "./types";
 import { OpuCardModel } from "@/features/opu/domain";
 
@@ -9,7 +9,7 @@ export function toBlockedOpuCard(dto: BlockedOpuSummaryDto): OpuCardModel {
         emoji: dto.emoji,
         categoryId: dto.categoryId,
         categoryName: dto.categoryName,
-        timeLabel: toTimeLabel(dto.requiredMinutes),
+        timeLabel: mapMinutesToLabel(dto.requiredMinutes),
         liked: false,
         blockedAt: dto.blockedAt,
     };

@@ -1,5 +1,5 @@
 import { OPU, LIKE } from "@/mocks/api/db/opu.db";
-import { toOpuCardModelFromEntity } from "./mappers";
+import { toOpuCardModelFromSummary } from "./mappers";
 import type { OpuCardModel } from "./domain";
 import { TIME_OPTIONS, type TimeCode } from "./utils/time";
 
@@ -40,7 +40,7 @@ export async function drawRandomOpu(
     const liked = likedSet.has(picked.id);
 
     // 4) 카드 모델로 변환
-    return toOpuCardModelFromEntity(picked, liked);
+    return toOpuCardModelFromSummary(picked, liked);
 }
 
 export function getLikedCountByMember(memberId: number): number {

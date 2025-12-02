@@ -1,0 +1,271 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+
+import {
+    type OpuCardModel,
+    type OpuListFilterRequest,
+    type OpuListPage,
+    TIME_CODE_TO_MINUTES,
+    type TimeCode,
+    getSortLabel,
+    type SortOption,
+    getCategoryFilterLabel,
+    getTimeFilterLabel,
+    SORT_OPTION_TO_API_SORT,
+} from "@/features/opu/domain";
+import { fetchMyOpuList, fetchSharedOpuList } from "../service";
+import { toastError } from "@/lib/toast";
+
+export type FilterMode = "time" | "category";
+
+type Props = {
+    contextType?: "my" | "shared";
+};
+
+const PAGE_SIZE = 20;
+
+export function useOpuListPage({ contextType = "shared" }: Props) {
+    const router = useRouter();
+
+    const [page, setPage] = useState(0);
+    const [pageMeta, setPageMeta] =
+        useState<
+            Pick<
+                OpuListPage,
+                | "totalElements"
+                | "totalPages"
+                | "currentPage"
+                | "pageSize"
+                | "hasNext"
+                | "hasPrevious"
+            >
+        >();
+
+    const [data, setData] = useState<OpuCardModel[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const [q, setQ] = useState("");
+
+    const [times, setTimes] = useState<TimeCode[]>([]);
+    const [categoryIds, setCategoryIds] = useState<number[]>([]);
+
+    const [filterMode, setFilterMode] = useState<FilterMode>("time");
+    const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+    const [sheetId, setSheetId] = useState<number | null>(null);
+
+    const [sortOption, setSortOption] = useState<SortOption>("liked");
+    const [showSortSheet, setShowSortSheet] = useState(false);
+
+    const [onlyLiked, setOnlyLiked] = useState(false);
+
+    const requestFilter: OpuListFilterRequest = useMemo(() => {
+        const minutes =
+            times.length === 0
+                ? undefined
+                : times
+                      .filter((t): t is Exclude<TimeCode, "ALL"> => t !== "ALL")
+                      .map((t) => TIME_CODE_TO_MINUTES[t])
+                      .filter((v) => v != null);
+
+        const sort = SORT_OPTION_TO_API_SORT[sortOption];
+
+        return {
+            categoryIds: categoryIds.length ? categoryIds : undefined,
+            requiredMinutes: minutes && minutes.length ? minutes : undefined,
+            search: q.trim() || undefined,
+            favoriteOnly: onlyLiked || undefined,
+            sort,
+        };
+    }, [q, times, categoryIds, onlyLiked, sortOption]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const load = async () => {
+            try {
+                setLoading(true);
+
+                const res =
+                    contextType === "my"
+                        ? await fetchMyOpuList({
+                              page,
+                              size: PAGE_SIZE,
+                              filter: requestFilter,
+                          })
+                        : await fetchSharedOpuList({
+                              page,
+                              size: PAGE_SIZE,
+                              filter: requestFilter,
+                          });
+
+                if (cancelled) return;
+
+                setData(res.content);
+                setPageMeta({
+                    totalElements: res.totalElements,
+                    totalPages: res.totalPages,
+                    currentPage: res.currentPage,
+                    pageSize: res.pageSize,
+                    hasNext: res.hasNext,
+                    hasPrevious: res.hasPrevious,
+                });
+            } catch (e) {
+                console.error(e);
+                if (!cancelled) {
+                    toastError("OPU 목록을 불러오지 못했어요.");
+                }
+            } finally {
+                if (!cancelled) {
+                    setLoading(false);
+                }
+            }
+        };
+
+        load();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [contextType, page, requestFilter]);
+
+    const timeLabel = useMemo(() => getTimeFilterLabel(times), [times]);
+    const categoryLabel = useMemo(
+        () => getCategoryFilterLabel(categoryIds),
+        [categoryIds]
+    );
+    const sortLabel = getSortLabel(sortOption);
+
+    // 정렬 변경
+    const handleChangeSort = (opt: SortOption) => {
+        setSortOption(opt);
+        setShowSortSheet(false);
+        setPage(0);
+    };
+
+    // 시간 필터 토글
+    const handleToggleTime = (value: TimeCode) => {
+        if (value === "ALL") {
+            setTimes([]);
+            setPage(0);
+            return;
+        }
+
+        setTimes((prev) => {
+            const filtered = prev.filter((p) => p !== "ALL");
+            if (filtered.includes(value)) {
+                return filtered.filter((p) => p !== value);
+            }
+            return [...filtered, value];
+        });
+        setPage(0);
+    };
+
+    // 카테고리 필터 토글
+    const handleToggleCategory = (id: number) => {
+        if (id === -1) {
+            setCategoryIds([]);
+            setPage(0);
+            return;
+        }
+        setCategoryIds((prev) =>
+            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+        );
+        setPage(0);
+    };
+
+    const handleResetFilter = () => {
+        setTimes([]);
+        setCategoryIds([]);
+        setPage(0);
+    };
+
+    const handleOpenFilterTime = () => {
+        setFilterMode("time");
+        setFilterSheetOpen(true);
+    };
+
+    const handleOpenFilterCategory = () => {
+        setFilterMode("category");
+        setFilterSheetOpen(true);
+    };
+
+    // 더보기 시트
+    const handleOpenMore = (id: number) => setSheetId(id);
+    const handleCloseMore = () => setSheetId(null);
+
+    const selectedItem =
+        sheetId !== null ? data.find((i) => i.id === sheetId) : undefined;
+
+    const isMine = selectedItem?.isMine ?? false;
+
+    const handleEditSelected = () => {
+        if (!selectedItem) return;
+        router.push(`/opu/edit/${selectedItem.id}`);
+    };
+
+    // 페이지 이동
+    const handleNextPage = () => {
+        if (pageMeta?.hasNext) {
+            setPage((prev) => prev + 1);
+        }
+    };
+
+    const handlePrevPage = () => {
+        if (pageMeta?.hasPrevious && page > 0) {
+            setPage((prev) => prev - 1);
+        }
+    };
+
+    return {
+        contextType,
+        loading,
+
+        // 목록
+        data,
+        filtered: data,
+        page,
+        pageMeta,
+        handleNextPage,
+        handlePrevPage,
+
+        // 검색
+        q,
+        setQ,
+
+        // 좋아요 필터
+        onlyLiked,
+        setOnlyLiked,
+
+        // 필터
+        times,
+        categoryIds,
+        filterMode,
+        filterSheetOpen,
+        timeLabel,
+        categoryLabel,
+        handleToggleTime,
+        handleToggleCategory,
+        handleResetFilter,
+        setFilterMode,
+        setFilterSheetOpen,
+        handleOpenFilterTime,
+        handleOpenFilterCategory,
+
+        // 정렬
+        sortOption,
+        sortLabel,
+        showSortSheet,
+        setShowSortSheet,
+        handleChangeSort,
+
+        // 더보기 시트
+        sheetId,
+        selectedItem,
+        isMine,
+        handleOpenMore,
+        handleCloseMore,
+        handleEditSelected,
+    };
+}

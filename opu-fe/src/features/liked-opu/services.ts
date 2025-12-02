@@ -1,6 +1,6 @@
 import { LIKE, OPU } from "@/mocks/api/db/opu.db";
 import type { OpuCardModel } from "@/features/opu/domain";
-import { toOpuCardModelFromEntity } from "@/features/opu/mappers";
+import { toOpuCardModelFromSummary } from "@/features/opu/mappers";
 import { BlockedJoin } from "../blocked-opu/services";
 import { listBlockedOpu } from "@/mocks/api/handler/blockedOpu";
 
@@ -17,5 +17,5 @@ export async function fetchLikedOpuCards(
 
     return OPU.filter((o) => likedSet.has(o.id))
         .filter((o) => !blockedSet.has(o.id))
-        .map((o) => toOpuCardModelFromEntity(o, true));
+        .map((o) => toOpuCardModelFromSummary(o, true));
 }
