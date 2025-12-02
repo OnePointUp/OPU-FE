@@ -20,9 +20,6 @@ export default function UserInfo({
     handleEdit,
     loading = false,
 }: Props) {
-    const initial =
-        nickname && nickname.trim().length > 0 ? nickname.trim().charAt(0) : "";
-
     const displayBio =
         bio && bio.trim().length > 0 ? bio : "아직 자기소개가 없어요 😊";
 
