@@ -20,7 +20,8 @@ import {
     fetchSharedOpuList,
     fetchLikedOpuList,
 } from "../service";
-import { toastError } from "@/lib/toast";
+import { toastError, toastSuccess } from "@/lib/toast";
+import { blockOpu } from "@/features/blocked-opu/services";
 
 export type FilterMode = "time" | "category";
 
@@ -58,6 +59,8 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
     const [filterMode, setFilterMode] = useState<FilterMode>("time");
     const [filterSheetOpen, setFilterSheetOpen] = useState(false);
     const [sheetId, setSheetId] = useState<number | null>(null);
+
+    const [blockTargetId, setBlockTargetId] = useState<number | null>(null);
 
     const [sortOption, setSortOption] = useState<SortOption>("liked");
     const [showSortSheet, setShowSortSheet] = useState(false);
@@ -216,6 +219,21 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         router.push(`/opu/edit/${selectedItem.id}`);
     };
 
+    // 차단하기
+    const handleBlockSelected = async (opuId: number) => {
+        try {
+            await blockOpu(opuId);
+
+            setData((prev) => prev.filter((item) => item.id !== opuId));
+
+            toastSuccess("OPU를 차단했어요.");
+            setSheetId(null);
+        } catch (e) {
+            console.error(e);
+            toastError("OPU 차단을 실패했어요.");
+        }
+    };
+
     const handleNextPage = () => {
         if (pageMeta?.hasNext) {
             setPage((prev) => prev + 1);
@@ -277,5 +295,10 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         handleOpenMore,
         handleCloseMore,
         handleEditSelected,
+
+        // 차단하기
+        blockTargetId,
+        setBlockTargetId,
+        handleBlockSelected,
     };
 }

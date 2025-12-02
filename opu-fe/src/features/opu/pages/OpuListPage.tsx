@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import SearchBar from "@/components/common/SearchBar";
 import BottomSheet from "@/components/common/BottomSheet";
 import ActionList from "@/components/common/ActionList";
@@ -8,6 +10,7 @@ import OpuToolbar from "@/features/opu/components/OpuToolbar";
 import OpuList from "../components/OpuList";
 import LikedOpuFilter from "../components/LikedOpuFilter";
 import PlusButton from "@/components/common/PlusButton";
+import ConfirmModal from "@/components/common/ConfirmModal";
 
 import type { OpuCardModel, SortOption } from "@/features/opu/domain";
 import { useOpuListPage } from "../hooks/useOpuListPage";
@@ -56,7 +59,12 @@ export default function OpuListPage({
         handleCloseMore,
         isMine,
         handleEditSelected,
+        handleBlockSelected,
+        blockTargetId,
+        setBlockTargetId,
     } = useOpuListPage({ contextType });
+
+    const [showBlockModal, setShowBlockModal] = useState(false);
 
     return (
         <section>
@@ -107,6 +115,12 @@ export default function OpuListPage({
                 target={selectedItem}
                 isMine={isMine}
                 onEdit={handleEditSelected}
+                onRequestBlock={() => {
+                    if (!selectedItem) return;
+                    setBlockTargetId(selectedItem.id);
+                    handleCloseMore();
+                    setShowBlockModal(true);
+                }}
             />
 
             {/* 정렬 시트 */}
@@ -131,6 +145,19 @@ export default function OpuListPage({
             />
 
             <PlusButton showMenu={false} />
+
+            {/* 차단 ConfirmModal */}
+            <ConfirmModal
+                isOpen={showBlockModal}
+                message={`이 OPU를 차단할까요?\n차단하면 랜덤 뽑기와 목록에서 보이지 않아요.`}
+                onConfirm={() => {
+                    if (blockTargetId != null) {
+                        handleBlockSelected(blockTargetId);
+                    }
+                    setShowBlockModal(false);
+                }}
+                onCancel={() => setShowBlockModal(false)}
+            />
         </section>
     );
 }
@@ -167,6 +194,7 @@ type MoreActionsSheetProps = {
     target?: OpuCardModel;
     isMine: boolean;
     onEdit: () => void;
+    onRequestBlock: () => void;
 };
 
 function MoreActionsSheet({
@@ -175,6 +203,7 @@ function MoreActionsSheet({
     target,
     isMine,
     onEdit,
+    onRequestBlock,
 }: MoreActionsSheetProps) {
     if (!target) return null;
 
@@ -188,7 +217,7 @@ function MoreActionsSheet({
         : [
               { label: "투두리스트 추가", onClick: () => {} },
               { label: "루틴 추가", onClick: () => {} },
-              { label: "차단하기", danger: true, onClick: () => {} },
+              { label: "차단하기", danger: true, onClick: onRequestBlock },
           ];
 
     return (

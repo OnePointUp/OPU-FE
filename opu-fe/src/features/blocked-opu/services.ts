@@ -23,6 +23,15 @@ export async function getBlockedOpuList(): Promise<OpuCardModel[]> {
     }
 }
 
+// OPU 차단
+export async function blockOpu(opuId: number) {
+    try {
+        await apiClient.post(`/opus/${opuId}/block`);
+    } catch (err: unknown) {
+        throw new Error(extractErrorMessage(err, "OPU 차단을 실패했어요."));
+    }
+}
+
 // 단일 차단 해제
 export async function deleteBlockedOpu(opuId: number): Promise<void> {
     try {
