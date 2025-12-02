@@ -7,7 +7,7 @@ type Props = {
     items: OpuCardModel[];
     onMore?: (id: number) => void;
     loading?: boolean;
-    contextType?: "shared" | "my";
+    contextType?: "shared" | "my" | "liked";
 };
 
 export default function SharedOpuList({

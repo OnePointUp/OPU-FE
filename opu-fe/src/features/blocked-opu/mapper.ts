@@ -1,8 +1,7 @@
-import { mapMinutesToLabel } from "../opu/utils/time";
-import { BlockedOpuSummaryDto } from "./types";
-import { OpuCardModel } from "@/features/opu/domain";
+import { BlockedOpuSummaryResponse } from "./types";
+import { mapMinutesToLabel, OpuCardModel } from "@/features/opu/domain";
 
-export function toBlockedOpuCard(dto: BlockedOpuSummaryDto): OpuCardModel {
+export function toBlockedOpuCard(dto: BlockedOpuSummaryResponse): OpuCardModel {
     return {
         id: dto.opuId,
         title: dto.title,
@@ -10,7 +9,7 @@ export function toBlockedOpuCard(dto: BlockedOpuSummaryDto): OpuCardModel {
         categoryId: dto.categoryId,
         categoryName: dto.categoryName,
         timeLabel: mapMinutesToLabel(dto.requiredMinutes),
-        liked: false,
+        isLiked: false,
         blockedAt: dto.blockedAt,
     };
 }

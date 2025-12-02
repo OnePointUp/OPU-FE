@@ -1,5 +1,5 @@
 import { OpuCardModel } from "@/features/opu/domain";
-import { BlockedOpuSummaryDto } from "./types";
+import { BlockedOpuSummaryResponse } from "./types";
 import { apiClient } from "@/lib/apiClient";
 import { ApiResponse, PageResponse } from "@/types/api";
 import { toBlockedOpuCard } from "./mapper";
@@ -9,7 +9,7 @@ import { extractErrorMessage } from "@/utils/api-helpers";
 export async function getBlockedOpuList(): Promise<OpuCardModel[]> {
     try {
         const res = await apiClient.get<
-            ApiResponse<PageResponse<BlockedOpuSummaryDto>>
+            ApiResponse<PageResponse<BlockedOpuSummaryResponse>>
         >("/opus/blocked", {
             params: { page: 0, size: 20 },
         });

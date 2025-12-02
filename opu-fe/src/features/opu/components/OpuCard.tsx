@@ -1,11 +1,12 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { CATEGORY_BADGE, type OpuCardModel } from "@/features/opu/domain";
-import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
 import Badge from "@/components/common/Badge";
 import OpuCardSkekleton from "./OpuCardSkeleton";
+import { toggleOpuFavorite } from "@/features/opu/service";
+import { toastError } from "@/lib/toast";
 
 type Props = {
     item: OpuCardModel;
@@ -16,20 +17,40 @@ type Props = {
 
 export default function OpuCard({ item, onMore, loading = false }: Props) {
     const [liked, setLiked] = useState(item.isLiked);
+    const [likeCount, setLikeCount] = useState(item.likeCount ?? 0);
+    const [likeLoading, setLikeLoading] = useState(false);
 
     const categoryKey = item.categoryName ?? "기타";
     const { bg, text } = CATEGORY_BADGE[categoryKey] ?? CATEGORY_BADGE["기타"];
 
-    const isMine = item.creatorId === CURRENT_MEMBER_ID;
-    const isPrivate = isMine && item.shareLabel === "비공유";
+    const isMine = item.isMine === true;
+    const isPrivate = isMine && item.isShared === false;
 
     const handleCardClick = () => {
         onMore?.(item.id);
     };
 
-    const handleLikeClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleLikeClick = async (e: MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
-        setLiked((v) => !v);
+        if (likeLoading) return;
+
+        const prevLiked = liked;
+        const nextLiked = !prevLiked;
+
+        setLiked(nextLiked);
+        setLikeCount((prev) => prev + (nextLiked ? 1 : -1));
+        setLikeLoading(true);
+
+        try {
+            await toggleOpuFavorite(item.id, prevLiked);
+        } catch (err) {
+            console.error(err);
+            setLiked(prevLiked);
+            setLikeCount((prev) => prev + (nextLiked ? -1 : 1));
+            toastError("OPU 찜 상태를 변경하지 못했어요.");
+        } finally {
+            setLikeLoading(false);
+        }
     };
 
     if (loading) {
@@ -95,8 +116,9 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
                     type="button"
                     onClick={handleLikeClick}
                     aria-pressed={liked}
-                    className="inline-flex"
+                    className="inline-flex disabled:opacity-50"
                     title="찜하기"
+                    disabled={likeLoading}
                 >
                     <Icon
                         icon={liked ? "mdi:heart" : "mdi:heart-outline"}
@@ -160,7 +182,7 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
                                 color: "var(--color-dark-gray)",
                             }}
                         >
-                            {(item.likeCount ?? 0).toLocaleString()}
+                            {likeCount.toLocaleString()}
                         </span>
                     </div>
                 </div>

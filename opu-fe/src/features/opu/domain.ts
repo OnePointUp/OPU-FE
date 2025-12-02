@@ -63,6 +63,12 @@ export type OpuListFilterRequest = {
 
 export type OpuListPage = PageResponse<OpuCardModel>;
 
+export type FetchOpuListParams = {
+    page?: number;
+    size?: number;
+    filter?: OpuListFilterRequest;
+};
+
 /* ===========================
  * 목 데이터용 엔티티 타입 (프론트 전용)
  * =========================== */

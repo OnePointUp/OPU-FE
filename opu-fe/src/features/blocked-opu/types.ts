@@ -1,4 +1,4 @@
-export type BlockedOpuSummaryDto = {
+export type BlockedOpuSummaryResponse = {
     opuId: number;
     emoji: string;
     title: string;

@@ -15,13 +15,17 @@ import {
     getTimeFilterLabel,
     SORT_OPTION_TO_API_SORT,
 } from "@/features/opu/domain";
-import { fetchMyOpuList, fetchSharedOpuList } from "../service";
+import {
+    fetchMyOpuList,
+    fetchSharedOpuList,
+    fetchLikedOpuList,
+} from "../service";
 import { toastError } from "@/lib/toast";
 
 export type FilterMode = "time" | "category";
 
 type Props = {
-    contextType?: "my" | "shared";
+    contextType?: "my" | "shared" | "liked";
 };
 
 const PAGE_SIZE = 20;
@@ -75,10 +79,11 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
             categoryIds: categoryIds.length ? categoryIds : undefined,
             requiredMinutes: minutes && minutes.length ? minutes : undefined,
             search: q.trim() || undefined,
-            favoriteOnly: onlyLiked || undefined,
+            favoriteOnly:
+                contextType === "liked" ? undefined : onlyLiked || undefined,
             sort,
         };
-    }, [q, times, categoryIds, onlyLiked, sortOption]);
+    }, [q, times, categoryIds, onlyLiked, sortOption, contextType]);
 
     useEffect(() => {
         let cancelled = false;
@@ -90,6 +95,12 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
                 const res =
                     contextType === "my"
                         ? await fetchMyOpuList({
+                              page,
+                              size: PAGE_SIZE,
+                              filter: requestFilter,
+                          })
+                        : contextType === "liked"
+                        ? await fetchLikedOpuList({
                               page,
                               size: PAGE_SIZE,
                               filter: requestFilter,
@@ -205,7 +216,6 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         router.push(`/opu/edit/${selectedItem.id}`);
     };
 
-    // 페이지 이동
     const handleNextPage = () => {
         if (pageMeta?.hasNext) {
             setPage((prev) => prev + 1);

@@ -9,18 +9,21 @@ import OpuList from "../components/OpuList";
 import LikedOpuFilter from "../components/LikedOpuFilter";
 import PlusButton from "@/components/common/PlusButton";
 
-import type { OpuCardModel } from "@/features/opu/domain";
+import type { OpuCardModel, SortOption } from "@/features/opu/domain";
 import { useOpuListPage } from "../hooks/useOpuListPage";
 
 type Props = {
-    contextType?: "my" | "shared";
+    contextType?: "my" | "shared" | "liked";
+    showLikedFilter?: boolean;
 };
 
-export default function OpuListPage(props: Props) {
+export default function OpuListPage({
+    contextType,
+    showLikedFilter = true,
+}: Props) {
     const {
         filtered,
         loading,
-        contextType,
         // 검색
         q,
         setQ,
@@ -53,10 +56,11 @@ export default function OpuListPage(props: Props) {
         handleCloseMore,
         isMine,
         handleEditSelected,
-    } = useOpuListPage(props);
+    } = useOpuListPage({ contextType });
 
     return (
         <section>
+            {/* 검색 */}
             <SearchBar
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
@@ -65,8 +69,17 @@ export default function OpuListPage(props: Props) {
                 className="mb-6"
             />
 
+            {/* 정렬 / 필터 툴바 / 찜 필터 */}
             <div className="w-full pl-1 flex items-center justify-between">
-                <LikedOpuFilter checked={onlyLiked} onChange={setOnlyLiked} />
+                {showLikedFilter ? (
+                    <LikedOpuFilter
+                        checked={onlyLiked}
+                        onChange={setOnlyLiked}
+                    />
+                ) : (
+                    <span />
+                )}
+
                 <OpuToolbar
                     sortLabel={sortLabel}
                     timeLabel={timeLabel}
@@ -77,6 +90,7 @@ export default function OpuListPage(props: Props) {
                 />
             </div>
 
+            {/* 카드 리스트 */}
             <div className="mt-3 -mx-1">
                 <OpuList
                     items={filtered}
@@ -86,6 +100,7 @@ export default function OpuListPage(props: Props) {
                 />
             </div>
 
+            {/* 카드 더보기 액션 시트 */}
             <MoreActionsSheet
                 open={sheetId !== null}
                 onClose={handleCloseMore}
@@ -94,12 +109,14 @@ export default function OpuListPage(props: Props) {
                 onEdit={handleEditSelected}
             />
 
+            {/* 정렬 시트 */}
             <SortSheet
                 open={showSortSheet}
                 onClose={() => setShowSortSheet(false)}
                 onChange={handleChangeSort}
             />
 
+            {/* 기간 / 카테고리 필터 시트 */}
             <OpuFilterSheet
                 open={filterSheetOpen}
                 onClose={() => setFilterSheetOpen(false)}
@@ -121,15 +138,14 @@ export default function OpuListPage(props: Props) {
 type SortSheetProps = {
     open: boolean;
     onClose: () => void;
-    onChange: (opt: "liked" | "completed" | "name" | "latest") => void;
+    onChange: (opt: SortOption) => void;
 };
 
 function SortSheet({ open, onClose, onChange }: SortSheetProps) {
-    const handleSelect =
-        (opt: "liked" | "completed" | "name" | "latest") => () => {
-            onChange(opt);
-            onClose();
-        };
+    const handleSelect = (opt: SortOption) => () => {
+        onChange(opt);
+        onClose();
+    };
 
     return (
         <BottomSheet open={open} onClose={onClose}>
@@ -157,13 +173,12 @@ function MoreActionsSheet({
     open,
     onClose,
     target,
+    isMine,
     onEdit,
 }: MoreActionsSheetProps) {
     if (!target) return null;
 
-    const mine = target.isMine === true;
-
-    const items = mine
+    const items = isMine
         ? [
               { label: "투두리스트 추가", onClick: () => {} },
               { label: "루틴 추가", onClick: () => {} },
