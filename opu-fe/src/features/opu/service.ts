@@ -1,45 +1,75 @@
-import { LIKE, OPU } from "@/mocks/api/db/opu.db";
-import { OpuCardModel } from "./domain";
-import { toOpuCardModelFromEntity } from "./mappers";
-import { listBlockedOpu } from "@/mocks/api/handler/blockedOpu";
-import { BlockedJoin } from "../blocked-opu/services";
+import {
+    OpuListFilterRequest,
+    OpuListPage,
+    OpuSummaryResponse,
+} from "./domain";
+import { toOpuCardModelFromSummary } from "./mappers";
+import { apiClient } from "@/lib/apiClient";
+import { ApiResponse, PageResponse } from "@/types/api";
+import { extractErrorMessage } from "@/utils/api-helpers";
 
-// 전체 OPU + 내 찜 여부
-export async function fetchOpuCardsByMember(
-    memberId: number
-): Promise<OpuCardModel[]> {
-    const likedSet = new Set(
-        LIKE.filter((l) => l.member_id === memberId).map((l) => l.opu_id)
-    );
+type FetchOpuListParams = {
+    page?: number;
+    size?: number;
+    filter?: OpuListFilterRequest;
+};
 
-    return OPU.map((o) => toOpuCardModelFromEntity(o, likedSet.has(o.id)));
+// 공유 OPU 목록 조회
+export async function fetchSharedOpuList({
+    page = 0,
+    size = 20,
+    filter,
+}: FetchOpuListParams = {}): Promise<OpuListPage> {
+    try {
+        const res = await apiClient.get<
+            ApiResponse<PageResponse<OpuSummaryResponse>>
+        >("/opus", {
+            params: {
+                ...filter,
+                page,
+                size,
+            },
+        });
+
+        const pageData = res.data.data;
+
+        return {
+            ...pageData,
+            content: pageData.content.map(toOpuCardModelFromSummary),
+        };
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "공유 OPU 목록을 불러오지 못했어요.")
+        );
+    }
 }
 
-// 공유 OPU
-export async function fetchSharedOpuCardsByMember(
-    memberId: number
-): Promise<OpuCardModel[]> {
-    const likedSet = new Set(
-        LIKE.filter((l) => l.member_id === memberId).map((l) => l.opu_id)
-    );
+// 내가 만든 OPU 목록
+export async function fetchMyOpuList({
+    page = 0,
+    size = 20,
+    filter,
+}: FetchOpuListParams = {}): Promise<OpuListPage> {
+    try {
+        const res = await apiClient.get<
+            ApiResponse<PageResponse<OpuSummaryResponse>>
+        >("/opus/my", {
+            params: {
+                ...filter,
+                page,
+                size,
+            },
+        });
 
-    const blockedRows = listBlockedOpu("") as BlockedJoin[];
-    const blockedSet = new Set(blockedRows.map((b) => b.opu_id));
+        const pageData = res.data.data;
 
-    return OPU.filter((o) => o.is_shared === "Y")
-        .filter((o) => !blockedSet.has(o.id))
-        .map((o) => toOpuCardModelFromEntity(o, likedSet.has(o.id)));
-}
-
-// 내가 만든 OPU
-export async function fetchMyOpuCards(
-    memberId: number
-): Promise<OpuCardModel[]> {
-    const likedSet = new Set(
-        LIKE.filter((l) => l.member_id === memberId).map((l) => l.opu_id)
-    );
-
-    return OPU.filter((o) => o.member_id === memberId).map((o) =>
-        toOpuCardModelFromEntity(o, likedSet.has(o.id))
-    );
+        return {
+            ...pageData,
+            content: pageData.content.map(toOpuCardModelFromSummary),
+        };
+    } catch (err) {
+        throw new Error(
+            extractErrorMessage(err, "내 OPU 목록을 불러오지 못했어요.")
+        );
+    }
 }

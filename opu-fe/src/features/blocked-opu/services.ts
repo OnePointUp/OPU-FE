@@ -1,7 +1,7 @@
 import { OpuCardModel } from "@/features/opu/domain";
-import { BlockedOpuSummaryDto, PageResponse } from "./types";
+import { BlockedOpuSummaryDto } from "./types";
 import { apiClient } from "@/lib/apiClient";
-import { ApiResponse } from "@/types/api";
+import { ApiResponse, PageResponse } from "@/types/api";
 import { toBlockedOpuCard } from "./mapper";
 import { extractErrorMessage } from "@/utils/api-helpers";
 

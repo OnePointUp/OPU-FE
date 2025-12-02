@@ -17,21 +17,21 @@ export default function SharedOpuList({
     contextType,
 }: Props) {
     const cardList: OpuCardModel[] = loading
-        ? Array.from({ length: 4 }).map((_, idx) => ({
+        ? Array.from({ length: 6 }).map((_, idx) => ({
               id: -idx - 1,
               title: "",
               emoji: "",
               categoryId: 0,
               timeLabel: "",
-              liked: false,
+              isLiked: false,
           }))
         : items;
 
     if (!loading && items.length === 0) {
         const emptyMessage =
             contextType === "my"
-                ? "내가 만든 OPU가 없습니다"
-                : "공유된 OPU가 없습니다";
+                ? `내가 만든 OPU가 없습니다.\nOPU를 등록해보세요!`
+                : "공유된 OPU가 없습니다.";
 
         return (
             <div

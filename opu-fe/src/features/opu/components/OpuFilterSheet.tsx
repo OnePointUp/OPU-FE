@@ -3,7 +3,7 @@
 import { Icon } from "@iconify/react";
 import BottomSheet from "@/components/common/BottomSheet";
 import { CATEGORY_MAP, type OpuEntity } from "@/features/opu/domain";
-import { TIME_OPTIONS } from "../utils/time";
+import { TIME_OPTIONS } from "../domain";
 
 type FilterMode = "time" | "category";
 
