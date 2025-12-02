@@ -5,9 +5,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore, type AuthMember } from "@/stores/useAuthStore";
 import { KakaoLoginResponse } from "../types";
 import { requestKakaoLogin } from "../services";
+import { toastError } from "@/lib/toast";
 
 function applyKakaoAuth(data: KakaoLoginResponse) {
     const token = data.token;
+
     if (!token?.accessToken || !token.refreshToken) {
         return;
     }
@@ -63,6 +65,7 @@ export function useKakaoCallback() {
                 }
             } catch (error) {
                 console.error("카카오 로그인 처리 실패:", error);
+                toastError("로그인 처리 중 오류가 발생했습니다.");
                 router.replace("/welcome");
             }
         };
