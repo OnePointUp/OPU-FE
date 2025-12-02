@@ -31,7 +31,7 @@ export function useProfileEdit() {
         profileImageUrl,
         file,
         handlePickImage,
-        setProfileImgUrl,
+        setProfileImageUrl,
         setFile,
     } = useProfileImagePicker();
 
@@ -42,7 +42,7 @@ export function useProfileEdit() {
                 setProfile(data);
                 setNickname(data.nickname ?? "");
                 setBio(data.bio ?? "");
-                setProfileImgUrl(data.profileImageUrl ?? "");
+                setProfileImageUrl(data.profileImageUrl ?? "");
                 setFile(null);
             } catch (e) {
                 console.error("프로필 로드 실패", e);
@@ -52,7 +52,7 @@ export function useProfileEdit() {
             }
         };
         load();
-    }, [setProfileImgUrl, setFile]);
+    }, [setProfileImageUrl, setFile]);
 
     const handleBlurNickname = useCallback(async () => {
         if (!profile) return;
@@ -83,28 +83,30 @@ export function useProfileEdit() {
         bio.length <= INTRO_MAX &&
         !dupError;
 
+    const handleDeleteImage = useCallback(() => {
+        setProfileImageUrl("");
+        setFile(null);
+    }, [setProfileImageUrl, setFile]);
+
     const handleSave = useCallback(async () => {
         if (!canSubmit) return;
 
         try {
             setSaving(true);
 
-            let finalProfileImageUrl: string | null = profileImageUrl || null;
+            let finalProfileImageUrl: string | null = profileImageUrl;
 
-            // 새 파일 선택된 경우에만 S3 업로드
             if (file) {
                 const mime = file.type || "image/jpeg";
                 const ext = mime.startsWith("image/")
                     ? mime.split("/")[1] || "jpeg"
                     : "jpeg";
 
-                // presigned URL 발급
                 const { uploadUrl, finalUrl } =
                     await getProfileImagePresignedUrl(ext);
 
                 const contentType = `image/${ext}`;
 
-                // S3 업로드
                 const uploadRes = await fetch(uploadUrl, {
                     method: "PUT",
                     body: file,
@@ -117,15 +119,13 @@ export function useProfileEdit() {
                     throw new Error("이미지 업로드 실패");
                 }
 
-                // CloudFront 최종 URL 저장
                 finalProfileImageUrl = finalUrl;
             }
 
-            // 프로필 업데이트
             await editProfile({
                 nickname: nickname.trim(),
                 bio,
-                profileImageUrl: finalProfileImageUrl,
+                profileImageUrl: finalProfileImageUrl ?? "",
             });
 
             toastSuccess("프로필 수정이 완료되었습니다!");
@@ -150,6 +150,7 @@ export function useProfileEdit() {
         setNickname,
         setBio,
         handleBlurNickname,
+        handleDeleteImage,
         handlePickImage,
         handleSave,
     };

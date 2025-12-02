@@ -6,8 +6,10 @@ import { Icon } from "@iconify/react";
 
 type Props = {
     nickname: string;
-    previewUrl?: string;
+    previewUrl?: string | null;
     onPick: (file: File) => void;
+    canDelete?: boolean;
+    onClickDelete?: () => void;
     className?: string;
 };
 
@@ -15,12 +17,16 @@ export default function ProfileAvatarPicker({
     nickname,
     previewUrl,
     onPick,
+    canDelete = false,
+    onClickDelete,
     className = "",
 }: Props) {
     const fileRef = useRef<HTMLInputElement>(null);
 
     return (
-        <section className={`w-full flex justify-center mb-6 ${className}`}>
+        <section
+            className={`w-full flex flex-col items-center justify-center mb-6 ${className}`}
+        >
             <div className="relative inline-block">
                 <div className="size-22 overflow-hidden rounded-full border border-[var(--color-super-light-gray)] bg-[var(--background)] relative">
                     {previewUrl ? (
@@ -61,6 +67,17 @@ export default function ProfileAvatarPicker({
                     />
                 </div>
             </div>
+
+            {canDelete && onClickDelete && (
+                <button
+                    type="button"
+                    className="mt-2 underline text-[var(--color-light-gray)] underline-offset-2 hover:underline"
+                    style={{ fontSize: "var(--text-mini)" }}
+                    onClick={onClickDelete}
+                >
+                    프로필 사진 삭제
+                </button>
+            )}
 
             <input
                 ref={fileRef}
