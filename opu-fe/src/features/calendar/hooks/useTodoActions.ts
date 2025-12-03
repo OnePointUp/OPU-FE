@@ -85,14 +85,19 @@ export function useTodoActions(
   const handleAdd = () => {
     if (!selectedDay) return;
 
-    const newId =
-      selectedDay.todos.length > 0
-        ? Math.max(...selectedDay.todos.map((t) => t.id)) + 1
-        : 1;
+    const newId = Date.now(); // number + 고유성 보장
 
     updateDay(selectedDay.date, (day) => ({
       ...day,
-      todos: sortTodos([...day.todos, { id: newId, title: "", done: false, time: null }]),
+      todos: sortTodos([
+        ...day.todos,
+        {
+          id: newId,
+          title: "",
+          done: false,
+          time: null,
+        },
+      ]),
     }));
 
     setEditingTodoId(newId);

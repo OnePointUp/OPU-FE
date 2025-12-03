@@ -33,7 +33,6 @@ export default function CalendarPage() {
     handleConfirm,
   } = useCalendarCore();
 
-  /** 높이 관련 훅 (UI) */
   const {
     daySelectorRef,
     cellHeight,
@@ -43,14 +42,23 @@ export default function CalendarPage() {
     todoHeight,
   } = useCalendarLayout(calendarMatrix.length);
 
-  /** 날짜 선택 시: collapse */
+  /** 날짜 클릭 시 */
   const handleSelectDay = (day: DailyTodoStats | null) => {
     if (!day) return;
+
+    // 선택된 날짜 설정
     selectDay(day);
+
+    // 🔥 누락되었던 year/month 갱신 로직 복원
+    const d = new Date(day.date);
+    setYear(d.getFullYear());
+    setMonth(d.getMonth() + 1);
+
+    // 캘린더 접힘
     setCellHeight(collapsedHeight);
   };
 
-  /** Todo 추가 시: collapse */
+  /** Todo 추가 + collapse */
   const handleAddTodo = () => {
     handleAdd();
     setCellHeight(collapsedHeight);
@@ -65,7 +73,7 @@ export default function CalendarPage() {
           paddingRight: "max(1rem, env(safe-area-inset-right))",
         }}
       >
-        {/* DaySelector */}
+        {/* 날짜 선택 영역 */}
         <div ref={daySelectorRef} className="shrink-0 mb-3">
           <DaySelector
             year={year}
@@ -92,9 +100,8 @@ export default function CalendarPage() {
           />
         </div>
 
-        {/* Calendar & Todo */}
+        {/* 달력 + TodoList */}
         <div className="flex-1 flex flex-col min-h-0">
-          {/* 드래그 캘린더 */}
           <CalendarContainer
             cellHeight={cellHeight}
             setCellHeight={setCellHeight}
@@ -109,7 +116,6 @@ export default function CalendarPage() {
             />
           </CalendarContainer>
 
-          {/* TodoList 영역 */}
           <div
             className="transition-opacity duration-300"
             style={{

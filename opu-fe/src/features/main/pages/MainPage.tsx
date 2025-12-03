@@ -8,8 +8,12 @@ import { useCalendarCore } from "@/features/calendar/hooks/useCalendarCore";
 
 export default function MainPage() {
   const {
+    year,
+    month,
     selectedDay,
     editingTodoId,
+    setYear,
+    setMonth,
     selectDay,
     handleToggle,
     handleEdit,
@@ -24,7 +28,12 @@ export default function MainPage() {
         {/* 캘린더 */}
         <Calendar
           selectedDay={selectedDay}
-          onSelectDay={selectDay}
+          onSelectDay={(day) => {
+            selectDay(day);
+            const d = new Date(day.date);
+            setYear(d.getFullYear());
+            setMonth(d.getMonth() + 1);
+          }}
         />
 
         {/* TodoList */}
