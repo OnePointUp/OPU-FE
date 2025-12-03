@@ -121,7 +121,6 @@ export default function OpuListPage({
                 onClose={handleCloseMore}
                 target={selectedItem}
                 isMine={isMine}
-                onEdit={handleEditSelected}
                 onRequestBlock={() => {
                     if (!selectedItem) return;
                     setBlockTargetId(selectedItem.id);
@@ -233,7 +232,6 @@ type MoreActionsSheetProps = {
     onClose: () => void;
     target?: OpuCardModel;
     isMine: boolean;
-    onEdit: () => void;
     onRequestBlock: () => void;
     onAddTodo: () => void;
     onToggleShare?: () => void;

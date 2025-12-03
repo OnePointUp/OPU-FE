@@ -377,7 +377,6 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         handleShareToggle,
 
         // 삭제
-        // 차단
         deleteTargetId,
         setDeleteTargetId,
         handleDeleteSelected,
