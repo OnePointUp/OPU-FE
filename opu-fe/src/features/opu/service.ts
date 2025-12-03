@@ -35,7 +35,7 @@ export async function fetchSharedOpuList({
         };
     } catch (err: unknown) {
         throw new Error(
-            extractErrorMessage(err, "공유 OPU 목록을 불러오지 못했어요.")
+            extractErrorMessage(err, "공유 OPU 목록을 불러오지 못했어요")
         );
     }
 }
@@ -65,7 +65,7 @@ export async function fetchMyOpuList({
         };
     } catch (err) {
         throw new Error(
-            extractErrorMessage(err, "내 OPU 목록을 불러오지 못했어요.")
+            extractErrorMessage(err, "내 OPU 목록을 불러오지 못했어요")
         );
     }
 }
@@ -95,7 +95,7 @@ export async function fetchLikedOpuList({
         };
     } catch (err: unknown) {
         throw new Error(
-            extractErrorMessage(err, "찜한 OPU 목록을 불러오지 못했어요.")
+            extractErrorMessage(err, "찜한 OPU 목록을 불러오지 못했어요")
         );
     }
 }
@@ -193,4 +193,13 @@ export async function toggleOpuShare(
     }
 
     return shareOpu(opuId);
+}
+
+/* ==== OPU 삭제 ===== */
+export async function deleteMyOpu(opuId: number): Promise<void> {
+    try {
+        await apiClient.delete(`/opus/${opuId}`);
+    } catch (err: unknown) {
+        throw new Error(extractErrorMessage(err, "OPU 삭제에 실패했어요"));
+    }
 }

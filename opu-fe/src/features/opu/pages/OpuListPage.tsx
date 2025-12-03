@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import SearchBar from "@/components/common/SearchBar";
 import BottomSheet from "@/components/common/BottomSheet";
-import ActionList from "@/components/common/ActionList";
+import ActionList, { ActionItem } from "@/components/common/ActionList";
 import OpuFilterSheet from "@/features/opu/components/OpuFilterSheet";
 import OpuToolbar from "@/features/opu/components/OpuToolbar";
 import OpuList from "../components/OpuList";
@@ -65,9 +65,13 @@ export default function OpuListPage({
         setBlockTargetId,
         handleAddTodoSelected,
         handleShareToggle,
+        deleteTargetId,
+        setDeleteTargetId,
+        handleDeleteSelected,
     } = useOpuListPage({ contextType });
 
     const [showBlockModal, setShowBlockModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     return (
         <section>
@@ -121,6 +125,7 @@ export default function OpuListPage({
                 onRequestBlock={() => {
                     if (!selectedItem) return;
                     setBlockTargetId(selectedItem.id);
+                    setShowBlockModal(true);
                 }}
                 onAddTodo={() => {
                     if (!selectedItem) return;
@@ -133,6 +138,14 @@ export default function OpuListPage({
                                   selectedItem.id,
                                   selectedItem.isShared ?? false
                               )
+                        : undefined
+                }
+                onDelete={
+                    selectedItem
+                        ? () => {
+                              setDeleteTargetId(selectedItem.id);
+                              setShowDeleteModal(true);
+                          }
                         : undefined
                 }
             />
@@ -171,6 +184,19 @@ export default function OpuListPage({
                     setShowBlockModal(false);
                 }}
                 onCancel={() => setShowBlockModal(false)}
+            />
+
+            {/* 삭제 ConfirmModal */}
+            <ConfirmModal
+                isOpen={showDeleteModal}
+                message={`이 OPU를 삭제할까요?\n삭제하면 되돌릴 수 없어요.`}
+                onConfirm={() => {
+                    if (deleteTargetId != null) {
+                        handleDeleteSelected(deleteTargetId);
+                    }
+                    setShowDeleteModal(false);
+                }}
+                onCancel={() => setShowDeleteModal(false)}
             />
         </section>
     );
@@ -211,6 +237,7 @@ type MoreActionsSheetProps = {
     onRequestBlock: () => void;
     onAddTodo: () => void;
     onToggleShare?: () => void;
+    onDelete?: () => void;
 };
 
 function MoreActionsSheet({
@@ -221,28 +248,52 @@ function MoreActionsSheet({
     onRequestBlock,
     onAddTodo,
     onToggleShare,
+    onDelete,
 }: MoreActionsSheetProps) {
     if (!target) return null;
 
-    const shareAction =
-        isMine && onToggleShare
+    const items: ActionItem[] = [
+        {
+            label: "투두리스트 추가",
+            onClick: () => {
+                onAddTodo();
+                onClose();
+            },
+        },
+
+        { label: "루틴 추가", onClick: () => {} },
+    ];
+
+    if (isMine && onToggleShare) {
+        items.push({
+            label: target.isShared ? "비공개로 전환" : "공개하기",
+            onClick: () => {
+                onToggleShare();
+                onClose();
+            },
+            primary: true,
+        });
+    }
+
+    items.push(
+        isMine
             ? {
-                  label: target.isShared ? "비공개로 전환" : "공개하기",
+                  label: "삭제",
+                  danger: true,
                   onClick: () => {
-                      onToggleShare();
+                      onDelete?.();
                       onClose();
                   },
               }
-            : null;
-
-    const items = [
-        { label: "투두리스트 추가", onClick: onAddTodo },
-        { label: "루틴 추가", onClick: () => {} },
-        ...(shareAction ? [shareAction] : []),
-        isMine
-            ? { label: "삭제", danger: true, onClick: () => {} }
-            : { label: "차단하기", danger: true, onClick: onRequestBlock },
-    ];
+            : {
+                  label: "차단하기",
+                  danger: true,
+                  onClick: () => {
+                      onRequestBlock();
+                      onClose();
+                  },
+              }
+    );
 
     return (
         <BottomSheet open={open} onClose={onClose}>

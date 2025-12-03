@@ -21,6 +21,7 @@ import {
     fetchLikedOpuList,
     addTodoByOpu,
     toggleOpuShare,
+    deleteMyOpu,
 } from "../service";
 import { toastError, toastSuccess } from "@/lib/toast";
 import { blockOpu } from "@/features/blocked-opu/services";
@@ -63,6 +64,9 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
     const [sheetId, setSheetId] = useState<number | null>(null);
 
     const [blockTargetId, setBlockTargetId] = useState<number | null>(null);
+
+    const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     const [sortOption, setSortOption] = useState<SortOption>("liked");
     const [showSortSheet, setShowSortSheet] = useState(false);
@@ -280,6 +284,25 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         }
     };
 
+    const handleDeleteSelected = async (opuId: number) => {
+        if (deleteLoading) return;
+        setDeleteLoading(true);
+
+        try {
+            await deleteMyOpu(opuId);
+
+            // UI에서 제거
+            setData((prev) => prev.filter((item) => item.id !== opuId));
+
+            toastSuccess("OPU가 삭제되었어요.");
+        } catch (e) {
+            console.error(e);
+            toastError("OPU를 삭제하지 못했어요.");
+        } finally {
+            setDeleteLoading(false);
+        }
+    };
+
     const handleNextPage = () => {
         if (pageMeta?.hasNext) {
             setPage((prev) => prev + 1);
@@ -345,12 +368,18 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         // 투두리스트 추가
         handleAddTodoSelected,
 
-        // 차단하기
+        // 차단
         blockTargetId,
         setBlockTargetId,
         handleBlockSelected,
 
         // 공개 설정 토글
         handleShareToggle,
+
+        // 삭제
+        // 차단
+        deleteTargetId,
+        setDeleteTargetId,
+        handleDeleteSelected,
     };
 }
