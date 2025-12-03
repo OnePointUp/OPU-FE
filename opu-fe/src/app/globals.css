@@ -244,6 +244,27 @@
         /* padding-left: 13px; */
     }
 
+    .input-box-2 {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 355px;
+        height: 50px;
+
+        border: 1px solid var(--color-input-border);
+        border-radius: 12px;
+
+        background-color: #ffffff;
+        color: var(--color-dark-navy);
+
+        font-weight: var(--weight-regular);
+        font-size: var(--text-body);
+        line-height: 1.5;
+        padding-left: 13px;
+    }
+
+    .input-box--textarea::placeholder,
+    .input-box-2::placeholder,
     .input-box::placeholder {
         color: var(--color-placeholder);
         font-size: 13px;
