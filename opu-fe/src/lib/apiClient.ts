@@ -129,7 +129,8 @@ apiClient.interceptors.response.use(
         const isAuthPath =
             url.includes("/auth/login") ||
             url.includes("/auth/register") ||
-            url.includes("/auth/password") ||
+            url.includes("/auth/find-pw") ||
+            url.includes("/auth/password/check") ||
             url.includes("/auth/refresh");
 
         if (isAuthPath) {
@@ -171,6 +172,11 @@ apiClient.interceptors.response.use(
         } catch (refreshError) {
             processQueue(refreshError, null);
             clearAuth();
+
+            if (typeof window !== "undefined") {
+                window.location.href = "/welcome";
+            }
+
             return Promise.reject(refreshError);
         } finally {
             isRefreshing = false;

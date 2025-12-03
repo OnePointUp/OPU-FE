@@ -1,14 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import UserInfo from "@/features/user/components/UserInfo";
-import SettingsList from "@/features/user/components/SettingsList";
+import MemberInfo from "@/features/member/components/MemberInfo";
+import SettingsList from "@/features/member/components/SettingsList";
 import { useMyPageMenuData } from "../constants/myPageMenu";
 import OpuManagement from "../components/OpuManagement";
 import { useMyProfile } from "../hooks/useMyProfile";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import { useLogout } from "../hooks/useLogout";
 import { useState } from "react";
+import SettingsSection from "./SettingsSection";
 
 export default function MyPageScreen() {
     const router = useRouter();
@@ -31,7 +32,7 @@ export default function MyPageScreen() {
 
     return (
         <section>
-            <UserInfo
+            <MemberInfo
                 nickname={profile?.nickname ?? ""}
                 email={profile?.email ?? ""}
                 bio={profile?.bio}
@@ -49,7 +50,7 @@ export default function MyPageScreen() {
             <div className="mt-5 border-t border-[#F3F5F8]" />
 
             <div className="w-full mt-1.5">
-                <SettingsList items={myPageMenuItems} />
+                <SettingsSection items={myPageMenuItems} />
             </div>
 
             <ConfirmModal

@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toastError } from "@/lib/toast";
 import { verifyCurrentPassword } from "../services";
+import { extractErrorMessage } from "@/utils/api-helpers";
 
 const VERIFIED_KEY = "pw-verified";
 const CUR_CACHE_KEY = "pw-cur-cache";
@@ -25,6 +26,7 @@ export function useVerifyCurrentPassword() {
 
         try {
             setLoading(true);
+
             await verifyCurrentPassword(cur);
 
             if (typeof window !== "undefined") {
@@ -34,11 +36,10 @@ export function useVerifyCurrentPassword() {
 
             router.push("/reset-password?mode=change");
         } catch (e: unknown) {
-            console.error(e);
-            const msg =
-                e instanceof Error
-                    ? e.message
-                    : "비밀번호를 확인할 수 없습니다. 다시 시도해 주세요.";
+            const msg = extractErrorMessage(
+                e,
+                "비밀번호를 확인할 수 없습니다. 다시 시도해 주세요"
+            );
             toastError(msg);
         } finally {
             setLoading(false);

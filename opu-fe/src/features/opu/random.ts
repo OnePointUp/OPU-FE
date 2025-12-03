@@ -1,7 +1,7 @@
 import { OPU, LIKE } from "@/mocks/api/db/opu.db";
 import { TIME_OPTIONS, type OpuCardModel, type TimeCode } from "./domain";
 import { apiClient } from "@/lib/apiClient";
-import { fetchProfileSummary } from "../user/services";
+import { fetchProfileSummary } from "../member/services";
 
 export type RandomScope = "ALL" | "LIKED";
 

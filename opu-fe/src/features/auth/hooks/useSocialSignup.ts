@@ -6,7 +6,7 @@ import { toastSuccess, toastError } from "@/lib/toast";
 import { AuthMember, useAuthStore } from "@/stores/useAuthStore";
 import { apiClient } from "@/lib/apiClient";
 import type { ApiResponse } from "@/types/api";
-import { useProfileImagePicker } from "@/features/user/hooks/useProfileImagePicker";
+import { useProfileImagePicker } from "@/features/member/hooks/useProfileImagePicker";
 import { useNicknameField } from "./useNicknameField";
 import { useAgreements } from "./useAgreements";
 

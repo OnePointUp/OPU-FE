@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { fetchProfileSummary } from "../services";
-import { UserProfileSummary } from "../types";
+import { MemberProfileSummary } from "../types";
 
 export function useMyProfile() {
-    const [profile, setProfile] = useState<UserProfileSummary | null>(null);
+    const [profile, setProfile] = useState<MemberProfileSummary | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

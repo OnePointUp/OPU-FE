@@ -12,7 +12,7 @@ type Props = {
     loading?: boolean;
 };
 
-export default function UserInfo({
+export default function MemberInfo({
     nickname,
     email,
     bio = "아직 자기소개가 없어요 😊",

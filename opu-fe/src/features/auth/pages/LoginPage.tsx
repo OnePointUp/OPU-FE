@@ -66,7 +66,7 @@ export default function LoginPage() {
                 <div className="text-center text-[length:var(--text-caption)] text-[color:var(--color-light-gray)] mt-[15px]">
                     <span
                         className="cursor-pointer hover:underline"
-                        onClick={() => router.push("/welcome")}
+                        onClick={() => router.push("/signup")}
                     >
                         회원가입
                     </span>

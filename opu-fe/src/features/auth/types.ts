@@ -30,10 +30,6 @@ export type LoginPayload = {
     password: string;
 };
 
-export type PasswordCheckPayload = {
-    password: string;
-};
-
 export type ResetPasswordByTokenPayload = {
     token: string;
     newPassword: string;

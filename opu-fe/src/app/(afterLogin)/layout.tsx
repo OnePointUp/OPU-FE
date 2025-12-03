@@ -12,7 +12,7 @@ export default function AfterLoginLayout({
     const pathname = usePathname();
 
     const HIDDEN_MENU_PATHS = [
-        "/me/password",
+        "/me/verify-password",
         "/me/profile",
         "/me/notification",
         "/notification",
