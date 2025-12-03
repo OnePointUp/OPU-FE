@@ -240,12 +240,12 @@
         font-weight: var(--weight-regular);
         font-size: var(--text-body);
         line-height: 1.5;
-        padding-left: 15px;
+        padding-left: 13px;
     }
 
     .input-box::placeholder {
         color: var(--color-placeholder);
-        font-size: var(--text-sub);
+        font-size: 13px;
         font-weight: var(--weight-medium);
     }
 
@@ -673,7 +673,7 @@
         justify-content: center;
         box-shadow: 0px 0.5px 20px rgba(0, 0, 0, 0.2);
         transition: transform 0.2s ease;
-        pointer-events: auto; 
+        pointer-events: auto;
     }
 
     .plus-button:active {
@@ -857,7 +857,9 @@
     }
 
     /* 모바일 터치 하이라이트 제거 */
-    html, body, * {
-    -webkit-tap-highlight-color: transparent !important;
+    html,
+    body,
+    * {
+        -webkit-tap-highlight-color: transparent !important;
     }
 }
