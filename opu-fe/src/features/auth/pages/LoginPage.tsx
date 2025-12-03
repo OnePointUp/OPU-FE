@@ -22,15 +22,15 @@ export default function LoginPage() {
     } = useLogin();
 
     return (
-        <section className="pt-8">
-            <main className="flex flex-col items-center">
+        <section className="py-3">
+            <div className="flex flex-col items-center px-2">
                 {/* 로고 */}
-                <div className="flex justify-center">
+                <div className="flex justify-center mb-6">
                     <Image
                         src="/images/cabit_logo3.png"
                         alt="OPU mascot"
-                        width={120}
-                        height={120}
+                        width={130}
+                        height={130}
                         priority
                     />
                 </div>
@@ -44,41 +44,42 @@ export default function LoginPage() {
                         value={email}
                         onChange={handleEmailChange}
                         error={emailError}
+                        placeholder="이메일"
                     />
 
                     <PasswordInput
                         label="비밀번호"
                         value={password}
                         onChange={setPassword}
-                        placeholder="비밀번호를 입력하세요"
-                    />
-
-                    <OpuActionButton
-                        label="로그인"
-                        disabled={!canSubmit}
-                        loading={loading}
-                        onClick={handleSubmit}
-                        positionFixed={false}
+                        placeholder="비밀번호"
                     />
                 </form>
+            </div>
 
-                {/* 하단 링크 */}
-                <div className="text-center text-[length:var(--text-caption)] text-[color:var(--color-light-gray)] mt-[15px]">
-                    <span
-                        className="cursor-pointer hover:underline"
-                        onClick={() => router.push("/signup")}
-                    >
-                        회원가입
-                    </span>
-                    {"  |  "}
-                    <span
-                        className="cursor-pointer hover:underline"
-                        onClick={() => router.push("/find-pw")}
-                    >
-                        비밀번호 찾기
-                    </span>
-                </div>
-            </main>
+            <OpuActionButton
+                label="로그인"
+                disabled={!canSubmit}
+                loading={loading}
+                onClick={handleSubmit}
+                positionFixed={false}
+            />
+
+            {/* 하단 링크 */}
+            <div className="text-center text-[length:var(--text-caption)] text-[color:var(--color-light-gray)] mt-[15px]">
+                <span
+                    className="cursor-pointer hover:underline"
+                    onClick={() => router.push("/signup")}
+                >
+                    회원가입
+                </span>
+                {"  |  "}
+                <span
+                    className="cursor-pointer hover:underline"
+                    onClick={() => router.push("/find-pw")}
+                >
+                    비밀번호 찾기
+                </span>
+            </div>
         </section>
     );
 }
