@@ -5,6 +5,7 @@ export type MemberProfileSummary = {
     favoriteOpuCount: number;
     myOpuCount: number;
     bio: string;
+    authProvider: "local" | "kakao" | string;
 };
 
 export type MemberProfileDetail = {

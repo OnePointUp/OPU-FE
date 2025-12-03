@@ -7,12 +7,23 @@ type LinkItem = { label: string; href: string; disabled?: boolean };
 type ActionItem = { label: string; onClick: () => void; disabled?: boolean };
 type Item = LinkItem | ActionItem;
 
-export default function SettingsSection({ items }: { items: Item[] }) {
+export default function SettingsSection({
+    items,
+    loading,
+}: {
+    items: Item[];
+    loading?: boolean;
+}) {
     const router = useRouter();
 
     const handleWithdrawClick = () => {
+        if (loading) return;
         router.push("/me/verify-password?mode=withdraw");
     };
+
+    if (loading) {
+        return null;
+    }
 
     return (
         <section>
@@ -28,12 +39,12 @@ export default function SettingsSection({ items }: { items: Item[] }) {
                     />
                 ))}
 
-                <div className="border-t border-[#F3F5F8] my-2" />
+                <div className="border-t border-[#F3F5F8] mt-1" />
 
                 <button
                     type="button"
                     onClick={handleWithdrawClick}
-                    className="h-12 w-full mx-1 text-left text-[var(--color-light-gray)] opacity-70 hover:opacity-90 focus:opacity-90 focus:outline-none"
+                    className="h-12 w-full text-left text-[var(--color-light-gray)] opacity-70 hover:opacity-90 focus:opacity-90 focus:outline-none"
                     style={{ fontSize: "var(--text-caption)" }}
                 >
                     회원 탈퇴
