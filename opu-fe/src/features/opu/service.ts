@@ -1,10 +1,15 @@
-import { FetchOpuListParams, OpuListPage, OpuSummaryResponse } from "./domain";
+import {
+    buildOpuTodoPayload,
+    FetchOpuListParams,
+    OpuListPage,
+    OpuSummaryResponse,
+} from "./domain";
 import { toOpuCardModelFromSummary } from "./mappers";
 import { apiClient } from "@/lib/apiClient";
 import { ApiResponse, PageResponse } from "@/types/api";
 import { extractErrorMessage } from "@/utils/api-helpers";
 
-// 공유 OPU 목록 조회
+/* ==== 공유 OPU 목록 조회 ===== */
 export async function fetchSharedOpuList({
     page = 0,
     size = 20,
@@ -34,7 +39,7 @@ export async function fetchSharedOpuList({
     }
 }
 
-// 내가 만든 OPU 목록 조회
+/* ==== 내가 만든 OPU 목록 조회 ===== */
 export async function fetchMyOpuList({
     page = 0,
     size = 20,
@@ -64,7 +69,7 @@ export async function fetchMyOpuList({
     }
 }
 
-// 찜한 OPU 목록 조회
+/* ==== 찜한 OPU 목록 조회 ===== */
 export async function fetchLikedOpuList({
     page = 0,
     size = 20,
@@ -94,7 +99,7 @@ export async function fetchLikedOpuList({
     }
 }
 
-// 찜 등록
+/* ==== 찜 등록 ===== */
 export async function likeOpu(opuId: number) {
     try {
         await apiClient.post(`/opus/${opuId}/favorite`);
@@ -105,7 +110,7 @@ export async function likeOpu(opuId: number) {
     }
 }
 
-// 찜 해제
+/* ==== 찜 해제 ===== */
 export async function unlikeOpu(opuId: number) {
     try {
         await apiClient.delete(`/opus/${opuId}/favorite`);
@@ -116,7 +121,7 @@ export async function unlikeOpu(opuId: number) {
     }
 }
 
-// 찜 토글
+/* ==== 찜 토글 ===== */
 export async function toggleOpuFavorite(
     opuId: number,
     isCurrentlyLiked: boolean
@@ -126,4 +131,19 @@ export async function toggleOpuFavorite(
     }
 
     return likeOpu(opuId);
+}
+
+/* ==== 투두리스트에 OPU 추가 ===== */
+export async function addTodoByOpu(opuId: number) {
+    const payload = buildOpuTodoPayload();
+
+    try {
+        await apiClient.post(`/opu/${opuId}/todo`, payload);
+
+        return { ok: true };
+    } catch (err) {
+        throw new Error(
+            extractErrorMessage(err, "투두리스트 추가에 실패했어요")
+        );
+    }
 }

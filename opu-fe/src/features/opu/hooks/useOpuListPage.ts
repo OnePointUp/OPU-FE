@@ -19,6 +19,7 @@ import {
     fetchMyOpuList,
     fetchSharedOpuList,
     fetchLikedOpuList,
+    addTodoByOpu,
 } from "../service";
 import { toastError, toastSuccess } from "@/lib/toast";
 import { blockOpu } from "@/features/blocked-opu/services";
@@ -234,6 +235,16 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         }
     };
 
+    const handleAddTodoSelected = async (opuId: number) => {
+        try {
+            await addTodoByOpu(opuId);
+            toastSuccess("해당 OPU가 오늘 할 일에 추가됐어요");
+        } catch (e) {
+            console.error(e);
+            toastError("투두리스트에 추가하지 못했어요");
+        }
+    };
+
     const handleNextPage = () => {
         if (pageMeta?.hasNext) {
             setPage((prev) => prev + 1);
@@ -295,6 +306,9 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         handleOpenMore,
         handleCloseMore,
         handleEditSelected,
+
+        // 투두리스트 추가
+        handleAddTodoSelected,
 
         // 차단하기
         blockTargetId,

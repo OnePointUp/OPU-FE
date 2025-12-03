@@ -62,6 +62,7 @@ export default function OpuListPage({
         handleBlockSelected,
         blockTargetId,
         setBlockTargetId,
+        handleAddTodoSelected,
     } = useOpuListPage({ contextType });
 
     const [showBlockModal, setShowBlockModal] = useState(false);
@@ -120,6 +121,11 @@ export default function OpuListPage({
                     setBlockTargetId(selectedItem.id);
                     handleCloseMore();
                     setShowBlockModal(true);
+                }}
+                onAddTodo={() => {
+                    if (!selectedItem) return;
+                    handleAddTodoSelected(selectedItem.id);
+                    handleCloseMore();
                 }}
             />
 
@@ -195,6 +201,7 @@ type MoreActionsSheetProps = {
     isMine: boolean;
     onEdit: () => void;
     onRequestBlock: () => void;
+    onAddTodo: () => void;
 };
 
 function MoreActionsSheet({
@@ -204,18 +211,19 @@ function MoreActionsSheet({
     isMine,
     onEdit,
     onRequestBlock,
+    onAddTodo,
 }: MoreActionsSheetProps) {
     if (!target) return null;
 
     const items = isMine
         ? [
-              { label: "투두리스트 추가", onClick: () => {} },
+              { label: "투두리스트 추가", onClick: onAddTodo },
               { label: "루틴 추가", onClick: () => {} },
               { label: "수정", onClick: onEdit },
               { label: "삭제", danger: true, onClick: () => {} },
           ]
         : [
-              { label: "투두리스트 추가", onClick: () => {} },
+              { label: "투두리스트 추가", onClick: onAddTodo },
               { label: "루틴 추가", onClick: () => {} },
               { label: "차단하기", danger: true, onClick: onRequestBlock },
           ];
