@@ -9,9 +9,11 @@ type PasswordRule = {
 };
 
 type Props = {
+    label: string;
     value: string;
     onChange: (v: string) => void;
     placeholder?: string;
+    error?: string;
     className?: string;
     rules?: PasswordRule[];
     statusLabel?: string;
