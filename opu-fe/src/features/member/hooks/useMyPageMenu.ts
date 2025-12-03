@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { fetchProfileSummary } from "@/features/member/services";
+import { extractErrorMessage } from "@/utils/api-helpers";
 
 type MyPageMenuArgs = {
     onClickLogout: () => void;
@@ -24,10 +25,12 @@ export function useMyPageMenu({ onClickLogout }: MyPageMenuArgs) {
                 if (cancelled) return;
                 setAuthProvider(profile.authProvider);
             } catch (e) {
-                console.error(e);
                 if (!cancelled) {
                     setAuthProvider(null);
                 }
+                throw new Error(
+                    extractErrorMessage(e, "프로필을 불러오지 못했어요")
+                );
             } finally {
                 if (!cancelled) {
                     setLoading(false);

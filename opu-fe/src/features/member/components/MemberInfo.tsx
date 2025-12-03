@@ -22,7 +22,6 @@ export default function MemberInfo({
     loading = false,
     authProvider,
 }: Props) {
-    console.log("authProvider: ", authProvider);
     const displayBio =
         bio && bio.trim().length > 0 ? bio : "아직 자기소개가 없어요 😊";
 
