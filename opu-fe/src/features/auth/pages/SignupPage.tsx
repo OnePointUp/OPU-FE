@@ -28,6 +28,19 @@ export default function RegisterEmailPage() {
         handleSubmit,
     } = useSignupEmail();
 
+    const passwordRules = [
+        { label: "영문포함", satisfied: /[a-zA-Z]/.test(password) },
+        { label: "숫자포함", satisfied: /\d/.test(password) },
+        { label: "특수문자포함", satisfied: /[!@#$%^&*]/.test(password) },
+        {
+            label: "8자이상",
+            satisfied: password.length >= 8 && password.length <= 20,
+        },
+    ];
+
+    const matchActive =
+        confirmPassword.length > 0 && !isPwMismatch && password.length > 0;
+
     return (
         <section>
             <EmailField
@@ -40,15 +53,17 @@ export default function RegisterEmailPage() {
                 label="비밀번호"
                 value={password}
                 onChange={setPassword}
+                placeholder="비밀번호를 입력해주세요."
+                rules={passwordRules}
             />
 
             <PasswordInput
                 label="비밀번호 확인"
                 value={confirmPassword}
                 onChange={setConfirmPassword}
-                error={
-                    isPwMismatch ? "일치하지 않는 비밀번호입니다." : undefined
-                }
+                placeholder="비밀번호를 다시 입력해주세요."
+                statusLabel="비밀번호 일치"
+                statusActive={matchActive}
             />
 
             <NicknameField value={nickname} onChange={(v) => setNickname(v)} />
