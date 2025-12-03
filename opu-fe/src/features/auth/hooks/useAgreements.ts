@@ -1,25 +1,18 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { Agreements } from "../types";
 
-export type AgreementsState = {
-    all: boolean;
-    terms: boolean;
-    privacy: boolean;
-    marketing: boolean;
-    notification: boolean;
-};
-
-const DEFAULT_AGREEMENTS: AgreementsState = {
+const DEFAULT_AGREEMENTS: Agreements = {
     all: false,
+    age14: false,
     terms: false,
     privacy: false,
-    marketing: false,
-    notification: false,
+    webPush: false,
 };
 
-export function useAgreements(initial?: Partial<AgreementsState>) {
-    const [agreements, setAgreements] = useState<AgreementsState>({
+export function useAgreements(initial?: Partial<Agreements>) {
+    const [agreements, setAgreements] = useState<Agreements>({
         ...DEFAULT_AGREEMENTS,
         ...initial,
     });
@@ -27,29 +20,27 @@ export function useAgreements(initial?: Partial<AgreementsState>) {
     const handleCheckAll = useCallback((checked: boolean) => {
         setAgreements({
             all: checked,
+            age14: checked,
             terms: checked,
             privacy: checked,
-            marketing: checked,
-            notification: checked,
+            webPush: checked,
         });
     }, []);
 
     const handleCheckItem = useCallback(
-        (key: keyof AgreementsState, checked: boolean) => {
+        (key: keyof Agreements, checked: boolean) => {
             setAgreements((prev) => {
-                const next: AgreementsState = { ...prev, [key]: checked };
+                const next: Agreements = { ...prev, [key]: checked };
                 next.all =
-                    next.terms &&
-                    next.privacy &&
-                    next.marketing &&
-                    next.notification;
+                    next.age14 && next.terms && next.privacy && next.webPush;
                 return next;
             });
         },
         []
     );
 
-    const agreedRequired = agreements.terms && agreements.privacy;
+    const agreedRequired =
+        agreements.age14 && agreements.terms && agreements.privacy;
 
     return {
         agreements,

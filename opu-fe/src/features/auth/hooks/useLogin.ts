@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { login } from "@/features/auth/services";
 import { toastSuccess, toastError } from "@/lib/toast";
 import { validateEmail } from "@/utils/validation";
+import { extractErrorMessage } from "@/utils/api-helpers";
 
 export function useLogin() {
     const router = useRouter();
@@ -35,7 +36,12 @@ export function useLogin() {
             toastSuccess("로그인 완료!");
             router.replace("/");
         } catch (e) {
-            toastError(extractErrorMessage(e, "이메일 또는 비밀번호를 다시 확인해주세요."));
+            toastError(
+                extractErrorMessage(
+                    e,
+                    "이메일 또는 비밀번호를 다시 확인해주세요."
+                )
+            );
         } finally {
             setLoading(false);
         }

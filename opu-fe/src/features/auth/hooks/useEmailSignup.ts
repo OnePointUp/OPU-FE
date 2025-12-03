@@ -37,6 +37,8 @@ export function useSignupEmail() {
     const isPwMismatch =
         confirmPassword.length > 0 && password !== confirmPassword;
 
+    const webPushAgreed = agreements.webPush;
+
     const canSubmit =
         email.trim() &&
         !emailError &&
@@ -57,6 +59,7 @@ export function useSignupEmail() {
                 email: email.trim(),
                 password,
                 nickname: nickname.trim(),
+                webPushAgreed,
             });
 
             toastSuccess("인증용 이메일이 발송되었습니다.");
@@ -70,7 +73,7 @@ export function useSignupEmail() {
         } finally {
             setLoading(false);
         }
-    }, [canSubmit, email, password, nickname, router]);
+    }, [canSubmit, email, password, nickname, webPushAgreed, router]);
 
     return {
         profileImgUrl: profileImageUrl,

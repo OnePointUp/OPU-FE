@@ -18,6 +18,7 @@ export type EmailSignupPayload = {
     email: string;
     password: string;
     nickname: string;
+    webPushAgreed: boolean;
 };
 
 export type EmailVerifyStatusResponse = {
@@ -51,4 +52,12 @@ export type KakaoLoginResponse = {
     providerId?: string;
     token?: KakaoLoginToken;
     member?: AuthMember;
+};
+
+export type Agreements = {
+    all: boolean;
+    age14: boolean;
+    terms: boolean;
+    privacy: boolean;
+    webPush: boolean;
 };

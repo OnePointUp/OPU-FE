@@ -1,45 +1,149 @@
-import { LIKE, OPU } from "@/mocks/api/db/opu.db";
-import { OpuCardModel } from "./domain";
-import { toOpuCardModelFromEntity } from "./mappers";
-import { listBlockedOpu } from "@/mocks/api/handler/blockedOpu";
-import { BlockedJoin } from "../blocked-opu/services";
+import {
+    buildOpuTodoPayload,
+    FetchOpuListParams,
+    OpuListPage,
+    OpuSummaryResponse,
+} from "./domain";
+import { toOpuCardModelFromSummary } from "./mappers";
+import { apiClient } from "@/lib/apiClient";
+import { ApiResponse, PageResponse } from "@/types/api";
+import { extractErrorMessage } from "@/utils/api-helpers";
 
-// 전체 OPU + 내 찜 여부
-export async function fetchOpuCardsByMember(
-    memberId: number
-): Promise<OpuCardModel[]> {
-    const likedSet = new Set(
-        LIKE.filter((l) => l.member_id === memberId).map((l) => l.opu_id)
-    );
+/* ==== 공유 OPU 목록 조회 ===== */
+export async function fetchSharedOpuList({
+    page = 0,
+    size = 20,
+    filter,
+}: FetchOpuListParams = {}): Promise<OpuListPage> {
+    try {
+        const res = await apiClient.get<
+            ApiResponse<PageResponse<OpuSummaryResponse>>
+        >("/opus", {
+            params: {
+                ...filter,
+                page,
+                size,
+            },
+        });
 
-    return OPU.map((o) => toOpuCardModelFromEntity(o, likedSet.has(o.id)));
+        const pageData = res.data.data;
+
+        return {
+            ...pageData,
+            content: pageData.content.map(toOpuCardModelFromSummary),
+        };
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "공유 OPU 목록을 불러오지 못했어요.")
+        );
+    }
 }
 
-// 공유 OPU
-export async function fetchSharedOpuCardsByMember(
-    memberId: number
-): Promise<OpuCardModel[]> {
-    const likedSet = new Set(
-        LIKE.filter((l) => l.member_id === memberId).map((l) => l.opu_id)
-    );
+/* ==== 내가 만든 OPU 목록 조회 ===== */
+export async function fetchMyOpuList({
+    page = 0,
+    size = 20,
+    filter,
+}: FetchOpuListParams = {}): Promise<OpuListPage> {
+    try {
+        const res = await apiClient.get<
+            ApiResponse<PageResponse<OpuSummaryResponse>>
+        >("/opus/my", {
+            params: {
+                ...filter,
+                page,
+                size,
+            },
+        });
 
-    const blockedRows = listBlockedOpu("") as BlockedJoin[];
-    const blockedSet = new Set(blockedRows.map((b) => b.opu_id));
+        const pageData = res.data.data;
 
-    return OPU.filter((o) => o.is_shared === "Y")
-        .filter((o) => !blockedSet.has(o.id))
-        .map((o) => toOpuCardModelFromEntity(o, likedSet.has(o.id)));
+        return {
+            ...pageData,
+            content: pageData.content.map(toOpuCardModelFromSummary),
+        };
+    } catch (err) {
+        throw new Error(
+            extractErrorMessage(err, "내 OPU 목록을 불러오지 못했어요.")
+        );
+    }
 }
 
-// 내가 만든 OPU
-export async function fetchMyOpuCards(
-    memberId: number
-): Promise<OpuCardModel[]> {
-    const likedSet = new Set(
-        LIKE.filter((l) => l.member_id === memberId).map((l) => l.opu_id)
-    );
+/* ==== 찜한 OPU 목록 조회 ===== */
+export async function fetchLikedOpuList({
+    page = 0,
+    size = 20,
+    filter,
+}: FetchOpuListParams = {}): Promise<OpuListPage> {
+    try {
+        const res = await apiClient.get<
+            ApiResponse<PageResponse<OpuSummaryResponse>>
+        >("/opus/favorites", {
+            params: {
+                ...filter,
+                page,
+                size,
+            },
+        });
 
-    return OPU.filter((o) => o.member_id === memberId).map((o) =>
-        toOpuCardModelFromEntity(o, likedSet.has(o.id))
-    );
+        const pageData = res.data.data;
+
+        return {
+            ...pageData,
+            content: pageData.content.map(toOpuCardModelFromSummary),
+        };
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "찜한 OPU 목록을 불러오지 못했어요.")
+        );
+    }
+}
+
+/* ==== 찜 등록 ===== */
+export async function likeOpu(opuId: number) {
+    try {
+        await apiClient.post(`/opus/${opuId}/favorite`);
+
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(extractErrorMessage(err, "OPU를 찜 하지 못했어요"));
+    }
+}
+
+/* ==== 찜 해제 ===== */
+export async function unlikeOpu(opuId: number) {
+    try {
+        await apiClient.delete(`/opus/${opuId}/favorite`);
+
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(extractErrorMessage(err, "OPU를 찜 해제하지 못했어요"));
+    }
+}
+
+/* ==== 찜 토글 ===== */
+export async function toggleOpuFavorite(
+    opuId: number,
+    isCurrentlyLiked: boolean
+) {
+    if (isCurrentlyLiked) {
+        return unlikeOpu(opuId);
+    }
+
+    return likeOpu(opuId);
+}
+
+/* ==== 투두리스트에 OPU 추가 ===== */
+export async function addTodoByOpu(opuId: number) {
+    const payload = buildOpuTodoPayload();
+
+    try {
+        await apiClient.post(`/opu/${opuId}/todo`, payload);
+
+        return { ok: true };
+    } catch (err) {
+        throw new Error(
+            extractErrorMessage(err, "투두리스트 추가에 실패했어요")
+        );
+    }
 }

@@ -1,4 +1,4 @@
-export type BlockedOpuSummaryDto = {
+export type BlockedOpuSummaryResponse = {
     opuId: number;
     emoji: string;
     title: string;
@@ -10,14 +10,4 @@ export type BlockedOpuSummaryDto = {
 
 export type BlockedOpuFilter = {
     q?: string;
-};
-
-export type PageResponse<T> = {
-    totalElements: number;
-    totalPages: number;
-    currentPage: number;
-    pageSize: number;
-    content: T[];
-    hasNext: boolean;
-    hasPrevious: boolean;
 };

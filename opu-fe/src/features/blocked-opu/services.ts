@@ -1,7 +1,7 @@
 import { OpuCardModel } from "@/features/opu/domain";
-import { BlockedOpuSummaryDto, PageResponse } from "./types";
+import { BlockedOpuSummaryResponse } from "./types";
 import { apiClient } from "@/lib/apiClient";
-import { ApiResponse } from "@/types/api";
+import { ApiResponse, PageResponse } from "@/types/api";
 import { toBlockedOpuCard } from "./mapper";
 import { extractErrorMessage } from "@/utils/api-helpers";
 
@@ -9,7 +9,7 @@ import { extractErrorMessage } from "@/utils/api-helpers";
 export async function getBlockedOpuList(): Promise<OpuCardModel[]> {
     try {
         const res = await apiClient.get<
-            ApiResponse<PageResponse<BlockedOpuSummaryDto>>
+            ApiResponse<PageResponse<BlockedOpuSummaryResponse>>
         >("/opus/blocked", {
             params: { page: 0, size: 20 },
         });
@@ -20,6 +20,15 @@ export async function getBlockedOpuList(): Promise<OpuCardModel[]> {
         throw new Error(
             extractErrorMessage(err, "차단한 OPU 목록을 불러오지 못했어요.")
         );
+    }
+}
+
+// OPU 차단
+export async function blockOpu(opuId: number) {
+    try {
+        await apiClient.post(`/opus/${opuId}/block`);
+    } catch (err: unknown) {
+        throw new Error(extractErrorMessage(err, "OPU 차단을 실패했어요."));
     }
 }
 
