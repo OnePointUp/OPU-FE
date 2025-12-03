@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toastError, toastSuccess } from "@/lib/toast";
 import { changePassword, resetPasswordByToken } from "../services";
+import { extractErrorMessage } from "@/utils/api-helpers";
 
 const VERIFIED_KEY = "pw-verified";
 const CUR_CACHE_KEY = "pw-cur-cache";
@@ -37,7 +38,7 @@ export function useSetNewPassword(options: UseSetNewPasswordOptions = {}) {
         const cached = sessionStorage.getItem(CUR_CACHE_KEY) ?? "";
 
         if (!ok || !cached) {
-            router.replace("/me/password");
+            router.replace("/me/verify-password");
             return;
         }
         setCur(cached);
@@ -120,12 +121,11 @@ export function useSetNewPassword(options: UseSetNewPasswordOptions = {}) {
                 setTimeout(() => router.replace("/me"), 1000);
             }
         } catch (e: unknown) {
-            console.error(e);
-            if (process.env.NODE_ENV == "development") {
-                toastError(String(e));
-            } else {
-                toastError("비밀번호 변경에 실패했습니다. 다시 시도해주세요.");
-            }
+            const msg = extractErrorMessage(
+                e,
+                "비밀번호 변경에 실패했습니다. 다시 시도해주세요."
+            );
+            toastError(msg);
         } finally {
             setLoading(false);
         }

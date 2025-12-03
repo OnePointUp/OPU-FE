@@ -9,6 +9,7 @@ import { useMyProfile } from "../hooks/useMyProfile";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import { useLogout } from "../hooks/useLogout";
 import { useState } from "react";
+import SettingsSection from "./SettingsSection";
 
 export default function MyPageScreen() {
     const router = useRouter();
@@ -49,7 +50,7 @@ export default function MyPageScreen() {
             <div className="mt-5 border-t border-[#F3F5F8]" />
 
             <div className="w-full mt-1.5">
-                <SettingsList items={myPageMenuItems} />
+                <SettingsSection items={myPageMenuItems} />
             </div>
 
             <ConfirmModal

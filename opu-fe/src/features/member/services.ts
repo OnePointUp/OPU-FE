@@ -5,8 +5,10 @@ import {
     PresignedUrlResponse,
     MemberProfileDetail,
     MemberProfileSummary,
+    PasswordCheckPayload,
 } from "./types";
 import { extractErrorMessage } from "@/utils/api-helpers";
+import axios from "axios";
 
 /* ===== 프로필 요약 ===== */
 export async function fetchProfileSummary(): Promise<MemberProfileSummary> {
@@ -39,7 +41,7 @@ export async function editProfile(payload: EditProfilePayload) {
 
         return { ok: true };
     } catch (err: unknown) {
-        throw new Error(extractErrorMessage(err, "프로필 수정에 실패했어요."));
+        throw new Error(extractErrorMessage(err, "프로필 수정에 실패했어요"));
     }
 }
 
@@ -54,4 +56,40 @@ export async function getProfileImagePresignedUrl(
     });
 
     return res.data.data;
+}
+
+/* ===== 회원 탈퇴 ===== */
+export async function memberWithdraw(currentPassword: string) {
+    try {
+        await apiClient.delete("/members/me", {
+            data: { currentPassword },
+        });
+    } catch (err: unknown) {
+        throw new Error(extractErrorMessage(err, "회원 탈퇴를 실패했어요"));
+    }
+}
+
+/* ===== 현재 비밀번호 검증 ===== */
+export async function verifyCurrentPassword(password: string) {
+    try {
+        const payload: PasswordCheckPayload = { password };
+        await apiClient.post("/auth/password/check", payload);
+        return { ok: true };
+    } catch (err: unknown) {
+        // axios 에러 + 인증/권한 문제
+        if (axios.isAxiosError(err)) {
+            const status = err.response?.status;
+
+            if (status === 401 || status === 403) {
+                throw new Error(
+                    err.response?.data?.message ??
+                        "로그인이 필요합니다. 다시 로그인해 주세요."
+                );
+            }
+        }
+
+        throw new Error(
+            extractErrorMessage(err, "비밀번호가 일치하지 않습니다.")
+        );
+    }
 }

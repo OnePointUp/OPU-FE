@@ -25,3 +25,7 @@ export type PresignedUrlResponse = {
     uploadUrl: string;
     finalUrl: string;
 };
+
+export type PasswordCheckPayload = {
+    password: string;
+};

@@ -34,7 +34,7 @@ const TITLE_GROUP = {
         map: {
             "/me": "마이페이지",
             "/me/profile": "프로필 편집",
-            "/me/password": "비밀번호 확인",
+            "/me/verify-password": "비밀번호 확인",
         },
     },
     opu: {

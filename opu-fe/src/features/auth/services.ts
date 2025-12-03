@@ -2,14 +2,12 @@ import { apiClient } from "@/lib/apiClient";
 import { useAuthStore } from "@/stores/useAuthStore";
 
 import { extractErrorMessage } from "@/utils/api-helpers";
-import axios from "axios";
 import {
     EmailSignupPayload,
     EmailVerifyStatusResponse,
     KakaoLoginResponse,
     LoginPayload,
     LoginResponse,
-    PasswordCheckPayload,
     ResetPasswordByTokenPayload,
 } from "./types";
 import { ApiResponse } from "@/types/api";
@@ -139,34 +137,6 @@ export async function resetPasswordByToken(
                 "비밀번호 재설정에 실패했어요. 링크를 다시 확인해 주세요."
             )
         );
-    }
-}
-
-// 현재 비밀번호 검증
-export async function verifyCurrentPassword(password: string) {
-    try {
-        const payload: PasswordCheckPayload = { password };
-        await apiClient.post("/auth/password/check", payload);
-        return { ok: true };
-    } catch (err: unknown) {
-        if (axios.isAxiosError(err)) {
-            const status = err.response?.status;
-
-            // 인증/권한 문제
-            if (status === 401 || status === 403) {
-                throw new Error(
-                    err.response?.data?.message ??
-                        "로그인이 필요합니다. 다시 로그인해 주세요."
-                );
-            }
-
-            // 그 외 (진짜 비밀번호 불일치 등)
-            throw new Error(
-                err.response?.data?.message ?? "비밀번호가 일치하지 않습니다."
-            );
-        }
-
-        throw new Error("비밀번호 확인 중 오류가 발생했어요.");
     }
 }
 
