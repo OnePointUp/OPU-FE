@@ -11,8 +11,6 @@ export default function SettingsSection({ items }: { items: Item[] }) {
     const router = useRouter();
 
     const handleWithdrawClick = () => {
-        console.log("withdraw clicked");
-
         router.push("/me/verify-password?mode=withdraw");
     };
 
