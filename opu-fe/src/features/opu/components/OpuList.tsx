@@ -29,9 +29,15 @@ export default function SharedOpuList({
 
     if (!loading && items.length === 0) {
         const emptyMessage =
-            contextType === "my"
-                ? `내가 만든 OPU가 없습니다.\nOPU를 등록해보세요!`
-                : "공유된 OPU가 없습니다.";
+            contextType === "my" ? (
+                <>
+                    내가 만든 OPU가 없습니다.
+                    <br />
+                    OPU를 등록해보세요!
+                </>
+            ) : (
+                <>공유된 OPU가 없습니다.</>
+            );
 
         return (
             <div

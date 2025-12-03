@@ -1,50 +1,27 @@
 import { OPU, LIKE } from "@/mocks/api/db/opu.db";
-import { toOpuCardModelFromSummary } from "./mappers";
-import type { OpuCardModel } from "./domain";
-import { TIME_OPTIONS, type TimeCode } from "./utils/time";
+import { TIME_OPTIONS, type OpuCardModel, type TimeCode } from "./domain";
+import { apiClient } from "@/lib/apiClient";
+import { fetchProfileSummary } from "../user/services";
 
 export type RandomScope = "ALL" | "LIKED";
 
 export async function drawRandomOpu(
-    memberId: number,
     scope: RandomScope,
     time: TimeCode
 ): Promise<OpuCardModel | null> {
-    // 1) 내가 찜한 OPU id 세트
-    const likedSet = new Set(
-        LIKE.filter((l) => l.member_id === memberId).map((l) => l.opu_id)
-    );
-
-    // 2) scope + time 조건으로 풀 만들기
-    const pool = OPU.filter((o) => {
-        // 범위: 찜 목록만
-        if (scope === "LIKED" && !likedSet.has(o.id)) {
-            return false;
-        }
-
-        // 시간: ALL 아니면 required_time 일치하는 것만
-        if (time !== "ALL" && o.required_time !== time) {
-            return false;
-        }
-
-        return true;
+    const res = await apiClient.get<OpuCardModel | null>("/opus/random", {
+        params: {
+            scope,
+            time,
+        },
     });
 
-    // 조건에 맞는 게 하나도 없으면 null
-    if (pool.length === 0) return null;
-
-    // 3) 랜덤 인덱스로 하나 뽑기
-    const idx = Math.floor(Math.random() * pool.length);
-    const picked = pool[idx];
-
-    const liked = likedSet.has(picked.id);
-
-    // 4) 카드 모델로 변환
-    return toOpuCardModelFromSummary(picked, liked);
+    return res.data;
 }
 
-export function getLikedCountByMember(memberId: number): number {
-    return LIKE.filter((l) => l.member_id === memberId).length;
+export async function getLikedCountByMember(): Promise<number> {
+    const summary = await fetchProfileSummary();
+    return summary.favoriteOpuCount;
 }
 
 export function getTimeCountsByScope(
