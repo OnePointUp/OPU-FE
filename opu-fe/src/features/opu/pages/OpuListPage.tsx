@@ -64,6 +64,7 @@ export default function OpuListPage({
         blockTargetId,
         setBlockTargetId,
         handleAddTodoSelected,
+        handleShareToggle,
     } = useOpuListPage({ contextType });
 
     const [showBlockModal, setShowBlockModal] = useState(false);
@@ -120,14 +121,20 @@ export default function OpuListPage({
                 onRequestBlock={() => {
                     if (!selectedItem) return;
                     setBlockTargetId(selectedItem.id);
-                    handleCloseMore();
-                    setShowBlockModal(true);
                 }}
                 onAddTodo={() => {
                     if (!selectedItem) return;
                     handleAddTodoSelected(selectedItem.id);
-                    handleCloseMore();
                 }}
+                onToggleShare={
+                    selectedItem
+                        ? () =>
+                              handleShareToggle(
+                                  selectedItem.id,
+                                  selectedItem.isShared ?? false
+                              )
+                        : undefined
+                }
             />
 
             {/* 정렬 시트 */}
@@ -203,6 +210,7 @@ type MoreActionsSheetProps = {
     onEdit: () => void;
     onRequestBlock: () => void;
     onAddTodo: () => void;
+    onToggleShare?: () => void;
 };
 
 function MoreActionsSheet({
@@ -212,20 +220,29 @@ function MoreActionsSheet({
     isMine,
     onRequestBlock,
     onAddTodo,
+    onToggleShare,
 }: MoreActionsSheetProps) {
     if (!target) return null;
 
-    const items = isMine
-        ? [
-              { label: "투두리스트 추가", onClick: onAddTodo },
-              { label: "루틴 추가", onClick: () => {} },
-              { label: "삭제", danger: true, onClick: () => {} },
-          ]
-        : [
-              { label: "투두리스트 추가", onClick: onAddTodo },
-              { label: "루틴 추가", onClick: () => {} },
-              { label: "차단하기", danger: true, onClick: onRequestBlock },
-          ];
+    const shareAction =
+        isMine && onToggleShare
+            ? {
+                  label: target.isShared ? "비공개로 전환" : "공개하기",
+                  onClick: () => {
+                      onToggleShare();
+                      onClose();
+                  },
+              }
+            : null;
+
+    const items = [
+        { label: "투두리스트 추가", onClick: onAddTodo },
+        { label: "루틴 추가", onClick: () => {} },
+        ...(shareAction ? [shareAction] : []),
+        isMine
+            ? { label: "삭제", danger: true, onClick: () => {} }
+            : { label: "차단하기", danger: true, onClick: onRequestBlock },
+    ];
 
     return (
         <BottomSheet open={open} onClose={onClose}>

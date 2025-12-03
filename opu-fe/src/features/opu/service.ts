@@ -158,3 +158,39 @@ export async function registerOpu(payload: RegisterOpuPayload) {
         throw new Error(extractErrorMessage(err, "OPU 등록에 실패했어요"));
     }
 }
+
+/* ==== 공개 설정 ===== */
+export async function shareOpu(opuId: number) {
+    try {
+        await apiClient.patch(`/opus/${opuId}/share`);
+
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(extractErrorMessage(err, "OPU 공개 처리에 실패했어요"));
+    }
+}
+
+/* ==== 비공개 설정 ===== */
+export async function unshareOpu(opuId: number) {
+    try {
+        await apiClient.patch(`/opus/${opuId}/unshare`);
+
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "OPU를 비공개 처리에 못했어요")
+        );
+    }
+}
+
+/* ==== 공유 설정 토글 ===== */
+export async function toggleOpuShare(
+    opuId: number,
+    isCurrentlyShared: boolean
+) {
+    if (isCurrentlyShared) {
+        return unshareOpu(opuId);
+    }
+
+    return shareOpu(opuId);
+}

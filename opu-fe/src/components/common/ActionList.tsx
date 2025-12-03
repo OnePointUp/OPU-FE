@@ -3,6 +3,7 @@
 export type ActionItem = {
     label: string;
     danger?: boolean;
+    primary?: boolean;
     onClick?: () => void;
 };
 
@@ -17,7 +18,13 @@ export default function ActionList({ items }: { items: ActionItem[] }) {
                         className={`
               w-full px-4 py-4 text-center text-[15px]
               ${i !== 0 ? "border-t border-zinc-100" : ""}
-              ${it.danger ? "text-rose-500 font-medium" : "text-zinc-800"}
+              ${
+                  it.danger
+                      ? "text-rose-500 font-medium"
+                      : it.primary
+                      ? "text-blue-600"
+                      : "text-zinc-800"
+              }
             `}
                     >
                         {it.label}
