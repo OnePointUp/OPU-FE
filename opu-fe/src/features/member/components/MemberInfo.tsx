@@ -44,7 +44,7 @@ export default function MemberInfo({
             className="flex items-center mb-6 justify-between cursor-pointer active:opacity-80 transition"
             onClick={handleEdit}
         >
-            <div className="flex gap-5">
+            <div className="flex gap-5 mr-4">
                 <div className="relative w-16 h-16 overflow-hidden rounded-full border border-[var(--color-super-light-gray)] bg-[var(--background)]">
                     {profileImageUrl ? (
                         <Image
@@ -81,7 +81,7 @@ export default function MemberInfo({
                     </p>
 
                     <p
-                        className="truncate text-[var(--color-light-gray)]"
+                        className="text-[var(--color-light-gray)]"
                         style={{
                             fontSize: "var(--text-caption)",
                             fontWeight: "var(--weight-regular)",
@@ -89,27 +89,25 @@ export default function MemberInfo({
                     >
                         {email}
                     </p>
-                    <div className="flex gap-2 w-full items-start">
-                        <p
-                            className="flex-1 text-[var(--color-dark-navy)] break-words whitespace-pre-line"
-                            style={{
-                                fontSize: "var(--text-caption)",
-                                fontWeight: "var(--weight-regular)",
-                            }}
-                        >
-                            {displayBio}
-                        </p>
-                        <button type="button" onClick={handleEdit}>
-                            <Icon
-                                icon="mdi:chevron-right"
-                                width={25}
-                                height={25}
-                                className="text-[var(--color-dark-navy)]"
-                            />
-                        </button>
-                    </div>
+                    <p
+                        className="flex-1 mt-1 text-[var(--color-dark-navy)] break-words whitespace-pre-line"
+                        style={{
+                            fontSize: "var(--text-caption)",
+                            fontWeight: "var(--weight-regular)",
+                        }}
+                    >
+                        {displayBio}
+                    </p>
                 </div>
             </div>
+            <button type="button" onClick={handleEdit}>
+                <Icon
+                    icon="mdi:chevron-right"
+                    width={25}
+                    height={25}
+                    className="text-[var(--color-dark-navy)]"
+                />
+            </button>
         </div>
     );
 }
