@@ -46,7 +46,7 @@ export function useOpuForm({
     };
 
     /** 설명 */
-    const handleDescriptionChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const handleDescriptionChange = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
 
         if (value.length > MAX_DESCRIPTION_LENGTH) {

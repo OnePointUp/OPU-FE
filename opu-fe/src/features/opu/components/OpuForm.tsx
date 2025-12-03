@@ -62,17 +62,26 @@ export default function OpuForm({
         <form onSubmit={handleSubmit}>
             <div className="flex flex-col">
                 {/* 제목 */}
-                <label className="block mb-2">제목</label>
                 <div className="flex items-start gap-2">
                     <div className="flex-1">
                         <input
-                            placeholder="OPU 제목을 입력해주세요"
-                            className="input-box input-box--field w-full px-3"
                             value={title}
                             onChange={handleTitleChange}
                             disabled={disabled}
+                            placeholder="OPU 제목을 입력해주세요."
+                            className="input-box input-box--field"
+                            style={{
+                                fontSize: "var(--text-sub)",
+                                color: "var(--color-dark-navy)",
+                            }}
                         />
-                        <div className="mt-1 text-right text-[12px] text-gray-400">
+                        <div
+                            className="mt-1 text-right"
+                            style={{
+                                color: "var(--color-light-gray)",
+                                fontSize: "var(--text-validation)",
+                            }}
+                        >
                             {titleLength}/{MAX_TITLE_LENGTH}
                         </div>
                     </div>
@@ -82,7 +91,7 @@ export default function OpuForm({
                         type="button"
                         disabled={disabled}
                         onClick={onClickEmoji}
-                        className="mt-[2px] px-2 py-2 flex items-center justify-between rounded-xl border border-gray-200 bg-white text-2xl"
+                        className="px-2 py-2 flex items-center justify-between rounded-[12px] border border-[var(--color-input-border)] bg-white text-2xl"
                     >
                         {currentEmoji || "😀"}
                         <Icon icon="mdi:chevron-down" width={20} height={20} />
@@ -90,50 +99,113 @@ export default function OpuForm({
                 </div>
 
                 {/* 설명 */}
-                <label className="block mb-2 mt-6">설명</label>
-                <textarea
-                    placeholder="상세 설명을 입력해주세요"
-                    className="input-box input-box--field w-full px-3 py-2 h-28 resize-none"
-                    value={description}
-                    onChange={handleDescriptionChange}
-                    disabled={disabled}
-                />
-                <div className="mt-1 text-right text-[12px] text-gray-400">
-                    {descriptionLength}/{MAX_DESCRIPTION_LENGTH}
-                </div>
-
-                {/* 시간 */}
-                <label className="block mb-2 mt-6">시간</label>
-                <button
-                    type="button"
-                    className="input-box input-box--field flex items-center justify-between"
-                    onClick={onClickTime}
-                    disabled={disabled}
-                >
-                    <span>{currentTimeLabel || "선택"}</span>
-                    <Icon icon="mdi:chevron-right" width={20} height={20} />
-                </button>
-
-                {/* 카테고리 */}
-                <label className="block mb-2 mt-6">카테고리</label>
-                <button
-                    type="button"
-                    className="input-box input-box--field flex items-center justify-between"
-                    onClick={onClickCategory}
-                    disabled={disabled}
-                >
-                    <span>{currentCategoryLabel || "선택"}</span>
-                    <Icon icon="mdi:chevron-right" width={20} height={20} />
-                </button>
-
-                {/* 공개 여부 */}
-                <div className="flex items-center justify-between mt-6">
-                    <label className="block mb-2">커뮤니티 공개 설정</label>
-                    <Toggle
-                        checked={isPublic}
-                        onChange={handleToggleChange}
+                <div className="flex flex-col">
+                    <input
+                        placeholder="상세 설명을 입력해주세요."
+                        className="input-box input-box--field"
+                        value={description}
+                        onChange={handleDescriptionChange}
                         disabled={disabled}
                     />
+                    <div
+                        className="mt-1 text-right"
+                        style={{
+                            color: "var(--color-light-gray)",
+                            fontSize: "var(--text-validation)",
+                        }}
+                    >
+                        {descriptionLength}/{MAX_DESCRIPTION_LENGTH}
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-4 py-6">
+                    {/* 소요시간 */}
+                    <div className="w-full relative">
+                        <button
+                            type="button"
+                            onClick={onClickTime}
+                            disabled={disabled}
+                            className="input-box-2 input-box--field flex items-center justify-between overflow-hidden pr-2"
+                        >
+                            <span
+                                style={{
+                                    fontSize: "var(--text-sub)",
+                                    color: "var(--color-dark-navy)",
+                                }}
+                            >
+                                소요시간
+                            </span>
+                            <span
+                                className="flex items-center gap-1"
+                                style={{
+                                    fontSize: "var(--text-sub)",
+                                    fontWeight: "var(--weight-semibold)",
+                                    color: "var(--color-dark-navy)",
+                                }}
+                            >
+                                <span>{currentTimeLabel || "선택"}</span>
+                                <Icon
+                                    icon="mdi:chevron-right"
+                                    width={20}
+                                    height={20}
+                                    className="text-[var(--color-super-dark-gray)]"
+                                />
+                            </span>
+                        </button>
+                    </div>
+
+                    {/* 카테고리 */}
+                    <div className="w-full relative mb-1">
+                        <button
+                            type="button"
+                            onClick={onClickCategory}
+                            disabled={disabled}
+                            className="input-box-2 input-box--field flex items-center justify-between overflow-hidden pr-2"
+                        >
+                            <span
+                                style={{
+                                    fontSize: "var(--text-sub)",
+                                    color: "var(--color-dark-navy)",
+                                }}
+                            >
+                                카테고리
+                            </span>
+                            <span
+                                className="flex items-center gap-1"
+                                style={{
+                                    fontSize: "var(--text-sub)",
+                                    fontWeight: "var(--weight-semibold)",
+                                    color: "var(--color-dark-navy)",
+                                }}
+                            >
+                                <span>{currentCategoryLabel || "선택"}</span>
+                                <Icon
+                                    icon="mdi:chevron-right"
+                                    width={20}
+                                    height={20}
+                                    className="text-[var(--color-super-dark-gray)]"
+                                />
+                            </span>
+                        </button>
+                    </div>
+
+                    {/* 공개 여부 */}
+                    <div className="flex pl-3 items-center justify-between">
+                        <label
+                            className="block"
+                            style={{
+                                fontSize: "var(--text-sub)",
+                                fontWeight: "var(--weight-semibold)",
+                            }}
+                        >
+                            커뮤니티 공개 설정
+                        </label>
+                        <Toggle
+                            checked={isPublic}
+                            onChange={handleToggleChange}
+                            disabled={disabled}
+                        />
+                    </div>
                 </div>
 
                 {/* 제출 */}

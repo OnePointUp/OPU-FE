@@ -18,7 +18,7 @@ export default function IntroField({
     return (
         <section className={`mt-6 ${className}`}>
             <label
-                className="block my-2 mx-1"
+                className="block my-1 mx-1"
                 style={{
                     fontSize: "var(--text-sub)",
                     fontWeight: "var(--weight-semibold)",
