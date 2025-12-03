@@ -52,6 +52,7 @@ export default function OpuListPage({
         handleToggleTime,
         handleToggleCategory,
         handleResetFilter,
+        setFilterMode,
         // 더보기 시트
         selectedItem,
         sheetId,
@@ -144,7 +145,7 @@ export default function OpuListPage({
                 selectedTimes={times}
                 selectedCategoryIds={categoryIds}
                 resultCount={filtered.length}
-                onChangeMode={() => {}}
+                onChangeMode={setFilterMode}
                 onToggleTime={handleToggleTime}
                 onToggleCategory={handleToggleCategory}
                 onReset={handleResetFilter}
