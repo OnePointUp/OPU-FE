@@ -178,7 +178,7 @@ export async function unshareOpu(opuId: number) {
         return { ok: true };
     } catch (err: unknown) {
         throw new Error(
-            extractErrorMessage(err, "OPU를 비공개 처리에 못했어요")
+            extractErrorMessage(err, "OPU 비공개 처리에 실패했어요")
         );
     }
 }
