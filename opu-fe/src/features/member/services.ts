@@ -3,14 +3,14 @@ import { ApiResponse } from "@/types/api";
 import {
     EditProfilePayload,
     PresignedUrlResponse,
-    UserProfileDetail,
-    UserProfileSummary,
+    MemberProfileDetail,
+    MemberProfileSummary,
 } from "./types";
 import { extractErrorMessage } from "@/utils/api-helpers";
 
 /* ===== 프로필 요약 ===== */
-export async function fetchProfileSummary(): Promise<UserProfileSummary> {
-    const res = await apiClient.get<ApiResponse<UserProfileSummary>>(
+export async function fetchProfileSummary(): Promise<MemberProfileSummary> {
+    const res = await apiClient.get<ApiResponse<MemberProfileSummary>>(
         "/members/me/summary"
     );
 
@@ -18,8 +18,8 @@ export async function fetchProfileSummary(): Promise<UserProfileSummary> {
 }
 
 /* ===== 프로필 상세 ===== */
-export async function fetchProfileDetail(): Promise<UserProfileDetail> {
-    const res = await apiClient.get<ApiResponse<UserProfileDetail>>(
+export async function fetchProfileDetail(): Promise<MemberProfileDetail> {
+    const res = await apiClient.get<ApiResponse<MemberProfileDetail>>(
         "/members/me/profile"
     );
 
@@ -30,7 +30,7 @@ export async function fetchProfileDetail(): Promise<UserProfileDetail> {
 export async function editProfile(payload: EditProfilePayload) {
     try {
         await apiClient.patch<
-            UserProfileDetail | ApiResponse<UserProfileDetail>
+            MemberProfileDetail | ApiResponse<MemberProfileDetail>
         >("/members/me/profile", {
             nickname: payload.nickname,
             bio: payload.bio,

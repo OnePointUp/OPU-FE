@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { toastSuccess, toastError } from "@/lib/toast";
-import { UserProfileDetail } from "../types";
+import { MemberProfileDetail } from "../types";
 import {
     editProfile,
     fetchProfileDetail,
@@ -17,7 +17,7 @@ const INTRO_MAX = 100;
 export function useProfileEdit() {
     const router = useRouter();
 
-    const [profile, setProfile] = useState<UserProfileDetail | null>(null);
+    const [profile, setProfile] = useState<MemberProfileDetail | null>(null);
     const [nickname, setNickname] = useState("");
     const [bio, setBio] = useState("");
     // const [dupError, setDupError] = useState("");

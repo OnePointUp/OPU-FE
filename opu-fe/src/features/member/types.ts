@@ -1,4 +1,4 @@
-export type UserProfileSummary = {
+export type MemberProfileSummary = {
     nickname: string;
     profileImageUrl: string | null;
     email: string;
@@ -7,7 +7,7 @@ export type UserProfileSummary = {
     bio: string;
 };
 
-export type UserProfileDetail = {
+export type MemberProfileDetail = {
     id: number;
     email: string;
     nickname: string;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import UserInfo from "@/features/member/components/UserInfo";
+import MemberInfo from "@/features/member/components/MemberInfo";
 import SettingsList from "@/features/member/components/SettingsList";
 import { useMyPageMenuData } from "../constants/myPageMenu";
 import OpuManagement from "../components/OpuManagement";
@@ -31,7 +31,7 @@ export default function MyPageScreen() {
 
     return (
         <section>
-            <UserInfo
+            <MemberInfo
                 nickname={profile?.nickname ?? ""}
                 email={profile?.email ?? ""}
                 bio={profile?.bio}
