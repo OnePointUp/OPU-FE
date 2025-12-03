@@ -18,7 +18,11 @@ export default function EmailField({
 }: Props) {
     return (
         <section className={`mb-6 ${className}`}>
+            <label htmlFor="email-input" className="sr-only">
+                이메일
+            </label>
             <input
+                id="email-input"
                 type="email"
                 placeholder="이메일을 입력해주세요."
                 value={value}
@@ -28,9 +32,10 @@ export default function EmailField({
 
             {error ? (
                 <p
-                    className="flex items-center gap-0.5 mt-2 text-[11px]"
+                    className="flex items-center gap-0.5 mt-2"
                     style={{
                         color: "var(--color-opu-red)",
+                        fontSize: "var(--text-validation)",
                         fontWeight: "var(--weight-medium)",
                     }}
                 >

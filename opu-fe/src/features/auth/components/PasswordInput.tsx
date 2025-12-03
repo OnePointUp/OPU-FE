@@ -67,8 +67,9 @@ export default function PasswordInput({
                     {rules.map((rule) => (
                         <span
                             key={rule.label}
-                            className="flex items-center gap-0.5 text-[11px]"
+                            className="flex items-center gap-0.5"
                             style={{
+                                fontSize: "var(--text-validation)",
                                 color: rule.satisfied
                                     ? "var(--color-opu-green)"
                                     : "var(--color-light-gray)",
@@ -91,8 +92,9 @@ export default function PasswordInput({
             {/* 비밀번호 일치 */}
             {statusLabel && (
                 <p
-                    className="flex gap-0.5 mt-1 text-[11px]"
+                    className="flex gap-0.5 mt-2"
                     style={{
+                        fontSize: "var(--text-validation)",
                         color: statusActive
                             ? "var(--color-opu-green)"
                             : "var(--color-light-gray)",

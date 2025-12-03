@@ -21,7 +21,11 @@ export default function NicknameField({
 
     return (
         <section className={`mt-6 ${className}`}>
+            <label htmlFor="nickname-input" className="sr-only">
+                닉네임
+            </label>
             <input
+                id="nickname-input"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="닉네임을 입력해주세요."
@@ -29,8 +33,9 @@ export default function NicknameField({
             />
 
             <p
-                className="flex items-center gap-0.5 mt-2 text-[11px]"
+                className="flex items-center gap-0.5 mt-2"
                 style={{
+                    fontSize: "var(--text-validation)",
                     color: isSatisfied
                         ? "var(--color-opu-green)"
                         : "var(--color-light-gray)",
