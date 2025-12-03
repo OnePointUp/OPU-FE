@@ -39,6 +39,8 @@ export default function ProfileEditPage() {
                 onChange={(v) => {
                     setNickname(v);
                 }}
+                showLabel
+                variant="profile"
             />
             <IntroField value={bio} onChange={setBio} max={introMax} />
 
