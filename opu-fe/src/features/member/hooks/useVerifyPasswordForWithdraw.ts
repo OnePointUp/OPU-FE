@@ -35,7 +35,6 @@ export function useVerifyPasswordForWithdraw() {
         try {
             setLoading(true);
 
-            await verifyCurrentPassword(cur);
             await memberWithdraw(cur);
 
             toastSuccess("회원 탈퇴가 완료되었어요.");
