@@ -83,7 +83,7 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
 
                     {/* 제목 */}
                     <span
-                        className="flex items-center gap-0.5 line-clamp-2 w-full"
+                        className="break-words whitespace-pre-line flex items-center gap-0.5 w-full mb-1"
                         style={{
                             fontSize: "var(--text-sub)",
                             fontWeight: "var(--weight-semibold)",
@@ -136,7 +136,7 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
             {/* 설명 */}
             {item.description && (
                 <p
-                    className="line-clamp-2 mt-0.5 mb-2"
+                    className="break-words whitespace-pre-line mt-0.5 mb-2"
                     style={{
                         color: "var(--color-light-gray)",
                         fontSize: "var(--text-mini)",
