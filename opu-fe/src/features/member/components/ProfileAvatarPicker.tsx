@@ -25,7 +25,7 @@ export default function ProfileAvatarPicker({
 
     return (
         <section
-            className={`w-full flex flex-col items-center justify-center mb-6 ${className}`}
+            className={`w-full flex flex-col items-center justify-center mb-8 ${className}`}
         >
             <div className="relative inline-block">
                 <div className="size-22 overflow-hidden rounded-full border border-[var(--color-super-light-gray)] bg-[var(--background)] relative">
