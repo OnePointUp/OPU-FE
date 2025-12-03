@@ -170,7 +170,7 @@ export const CATEGORY_BADGE: Record<string, CategoryBadgeStyle> = {
 export const toCategoryName = (id: number) => CATEGORY_MAP[id] ?? "기타";
 
 /* ===========================
- * 시간 관련 (TimeCode, 레이블)
+ * 시간 관련
  * =========================== */
 
 export type TimeCode = OpuEntity["required_time"] | "ALL";
@@ -215,47 +215,8 @@ export const TIME_CODE_TO_MINUTES: Record<Exclude<TimeCode, "ALL">, number> = {
 };
 
 /* ===========================
- * 프론트 단 필터링 유틸 (목데이터용 / 백업용)
+ * 필터링 유틸
  * =========================== */
-
-export type OpuFilterState = {
-    q: string;
-    times: TimeCode[];
-    categoryIds: number[];
-};
-
-export function filterOpuList(
-    items: OpuCardModel[],
-    { q, times, categoryIds }: OpuFilterState
-): OpuCardModel[] {
-    const text = q.trim().toLowerCase();
-    const hasTimeFilter = times.length > 0;
-
-    return items.filter((item) => {
-        // 검색어
-        if (text) {
-            const title = item.title?.toLowerCase() ?? "";
-            const description = item.description?.toLowerCase() ?? "";
-            const haystack = `${title} ${description}`;
-            if (!haystack.includes(text)) return false;
-        }
-
-        // 시간 필터 (timeLabel 기준)
-        if (hasTimeFilter) {
-            const matched = times.some(
-                (p) => mapTimeToLabel(p) === item.timeLabel
-            );
-            if (!matched) return false;
-        }
-
-        // 카테고리 필터
-        if (categoryIds.length > 0 && !categoryIds.includes(item.categoryId)) {
-            return false;
-        }
-
-        return true;
-    });
-}
 
 export function getTimeFilterLabel(times: TimeCode[]): string {
     if (times.length === 0) return "시간";
@@ -276,7 +237,7 @@ export function getCategoryFilterLabel(categoryIds: number[]): string {
 }
 
 /* ===========================
- * 정렬 유틸 (라벨 + 로컬 정렬)
+ * 정렬 유틸
  * =========================== */
 
 export type SortOption = "name" | "latest" | "completed" | "liked";
@@ -297,28 +258,4 @@ export const SORT_LABEL_MAP: Record<SortOption, string> = {
 
 export function getSortLabel(option: SortOption): string {
     return SORT_LABEL_MAP[option] ?? "정렬";
-}
-
-// 필요하면 목 데이터 / 클라이언트 정렬용으로 사용
-export function sortOpuList(items: OpuCardModel[], option: SortOption) {
-    const sorted = [...items];
-
-    switch (option) {
-        case "name":
-            return sorted.sort((a, b) => a.title.localeCompare(b.title, "ko"));
-        case "latest":
-            return sorted.sort((a, b) =>
-                (b.createdAt ?? "").localeCompare(a.createdAt ?? "")
-            );
-        case "completed":
-            return sorted.sort(
-                (a, b) => (b.completedCount ?? 0) - (a.completedCount ?? 0)
-            );
-        case "liked":
-            return sorted.sort(
-                (a, b) => (b.likeCount ?? 0) - (a.likeCount ?? 0)
-            );
-        default:
-            return items;
-    }
 }
