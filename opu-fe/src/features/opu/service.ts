@@ -94,7 +94,7 @@ export async function fetchLikedOpuList({
         };
     } catch (err: unknown) {
         throw new Error(
-            extractErrorMessage(err, "공유 OPU 목록을 불러오지 못했어요.")
+            extractErrorMessage(err, "찜한 OPU 목록을 불러오지 못했어요.")
         );
     }
 }
