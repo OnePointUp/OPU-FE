@@ -12,7 +12,7 @@ type Props = {
 };
 
 export default function RandomOpuCard({ item, onAddTodo }: Props) {
-    const [liked, setLiked] = useState(item.liked);
+    const [liked, setLiked] = useState(item.isLiked);
 
     const categoryKey = item.categoryName ?? "기타";
     const { bg, text } = CATEGORY_BADGE[categoryKey] ?? CATEGORY_BADGE["기타"];

@@ -20,6 +20,8 @@ import {
     fetchSharedOpuList,
     fetchLikedOpuList,
     addTodoByOpu,
+    toggleOpuShare,
+    deleteMyOpu,
 } from "../service";
 import { toastError, toastSuccess } from "@/lib/toast";
 import { blockOpu } from "@/features/blocked-opu/services";
@@ -62,6 +64,9 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
     const [sheetId, setSheetId] = useState<number | null>(null);
 
     const [blockTargetId, setBlockTargetId] = useState<number | null>(null);
+
+    const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     const [sortOption, setSortOption] = useState<SortOption>("liked");
     const [showSortSheet, setShowSortSheet] = useState(false);
@@ -227,14 +232,15 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
 
             setData((prev) => prev.filter((item) => item.id !== opuId));
 
-            toastSuccess("OPU를 차단했어요.");
+            toastSuccess("OPU를 차단했어요");
             setSheetId(null);
         } catch (e) {
             console.error(e);
-            toastError("OPU 차단을 실패했어요.");
+            toastError("OPU 차단을 실패했어요");
         }
     };
 
+    // 투두리스트 추가
     const handleAddTodoSelected = async (opuId: number) => {
         try {
             await addTodoByOpu(opuId);
@@ -242,6 +248,58 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         } catch (e) {
             console.error(e);
             toastError("투두리스트에 추가하지 못했어요");
+        }
+    };
+
+    // 공개/비공개 토글
+    const handleShareToggle = async (
+        opuId: number,
+        isCurrentlyShared: boolean | undefined
+    ) => {
+        const prevShared = !!isCurrentlyShared;
+        const nextShared = !prevShared;
+
+        // UI 먼저 반영
+        setData((prev) =>
+            prev.map((item) =>
+                item.id === opuId ? { ...item, isShared: nextShared } : item
+            )
+        );
+
+        try {
+            await toggleOpuShare(opuId, prevShared);
+            toastSuccess(
+                nextShared
+                    ? "OPU가 공개로 전환되었습니다"
+                    : "OPU가 비공개로 전환되었습니다"
+            );
+        } catch (err) {
+            console.error(err);
+            setData((prev) =>
+                prev.map((item) =>
+                    item.id === opuId ? { ...item, isShared: prevShared } : item
+                )
+            );
+            toastError("OPU 공개 설정을 변경하지 못했어요");
+        }
+    };
+
+    const handleDeleteSelected = async (opuId: number) => {
+        if (deleteLoading) return;
+        setDeleteLoading(true);
+
+        try {
+            await deleteMyOpu(opuId);
+
+            // UI에서 제거
+            setData((prev) => prev.filter((item) => item.id !== opuId));
+
+            toastSuccess("OPU가 삭제되었어요.");
+        } catch (e) {
+            console.error(e);
+            toastError("OPU를 삭제하지 못했어요.");
+        } finally {
+            setDeleteLoading(false);
         }
     };
 
@@ -310,9 +368,17 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         // 투두리스트 추가
         handleAddTodoSelected,
 
-        // 차단하기
+        // 차단
         blockTargetId,
         setBlockTargetId,
         handleBlockSelected,
+
+        // 공개 설정 토글
+        handleShareToggle,
+
+        // 삭제
+        deleteTargetId,
+        setDeleteTargetId,
+        handleDeleteSelected,
     };
 }

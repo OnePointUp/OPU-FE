@@ -3,6 +3,7 @@ import {
     FetchOpuListParams,
     OpuListPage,
     OpuSummaryResponse,
+    RegisterOpuPayload,
 } from "./domain";
 import { toOpuCardModelFromSummary } from "./mappers";
 import { apiClient } from "@/lib/apiClient";
@@ -34,7 +35,7 @@ export async function fetchSharedOpuList({
         };
     } catch (err: unknown) {
         throw new Error(
-            extractErrorMessage(err, "공유 OPU 목록을 불러오지 못했어요.")
+            extractErrorMessage(err, "공유 OPU 목록을 불러오지 못했어요")
         );
     }
 }
@@ -64,7 +65,7 @@ export async function fetchMyOpuList({
         };
     } catch (err) {
         throw new Error(
-            extractErrorMessage(err, "내 OPU 목록을 불러오지 못했어요.")
+            extractErrorMessage(err, "내 OPU 목록을 불러오지 못했어요")
         );
     }
 }
@@ -94,7 +95,7 @@ export async function fetchLikedOpuList({
         };
     } catch (err: unknown) {
         throw new Error(
-            extractErrorMessage(err, "찜한 OPU 목록을 불러오지 못했어요.")
+            extractErrorMessage(err, "찜한 OPU 목록을 불러오지 못했어요")
         );
     }
 }
@@ -145,5 +146,60 @@ export async function addTodoByOpu(opuId: number) {
         throw new Error(
             extractErrorMessage(err, "투두리스트 추가에 실패했어요")
         );
+    }
+}
+
+/* ==== OPU 등록 ===== */
+export async function registerOpu(payload: RegisterOpuPayload) {
+    try {
+        await apiClient.post("/opus", payload);
+        return { ok: true };
+    } catch (err) {
+        throw new Error(extractErrorMessage(err, "OPU 등록에 실패했어요"));
+    }
+}
+
+/* ==== 공개 설정 ===== */
+export async function shareOpu(opuId: number) {
+    try {
+        await apiClient.patch(`/opus/${opuId}/share`);
+
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(extractErrorMessage(err, "OPU 공개 처리에 실패했어요"));
+    }
+}
+
+/* ==== 비공개 설정 ===== */
+export async function unshareOpu(opuId: number) {
+    try {
+        await apiClient.patch(`/opus/${opuId}/unshare`);
+
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "OPU 비공개 처리에 실패했어요")
+        );
+    }
+}
+
+/* ==== 공유 설정 토글 ===== */
+export async function toggleOpuShare(
+    opuId: number,
+    isCurrentlyShared: boolean
+) {
+    if (isCurrentlyShared) {
+        return unshareOpu(opuId);
+    }
+
+    return shareOpu(opuId);
+}
+
+/* ==== OPU 삭제 ===== */
+export async function deleteMyOpu(opuId: number): Promise<void> {
+    try {
+        await apiClient.delete(`/opus/${opuId}`);
+    } catch (err: unknown) {
+        throw new Error(extractErrorMessage(err, "OPU 삭제에 실패했어요"));
     }
 }

@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import SearchBar from "@/components/common/SearchBar";
 import BottomSheet from "@/components/common/BottomSheet";
-import ActionList from "@/components/common/ActionList";
+import ActionList, { ActionItem } from "@/components/common/ActionList";
 import OpuFilterSheet from "@/features/opu/components/OpuFilterSheet";
 import OpuToolbar from "@/features/opu/components/OpuToolbar";
 import OpuList from "../components/OpuList";
@@ -64,9 +64,14 @@ export default function OpuListPage({
         blockTargetId,
         setBlockTargetId,
         handleAddTodoSelected,
+        handleShareToggle,
+        deleteTargetId,
+        setDeleteTargetId,
+        handleDeleteSelected,
     } = useOpuListPage({ contextType });
 
     const [showBlockModal, setShowBlockModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     return (
         <section>
@@ -116,18 +121,32 @@ export default function OpuListPage({
                 onClose={handleCloseMore}
                 target={selectedItem}
                 isMine={isMine}
-                onEdit={handleEditSelected}
                 onRequestBlock={() => {
                     if (!selectedItem) return;
                     setBlockTargetId(selectedItem.id);
-                    handleCloseMore();
                     setShowBlockModal(true);
                 }}
                 onAddTodo={() => {
                     if (!selectedItem) return;
                     handleAddTodoSelected(selectedItem.id);
-                    handleCloseMore();
                 }}
+                onToggleShare={
+                    selectedItem
+                        ? () =>
+                              handleShareToggle(
+                                  selectedItem.id,
+                                  selectedItem.isShared ?? false
+                              )
+                        : undefined
+                }
+                onDelete={
+                    selectedItem
+                        ? () => {
+                              setDeleteTargetId(selectedItem.id);
+                              setShowDeleteModal(true);
+                          }
+                        : undefined
+                }
             />
 
             {/* 정렬 시트 */}
@@ -165,6 +184,19 @@ export default function OpuListPage({
                 }}
                 onCancel={() => setShowBlockModal(false)}
             />
+
+            {/* 삭제 ConfirmModal */}
+            <ConfirmModal
+                isOpen={showDeleteModal}
+                message={`이 OPU를 삭제할까요?\n삭제하면 되돌릴 수 없어요.`}
+                onConfirm={() => {
+                    if (deleteTargetId != null) {
+                        handleDeleteSelected(deleteTargetId);
+                    }
+                    setShowDeleteModal(false);
+                }}
+                onCancel={() => setShowDeleteModal(false)}
+            />
         </section>
     );
 }
@@ -200,9 +232,10 @@ type MoreActionsSheetProps = {
     onClose: () => void;
     target?: OpuCardModel;
     isMine: boolean;
-    onEdit: () => void;
     onRequestBlock: () => void;
     onAddTodo: () => void;
+    onToggleShare?: () => void;
+    onDelete?: () => void;
 };
 
 function MoreActionsSheet({
@@ -210,24 +243,54 @@ function MoreActionsSheet({
     onClose,
     target,
     isMine,
-    onEdit,
     onRequestBlock,
     onAddTodo,
+    onToggleShare,
+    onDelete,
 }: MoreActionsSheetProps) {
     if (!target) return null;
 
-    const items = isMine
-        ? [
-              { label: "투두리스트 추가", onClick: onAddTodo },
-              { label: "루틴 추가", onClick: () => {} },
-              { label: "수정", onClick: onEdit },
-              { label: "삭제", danger: true, onClick: () => {} },
-          ]
-        : [
-              { label: "투두리스트 추가", onClick: onAddTodo },
-              { label: "루틴 추가", onClick: () => {} },
-              { label: "차단하기", danger: true, onClick: onRequestBlock },
-          ];
+    const items: ActionItem[] = [
+        {
+            label: "투두리스트 추가",
+            onClick: () => {
+                onAddTodo();
+                onClose();
+            },
+        },
+
+        { label: "루틴 추가", onClick: () => {} },
+    ];
+
+    if (isMine && onToggleShare) {
+        items.push({
+            label: target.isShared ? "비공개로 전환" : "공개하기",
+            onClick: () => {
+                onToggleShare();
+                onClose();
+            },
+        });
+    }
+
+    items.push(
+        isMine
+            ? {
+                  label: "삭제",
+                  danger: true,
+                  onClick: () => {
+                      onDelete?.();
+                      onClose();
+                  },
+              }
+            : {
+                  label: "차단하기",
+                  danger: true,
+                  onClick: () => {
+                      onRequestBlock();
+                      onClose();
+                  },
+              }
+    );
 
     return (
         <BottomSheet open={open} onClose={onClose}>

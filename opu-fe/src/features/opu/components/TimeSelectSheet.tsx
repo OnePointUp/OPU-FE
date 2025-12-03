@@ -2,7 +2,7 @@
 
 import { Icon } from "@iconify/react";
 import BottomSheet from "@/components/common/BottomSheet";
-import { TIME_OPTIONS, type TimeCode } from "../utils/time";
+import { TIME_OPTIONS, TimeCode } from "../domain";
 
 type Props = {
     open: boolean;
