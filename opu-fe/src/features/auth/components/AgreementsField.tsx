@@ -1,12 +1,6 @@
 "use client";
 
-type Agreements = {
-    all: boolean;
-    terms: boolean;
-    privacy: boolean;
-    marketing: boolean;
-    notification: boolean;
-};
+import { Agreements } from "../types";
 
 type Props = {
     value: Agreements;
@@ -42,6 +36,20 @@ export default function AgreementsField({
                     <input
                         type="checkbox"
                         className="custom-checkbox"
+                        checked={value.age14}
+                        onChange={(e) =>
+                            onChangeItem("age14", e.target.checked)
+                        }
+                    />
+                    <p className="text-agreement-required">
+                        [필수] 만 14세 이상입니다.
+                    </p>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        className="custom-checkbox"
                         checked={value.terms}
                         onChange={(e) =>
                             onChangeItem("terms", e.target.checked)
@@ -66,7 +74,7 @@ export default function AgreementsField({
                     </p>
                 </label>
 
-                <label className="flex items-center gap-2 cursor-pointer">
+                {/* <label className="flex items-center gap-2 cursor-pointer">
                     <input
                         type="checkbox"
                         className="custom-checkbox"
@@ -78,19 +86,19 @@ export default function AgreementsField({
                     <p className="text-agreement-optional">
                         [선택] 마케팅 정보 수신 동의
                     </p>
-                </label>
+                </label> */}
 
                 <label className="flex items-center gap-2 cursor-pointer">
                     <input
                         type="checkbox"
                         className="custom-checkbox"
-                        checked={value.notification}
+                        checked={value.webPush}
                         onChange={(e) =>
-                            onChangeItem("notification", e.target.checked)
+                            onChangeItem("webPush", e.target.checked)
                         }
                     />
                     <p className="text-agreement-optional">
-                        [선택] 알림 수신 동의
+                        [선택] 웹 푸시 수신 동의
                     </p>
                 </label>
             </div>

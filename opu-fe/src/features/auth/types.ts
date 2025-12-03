@@ -52,3 +52,11 @@ export type KakaoLoginResponse = {
     token?: KakaoLoginToken;
     member?: AuthMember;
 };
+
+export type Agreements = {
+    all: boolean;
+    age14: boolean;
+    terms: boolean;
+    privacy: boolean;
+    webPush: boolean;
+};
