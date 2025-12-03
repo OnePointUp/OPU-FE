@@ -3,6 +3,7 @@ import {
     FetchOpuListParams,
     OpuListPage,
     OpuSummaryResponse,
+    RegisterOpuPayload,
 } from "./domain";
 import { toOpuCardModelFromSummary } from "./mappers";
 import { apiClient } from "@/lib/apiClient";
@@ -145,5 +146,15 @@ export async function addTodoByOpu(opuId: number) {
         throw new Error(
             extractErrorMessage(err, "투두리스트 추가에 실패했어요")
         );
+    }
+}
+
+/* ==== OPU 등록 ===== */
+export async function registerOpu(payload: RegisterOpuPayload) {
+    try {
+        await apiClient.post("/opus", payload);
+        return { ok: true };
+    } catch (err) {
+        throw new Error(extractErrorMessage(err, "OPU 등록에 실패했어요"));
     }
 }

@@ -210,7 +210,6 @@ function MoreActionsSheet({
     onClose,
     target,
     isMine,
-    onEdit,
     onRequestBlock,
     onAddTodo,
 }: MoreActionsSheetProps) {
@@ -220,7 +219,6 @@ function MoreActionsSheet({
         ? [
               { label: "투두리스트 추가", onClick: onAddTodo },
               { label: "루틴 추가", onClick: () => {} },
-              { label: "수정", onClick: onEdit },
               { label: "삭제", danger: true, onClick: () => {} },
           ]
         : [

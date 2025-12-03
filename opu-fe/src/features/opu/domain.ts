@@ -87,6 +87,24 @@ export function buildOpuTodoPayload(): OpuTodoCreateDto {
     };
 }
 
+export type OpuFormValues = {
+    title: string;
+    description: string;
+    emoji?: string;
+    timeLabel?: string;
+    categoryLabel?: string;
+    isPublic: boolean;
+};
+
+export type RegisterOpuPayload = {
+    title: string;
+    description: string;
+    emoji: string;
+    requiredMinutes: number;
+    isShared: boolean;
+    categoryId: number;
+};
+
 /* ===========================
  * 목 데이터용 엔티티 타입 (프론트 전용)
  * =========================== */
