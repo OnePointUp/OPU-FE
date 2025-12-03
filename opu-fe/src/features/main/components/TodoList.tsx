@@ -10,6 +10,14 @@ import { toastError } from "@/lib/toast";
 import { useDragDrop } from "../hooks/useDragDrop";
 import { useRouter } from "next/navigation";
 
+/* ------------------------------------------------
+   Skeleton 스타일을 위한 Tailwind 유틸 클래스
+   ------------------------------------------------ */
+const skeleton = "bg-gray-200 rounded animate-pulse";
+
+/* ------------------------------------------------
+   컴포넌트 시작
+   ------------------------------------------------ */
 type Props = {
   selectedDay: DailyTodoStats | null;
   onToggleTodo: (todoId: number) => void;
@@ -37,7 +45,6 @@ export default function TodoList({
   onEditTodo,
   onDeleteTodo,
   onConfirmNewTodo,
-
   editingTodoId,
   loading = false,
   maxHeight,
@@ -63,7 +70,9 @@ export default function TodoList({
 
   const router = useRouter();
 
-  // 드래그 앤 드롭 훅 적용
+  /* -----------------------------------------------
+     드래그 앤 드롭 훅 적용
+     ----------------------------------------------- */
   const {
     items: reorderedItems,
     bindItemEvents,
@@ -73,17 +82,15 @@ export default function TodoList({
   } = useDragDrop(
     selectedDay ? selectedDay.todos : [],
     (updated) => {
-      /** 순서 변경을 부모에게 저장 요청 — newTitle / time 그대로 유지 */
-      updated.forEach((todo, idx) => {
-        // 필요하다면 order 필드를 저장하도록 수정 가능
-      });
-
       if (selectedDay) {
         selectedDay.todos.splice(0, selectedDay.todos.length, ...updated);
       }
     }
   );
 
+  /* -----------------------------------------------
+     신규 Todo 편집 시작
+     ----------------------------------------------- */
   useEffect(() => {
     if (!selectedDay) return;
     if (editingTodoId == null) return;
@@ -101,15 +108,13 @@ export default function TodoList({
       setTimeValue(todo.time);
     } else {
       setShowTimePicker(false);
-      setTimeValue({
-        ampm: "AM",
-        hour: 9,
-        minute: 0,
-      });
+      setTimeValue({ ampm: "AM", hour: 9, minute: 0 });
     }
   }, [editingTodoId, selectedDay]);
 
-  // 날짜 바뀌면 편집 종료
+  /* -----------------------------------------------
+     날짜 바뀌면 편집 초기화
+     ----------------------------------------------- */
   useEffect(() => {
     setEditingId(null);
     setEditText("");
@@ -124,7 +129,9 @@ export default function TodoList({
     e.stopPropagation();
   };
 
-  // 저장 처리
+  /* -----------------------------------------------
+     저장 처리
+     ----------------------------------------------- */
   const saveEditing = () => {
     if (!editingId) return;
 
@@ -144,22 +151,17 @@ export default function TodoList({
     setShowTimePicker(false);
   };
 
-  // 취소 처리
+  /* -----------------------------------------------
+     취소 처리
+     ----------------------------------------------- */
   const cancelEditing = () => {
     if (!editingId) return;
 
     const isNewTodo = originalTitle === "";
-
     if (isNewTodo) onDeleteTodo(editingId);
 
     setEditText(originalTitle);
-    setTimeValue(
-      originalTime ?? {
-        ampm: "AM",
-        hour: 9,
-        minute: 0,
-      }
-    );
+    setTimeValue(originalTime ?? { ampm: "AM", hour: 9, minute: 0 });
     setShowTimePicker(!!originalTime);
 
     setEditingId(null);
@@ -187,7 +189,7 @@ export default function TodoList({
     setOpenSheet(false);
   };
 
-  const formatTime = (time: DailyTodoStats['todos'][0]['time']) => {
+  const formatTime = (time: DailyTodoStats["todos"][0]["time"]) => {
     if (!time) return null;
     const minute = String(time.minute).padStart(2, "0");
     return `${time.ampm} ${time.hour}:${minute}`;
@@ -199,8 +201,43 @@ export default function TodoList({
     return `${date.getMonth() + 1}월 ${date.getDate()}일 (${weekday})`;
   };
 
-  if (loading || !selectedDay) return <div>Loading...</div>;
+  /* ------------------------------------------------
+     ⭐ 스켈레톤 UI (로딩 or selectedDay 없음)
+     ------------------------------------------------ */
+  if (loading || !selectedDay) {
+    return (
+      <div
+        className={`bg-white p-4 rounded-xl shadow-sm ${
+          maxHeight ? "overflow-y-auto" : ""
+        }`}
+        style={maxHeight ? { maxHeight } : {}}
+      >
+        {/* 날짜 스켈레톤 */}
+        <div className={`h-5 w-32 ${skeleton} mb-4`} />
 
+        {/* Todo 스켈레톤 3개 */}
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="flex items-center gap-3 mb-6">
+            {/* 체크박스 자리 */}
+            <div className={`w-5 h-5 rounded ${skeleton}`} />
+
+            {/* 텍스트 자리 */}
+            <div className="flex-1">
+              <div className={`h-4 w-40 ${skeleton} mb-2`} />
+              <div className={`h-3 w-24 ${skeleton}`} />
+            </div>
+
+            {/* 메뉴 버튼 자리 */}
+            <div className={`w-4 h-4 ${skeleton}`} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  /* ------------------------------------------------
+     실제 렌더링 영역
+     ------------------------------------------------ */
   return (
     <>
       <div
@@ -217,7 +254,6 @@ export default function TodoList({
           const isEditing = editingId === todo.id;
           const displayTime = formatTime(todo.time);
 
-          /** 드래그 중인 원본은 안 보이게 */
           const hiddenWhileDragging =
             isDragging && dragItem && dragItem.id === todo.id
               ? "opacity-0"
@@ -278,6 +314,7 @@ export default function TodoList({
                 )}
               </div>
 
+              {/* 편집 UI */}
               {isEditing && (
                 <div className="mt-3 flex flex-col gap-4">
                   <div
