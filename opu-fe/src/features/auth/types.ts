@@ -18,6 +18,7 @@ export type EmailSignupPayload = {
     email: string;
     password: string;
     nickname: string;
+    webPushAgreed: boolean;
 };
 
 export type EmailVerifyStatusResponse = {
