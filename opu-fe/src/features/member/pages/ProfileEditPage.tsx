@@ -1,8 +1,8 @@
 "use client";
 
-import ProfileAvatarPicker from "@/features/user/components/ProfileAvatarPicker";
-import NicknameField from "@/features/user/components/NicknameField";
-import IntroField from "@/features/user/components/IntroField";
+import ProfileAvatarPicker from "@/features/member/components/ProfileAvatarPicker";
+import NicknameField from "@/features/member/components/NicknameField";
+import IntroField from "@/features/member/components/IntroField";
 import OpuActionButton from "@/components/common/OpuActionButton";
 import { useProfileEdit } from "../hooks/useProfileEdit";
 import { useState } from "react";

@@ -1,6 +1,6 @@
 "use client";
 
-import SettingsList from "@/features/user/components/SettingsList";
+import SettingsList from "@/features/member/components/SettingsList";
 
 type Item =
     | { label: string; href: string; onClick?: never }

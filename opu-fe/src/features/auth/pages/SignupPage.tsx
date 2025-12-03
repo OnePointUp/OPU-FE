@@ -2,7 +2,7 @@
 
 import EmailField from "@/features/auth/components/EmailField";
 import PasswordInput from "@/features/auth/components/PasswordInput";
-import NicknameField from "@/features/user/components/NicknameField";
+import NicknameField from "@/features/member/components/NicknameField";
 import AgreementsField from "@/features/auth/components/AgreementsField";
 import OpuActionButton from "@/components/common/OpuActionButton";
 import { useSignupEmail } from "@/features/auth/hooks/useEmailSignup";

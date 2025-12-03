@@ -32,32 +32,31 @@ function BottomSheetInner({
     const [dragging, setDragging] = useState(false);
 
     useEffect(() => {
-    const scrollY = window.scrollY;
+        const scrollY = window.scrollY;
 
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.left = '0';
-      document.body.style.right = '0';
-      document.body.style.width = '100%';
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.left = "0";
+        document.body.style.right = "0";
+        document.body.style.width = "100%";
 
-      const onKeyDown = (e: KeyboardEvent) => {
-          if (e.key === "Escape") onClose();
-      };
-      document.addEventListener("keydown", onKeyDown);
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") onClose();
+        };
+        document.addEventListener("keydown", onKeyDown);
 
-      return () => {
-          document.removeEventListener("keydown", onKeyDown);
+        return () => {
+            document.removeEventListener("keydown", onKeyDown);
 
-          document.body.style.position = '';
-          document.body.style.top = '';
-          document.body.style.left = '';
-          document.body.style.right = '';
-          document.body.style.width = '';
+            document.body.style.position = "";
+            document.body.style.top = "";
+            document.body.style.left = "";
+            document.body.style.right = "";
+            document.body.style.width = "";
 
-          window.scrollTo(0, scrollY);
-      };
+            window.scrollTo(0, scrollY);
+        };
     }, [onClose]);
-
 
     const beginDrag = (y: number) => {
         startY.current = y;

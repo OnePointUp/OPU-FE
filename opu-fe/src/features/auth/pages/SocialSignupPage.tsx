@@ -1,6 +1,6 @@
 "use client";
 
-import NicknameField from "@/features/user/components/NicknameField";
+import NicknameField from "@/features/member/components/NicknameField";
 import AgreementsField from "@/features/auth/components/AgreementsField";
 import OpuActionButton from "@/components/common/OpuActionButton";
 import { useSocialSignupForm } from "@/features/auth/hooks/useSocialSignup";

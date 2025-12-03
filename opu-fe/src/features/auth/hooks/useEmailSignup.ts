@@ -9,7 +9,7 @@ import { toastSuccess, toastError } from "@/lib/toast";
 import { validateEmail } from "@/utils/validation";
 import { useNicknameField } from "./useNicknameField";
 import { useAgreements } from "./useAgreements";
-import { useProfileImagePicker } from "@/features/user/hooks/useProfileImagePicker";
+import { useProfileImagePicker } from "@/features/member/hooks/useProfileImagePicker";
 import { extractErrorMessage } from "@/utils/api-helpers";
 
 export function useSignupEmail() {

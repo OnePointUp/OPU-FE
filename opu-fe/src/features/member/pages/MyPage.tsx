@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import UserInfo from "@/features/user/components/UserInfo";
-import SettingsList from "@/features/user/components/SettingsList";
+import UserInfo from "@/features/member/components/UserInfo";
+import SettingsList from "@/features/member/components/SettingsList";
 import { useMyPageMenuData } from "../constants/myPageMenu";
 import OpuManagement from "../components/OpuManagement";
 import { useMyProfile } from "../hooks/useMyProfile";
