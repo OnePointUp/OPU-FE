@@ -1,12 +1,13 @@
 "use client";
 
 import CalendarFull from "../components/CalendarFull";
-import CalendarContainer from "../hooks/CalendarContainer";
+import CalendarContainer from "../components/CalendarContainer";
 import DaySelector from "@/features/main/components/DaySelector";
 import TodoList from "@/features/main/components/TodoList";
 import PlusButton from "@/components/common/PlusButton";
 
-import { useCalendarTodo } from "@/features/calendar/hooks/useCalendarTodo";
+import type { DailyTodoStats } from "@/mocks/api/db/calendar.db";
+import { useCalendarCore } from "@/features/calendar/hooks/useCalendarCore";
 import { useCalendarLayout } from "../hooks/useCalendarLayout";
 
 export default function CalendarPage() {
@@ -22,15 +23,17 @@ export default function CalendarPage() {
     setYear,
     setMonth,
     setSelectedDay,
+    selectDay,
     setEditingTodoId,
-    handleSelectDay: baseHandleSelectDay,
-    handleToggleTodo,
-    handleEditTodo,
-    handleDeleteTodo,
-    handleAddTodo: baseHandleAddTodo,
-    handleConfirmNewTodo,
-  } = useCalendarTodo();
 
+    handleToggle,
+    handleEdit,
+    handleDelete,
+    handleAdd,
+    handleConfirm,
+  } = useCalendarCore();
+
+  /** 높이 관련 훅 (UI) */
   const {
     daySelectorRef,
     cellHeight,
@@ -40,17 +43,16 @@ export default function CalendarPage() {
     todoHeight,
   } = useCalendarLayout(calendarMatrix.length);
 
-  /** 날짜 클릭 시: 공통 로직 + 캘린더 접기 */
-  const handleSelectDay = (
-    day: Parameters<typeof baseHandleSelectDay>[0]
-  ) => {
-    baseHandleSelectDay(day);
+  /** 날짜 선택 시: collapse */
+  const handleSelectDay = (day: DailyTodoStats | null) => {
+    if (!day) return;
+    selectDay(day);
     setCellHeight(collapsedHeight);
   };
 
-  /** 플러스 버튼: 공통 로직 + 캘린더 접기 */
+  /** Todo 추가 시: collapse */
   const handleAddTodo = () => {
-    baseHandleAddTodo();
+    handleAdd();
     setCellHeight(collapsedHeight);
   };
 
@@ -92,7 +94,7 @@ export default function CalendarPage() {
 
         {/* Calendar & Todo */}
         <div className="flex-1 flex flex-col min-h-0">
-          {/* 드래그 가능한 캘린더 영역 */}
+          {/* 드래그 캘린더 */}
           <CalendarContainer
             cellHeight={cellHeight}
             setCellHeight={setCellHeight}
@@ -117,10 +119,10 @@ export default function CalendarPage() {
           >
             <TodoList
               selectedDay={selectedDay}
-              onToggleTodo={handleToggleTodo}
-              onEditTodo={handleEditTodo}
-              onDeleteTodo={handleDeleteTodo}
-              onConfirmNewTodo={handleConfirmNewTodo}
+              onToggleTodo={handleToggle}
+              onEditTodo={handleEdit}
+              onDeleteTodo={handleDelete}
+              onConfirmNewTodo={handleConfirm}
               editingTodoId={editingTodoId}
               maxHeight={todoHeight}
             />
