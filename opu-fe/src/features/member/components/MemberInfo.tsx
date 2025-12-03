@@ -10,6 +10,7 @@ type Props = {
     profileImageUrl?: string | null;
     handleEdit?: () => void;
     loading?: boolean;
+    authProvider?: string | null;
 };
 
 export default function MemberInfo({
@@ -19,6 +20,7 @@ export default function MemberInfo({
     profileImageUrl,
     handleEdit,
     loading = false,
+    authProvider,
 }: Props) {
     const displayBio =
         bio && bio.trim().length > 0 ? bio : "아직 자기소개가 없어요 😊";
@@ -70,15 +72,26 @@ export default function MemberInfo({
                     )}
                 </div>
                 <div className="flex flex-col flex-1">
-                    <p
-                        className="truncate text-[var(--color-dark-navy)]"
-                        style={{
-                            fontSize: "var(--text-h3)",
-                            fontWeight: "var(--weight-bold)",
-                        }}
-                    >
-                        {nickname}
-                    </p>
+                    <div className="flex items-center gap-2">
+                        <p
+                            className="truncate text-[var(--color-dark-navy)]"
+                            style={{
+                                fontSize: "var(--text-h3)",
+                                fontWeight: "var(--weight-bold)",
+                            }}
+                        >
+                            {nickname}
+                        </p>
+
+                        {authProvider === "kakao" && (
+                            <Image
+                                src="/images/kakao-simple-logo.png"
+                                width={18}
+                                height={18}
+                                alt="카카오 로그인"
+                            />
+                        )}
+                    </div>
 
                     <p
                         className="text-[var(--color-light-gray)]"

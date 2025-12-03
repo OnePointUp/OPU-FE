@@ -2,31 +2,32 @@
 
 import { useRouter } from "next/navigation";
 import MemberInfo from "@/features/member/components/MemberInfo";
-import SettingsList from "@/features/member/components/SettingsList";
-import { useMyPageMenuData } from "../constants/myPageMenu";
 import OpuManagement from "../components/OpuManagement";
 import { useMyProfile } from "../hooks/useMyProfile";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import { useLogout } from "../hooks/useLogout";
 import { useState } from "react";
-import SettingsSection from "./SettingsSection";
+import SettingsSection from "../components/SettingsSection";
+import { useMyPageMenu } from "../hooks/useMyPageMenu";
 
 export default function MyPageScreen() {
     const router = useRouter();
 
-    const { profile, loading } = useMyProfile();
-
+    const { profile, loading, authProvider } = useMyProfile();
     const { handleLogout } = useLogout();
     const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
     const openLogoutConfirm = () => setLogoutModalOpen(true);
     const closeLogoutConfirm = () => setLogoutModalOpen(false);
 
-    const { myPageMenuItems } = useMyPageMenuData({
+    const { myPageMenuItems, menuLoading } = useMyPageMenu({
         onClickLogout: openLogoutConfirm,
     });
 
+    const isLoadingAll = loading || menuLoading;
+
     function handleEdit() {
+        if (isLoadingAll) return;
         router.push("/me/profile");
     }
 
@@ -39,6 +40,7 @@ export default function MyPageScreen() {
                 profileImageUrl={profile?.profileImageUrl}
                 handleEdit={handleEdit}
                 loading={loading}
+                authProvider={authProvider}
             />
 
             <OpuManagement
@@ -50,7 +52,10 @@ export default function MyPageScreen() {
             <div className="mt-5 border-t border-[#F3F5F8]" />
 
             <div className="w-full mt-1.5">
-                <SettingsSection items={myPageMenuItems} />
+                <SettingsSection
+                    items={myPageMenuItems}
+                    loading={menuLoading}
+                />
             </div>
 
             <ConfirmModal
