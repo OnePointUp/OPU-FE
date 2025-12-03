@@ -13,7 +13,7 @@ import { useMyPageMenu } from "../hooks/useMyPageMenu";
 export default function MyPageScreen() {
     const router = useRouter();
 
-    const { profile, loading } = useMyProfile();
+    const { profile, loading, authProvider } = useMyProfile();
     const { handleLogout } = useLogout();
     const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
@@ -40,6 +40,7 @@ export default function MyPageScreen() {
                 profileImageUrl={profile?.profileImageUrl}
                 handleEdit={handleEdit}
                 loading={loading}
+                authProvider={authProvider}
             />
 
             <OpuManagement
