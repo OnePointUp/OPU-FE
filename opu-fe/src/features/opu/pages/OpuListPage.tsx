@@ -271,7 +271,6 @@ function MoreActionsSheet({
                 onToggleShare();
                 onClose();
             },
-            primary: true,
         });
     }
 
