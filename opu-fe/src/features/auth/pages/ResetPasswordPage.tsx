@@ -12,7 +12,6 @@ export default function ResetPasswordPage() {
     const {
         next,
         confirm,
-        errNext,
         errConfirm,
         loading,
         canSubmit,
@@ -23,6 +22,18 @@ export default function ResetPasswordPage() {
         token ? { mode: "reset", resetToken: token } : { mode: "change" }
     );
 
+    const rules = [
+        { label: "영문포함", satisfied: /[a-zA-Z]/.test(next) },
+        { label: "숫자포함", satisfied: /\d/.test(next) },
+        { label: "특수문자포함", satisfied: /[!@#$%^&*]/.test(next) },
+        {
+            label: "8자이상",
+            satisfied: next.length >= 8 && next.length <= 20,
+        },
+    ];
+
+    const matchActive = confirm.length > 0 && next === confirm;
+
     return (
         <section>
             <div className="flex flex-col">
@@ -30,14 +41,16 @@ export default function ResetPasswordPage() {
                     label="새 비밀번호"
                     value={next}
                     onChange={handleChangeNext}
-                    placeholder="@LwEoLgXgU7"
-                    error={errNext}
+                    placeholder="비밀번호를 입력해주세요."
+                    rules={rules}
                 />
                 <PasswordInput
                     label="비밀번호 확인"
                     value={confirm}
                     onChange={handleChangeConfirm}
-                    placeholder="@LwEoLgXgU7"
+                    placeholder="비밀번호를 다시 입력해주세요."
+                    statusLabel="비밀번호 일치"
+                    statusActive={matchActive}
                     error={errConfirm}
                 />
             </div>
