@@ -6,6 +6,8 @@ type Props = {
     value: string;
     onChange: (v: string) => void;
     className?: string;
+    showLabel?: boolean;
+    variant?: "default" | "profile";
 };
 
 const MIN_LEN = 2;
@@ -15,21 +17,39 @@ export default function NicknameField({
     value,
     onChange,
     className = "",
+    showLabel = false,
+    variant = "default",
 }: Props) {
     const length = value.trim().length;
     const isSatisfied = length >= MIN_LEN && length <= MAX_LEN;
 
+    const inputClass =
+        variant === "profile"
+            ? "input-box-2 input-box--field"
+            : "input-box input-box--field";
+
     return (
         <section className={`mt-6 ${className}`}>
-            <label htmlFor="nickname-input" className="sr-only">
-                닉네임
-            </label>
+            {showLabel && (
+                <label
+                    htmlFor="nickname-input"
+                    className="block my-2 mx-1"
+                    style={{
+                        fontSize: "var(--text-sub)",
+                        fontWeight: "var(--weight-semibold)",
+                        color: "var(--color-dark-navy)",
+                    }}
+                >
+                    닉네임
+                </label>
+            )}
+
             <input
                 id="nickname-input"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="닉네임을 입력해주세요."
-                className="input-box input-box--field"
+                className={inputClass}
             />
 
             <p
