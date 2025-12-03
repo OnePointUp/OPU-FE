@@ -19,7 +19,6 @@ export default function CalendarFull({
   onSelectDay,
   cellHeight,
 }: Props) {
-
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -29,22 +28,39 @@ export default function CalendarFull({
     }
   }, [calendarMatrix]);
 
+  /* -----------------------------------------------
+     ⭐ 요일 헤더 (로딩 여부 상관없이 항상 표시)
+     ----------------------------------------------- */
+  const WeekdayHeader = (
+    <div className="grid grid-cols-7 text-sm text-gray-500 mb-2">
+      {WEEKDAYS.map((day) => (
+        <div
+          key={day}
+          className={clsx(
+            "h-10 flex items-center justify-center text-sm",
+            day === "일" ? "text-red-500" : "text-[var(--color-dark-gray)]"
+          )}
+        >
+          {day}
+        </div>
+      ))}
+    </div>
+  );
+
+  /* -----------------------------------------------
+     ⭐ 로딩 Skeleton (요일 제외)
+     ----------------------------------------------- */
   if (isLoading) {
     return (
       <div className="w-full select-none animate-pulse">
-        
-        {/* 요일 스켈레톤 */}
-        <div className="grid grid-cols-7 mb-2">
-          {WEEKDAYS.map((_, i) => (
-            <div key={i} className="h-10 flex items-center justify-center">
-              <div className="w-6 h-3 bg-gray-200 rounded" />
-            </div>
-          ))}
-        </div>
+        {WeekdayHeader}
 
-        {/* 6주 스켈레톤 */}
+        {/* 날짜 6주 Skeleton */}
         {[...Array(6)].map((_, row) => (
-          <div key={row} className="grid grid-cols-7 w-full border-t border-gray-100">
+          <div
+            key={row}
+            className="grid grid-cols-7 w-full border-t border-gray-100"
+          >
             {[...Array(7)].map((_, col) => (
               <div
                 key={`${row}-${col}`}
@@ -61,31 +77,16 @@ export default function CalendarFull({
             ))}
           </div>
         ))}
-
       </div>
     );
   }
 
+  /* -----------------------------------------------
+     ⭐ 실제 달력 데이터 렌더링
+     ----------------------------------------------- */
   return (
-    <div
-      className={clsx(
-        "w-full select-none transition-opacity duration-300",
-        isLoading ? "opacity-0" : "opacity-100"
-      )}
-    >
-      <div className="grid grid-cols-7 text-sm text-gray-500 mb-2">
-        {WEEKDAYS.map((day) => (
-          <div
-            key={day}
-            className={clsx(
-              "h-10 flex items-center justify-center text-sm",
-              day === "일" ? "text-red-500" : "text-[var(--color-dark-gray)]"
-            )}
-          >
-            {day}
-          </div>
-        ))}
-      </div>
+    <div className="w-full select-none transition-opacity duration-300">
+      {WeekdayHeader}
 
       {calendarMatrix.map((week, wi) => (
         <div
@@ -95,10 +96,7 @@ export default function CalendarFull({
           {week.map((day, di) => {
             if (!day) {
               return (
-                <div
-                  key={`${wi}-${di}`}
-                  style={{ height: cellHeight }}
-                />
+                <div key={`${wi}-${di}`} style={{ height: cellHeight }} />
               );
             }
 
@@ -121,6 +119,7 @@ export default function CalendarFull({
                   "px-1 cursor-pointer flex flex-col transition-all rounded-md bg-white"
                 )}
               >
+                {/* 날짜 숫자 */}
                 <div
                   className={clsx(
                     "text-xs mb-1 flex justify-center relative",
@@ -134,6 +133,7 @@ export default function CalendarFull({
                   )}
                 </div>
 
+                {/* 투두 목록 */}
                 <div className="relative overflow-hidden flex-1">
                   <div className="text-[10px] flex flex-col gap-[2px] leading-tight">
                     {day.todos.map((t) => (
@@ -151,6 +151,7 @@ export default function CalendarFull({
                     ))}
                   </div>
 
+                  {/* Fade-out gradient */}
                   <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white/90 to-transparent pointer-events-none" />
                 </div>
               </div>
