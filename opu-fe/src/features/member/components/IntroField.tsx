@@ -18,7 +18,7 @@ export default function IntroField({
     return (
         <section className={`mt-6 ${className}`}>
             <label
-                className="block mb-2 ml-1"
+                className="block my-2 mx-1"
                 style={{
                     fontSize: "var(--text-sub)",
                     fontWeight: "var(--weight-semibold)",
@@ -34,7 +34,7 @@ export default function IntroField({
                 placeholder="나를 멋지게 소개해 봐요 :)"
                 rows={4}
                 maxLength={max}
-                className="input-box input-box--textarea"
+                className="input-box--textarea"
             />
             <div
                 className="mt-1 mr-1 text-right"
