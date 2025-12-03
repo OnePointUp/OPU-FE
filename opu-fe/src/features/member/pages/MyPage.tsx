@@ -2,14 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import MemberInfo from "@/features/member/components/MemberInfo";
-import SettingsList from "@/features/member/components/SettingsList";
 import { useMyPageMenuData } from "../constants/myPageMenu";
 import OpuManagement from "../components/OpuManagement";
 import { useMyProfile } from "../hooks/useMyProfile";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import { useLogout } from "../hooks/useLogout";
 import { useState } from "react";
-import SettingsSection from "./SettingsSection";
+import SettingsSection from "../components/SettingsSection";
 
 export default function MyPageScreen() {
     const router = useRouter();
