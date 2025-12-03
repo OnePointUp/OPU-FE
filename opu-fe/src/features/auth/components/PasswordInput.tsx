@@ -34,17 +34,6 @@ export default function PasswordInput({
 
     return (
         <section className="mb-6">
-            <label
-                className="block mb-2"
-                style={{
-                    fontSize: "var(--text-sub)",
-                    fontWeight: "var(--weight-semibold)",
-                    color: "var(--color-dark-navy)",
-                }}
-            >
-                {label}
-            </label>
-
             <div className="relative">
                 <input
                     type={show ? "text" : "password"}

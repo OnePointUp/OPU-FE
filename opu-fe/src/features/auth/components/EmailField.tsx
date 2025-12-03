@@ -1,5 +1,7 @@
 "use client";
 
+import { Icon } from "@iconify/react";
+
 type Props = {
     value: string;
     onChange: (v: string) => void;
@@ -12,27 +14,13 @@ export default function EmailField({
     value,
     onChange,
     className = "",
-    isLabeled = true,
     error,
 }: Props) {
     return (
         <section className={`mb-6 ${className}`}>
-            {isLabeled && (
-                <label
-                    className="block mb-2 ml-1"
-                    style={{
-                        fontSize: "var(--text-sub)",
-                        fontWeight: "var(--weight-semibold)",
-                        color: "var(--color-dark-navy)",
-                    }}
-                >
-                    이메일
-                </label>
-            )}
-
             <input
                 type="email"
-                placeholder="example@opu.com"
+                placeholder="이메일을 입력해주세요."
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 className="input-box input-box--field"
@@ -40,13 +28,17 @@ export default function EmailField({
 
             {error ? (
                 <p
-                    className="mt-2 ml-1"
+                    className="flex items-center gap-0.5 mt-2 text-[11px]"
                     style={{
                         color: "var(--color-opu-red)",
-                        fontSize: "var(--text-mini)",
                         fontWeight: "var(--weight-medium)",
                     }}
                 >
+                    <Icon
+                        icon="material-symbols:close"
+                        width="15"
+                        height="15"
+                    />
                     {error}
                 </p>
             ) : null}
