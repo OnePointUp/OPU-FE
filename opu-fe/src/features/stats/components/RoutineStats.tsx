@@ -3,12 +3,19 @@
 import { useEffect, useState, type FC } from "react";
 
 import MonthView from "@/features/main/components/MonthView";
-import { useCalendarCore } from "@/features/calendar/hooks/useCalendarCore";
 
 import type { DailyTodoStats } from "@/mocks/api/db/calendar.db";
 import { getMonthlyCalendar } from "@/mocks/api/handler/calendar.handler";
 import { buildCalendarMatrix } from "@/lib/calendar";
 import { WEEKDAYS } from "../types";
+import { Icon } from "@iconify/react";
+
+// 목데이터용
+const FILTERS = [
+    { key: "all", title: "전체", emoji: "none" },
+    { key: "water", title: "물 2L 마시기", emoji: "💧" },
+    { key: "walk", title: "산책하기", emoji: "🙂" },
+];
 
 type RoutineStatsProps = {
     year: number;
@@ -16,24 +23,19 @@ type RoutineStatsProps = {
 };
 
 const RoutineStats: FC<RoutineStatsProps> = ({ year, month }) => {
-    const { selectedDay, selectDay } = useCalendarCore();
+    const [activeFilter, setActiveFilter] = useState("all");
 
     const [calendarData, setCalendarData] = useState<DailyTodoStats[]>([]);
     const [calendarMatrix, setCalendarMatrix] = useState<
         (DailyTodoStats | null)[][]
     >([]);
 
-    // 🔹 year/month 기준으로 캘린더 데이터 생성
     useEffect(() => {
         const data = getMonthlyCalendar(year, month);
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setCalendarData(data);
         setCalendarMatrix(buildCalendarMatrix(data));
     }, [year, month]);
-
-    const handleSelectDay = (day: DailyTodoStats) => {
-        selectDay(day);
-    };
 
     const today = new Date();
     const todayStr = `${today.getFullYear()}-${String(
@@ -44,29 +46,67 @@ const RoutineStats: FC<RoutineStatsProps> = ({ year, month }) => {
         <div className="space-y-4">
             {/* 상단 필터 (TODO: 실제 데이터 기준으로 변경) */}
             <div className="flex gap-2 overflow-x-auto pb-1">
-                <button className="rounded-full bg-[var(--color-chip-bg)] px-3 py-1 text-xs font-medium">
-                    전체
-                </button>
-                <button className="rounded-full bg-[#FFE8EC] px-3 py-1 text-xs font-medium">
-                    물 2L 마시기
-                </button>
-                <button className="rounded-full bg-[#FFF7D9] px-3 py-1 text-xs font-medium">
-                    산책하기
-                </button>
+                {FILTERS.map((f) => {
+                    const isActive = activeFilter === f.key;
+
+                    return (
+                        <button
+                            key={f.key}
+                            onClick={() => setActiveFilter(f.key)}
+                            className="flex items-center gap-1 rounded-full border border-[var(--color-opu-pink)] px-3 py-1 whitespace-nowrap transition-colors"
+                            style={{
+                                fontWeight: "var(--weight-semibold)",
+                                fontSize: "var(--text-caption)",
+                                background: isActive
+                                    ? "var(--color-opu-pink)"
+                                    : "#ffffff",
+
+                                color: isActive
+                                    ? "#ffffff"
+                                    : "var(--color-super-dark-gray)",
+                            }}
+                        >
+                            {f.emoji !== "none" && (
+                                <span className="text-base leading-none">
+                                    {f.emoji}
+                                </span>
+                            )}
+                            {f.title}
+                        </button>
+                    );
+                })}
             </div>
 
             {/* 요약 카드 */}
             <section className="grid grid-cols-3 gap-2">
-                <StatsCard title="전체 달성률" value="86%" />
-                <StatsCard title="연속 성공" value="12" suffix="일" />
-                <StatsCard title="완료" value="26" suffix="회" />
+                <StatsCard
+                    title="전체 달성률"
+                    value="86%"
+                    icon="uil:calendar"
+                    color="#FF9CB9"
+                    background="#FFECF1"
+                />
+                <StatsCard
+                    title="연속 성공"
+                    value="12"
+                    icon="solar:fire-bold"
+                    suffix="일"
+                    color="#FFA061"
+                    background="#FFF0E6"
+                />
+                <StatsCard
+                    title="완료"
+                    value="26"
+                    icon="lets-icons:check-fill"
+                    suffix="회"
+                    color="#48EA8A"
+                    background="#EAF9EE"
+                />
             </section>
 
             {/* 캘린더 */}
             <StatsCalendar
                 calendarMatrix={calendarMatrix}
-                selectedDay={selectedDay}
-                onSelectDay={handleSelectDay}
                 todayStr={todayStr}
             />
         </div>
@@ -78,22 +118,64 @@ export default RoutineStats;
 type StatsCardProps = {
     title: string;
     value: string | number;
+    icon: string;
+    color: string;
+    background: string;
     suffix?: string;
 };
 
-function StatsCard({ title, value, suffix }: StatsCardProps) {
+function StatsCard({
+    title,
+    value,
+    icon,
+    color,
+    background,
+    suffix,
+}: StatsCardProps) {
     return (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--color-super-light-gray)] bg-white py-3 text-center shadow-[0_4px_10px_rgba(0,0,0,0.02)]">
-            <p className="mb-2 text-[11px] text-[var(--color-text-subtle)]">
-                {title}
-            </p>
-            <p className="text-[20px] font-semibold">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-[var(--color-super-light-gray)] bg-white py-2 text-center">
+            {/* 아이콘 */}
+            <span
+                className="flex items-center justify-center p-2 rounded-full mb-2"
+                style={{
+                    background,
+                    color,
+                }}
+            >
+                {icon && <Icon icon={icon} width="21" height="21" />}
+            </span>
+
+            {/* 달성도 */}
+            <p
+                style={{
+                    fontSize: "var(--text-body)",
+                    fontWeight: "var(--weight-semibold)",
+                }}
+            >
                 {value}
                 {suffix && (
-                    <span className="ml-[1px] text-[12px] font-medium">
+                    <span
+                        className="ml-[1px]"
+                        style={{
+                            fontSize: "var(--text-caption)",
+                            fontWeight: "var(--weight-regular)",
+                        }}
+                    >
                         {suffix}
                     </span>
                 )}
+            </p>
+
+            {/* 타이틀 */}
+            <p
+                className="mb-1"
+                style={{
+                    fontSize: "var(--text-mini)",
+                    color: "var(--color-dark-gray)",
+                    fontWeight: "var(--weight-medium)",
+                }}
+            >
+                {title}
             </p>
         </div>
     );
@@ -101,42 +183,48 @@ function StatsCard({ title, value, suffix }: StatsCardProps) {
 
 type StatsCalendarProps = {
     calendarMatrix: (DailyTodoStats | null)[][];
-    selectedDay: DailyTodoStats | null;
-    onSelectDay: (day: DailyTodoStats) => void;
     todayStr: string;
 };
 
 const StatsCalendar: FC<StatsCalendarProps> = ({
     calendarMatrix,
-    selectedDay,
-    onSelectDay,
     todayStr,
 }) => {
     return (
-        <section className="mt-2 rounded-3xl border border-[var(--color-super-light-gray)] bg-white px-4 pb-4 pt-3">
-            {/* 요일 */}
-            <div className="grid grid-cols-7 mb-2 gap-2 inline-grid">
-                {WEEKDAYS.map((day) => (
-                    <div
-                        key={day}
-                        className={`w-10 h-10 flex items-center justify-center text-sm ${
-                            day === "일"
-                                ? "[var(--color-sunday)]"
-                                : "text-[var(--color-dark-gray)]"
-                        }`}
-                    >
-                        {day}
-                    </div>
-                ))}
-            </div>
+        <section className="mt-2 rounded-xl border border-[var(--color-super-light-gray)] bg-white px-4 py-3 flex justify-center">
+            {/* 가운데 정렬 + 반응형 너비 */}
+            <div className="flex flex-col items-center w-full max-w-[320px] sm:max-w-[360px] md:max-w-[420px]">
+                {/* 요일 */}
+                <div className="mb-2 grid grid-cols-7 w-full gap-1 sm:gap-2 md:gap-3">
+                    {WEEKDAYS.map((day) => (
+                        <div
+                            key={day}
+                            className={`
+                  flex items-center justify-center text-center
+                  aspect-square
+                  ${
+                      day === "일"
+                          ? "text-[var(--color-sunday)]"
+                          : day === "토"
+                          ? "text-[var(--color-saturday)]"
+                          : "text-[var(--color-dark-gray)]"
+                  }
+                `}
+                            style={{ fontSize: "var(--text-caption)" }}
+                        >
+                            {day}
+                        </div>
+                    ))}
+                </div>
 
-            {/* 월간 캘린더 */}
-            <MonthView
-                calendarMatrix={calendarMatrix}
-                selectedDay={selectedDay}
-                onSelectDay={onSelectDay}
-                todayStr={todayStr}
-            />
+                {/* 월간 캘린더 */}
+                <MonthView
+                    calendarMatrix={calendarMatrix}
+                    todayStr={null}
+                    selectedDay={null}
+                    onSelectDay={() => {}}
+                />
+            </div>
         </section>
     );
 };

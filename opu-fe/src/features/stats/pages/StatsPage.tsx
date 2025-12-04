@@ -44,10 +44,11 @@ export default function StatsPage() {
     return (
         <div>
             {/* 월 선택 영역 */}
-            <section className="flex items-center justify-center gap-4 px-6">
+            <section className="flex items-center px-20">
+                {/* 이전 달 */}
                 <button
                     type="button"
-                    className="p-2"
+                    className="p-2 shrink-0"
                     aria-label="이전 달"
                     onClick={() => {
                         if (month === 1) {
@@ -58,14 +59,29 @@ export default function StatsPage() {
                         }
                     }}
                 >
-                    <Icon icon="mingcute:left-line" width={18} height={18} />
+                    <Icon
+                        icon="mingcute:left-line"
+                        width={18}
+                        height={18}
+                        color="var(--color-light-gray)"
+                    />
                 </button>
-                <p className="text-[18px] font-semibold">
+
+                {/* 년/월 텍스트 */}
+                <p
+                    className="flex-1 text-center"
+                    style={{
+                        fontSize: "var(--text-h3)",
+                        fontWeight: "var(--weight-semibold)",
+                    }}
+                >
                     {year}년 {month}월
                 </p>
+
+                {/* 다음 달 */}
                 <button
                     type="button"
-                    className="p-2"
+                    className="p-2 shrink-0"
                     aria-label="다음 달"
                     onClick={() => {
                         if (month === 12) {
@@ -76,21 +92,26 @@ export default function StatsPage() {
                         }
                     }}
                 >
-                    <Icon icon="mingcute:right-line" width={18} height={18} />
+                    <Icon
+                        icon="mingcute:right-line"
+                        width={18}
+                        height={18}
+                        color="var(--color-light-gray)"
+                    />
                 </button>
             </section>
 
             {/* 탭 */}
-            <nav className="mt-4 border-b border-[var(--color-super-light-gray)] px-6">
-                <div className="flex gap-8">
+            <nav className="w-full mt-4 border-b border-[var(--color-super-light-gray)]">
+                <div className="grid grid-cols-2">
                     <button
                         type="button"
                         onClick={() => setCurrentTab("ROUTINE")}
-                        className={`relative pb-3 text-sm ${
-                            currentTab === "ROUTINE"
-                                ? "font-semibold text-[var(--color-text-strong)]"
-                                : "text-[var(--color-text-subtle)]"
-                        }`}
+                        className="relative pb-3"
+                        style={{
+                            fontWeight: "var(--weight-semibold)",
+                            fontSize: "var(--text-sub)",
+                        }}
                     >
                         루틴
                         {currentTab === "ROUTINE" && (
@@ -100,11 +121,11 @@ export default function StatsPage() {
                     <button
                         type="button"
                         onClick={() => setCurrentTab("OPU")}
-                        className={`relative pb-3 text-sm ${
-                            currentTab === "OPU"
-                                ? "font-semibold text-[var(--color-text-strong)]"
-                                : "text-[var(--color-text-subtle)]"
-                        }`}
+                        className="relative pb-3"
+                        style={{
+                            fontWeight: "var(--weight-semibold)",
+                            fontSize: "var(--text-sub)",
+                        }}
                     >
                         OPU
                         {currentTab === "OPU" && (
