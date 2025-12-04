@@ -199,17 +199,15 @@ const StatsCalendar: FC<StatsCalendarProps> = ({
                     {WEEKDAYS.map((day) => (
                         <div
                             key={day}
-                            className={`
-                  flex items-center justify-center text-center
-                  aspect-square
-                  ${
-                      day === "일"
-                          ? "text-[var(--color-sunday)]"
-                          : day === "토"
-                          ? "text-[var(--color-saturday)]"
-                          : "text-[var(--color-dark-gray)]"
-                  }
-                `}
+                            className={`flex items-center justify-center text-center aspect-square
+                                ${
+                                    day === "일"
+                                        ? "text-[var(--color-sunday)]"
+                                        : day === "토"
+                                        ? "text-[var(--color-saturday)]"
+                                        : "text-[var(--color-dark-gray)]"
+                                }
+                                `}
                             style={{ fontSize: "var(--text-caption)" }}
                         >
                             {day}
