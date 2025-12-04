@@ -18,9 +18,10 @@ const FILTERS = [
 type RoutineStatsProps = {
     year: number;
     month: number;
+    loading?: boolean;
 };
 
-const RoutineStats: FC<RoutineStatsProps> = ({ year, month }) => {
+const RoutineStats: FC<RoutineStatsProps> = ({ year, month, loading }) => {
     const [activeFilter, setActiveFilter] = useState("all");
 
     const [calendarData, setCalendarData] = useState<DailyTodoStats[]>([]);
@@ -76,29 +77,51 @@ const RoutineStats: FC<RoutineStatsProps> = ({ year, month }) => {
 
             {/* 요약 카드 */}
             <section className="grid grid-cols-3 gap-2">
-                <StatsCard
-                    title="전체 달성률"
-                    value="86%"
-                    icon="uil:calendar"
-                    color="#FF9CB9"
-                    background="#FFECF1"
-                />
-                <StatsCard
-                    title="연속 성공"
-                    value="12"
-                    icon="solar:fire-bold"
-                    suffix="일"
-                    color="#FFA061"
-                    background="#FFF0E6"
-                />
-                <StatsCard
-                    title="완료"
-                    value="26"
-                    icon="lets-icons:check-fill"
-                    suffix="회"
-                    color="#48EA8A"
-                    background="#EAF9EE"
-                />
+                {loading ? (
+                    <>
+                        {Array.from({ length: 3 }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="flex flex-col items-center justify-center rounded-xl border border-[var(--color-super-light-gray)] bg-white py-3 text-center"
+                            >
+                                {/* 아이콘 */}
+                                <div className="skeleton rounded-full w-9 h-9 mb-3" />
+
+                                {/* 값 */}
+                                <div className="skeleton h-5 w-10 mb-1" />
+
+                                {/* 타이틀 */}
+                                <div className="skeleton h-3 w-14" />
+                            </div>
+                        ))}
+                    </>
+                ) : (
+                    <>
+                        <StatsCard
+                            title="전체 달성률"
+                            value="86%"
+                            icon="uil:calendar"
+                            color="#FF9CB9"
+                            background="#FFECF1"
+                        />
+                        <StatsCard
+                            title="연속 성공"
+                            value="12"
+                            icon="solar:fire-bold"
+                            suffix="일"
+                            color="#FFA061"
+                            background="#FFF0E6"
+                        />
+                        <StatsCard
+                            title="완료"
+                            value="26"
+                            icon="lets-icons:check-fill"
+                            suffix="회"
+                            color="#48EA8A"
+                            background="#EAF9EE"
+                        />
+                    </>
+                )}
             </section>
 
             {/* 캘린더 */}

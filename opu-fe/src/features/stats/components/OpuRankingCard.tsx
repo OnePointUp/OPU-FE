@@ -3,8 +3,6 @@
 import { Icon } from "@iconify/react";
 import { CATEGORY_BADGE } from "@/features/opu/domain";
 import { type OpuCardModel } from "@/features/opu/domain";
-import { formatDate } from "@/utils/formatDate";
-import { useState } from "react";
 import Badge from "@/components/common/Badge";
 
 export default function OpuRankingCard({

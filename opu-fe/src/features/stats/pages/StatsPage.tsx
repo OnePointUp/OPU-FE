@@ -23,11 +23,17 @@ export default function StatsPage() {
         (DailyTodoStats | null)[][]
     >([]);
 
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
-        const data = getMonthlyCalendar(year, month);
         // eslint-disable-next-line react-hooks/set-state-in-effect
+        setLoading(true);
+
+        const data = getMonthlyCalendar(year, month);
         setCalendarData(data);
         setCalendarMatrix(buildCalendarMatrix(data));
+
+        setLoading(false);
     }, [year, month]);
 
     return (
@@ -91,9 +97,9 @@ export default function StatsPage() {
             {/* 탭 내용 */}
             <main className="w-full pb-10 pt-4">
                 {currentTab === "ROUTINE" ? (
-                    <RoutineStats year={year} month={month} />
+                    <RoutineStats year={year} month={month} loading={loading} />
                 ) : (
-                    <OpuStats year={year} month={month} />
+                    <OpuStats year={year} month={month} loading={loading} />
                 )}
             </main>
         </div>
