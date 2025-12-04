@@ -7,13 +7,13 @@ export default function MonthView({
     selectedDay,
     onSelectDay,
     todayStr,
-    loading = false, // ← 추가
+    loading = false,
 }: {
     calendarMatrix: (DailyTodoStats | null)[][];
     selectedDay: DailyTodoStats | null;
     onSelectDay: (d: DailyTodoStats) => void;
-    todayStr: string;
-    loading?: boolean; // ← 추가
+    todayStr: string | null;
+    loading?: boolean;
 }) {
     /* ---------------------------------------------------------
      ⭐ 1) 로딩 시 Skeleton 캘린더 표시
@@ -40,38 +40,40 @@ export default function MonthView({
     /* ---------------------------------------------------------
      ⭐ 2) 실제 캘린더 UI 렌더링
      --------------------------------------------------------- */
+    const visibleMatrix = calendarMatrix.filter((week) =>
+        week.some((cell) => cell !== null)
+    );
+
     return (
-        <div className="grid grid-cols-7 gap-2 inline-grid mx-auto">
-            {calendarMatrix.map((week, i) =>
+        <div className="grid grid-cols-7 w-full gap-1.5 sm:gap-2.5 md:gap-3.5">
+            {visibleMatrix.map((week, i) =>
                 week.map((day, j) =>
                     day ? (
                         <button
                             key={day.date}
                             onClick={() => onSelectDay(day)}
                             className={`
-                w-10 h-10 rounded-lg flex items-center justify-center
-                text-agreement-optional text-[var(--color-dark-blue-gray)]
-                ${
-                    day.date === todayStr
-                        ? "font-bold text-[var(--color-dark-navy)]"
-                        : ""
-                }
-              `}
+                              rounded-xl flex items-center justify-center
+                              aspect-square
+                              text-agreement-optional text-[var(--color-dark-gray)]
+                        ${
+                            day.date === todayStr
+                                ? "font-[var(--weight-semibold)] text-[var(--color-dark-navy)]"
+                                : ""
+                        }
+                      `}
                             style={{
                                 backgroundColor: CALENDAR_COLORS[day.intensity],
                                 border:
                                     selectedDay?.date === day.date
-                                        ? "2px solid var(--color-opu-dark-green)"
-                                        : "1px solid #eee",
+                                        ? "1px solid var(--color-dark-navy)"
+                                        : "none",
                             }}
                         >
                             {new Date(day.date).getDate()}
                         </button>
                     ) : (
-                        <div
-                            key={`empty-${i}-${j}`}
-                            className="w-10 h-10 bg-gray-50 rounded-lg border border-gray-100"
-                        />
+                        <div key={`empty-${i}-${j}`} />
                     )
                 )
             )}
