@@ -33,12 +33,7 @@ export default function NicknameField({
             {showLabel && (
                 <label
                     htmlFor="nickname-input"
-                    className="block my-1 mx-1"
-                    style={{
-                        fontSize: "var(--text-sub)",
-                        fontWeight: "var(--weight-semibold)",
-                        color: "var(--color-dark-navy)",
-                    }}
+                    className="form-label block my-1 mx-1"
                 >
                     닉네임
                 </label>

@@ -17,16 +17,7 @@ export default function IntroField({
 
     return (
         <section className={`mt-6 ${className}`}>
-            <label
-                className="block my-1 mx-1"
-                style={{
-                    fontSize: "var(--text-sub)",
-                    fontWeight: "var(--weight-semibold)",
-                    color: "var(--color-dark-navy)",
-                }}
-            >
-                자기소개
-            </label>
+            <label className="form-label  block my-1 mx-1">자기소개</label>
 
             <textarea
                 value={value}
@@ -36,13 +27,7 @@ export default function IntroField({
                 maxLength={max}
                 className="input-box--textarea"
             />
-            <div
-                className="mt-1 mr-1 text-right"
-                style={{
-                    fontSize: "12px",
-                    color: "var(--color-light-gray)",
-                }}
-            >
+            <div className="length-validation mt-1 mr-1 text-right">
                 {len}/{max}
             </div>
         </section>
