@@ -1,293 +1,68 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import {
-  getMonthlyCalendar,
-  toggleTodo,
-} from "@/mocks/api/handler/calendar.handler";
-import { DailyTodoStats } from "@/mocks/api/db/calendar.db";
-import { buildCalendarMatrix } from "@/lib/calendar";
-
+import CalendarFull from "../components/CalendarFull";
+import CalendarContainer from "../components/CalendarContainer";
+import DaySelector from "@/features/main/components/DaySelector";
 import TodoList from "@/features/main/components/TodoList";
 import PlusButton from "@/components/common/PlusButton";
-import CalendarFull from "../components/CalendarFull";
-import CalendarContainer from "../hooks/CalendarContainer";
-import DaySelector from "@/features/main/components/DaySelector";
-import {
-  DEFAULT_DAY_SELECTOR_HEIGHT,
-  BOTTOM_NAV_HEIGHT,
-  PLUS_BUTTON_SPACE,
-  TOP_PADDING,
-  CELL_MIN_HEIGHT,
-  CELL_MAX_HEIGHT,
-  CALENDAR_BOTTOM_MARGIN,
-  MENU_HEIGHT,
-  PLUS_BUTTON_AREA,
-  SAFE_PADDING
-} from "../layout/height";
 
-/** 미완 → 완료 순 정렬 */
-const sortTodos = (todos: DailyTodoStats["todos"]) => {
-  return [...todos].sort((a, b) => {
-    if (a.done === b.done) return a.id - b.id;
-    return a.done ? 1 : -1;
-  });
-};
+import type { DailyTodoStats } from "@/mocks/api/db/calendar.db";
+import { useCalendarCore } from "@/features/calendar/hooks/useCalendarCore";
+import { useCalendarLayout } from "../hooks/useCalendarLayout";
 
 export default function CalendarPage() {
   const today = new Date();
-  const [year, setYear] = useState(today.getFullYear());
-  const [month, setMonth] = useState(today.getMonth() + 1);
 
-  const [calendarData, setCalendarData] = useState<DailyTodoStats[]>([]);
-  const [calendarMatrix, setCalendarMatrix] = useState<
-    (DailyTodoStats | null)[][]
-  >([]);
-  const [selectedDay, setSelectedDay] = useState<DailyTodoStats | null>(null);
+  const {
+    year,
+    month,
+    calendarData,
+    calendarMatrix,
+    selectedDay,
+    editingTodoId,
+    setYear,
+    setMonth,
+    setSelectedDay,
+    selectDay,
+    setEditingTodoId,
 
-  const [editingTodoId, setEditingTodoId] = useState<number | null>(null);
-  const [todoHeight, setTodoHeight] = useState(0);
+    handleToggle,
+    handleEdit,
+    handleDelete,
+    handleAdd,
+    handleConfirm,
+  } = useCalendarCore();
 
-  /** 셀 높이 관련 */
-  const [cellHeight, setCellHeight] = useState(90);
-  const [expandedHeight, setExpandedHeight] = useState(90);
-  const [collapsedHeight, setCollapsedHeight] = useState(45);
+  const {
+    daySelectorRef,
+    cellHeight,
+    setCellHeight,
+    expandedHeight,
+    collapsedHeight,
+    todoHeight,
+  } = useCalendarLayout(calendarMatrix.length);
 
-  const daySelectorRef = useRef<HTMLDivElement>(null);
+  /** 날짜 클릭 시 */
+  const handleSelectDay = (day: DailyTodoStats | null) => {
+    if (!day) return;
 
-  /** 초기 데이터 로딩 */
-  useEffect(() => {
-    const data = getMonthlyCalendar(year, month);
+    // 선택된 날짜 설정
+    selectDay(day);
 
-    const sorted = data.map((d) => ({
-      ...d,
-      todos: sortTodos(d.todos),
-    }));
+    // 🔥 누락되었던 year/month 갱신 로직 복원
+    const d = new Date(day.date);
+    setYear(d.getFullYear());
+    setMonth(d.getMonth() + 1);
 
-    setCalendarData(sorted);
-    setCalendarMatrix(buildCalendarMatrix(sorted));
-
-    if (!selectedDay) {
-      const todayItem = sorted.find((d) => d.isToday);
-      if (todayItem) setSelectedDay(todayItem);
-    }
-  }, [year, month]);
-
-  /** 날짜 선택 */
-  const handleSelectDay = (day: DailyTodoStats) => {
-    const date = new Date(day.date);
-
-    setEditingTodoId(null);
-
-    setSelectedDay({
-      ...day,
-      todos: sortTodos(day.todos),
-    });
-
-    setYear(date.getFullYear());
-    setMonth(date.getMonth() + 1);
-
+    // 캘린더 접힘
     setCellHeight(collapsedHeight);
   };
 
-  /** Todo 체크 */
-  const handleToggleTodo = (todoId: number) => {
-    if (!selectedDay) return;
-
-    const [y, m] = selectedDay.date.split("-").map(Number);
-    toggleTodo(y, m, selectedDay.date, todoId);
-
-    setCalendarData((prev) => {
-      const updated = prev.map((day) => {
-        if (day.date !== selectedDay.date) return day;
-
-        let todos = day.todos.map((todo) =>
-          todo.id === todoId ? { ...todo, done: !todo.done } : todo
-        );
-
-        todos = sortTodos(todos);
-
-        return {
-          ...day,
-          todos,
-          doneCount: todos.filter((t) => t.done).length,
-          total: todos.length,
-        };
-      });
-
-      setCalendarMatrix(buildCalendarMatrix(updated));
-      setSelectedDay(updated.find((d) => d.date === selectedDay.date) ?? null);
-      return updated;
-    });
-  };
-
-  /** Todo 수정 */
-  const handleEditTodo = (todoId: number, newTitle: string, time: DailyTodoStats['todos'][0]['time']) => {
-    if (!selectedDay) return;
-
-    setCalendarData((prev) => {
-      const updated = prev.map((day) => {
-        if (day.date !== selectedDay.date) return day;
-
-        let todos = day.todos.map((todo) =>
-          todo.id === todoId
-            ? { ...todo, title: newTitle, time: time ?? null }
-            : todo
-        );
-
-        todos = sortTodos(todos);
-
-        return { ...day, todos };
-      });
-
-      setCalendarMatrix(buildCalendarMatrix(updated));
-      setSelectedDay(updated.find((d) => d.date === selectedDay.date) ?? null);
-      return updated;
-    });
-
-    setEditingTodoId(null);
-  };
-
-  /** Todo 삭제 */
-  const handleDeleteTodo = (todoId: number) => {
-    if (!selectedDay) return;
-
-    setCalendarData((prev) => {
-      const updated = prev.map((day) => {
-        if (day.date !== selectedDay.date) return day;
-
-        let todos = day.todos.filter((todo) => todo.id !== todoId);
-        todos = sortTodos(todos);
-
-        return {
-          ...day,
-          todos,
-          doneCount: todos.filter((t) => t.done).length,
-          total: todos.length,
-        };
-      });
-
-      setCalendarMatrix(buildCalendarMatrix(updated));
-      setSelectedDay(updated.find((d) => d.date === selectedDay.date) ?? null);
-
-      return updated;
-    });
-  };
-
-  /** Todo 추가 */
+  /** Todo 추가 + collapse */
   const handleAddTodo = () => {
-    if (!selectedDay) return;
-
-    const tempId =
-      selectedDay.todos.length > 0
-        ? Math.max(...selectedDay.todos.map((t) => t.id)) + 1
-        : 1;
-
-    const newTempTodo = {
-      id: tempId,
-      title: "",
-      done: false,
-      time: null,
-    };
-
-    setCalendarData(prev => {
-      const updated = prev.map(day => {
-        if (day.date !== selectedDay.date) return day;
-
-        const todos = [...day.todos, newTempTodo];
-        return {
-          ...day,
-          todos
-        };
-      });
-
-      setCalendarMatrix(buildCalendarMatrix(updated));
-      setSelectedDay(updated.find(d => d.date === selectedDay.date) ?? null);
-
-      return updated;
-    });
-
-    setEditingTodoId(tempId);
+    handleAdd();
     setCellHeight(collapsedHeight);
   };
-
-  const handleConfirmNewTodo = (newId: number, newTitle: string, time: DailyTodoStats['todos'][0]['time']) => {
-    if (!selectedDay) return;
-
-    setCalendarData((prev) => {
-      const updated = prev.map((day) => {
-        if (day.date !== selectedDay.date) return day;
-
-        let todos = day.todos.map((todo) =>
-          todo.id === newId
-            ? { id: newId, title: newTitle, done: false, time }
-            : todo
-        );
-
-        todos = sortTodos(todos);
-
-        return {
-          ...day,
-          todos,
-          doneCount: todos.filter((t) => t.done).length,
-          total: todos.length,
-        };
-      });
-
-      setCalendarMatrix(buildCalendarMatrix(updated));
-      setSelectedDay(updated.find((d) => d.date === selectedDay.date) ?? null);
-
-      return updated;
-    });
-
-    setEditingTodoId(null);
-  };
-
-  /** 화면 높이 계산 */
-  useEffect(() => {
-    if (!calendarMatrix.length) return;
-
-    const vh = window.innerHeight;
-
-    const daySelectorH =
-      daySelectorRef.current?.offsetHeight ?? DEFAULT_DAY_SELECTOR_HEIGHT;
-
-    const remained =
-      vh -
-      daySelectorH -
-      BOTTOM_NAV_HEIGHT -
-      PLUS_BUTTON_SPACE -
-      TOP_PADDING;
-
-    const weekCount = calendarMatrix.length;
-    const newCellHeight = remained / weekCount;
-
-    const finalH = Math.max(CELL_MIN_HEIGHT, Math.min(newCellHeight, CELL_MAX_HEIGHT));
-
-    setExpandedHeight(finalH);
-    setCollapsedHeight(finalH * 0.55);
-  }, [calendarMatrix.length]);
-
-  /** TodoList 높이 계산 */
-  useEffect(() => {
-    if (!calendarMatrix.length) return;
-    if (!daySelectorRef.current) return;
-
-    const vh = window.innerHeight;
-    const daySelectorH = daySelectorRef.current.offsetHeight;
-
-    const calendarHeight = cellHeight * calendarMatrix.length + CALENDAR_BOTTOM_MARGIN;
-
-    const available =
-      vh -
-      daySelectorH -
-      calendarHeight -
-      MENU_HEIGHT -
-      PLUS_BUTTON_AREA -
-      SAFE_PADDING;
-
-    setTodoHeight(Math.max(0, available));
-  }, [cellHeight, calendarMatrix.length]);
 
   return (
     <section className="fixed inset-0 flex flex-col">
@@ -298,7 +73,7 @@ export default function CalendarPage() {
           paddingRight: "max(1rem, env(safe-area-inset-right))",
         }}
       >
-        {/* DaySelector */}
+        {/* 날짜 선택 영역 */}
         <div ref={daySelectorRef} className="shrink-0 mb-3">
           <DaySelector
             year={year}
@@ -313,9 +88,11 @@ export default function CalendarPage() {
             onSelect={(y, m, d) => {
               setYear(y);
               setMonth(m);
+
               const dateStr = `${y}-${String(m).padStart(2, "0")}-${String(
                 d
               ).padStart(2, "0")}`;
+
               const found = calendarData.find((dd) => dd.date === dateStr);
               if (found) setSelectedDay(found);
             }}
@@ -323,7 +100,7 @@ export default function CalendarPage() {
           />
         </div>
 
-        {/* Calendar & Todo */}
+        {/* 달력 + TodoList */}
         <div className="flex-1 flex flex-col min-h-0">
           <CalendarContainer
             cellHeight={cellHeight}
@@ -339,7 +116,6 @@ export default function CalendarPage() {
             />
           </CalendarContainer>
 
-          {/* TodoList */}
           <div
             className="transition-opacity duration-300"
             style={{
@@ -349,16 +125,17 @@ export default function CalendarPage() {
           >
             <TodoList
               selectedDay={selectedDay}
-              onToggleTodo={handleToggleTodo}
-              onEditTodo={handleEditTodo}
-              onDeleteTodo={handleDeleteTodo}
-              onConfirmNewTodo={handleConfirmNewTodo}
+              onToggleTodo={handleToggle}
+              onEditTodo={handleEdit}
+              onDeleteTodo={handleDelete}
+              onConfirmNewTodo={handleConfirm}
               editingTodoId={editingTodoId}
               maxHeight={todoHeight}
             />
           </div>
         </div>
 
+        {/* 플러스 버튼 */}
         <PlusButton showMenu={true} onAddEvent={handleAddTodo} />
       </div>
     </section>
