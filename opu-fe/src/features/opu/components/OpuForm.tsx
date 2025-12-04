@@ -70,18 +70,8 @@ export default function OpuForm({
                             disabled={disabled}
                             placeholder="OPU 제목을 입력해주세요."
                             className="input-box input-box--field"
-                            style={{
-                                fontSize: "var(--text-sub)",
-                                color: "var(--color-dark-navy)",
-                            }}
                         />
-                        <div
-                            className="mt-1 text-right"
-                            style={{
-                                color: "var(--color-light-gray)",
-                                fontSize: "var(--text-validation)",
-                            }}
-                        >
+                        <div className="length-validation mt-1 text-right">
                             {titleLength}/{MAX_TITLE_LENGTH}
                         </div>
                     </div>
@@ -107,13 +97,7 @@ export default function OpuForm({
                         onChange={handleDescriptionChange}
                         disabled={disabled}
                     />
-                    <div
-                        className="mt-1 text-right"
-                        style={{
-                            color: "var(--color-light-gray)",
-                            fontSize: "var(--text-validation)",
-                        }}
-                    >
+                    <div className="length-validation mt-1 text-right">
                         {descriptionLength}/{MAX_DESCRIPTION_LENGTH}
                     </div>
                 </div>
@@ -135,14 +119,7 @@ export default function OpuForm({
                             >
                                 소요시간
                             </span>
-                            <span
-                                className="flex items-center gap-1"
-                                style={{
-                                    fontSize: "var(--text-sub)",
-                                    fontWeight: "var(--weight-semibold)",
-                                    color: "var(--color-dark-navy)",
-                                }}
-                            >
+                            <span className="form-label flex items-center gap-1">
                                 <span>{currentTimeLabel || "선택"}</span>
                                 <Icon
                                     icon="mdi:chevron-right"
@@ -170,14 +147,7 @@ export default function OpuForm({
                             >
                                 카테고리
                             </span>
-                            <span
-                                className="flex items-center gap-1"
-                                style={{
-                                    fontSize: "var(--text-sub)",
-                                    fontWeight: "var(--weight-semibold)",
-                                    color: "var(--color-dark-navy)",
-                                }}
-                            >
+                            <span className="form-label flex items-center gap-1">
                                 <span>{currentCategoryLabel || "선택"}</span>
                                 <Icon
                                     icon="mdi:chevron-right"
@@ -191,13 +161,7 @@ export default function OpuForm({
 
                     {/* 공개 여부 */}
                     <div className="flex pl-3 items-center justify-between">
-                        <label
-                            className="block"
-                            style={{
-                                fontSize: "var(--text-sub)",
-                                fontWeight: "var(--weight-semibold)",
-                            }}
-                        >
+                        <label className="form-label block">
                             커뮤니티 공개 설정
                         </label>
                         <Toggle

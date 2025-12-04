@@ -267,10 +267,6 @@ export default function RoutineForm({
                                 }
                                 placeholder="루틴 제목을 입력해주세요."
                                 className="input-box input-box--field"
-                                style={{
-                                    fontSize: "var(--text-sub)",
-                                    color: "var(--color-dark-navy)",
-                                }}
                             />
                         </div>
 
