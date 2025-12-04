@@ -224,6 +224,18 @@
         font-weight: var(--weight-medium);
     }
 
+    /*  폼 내부 스타일 */
+    .form-label {
+        font-size: var(--text-sub);
+        font-weight: var(--weight-semibold);
+        color: var(--color-dark-navy);
+    }
+
+    .length-validation {
+        font-size: 12px;
+        color: var(--color-light-gray);
+    }
+
     /*  인풋박스 스타일 */
     .input-box {
         position: absolute;
@@ -239,11 +251,32 @@
         color: var(--color-dark-navy);
 
         font-weight: var(--weight-regular);
-        font-size: var(--text-body);
+        font-size: var(--text-sub);
         line-height: 1.5;
         /* padding-left: 13px; */
     }
 
+    .input-box-2 {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 355px;
+        height: 50px;
+
+        border: 1px solid var(--color-input-border);
+        border-radius: 12px;
+
+        background-color: #ffffff;
+        color: var(--color-dark-navy);
+
+        font-weight: var(--weight-regular);
+        font-size: var(--text-body);
+        line-height: 1.5;
+        padding-left: 13px;
+    }
+
+    .input-box--textarea::placeholder,
+    .input-box-2::placeholder,
     .input-box::placeholder {
         color: var(--color-placeholder);
         font-size: 13px;

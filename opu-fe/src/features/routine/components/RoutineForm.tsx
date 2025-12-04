@@ -255,7 +255,7 @@ export default function RoutineForm({
     return (
         <>
             <form onSubmit={handleFormSubmit}>
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-5">
                     {/* 루틴 이름 + 색상 */}
                     <div className="flex items-start gap-2">
                         <div className="flex-1">
@@ -265,12 +265,8 @@ export default function RoutineForm({
                                 onChange={(e) =>
                                     handleChange("title", e.target.value)
                                 }
-                                placeholder="루틴 제목을 입력해주세요"
-                                className="input-box input-box--field w-full px-3"
-                                style={{
-                                    fontSize: "var(--text-sub)",
-                                    color: "var(--color-dark-navy)",
-                                }}
+                                placeholder="루틴 제목을 입력해주세요."
+                                className="input-box input-box--field"
                             />
                         </div>
 
@@ -431,7 +427,7 @@ export default function RoutineForm({
                         <button
                             type="button"
                             onClick={handleFrequencyClick}
-                            className="input-box input-box--field flex items-center justify-between overflow-hidden px-4"
+                            className="input-box-2 input-box--field flex items-center justify-between overflow-hidden px-4"
                         >
                             <span
                                 style={{
@@ -465,7 +461,7 @@ export default function RoutineForm({
                         <button
                             type="button"
                             onClick={() => setShowTimeSheet(true)}
-                            className="input-box input-box--field flex items-center justify-between overflow-hidden px-4"
+                            className="input-box-2 input-box--field flex items-center justify-between overflow-hidden px-4"
                         >
                             <span
                                 style={{

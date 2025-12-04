@@ -8,6 +8,7 @@ type Props = {
     className?: string;
     isLabeled?: boolean;
     error?: string;
+    placeholder?: string;
 };
 
 export default function EmailField({
@@ -15,16 +16,18 @@ export default function EmailField({
     onChange,
     className = "",
     error,
+    placeholder = "이메일을 입력해주세요.",
 }: Props) {
     return (
         <section className={`mb-6 ${className}`}>
             <label htmlFor="email-input" className="sr-only">
                 이메일
             </label>
+
             <input
                 id="email-input"
                 type="email"
-                placeholder="이메일을 입력해주세요."
+                placeholder={placeholder}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 className="input-box input-box--field"
