@@ -8,8 +8,6 @@ import { useCalendarCore } from "@/features/calendar/hooks/useCalendarCore";
 
 export default function MainPage() {
     const {
-        year,
-        month,
         selectedDay,
         editingTodoId,
         setYear,
@@ -23,7 +21,7 @@ export default function MainPage() {
     } = useCalendarCore();
 
     return (
-        <div className="app-page">
+        <div>
             {/* 캘린더 */}
             <Calendar
                 selectedDay={selectedDay}
