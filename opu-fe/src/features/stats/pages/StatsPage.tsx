@@ -10,9 +10,11 @@ import { getMonthlyCalendar } from "@/mocks/api/handler/calendar.handler";
 import { buildCalendarMatrix } from "@/lib/calendar";
 
 type StatsTab = "ROUTINE" | "OPU";
+const TAB_STORAGE_KEY = "stats_current_tab";
 
 export default function StatsPage() {
     const [currentTab, setCurrentTab] = useState<StatsTab>("ROUTINE");
+    const [hasHydrated, setHasHydrated] = useState(false);
 
     const today = new Date();
     const [year, setYear] = useState(today.getFullYear());
@@ -26,6 +28,17 @@ export default function StatsPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (typeof window === "undefined") return;
+
+        const saved = window.sessionStorage.getItem(TAB_STORAGE_KEY);
+        if (saved === "ROUTINE" || saved === "OPU") {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setCurrentTab(saved);
+        }
+        setHasHydrated(true);
+    }, []);
+
+    useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
 
@@ -35,6 +48,13 @@ export default function StatsPage() {
 
         setLoading(false);
     }, [year, month]);
+
+    const handleChangeTab = (tab: StatsTab) => {
+        setCurrentTab(tab);
+        if (typeof window !== "undefined") {
+            window.sessionStorage.setItem(TAB_STORAGE_KEY, tab);
+        }
+    };
 
     return (
         <div>
@@ -65,7 +85,7 @@ export default function StatsPage() {
                 <div className="grid grid-cols-2">
                     <button
                         type="button"
-                        onClick={() => setCurrentTab("ROUTINE")}
+                        onClick={() => handleChangeTab("ROUTINE")}
                         className="relative pb-3"
                         style={{
                             fontWeight: "var(--weight-semibold)",
@@ -73,13 +93,17 @@ export default function StatsPage() {
                         }}
                     >
                         루틴
-                        {currentTab === "ROUTINE" && (
-                            <span className="absolute inset-x-0 -bottom-[1px] h-[2px] rounded-full bg-[var(--color-opu-pink)]" />
-                        )}
+                        <span
+                            className={`absolute inset-x-0 -bottom-[1px] h-[2px] rounded-full transition-colors ${
+                                hasHydrated && currentTab === "ROUTINE"
+                                    ? "bg-[var(--color-opu-pink)]"
+                                    : "bg-transparent"
+                            }`}
+                        />
                     </button>
                     <button
                         type="button"
-                        onClick={() => setCurrentTab("OPU")}
+                        onClick={() => handleChangeTab("OPU")}
                         className="relative pb-3"
                         style={{
                             fontWeight: "var(--weight-semibold)",
@@ -87,16 +111,22 @@ export default function StatsPage() {
                         }}
                     >
                         OPU
-                        {currentTab === "OPU" && (
-                            <span className="absolute inset-x-0 -bottom-[1px] h-[2px] rounded-full bg-[var(--color-opu-pink)]" />
-                        )}
+                        <span
+                            className={`absolute inset-x-0 -bottom-[1px] h-[2px] rounded-full transition-colors ${
+                                hasHydrated && currentTab === "OPU"
+                                    ? "bg-[var(--color-opu-pink)]"
+                                    : "bg-transparent"
+                            }`}
+                        />
                     </button>
                 </div>
             </nav>
 
             {/* 탭 내용 */}
             <main className="w-full pb-10 pt-4">
-                {currentTab === "ROUTINE" ? (
+                {!hasHydrated ? (
+                    <RoutineStats year={year} month={month} loading={true} />
+                ) : currentTab === "ROUTINE" ? (
                     <RoutineStats year={year} month={month} loading={loading} />
                 ) : (
                     <OpuStats year={year} month={month} loading={loading} />
