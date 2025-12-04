@@ -250,7 +250,13 @@ export default function TodoList({
                 }`}
                 style={maxHeight ? { maxHeight } : {}}
             >
-                <div className="font-semibold mb-3">
+                <div
+                    className="mb-2"
+                    style={{
+                        fontSize: "var(--text-sub)",
+                        fontWeight: "var(--weight-semibold)",
+                    }}
+                >
                     {formatDate(selectedDay.date)}
                 </div>
 
@@ -266,16 +272,16 @@ export default function TodoList({
                     return (
                         <div
                             key={todo.id}
-                            className={`py-4 transition-opacity ${hiddenWhileDragging}`}
+                            className={`py-2 transition-opacity ${hiddenWhileDragging}`}
                             {...(!isEditing ? bindItemEvents(todo, index) : {})}
                         >
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-start gap-3">
                                 {!isEditing && (
                                     <input
                                         type="checkbox"
                                         checked={todo.done}
                                         onChange={() => onToggleTodo(todo.id)}
-                                        className="custom-checkbox cursor-pointer"
+                                        className="custom-checkbox cursor-pointer mt-1"
                                     />
                                 )}
 
@@ -295,15 +301,26 @@ export default function TodoList({
                                             <span
                                                 className={`block ${
                                                     todo.done
-                                                        ? "line-through text-gray-400"
+                                                        ? "line-through var(--color-light-gray)"
                                                         : ""
                                                 }`}
+                                                style={{
+                                                    color: "var(--color-dark-navy)",
+                                                    fontSize: "var(--text-sub)",
+                                                }}
                                             >
                                                 {todo.title}
                                             </span>
 
                                             {todo.time && (
-                                                <span className="block text-sm text-gray-400 mt-1">
+                                                <span
+                                                    className="block"
+                                                    style={{
+                                                        color: "var(--color-light-gray)",
+                                                        fontSize:
+                                                            "var(--text-validation)",
+                                                    }}
+                                                >
                                                     {displayTime}
                                                 </span>
                                             )}

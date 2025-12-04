@@ -20,12 +20,12 @@ export type DailyTodoStats = {
 
 // 캘린더 색상 (단계별 색)
 export const CALENDAR_COLORS: Record<number, string> = {
-    0: "rgba(184, 221, 124, 0.1)",
-    1: "rgba(184, 221, 124, 0.3)",
-    2: "rgba(184, 221, 124, 0.5)",
-    3: "rgba(184, 221, 124, 0.7)",
-    4: "rgba(184, 221, 124, 0.8)",
-    5: "#B8DD7C",
+    0: "rgba(205, 233, 144, 0.15)",
+    1: "rgba(205, 233, 144, 0.3)",
+    2: "rgba(205, 233, 144, 0.5)",
+    3: "rgba(205, 233, 144, 0.65)",
+    4: "rgba(205, 233, 144, 0.75)",
+    5: "rgba(205, 233, 144, 0.95)",
 };
 
 export type CalendarSeedType = {
