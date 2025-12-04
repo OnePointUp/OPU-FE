@@ -1,17 +1,48 @@
-import type { FC } from "react";
-// import { useRoutineStats } from "../hooks/useRoutineStats";
+"use client";
 
-type Props = {
+import { useEffect, useState, type FC } from "react";
+
+import MonthView from "@/features/main/components/MonthView";
+import { useCalendarCore } from "@/features/calendar/hooks/useCalendarCore";
+
+import type { DailyTodoStats } from "@/mocks/api/db/calendar.db";
+import { getMonthlyCalendar } from "@/mocks/api/handler/calendar.handler";
+import { buildCalendarMatrix } from "@/lib/calendar";
+import { WEEKDAYS } from "../types";
+
+type RoutineStatsProps = {
     year: number;
     month: number;
 };
 
-const RoutineStats: FC<Props> = ({ year, month }) => {
-    // const { data, loading } = useRoutineStats({ year, month });
+const RoutineStats: FC<RoutineStatsProps> = ({ year, month }) => {
+    const { selectedDay, selectDay } = useCalendarCore();
+
+    const [calendarData, setCalendarData] = useState<DailyTodoStats[]>([]);
+    const [calendarMatrix, setCalendarMatrix] = useState<
+        (DailyTodoStats | null)[][]
+    >([]);
+
+    // 🔹 year/month 기준으로 캘린더 데이터 생성
+    useEffect(() => {
+        const data = getMonthlyCalendar(year, month);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCalendarData(data);
+        setCalendarMatrix(buildCalendarMatrix(data));
+    }, [year, month]);
+
+    const handleSelectDay = (day: DailyTodoStats) => {
+        selectDay(day);
+    };
+
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(
+        today.getMonth() + 1
+    ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
     return (
         <div className="space-y-4">
-            {/* 상단 필터 (전체 / 루틴별) */}
+            {/* 상단 필터 (TODO: 실제 데이터 기준으로 변경) */}
             <div className="flex gap-2 overflow-x-auto pb-1">
                 <button className="rounded-full bg-[var(--color-chip-bg)] px-3 py-1 text-xs font-medium">
                     전체
@@ -22,10 +53,9 @@ const RoutineStats: FC<Props> = ({ year, month }) => {
                 <button className="rounded-full bg-[#FFF7D9] px-3 py-1 text-xs font-medium">
                     산책하기
                 </button>
-                {/* TODO: 실제 데이터 기준 동적 생성 */}
             </div>
 
-            {/* 요약 카드 3개 */}
+            {/* 요약 카드 */}
             <section className="grid grid-cols-3 gap-2">
                 <StatsCard title="전체 달성률" value="86%" />
                 <StatsCard title="연속 성공" value="12" suffix="일" />
@@ -33,7 +63,12 @@ const RoutineStats: FC<Props> = ({ year, month }) => {
             </section>
 
             {/* 캘린더 */}
-            <StatsCalendar />
+            <StatsCalendar
+                calendarMatrix={calendarMatrix}
+                selectedDay={selectedDay}
+                onSelectDay={handleSelectDay}
+                todayStr={todayStr}
+            />
         </div>
     );
 };
@@ -64,42 +99,44 @@ function StatsCard({ title, value, suffix }: StatsCardProps) {
     );
 }
 
-function StatsCalendar() {
-    // TODO: 달력 데이터는 나중에 props/훅으로
+type StatsCalendarProps = {
+    calendarMatrix: (DailyTodoStats | null)[][];
+    selectedDay: DailyTodoStats | null;
+    onSelectDay: (day: DailyTodoStats) => void;
+    todayStr: string;
+};
+
+const StatsCalendar: FC<StatsCalendarProps> = ({
+    calendarMatrix,
+    selectedDay,
+    onSelectDay,
+    todayStr,
+}) => {
     return (
         <section className="mt-2 rounded-3xl border border-[var(--color-super-light-gray)] bg-white px-4 pb-4 pt-3">
-            {/* 요일 헤더 */}
-            <div className="mb-2 grid grid-cols-7 text-center text-[11px] text-[var(--color-text-subtle)]">
-                <span>월</span>
-                <span>화</span>
-                <span>수</span>
-                <span>목</span>
-                <span>금</span>
-                <span>토</span>
-                <span className="text-[var(--color-like-pink)]">일</span>
+            {/* 요일 */}
+            <div className="grid grid-cols-7 mb-2 gap-2 inline-grid">
+                {WEEKDAYS.map((day) => (
+                    <div
+                        key={day}
+                        className={`w-10 h-10 flex items-center justify-center text-sm ${
+                            day === "일"
+                                ? "[var(--color-sunday)]"
+                                : "text-[var(--color-dark-gray)]"
+                        }`}
+                    >
+                        {day}
+                    </div>
+                ))}
             </div>
 
-            {/* 날짜 그리드: 일단 레이아웃만 */}
-            <div className="grid grid-cols-7 gap-2 text-center text-[11px]">
-                {Array.from({ length: 31 }).map((_, idx) => {
-                    const day = idx + 1;
-                    const done = [
-                        1, 2, 3, 8, 9, 14, 15, 16, 18, 19, 20, 21, 22, 24,
-                    ].includes(day);
-                    return (
-                        <div
-                            key={day}
-                            className={`flex h-8 items-center justify-center rounded-xl ${
-                                done
-                                    ? "bg-[#CFEF9B] text-[var(--color-text-strong)]"
-                                    : "bg-[var(--color-chip-bg)] text-[var(--color-text-subtle)]"
-                            }`}
-                        >
-                            {day}
-                        </div>
-                    );
-                })}
-            </div>
+            {/* 월간 캘린더 */}
+            <MonthView
+                calendarMatrix={calendarMatrix}
+                selectedDay={selectedDay}
+                onSelectDay={onSelectDay}
+                todayStr={todayStr}
+            />
         </section>
     );
-}
+};
