@@ -89,7 +89,7 @@ export default function StatsPage() {
             </nav>
 
             {/* 탭 내용 */}
-            <main className="px-4 pb-10 pt-4">
+            <main className="w-full pb-10 pt-4">
                 {currentTab === "ROUTINE" ? (
                     <RoutineStats year={year} month={month} />
                 ) : (

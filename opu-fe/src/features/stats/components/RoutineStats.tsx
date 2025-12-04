@@ -1,16 +1,14 @@
 "use client";
 
 import { useEffect, useState, type FC } from "react";
-
-import MonthView from "@/features/main/components/MonthView";
+import { Icon } from "@iconify/react";
 
 import type { DailyTodoStats } from "@/mocks/api/db/calendar.db";
 import { getMonthlyCalendar } from "@/mocks/api/handler/calendar.handler";
 import { buildCalendarMatrix } from "@/lib/calendar";
-import { WEEKDAYS } from "../types";
-import { Icon } from "@iconify/react";
+import StatsCalendar from "./StatsCalendar";
 
-// 목데이터용
+// 목데이터
 const FILTERS = [
     { key: "all", title: "전체", emoji: "none" },
     { key: "water", title: "물 2L 마시기", emoji: "💧" },
@@ -60,7 +58,6 @@ const RoutineStats: FC<RoutineStatsProps> = ({ year, month }) => {
                                 background: isActive
                                     ? "var(--color-opu-pink)"
                                     : "#ffffff",
-
                                 color: isActive
                                     ? "#ffffff"
                                     : "var(--color-super-dark-gray)",
@@ -180,49 +177,3 @@ function StatsCard({
         </div>
     );
 }
-
-type StatsCalendarProps = {
-    calendarMatrix: (DailyTodoStats | null)[][];
-    todayStr: string;
-};
-
-const StatsCalendar: FC<StatsCalendarProps> = ({
-    calendarMatrix,
-    todayStr,
-}) => {
-    return (
-        <section className="mt-2 rounded-xl border border-[var(--color-super-light-gray)] bg-white px-4 py-3 flex justify-center">
-            {/* 가운데 정렬 + 반응형 너비 */}
-            <div className="flex flex-col items-center w-full max-w-[320px] sm:max-w-[360px] md:max-w-[420px]">
-                {/* 요일 */}
-                <div className="mb-2 grid grid-cols-7 w-full gap-1 sm:gap-2 md:gap-3">
-                    {WEEKDAYS.map((day) => (
-                        <div
-                            key={day}
-                            className={`flex items-center justify-center text-center aspect-square
-                                ${
-                                    day === "일"
-                                        ? "text-[var(--color-sunday)]"
-                                        : day === "토"
-                                        ? "text-[var(--color-saturday)]"
-                                        : "text-[var(--color-dark-gray)]"
-                                }
-                                `}
-                            style={{ fontSize: "var(--text-caption)" }}
-                        >
-                            {day}
-                        </div>
-                    ))}
-                </div>
-
-                {/* 월간 캘린더 */}
-                <MonthView
-                    calendarMatrix={calendarMatrix}
-                    todayStr={null}
-                    selectedDay={null}
-                    onSelectDay={() => {}}
-                />
-            </div>
-        </section>
-    );
-};
