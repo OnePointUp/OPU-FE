@@ -62,7 +62,7 @@ export default function MonthView({
                                 backgroundColor: CALENDAR_COLORS[day.intensity],
                                 border:
                                     selectedDay?.date === day.date
-                                        ? "1px solid var(--color-dark-gray)"
+                                        ? "2px solid var(--color-opu-dark-green)"
                                         : "none",
                             }}
                         >

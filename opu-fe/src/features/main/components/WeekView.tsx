@@ -24,17 +24,12 @@ export default function WeekView({
               rounded-xl flex items-center justify-center
               aspect-square
               text-agreement-optional text-[var(--color-dark-gray)]
-              ${
-                  day.date === todayStr
-                      ? "font-[var(--weight-semibold)] text-[var(--color-dark-navy)]"
-                      : ""
-              }
             `}
                         style={{
                             backgroundColor: CALENDAR_COLORS[day.intensity],
                             border:
                                 selectedDay?.date === day.date
-                                    ? "1px solid var(--color-dark-navy)"
+                                    ? "2px solid var(--color-opu-dark-green)"
                                     : "none",
                         }}
                     >
