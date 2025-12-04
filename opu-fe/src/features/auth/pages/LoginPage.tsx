@@ -22,7 +22,7 @@ export default function LoginPage() {
     } = useLogin();
 
     return (
-        <section className="py-3">
+        <main className="py-3">
             <div className="flex flex-col items-center px-2">
                 {/* 로고 */}
                 <div className="flex justify-center mb-6">
@@ -80,6 +80,6 @@ export default function LoginPage() {
                     비밀번호 찾기
                 </span>
             </div>
-        </section>
+        </main>
     );
 }
