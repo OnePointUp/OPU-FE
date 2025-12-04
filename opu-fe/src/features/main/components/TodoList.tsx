@@ -301,11 +301,10 @@ export default function TodoList({
                                             <span
                                                 className={`block ${
                                                     todo.done
-                                                        ? "line-through var(--color-light-gray)"
-                                                        : ""
+                                                        ? "line-through text-[var(--color-light-gray)]"
+                                                        : "text-[var(--color-dark-navy)]"
                                                 }`}
                                                 style={{
-                                                    color: "var(--color-dark-navy)",
                                                     fontSize: "var(--text-sub)",
                                                 }}
                                             >
