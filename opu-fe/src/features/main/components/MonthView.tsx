@@ -19,17 +19,16 @@ export default function MonthView({
      ⭐ 1) 로딩 시 Skeleton 캘린더 표시
      --------------------------------------------------------- */
     if (loading || calendarMatrix.length === 0) {
-        // 기본적으로 6주(6 rows) 렌더링하는 skeleton
-        const weeks = Array.from({ length: 6 });
+        const weeks = Array.from({ length: 5 });
         const days = Array.from({ length: 7 });
 
         return (
-            <div className="grid grid-cols-7 gap-2 inline-grid mx-auto">
+            <div className="grid grid-cols-7 w-full gap-1.5 sm:gap-2.5 md:gap-3.5">
                 {weeks.map((_, i) =>
                     days.map((_, j) => (
                         <div
                             key={`skeleton-${i}-${j}`}
-                            className="skeleton rounded-xl w-10 h-10"
+                            className="skeleton rounded-xl aspect-square"
                         />
                     ))
                 )}
