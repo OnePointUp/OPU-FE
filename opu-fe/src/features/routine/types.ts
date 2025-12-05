@@ -1,4 +1,13 @@
-import { RoutineFrequency } from "./domain";
+import type { RoutineFrequency } from "./domain";
+
+export type RoutineListItemResponse = {
+    id: number;
+    startDate: string;
+    endDate: string | null;
+    title: string;
+    frequency: RoutineFrequency;
+    active: number;
+};
 
 export type RoutineFormValue = {
     id?: number;
@@ -7,8 +16,7 @@ export type RoutineFormValue = {
     frequency: RoutineFrequency;
     startDate: string | null;
     endDate: string | null;
-    time: string | null;
-
+    alarmTime: string | null;
     weekDays?: string | null;
     monthDays?: string | null;
     yearDays?: string | null;
@@ -16,12 +24,11 @@ export type RoutineFormValue = {
 
 export type CreateRoutinePayload = {
     title: string;
+    color: string;
     frequency: RoutineFrequency;
     startDate: string;
     endDate?: string | null;
-    time?: string | null;
-    color: string;
-
+    alarmTime?: string | null;
     weekDays?: string | null;
     monthDays?: string | null;
     yearDays?: string | null;

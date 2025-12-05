@@ -12,7 +12,7 @@ export function toRoutineFormValue(e: RoutineEntity): RoutineFormValue {
         frequency: e.frequency,
         startDate: e.startDate,
         endDate: e.endDate,
-        time: e.time,
+        alarmTime: e.alarmTime,
         color: e.color,
         weekDays: e.weekDays,
         monthDays: e.monthDays,
@@ -25,11 +25,14 @@ export function toCreateRoutinePayload(
 ): CreateRoutinePayload {
     return {
         title: form.title,
+        color: form.color,
         frequency: form.frequency,
         startDate: form.startDate ?? new Date().toISOString().slice(0, 10),
         endDate: form.endDate,
-        time: form.time,
-        color: form.color,
+        alarmTime: form.alarmTime ?? undefined,
+        weekDays: form.weekDays ?? undefined,
+        monthDays: form.monthDays ?? undefined,
+        yearDays: form.yearDays ?? undefined,
     };
 }
 
@@ -45,7 +48,10 @@ export function toUpdateRoutinePayload(
         frequency: form.frequency,
         startDate: form.startDate ?? undefined,
         endDate: form.endDate,
-        time: form.time,
+        alarmTime: form.alarmTime ?? undefined,
         color: form.color,
+        weekDays: form.weekDays ?? undefined,
+        monthDays: form.monthDays ?? undefined,
+        yearDays: form.yearDays ?? undefined,
     };
 }

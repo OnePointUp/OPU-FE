@@ -1,17 +1,50 @@
 import type { RoutineEntity } from "./domain";
 import { requestJSON } from "@/lib/request";
-import { CreateRoutinePayload, UpdateRoutinePayload } from "./types";
+import {
+    CreateRoutinePayload,
+    RoutineFormValue,
+    RoutineListItemResponse,
+    UpdateRoutinePayload,
+} from "./types";
+import { extractErrorMessage } from "@/utils/api-helpers";
+import { apiClient } from "@/lib/apiClient";
+import { PageResponse } from "@/types/api";
 
-type RoutineListResponse = {
-    items: RoutineEntity[];
-};
+/* ==== 루틴 목록 조회 ===== */
+export async function fetchRoutineList(
+    page = 0,
+    size = 10
+): Promise<PageResponse<RoutineListItemResponse>> {
+    try {
+        const res = await apiClient.get<PageResponse<RoutineListItemResponse>>(
+            "/routines",
+            { params: { page, size } }
+        );
+        return res.data;
+    } catch (err) {
+        throw new Error(
+            extractErrorMessage(err, "루틴 목록을 불러오지 못했어요.")
+        );
+    }
+}
+
+/* ==== 루틴 상세 조회 ===== */
+export async function fetchRoutineDetail(routineId: number) {
+    try {
+        const res = await apiClient.get<RoutineFormValue>(
+            `/routines/${routineId}`
+        );
+        return res.data;
+    } catch (err) {
+        throw new Error(
+            extractErrorMessage(err, "루틴 목록을 불러오지 못했어요.")
+        );
+    }
+}
+
+// ============================
 
 const BASE = "/routine";
-
-// 루틴 목록 조회
-export function fetchRoutineList(): Promise<RoutineEntity[]> {
-    return requestJSON<RoutineListResponse>(BASE).then((data) => data.items);
-}
 
 // 개별 루틴 조회
 export function fetchRoutine(id: number): Promise<RoutineEntity> {

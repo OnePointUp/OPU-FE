@@ -8,12 +8,12 @@ import { Icon } from "@iconify/react";
 import BottomSheet from "@/components/common/BottomSheet";
 import ActionList, { type ActionItem } from "@/components/common/ActionList";
 import ConfirmModal from "@/components/common/ConfirmModal";
-import { useRoutineList } from "../hooks/useRoutineList";
 import { deleteRoutine } from "../services";
+import { useRoutineListPage } from "../hooks/useRoutineListPage";
 
 export default function RoutineListPage() {
     const router = useRouter();
-    const { items, loading, removeById, reload } = useRoutineList();
+    const { items, loading, removeById, reload } = useRoutineListPage();
     const [onlyOngoing, setOnlyOngoing] = useState(false);
 
     const [openSheet, setOpenSheet] = useState(false);

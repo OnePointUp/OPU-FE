@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchRoutine } from "../services";
+import { fetchRoutineDetail } from "../services";
 
-type Routine = Awaited<ReturnType<typeof fetchRoutine>>;
+type Routine = Awaited<ReturnType<typeof fetchRoutineDetail>>;
 
 export function useRoutine(id: number) {
     const [routine, setRoutine] = useState<Routine | null>(null);
@@ -19,7 +19,7 @@ export function useRoutine(id: number) {
             setLoading(true);
             setError(null);
             try {
-                const data = await fetchRoutine(id);
+                const data = await fetchRoutineDetail(id);
                 if (cancelled) return;
                 setRoutine(data);
             } catch (err) {

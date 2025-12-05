@@ -1,6 +1,5 @@
 "use client";
 
-import type { RoutineEntity } from "../domain";
 import {
     formatDateRange,
     getFrequencyLabel,
@@ -8,9 +7,10 @@ import {
     getStatusColor,
     getStatusLabel,
 } from "../domain";
+import { RoutineListItemResponse } from "../types";
 
 type Props = {
-    item: RoutineEntity;
+    item: RoutineListItemResponse;
     onClick?: (id: number) => void;
 };
 
