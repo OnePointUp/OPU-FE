@@ -73,6 +73,10 @@ export default function RoutineForm({
 
     const [form, setForm] = useState<RoutineFormValue>(initialValue);
 
+    useEffect(() => {
+        setForm(initialValue);
+    }, [initialValue]);
+
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
     const [activeDateField, setActiveDateField] = useState<
@@ -239,10 +243,6 @@ export default function RoutineForm({
         handleChange("alarmTime", value);
         setShowTimeSheet(false);
     };
-
-    useEffect(() => {
-        setForm(initialValue);
-    }, [initialValue]);
 
     useEffect(() => {
         if (!isClient) return;

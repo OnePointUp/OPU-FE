@@ -23,17 +23,32 @@ export function toRoutineFormValue(e: RoutineEntity): RoutineFormValue {
 export function toCreateRoutinePayload(
     form: RoutineFormValue
 ): CreateRoutinePayload {
-    return {
+    if (!form.startDate) {
+        throw new Error("startDate는 필수입니다.");
+    }
+
+    const payload: CreateRoutinePayload = {
         title: form.title,
         color: form.color,
         frequency: form.frequency,
-        startDate: form.startDate ?? new Date().toISOString().slice(0, 10),
-        endDate: form.endDate,
-        alarmTime: form.alarmTime ?? undefined,
-        weekDays: form.weekDays ?? undefined,
-        monthDays: form.monthDays ?? undefined,
-        yearDays: form.yearDays ?? undefined,
+        startDate: form.startDate,
+        endDate: form.endDate ?? null,
+        alarmTime: form.alarmTime ?? null,
     };
+
+    if (form.frequency === "WEEKLY" || form.frequency === "BIWEEKLY") {
+        payload.weekDays = form.weekDays ?? null;
+    }
+
+    if (form.frequency === "MONTHLY") {
+        payload.monthDays = form.monthDays ?? null;
+    }
+
+    if (form.frequency === "YEARLY") {
+        payload.yearDays = form.yearDays ?? null;
+    }
+
+    return payload;
 }
 
 export function toUpdateRoutinePayload(

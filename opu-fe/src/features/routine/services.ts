@@ -62,8 +62,20 @@ export async function fetchRoutineDetail(
     }
 }
 
+/* ==== 루틴 등록 ===== */
+export async function createRoutine(
+    payload: CreateRoutinePayload
+): Promise<RoutineDetailResponse> {
+    const res = await apiClient.post<ApiResponse<RoutineDetailResponse>>(
+        "/routines",
+        payload
+    );
+
+    return res.data.data;
+}
+
 /* ===== 루틴 수정 ===== */
-export async function editRoutine(
+export async function updateRoutine(
     routineId: number,
     payload: EditRoutinePayload
 ) {
@@ -78,29 +90,6 @@ export async function editRoutine(
 // ============================
 
 const BASE = "/routine";
-
-// 개별 루틴 조회
-export function fetchRoutine(id: number): Promise<RoutineEntity> {
-    return requestJSON<RoutineEntity>(`${BASE}/${id}`);
-}
-
-// 루틴 등록
-export function createRoutine(payload: CreateRoutinePayload) {
-    return requestJSON<RoutineEntity>(BASE, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-    });
-}
-
-// 루틴 수정
-export function updateRoutine(payload: UpdateRoutinePayload) {
-    return requestJSON<RoutineEntity>(BASE, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-    });
-}
 
 export function deleteRoutine(id: number) {
     return requestJSON<{ ok: boolean }>(BASE, {
