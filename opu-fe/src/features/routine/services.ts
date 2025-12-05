@@ -2,13 +2,15 @@ import type { RoutineEntity } from "./domain";
 import { requestJSON } from "@/lib/request";
 import {
     CreateRoutinePayload,
+    EditRoutinePayload,
+    RoutineDetailResponse,
     RoutineFormValue,
     RoutineListItemResponse,
     UpdateRoutinePayload,
 } from "./types";
 import { extractErrorMessage } from "@/utils/api-helpers";
 import { apiClient } from "@/lib/apiClient";
-import { PageResponse } from "@/types/api";
+import { ApiResponse, PageResponse } from "@/types/api";
 
 /* ==== 루틴 목록 조회 ===== */
 export async function fetchRoutineList(
@@ -29,16 +31,47 @@ export async function fetchRoutineList(
 }
 
 /* ==== 루틴 상세 조회 ===== */
-export async function fetchRoutineDetail(routineId: number) {
+export async function fetchRoutineDetail(
+    routineId: number
+): Promise<RoutineFormValue> {
     try {
-        const res = await apiClient.get<RoutineFormValue>(
+        const res = await apiClient.get<ApiResponse<RoutineDetailResponse>>(
             `/routines/${routineId}`
         );
-        return res.data;
+
+        const r = res.data.data;
+
+        const form: RoutineFormValue = {
+            id: r.id,
+            title: r.title,
+            color: r.color,
+            frequency: r.frequency,
+            startDate: r.startDate,
+            endDate: r.endDate,
+            alarmTime: r.alarmTime,
+            weekDays: r.weekDays ?? null,
+            monthDays: r.monthDays ?? null,
+            yearDays: r.days ?? null,
+        };
+
+        return form;
     } catch (err) {
         throw new Error(
-            extractErrorMessage(err, "루틴 목록을 불러오지 못했어요.")
+            extractErrorMessage(err, "루틴 상세 정보를 불러오지 못했어요.")
         );
+    }
+}
+
+/* ===== 루틴 수정 ===== */
+export async function editRoutine(
+    routineId: number,
+    payload: EditRoutinePayload
+) {
+    try {
+        await apiClient.patch(`/routines/${routineId}`, payload);
+        return { ok: true };
+    } catch (err) {
+        throw new Error(extractErrorMessage(err, "루틴 수정에 실패했어요."));
     }
 }
 

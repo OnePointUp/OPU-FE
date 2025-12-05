@@ -34,16 +34,16 @@ function formatDateOrNone(date: string | null) {
     return formatDate(date);
 }
 
-function formatTimeOrNone(time: string | null) {
-    if (!time) return "없음";
+function formatTimeOrNone(alarmTime: string | null) {
+    if (!alarmTime) return "없음";
 
-    if (time.includes("오전") || time.includes("오후")) {
-        return time;
+    if (alarmTime.includes("오전") || alarmTime.includes("오후")) {
+        return alarmTime;
     }
 
-    if (time.includes(":")) {
-        const [h, m] = time.split(":").map(Number);
-        if (isNaN(h) || isNaN(m)) return time;
+    if (alarmTime.includes(":")) {
+        const [h, m] = alarmTime.split(":").map(Number);
+        if (isNaN(h) || isNaN(m)) return alarmTime;
 
         const ampm = h >= 12 ? "오후" : "오전";
         const h12 = h % 12 || 12;
@@ -51,7 +51,7 @@ function formatTimeOrNone(time: string | null) {
         return `${ampm} ${h12}:${pad2(m)}`;
     }
 
-    return time;
+    return alarmTime;
 }
 
 export default function RoutineForm({
@@ -80,7 +80,7 @@ export default function RoutineForm({
     >(null);
     const [showTimeSheet, setShowTimeSheet] = useState(false);
 
-    const hasTitle = form.title.trim().length > 0;
+    const hasTitle = (form.title ?? "").trim().length > 0;
     const submitLabel = mode === "create" ? "등록" : "수정";
 
     const isSubmitDisabled = !isClient || disabled || submitting || !hasTitle;
@@ -146,7 +146,7 @@ export default function RoutineForm({
                     form.frequency === "BIWEEKLY") &&
                 form.weekDays
             ) {
-                const nums = form.weekDays
+                const nums = (form.weekDays ?? "")
                     .split(",")
                     .map((s) => s.trim())
                     .filter(Boolean)
@@ -160,7 +160,7 @@ export default function RoutineForm({
             }
 
             if (form.frequency === "MONTHLY" && form.monthDays) {
-                const tokens = form.monthDays
+                const tokens = (form.monthDays ?? "")
                     .split(",")
                     .map((s) => s.trim())
                     .filter(Boolean);
@@ -186,7 +186,7 @@ export default function RoutineForm({
             }
 
             if (form.frequency === "YEARLY" && form.yearDays) {
-                const tokens = form.yearDays
+                const tokens = (form.yearDays ?? "")
                     .split(",")
                     .map((s) => s.trim())
                     .filter(Boolean);
@@ -236,7 +236,7 @@ export default function RoutineForm({
     };
 
     const handleTimeConfirm = (value: string | null) => {
-        handleChange("time", value);
+        handleChange("alarmTime", value);
         setShowTimeSheet(false);
     };
 
@@ -480,7 +480,7 @@ export default function RoutineForm({
                                     color: "var(--color-dark-navy)",
                                 }}
                             >
-                                {formatTimeOrNone(form.time)}
+                                {formatTimeOrNone(form.alarmTime)}
                                 <Icon
                                     icon="mdi:chevron-right"
                                     width={20}
@@ -541,7 +541,7 @@ export default function RoutineForm({
                 showHandle
             >
                 <TimePickerSheet
-                    current={form.time}
+                    current={form.alarmTime}
                     onConfirm={handleTimeConfirm}
                 />
             </BottomSheet>

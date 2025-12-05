@@ -64,15 +64,15 @@ export default function RoutineEditPage({ id }: Props) {
         const routineBaseForm: RoutineFormValue = {
             id,
             title: routine.title,
-            frequency: routine.frequency,
+
             startDate: routine.startDate,
             endDate: routine.endDate,
-            time: routine.time,
-            color: routine.color,
-
+            frequency: routine.frequency,
             weekDays: routine.weekDays ?? null,
             monthDays: routine.monthDays ?? null,
             yearDays: routine.yearDays ?? null,
+            color: routine.color,
+            alarmTime: routine.alarmTime,
         };
 
         const frequencyParam = searchParams.get(

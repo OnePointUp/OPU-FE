@@ -1,5 +1,5 @@
 import { formatDate } from "@/utils/formatDate";
-import { RoutineListItemResponse } from "./types";
+import { RoutineFormValue, RoutineListItemResponse } from "./types";
 
 export type toRoutineListCard = {
     id: number;
@@ -151,7 +151,7 @@ export function formatDateRange(startDate: string, endDate: string | null) {
     return `${formatDate(startDate)} - ${formatDate(endDate)}`;
 }
 
-export function getFrequencyPartsFromRoutine(routine: RoutineEntity): {
+export function getFrequencyPartsFromRoutine(routine: RoutineFormValue): {
     days: number[];
     months: number[];
     last: boolean;
