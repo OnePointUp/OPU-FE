@@ -107,6 +107,26 @@ export default function CalendarPage() {
             setCellHeight={setCellHeight}
             expandedHeight={expandedHeight}
             collapsedHeight={collapsedHeight}
+
+            onSwipePrevMonth={() => {
+              const newMonth = month - 1;
+              if (newMonth < 1) {
+                setYear(year - 1);
+                setMonth(12);
+              } else {
+                setMonth(newMonth);
+              }
+            }}
+
+            onSwipeNextMonth={() => {
+              const newMonth = month + 1;
+              if (newMonth > 12) {
+                setYear(year + 1);
+                setMonth(1);
+              } else {
+                setMonth(newMonth);
+              }
+            }}
           >
             <CalendarFull
               calendarMatrix={calendarMatrix}
