@@ -28,18 +28,21 @@ export default function CalendarFull({
     }
   }, [calendarMatrix]);
 
-  /* -----------------------------------------------
-     ⭐ 요일 헤더 (로딩 여부 상관없이 항상 표시)
-     ----------------------------------------------- */
   const WeekdayHeader = (
     <div className="grid grid-cols-7 text-sm text-gray-500 mb-2">
       {WEEKDAYS.map((day) => (
         <div
           key={day}
-          className={clsx(
-            "h-10 flex items-center justify-center text-sm",
-            day === "일" ? "text-red-500" : "text-[var(--color-dark-gray)]"
-          )}
+          className={`flex items-center justify-center text-center aspect-square
+              ${
+                  day === "일"
+                      ? "text-[var(--color-sunday)]"
+                      : day === "토"
+                      ? "text-[var(--color-saturday)]"
+                      : "text-[var(--color-dark-gray)]"
+              }
+          `}
+          style={{ fontSize: "var(--text-caption)" }}
         >
           {day}
         </div>
@@ -47,9 +50,6 @@ export default function CalendarFull({
     </div>
   );
 
-  /* -----------------------------------------------
-     ⭐ 로딩 Skeleton (요일 제외)
-     ----------------------------------------------- */
   if (isLoading) {
     return (
       <div className="w-full select-none animate-pulse">
@@ -81,9 +81,6 @@ export default function CalendarFull({
     );
   }
 
-  /* -----------------------------------------------
-     ⭐ 실제 달력 데이터 렌더링
-     ----------------------------------------------- */
   return (
     <div className="w-full select-none transition-opacity duration-300">
       {WeekdayHeader}
