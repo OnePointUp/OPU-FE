@@ -20,6 +20,7 @@ type Props = {
     initialValue: RoutineFormValue;
     onSubmit: (form: RoutineFormValue) => Promise<void> | void;
     onDelete?: () => Promise<void> | void;
+    onDeleteClick?: () => void;
     submitting?: boolean;
     disabled?: boolean;
     frequencyLabelOverride?: string;
@@ -59,6 +60,7 @@ export default function RoutineForm({
     initialValue,
     onSubmit,
     onDelete,
+    onDeleteClick,
     submitting = false,
     disabled = false,
     frequencyLabelOverride,
@@ -495,7 +497,13 @@ export default function RoutineForm({
                     {mode === "edit" && onDelete && (
                         <button
                             type="button"
-                            onClick={() => setShowDeleteConfirm(true)}
+                            onClick={() => {
+                                if (onDeleteClick) {
+                                    onDeleteClick();
+                                } else {
+                                    setShowDeleteConfirm(true);
+                                }
+                            }}
                             className="w-full h-[50px] rounded-[12px] border bg-white text-center"
                             style={{
                                 borderColor: "var(--color-super-light-gray)",
@@ -521,7 +529,7 @@ export default function RoutineForm({
                     />
                 </div>
 
-                {mode === "edit" && onDelete && (
+                {mode === "edit" && onDelete && !onDeleteClick && (
                     <ConfirmModal
                         isOpen={showDeleteConfirm}
                         message="이 루틴을 삭제하시겠습니까?"

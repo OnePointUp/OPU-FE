@@ -63,3 +63,5 @@ export type CreateRoutinePayload = {
 export type UpdateRoutinePayload = {
     id: number;
 } & Partial<CreateRoutinePayload>;
+
+export type DeleteScope = "ALL" | "UNCOMPLETED_TODO";

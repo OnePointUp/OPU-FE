@@ -193,7 +193,20 @@ export function useRoutineEditPage(id: number) {
     const handleDelete = useCallback(async () => {
         setSubmitting(true);
         try {
-            await deleteRoutine(id);
+            await deleteRoutine(id, "ALL");
+            if (typeof window !== "undefined") {
+                window.sessionStorage.removeItem(STORAGE_KEY);
+            }
+            router.push("/routine");
+        } finally {
+            setSubmitting(false);
+        }
+    }, [STORAGE_KEY, id, router]);
+
+    const handleDeleteIncomplete = useCallback(async () => {
+        setSubmitting(true);
+        try {
+            await deleteRoutine(id, "UNCOMPLETED_TODO");
             if (typeof window !== "undefined") {
                 window.sessionStorage.removeItem(STORAGE_KEY);
             }
@@ -209,5 +222,6 @@ export function useRoutineEditPage(id: number) {
         submitting,
         handleSubmit,
         handleDelete,
+        handleDeleteIncomplete,
     };
 }

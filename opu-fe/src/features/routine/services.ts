@@ -1,12 +1,10 @@
-import type { RoutineEntity } from "./domain";
-import { requestJSON } from "@/lib/request";
 import {
     CreateRoutinePayload,
+    DeleteScope,
     EditRoutinePayload,
     RoutineDetailResponse,
     RoutineFormValue,
     RoutineListItemResponse,
-    UpdateRoutinePayload,
 } from "./types";
 import { extractErrorMessage } from "@/utils/api-helpers";
 import { apiClient } from "@/lib/apiClient";
@@ -87,14 +85,17 @@ export async function editRoutine(
     }
 }
 
-// ============================
-
-const BASE = "/routine";
-
-export function deleteRoutine(id: number) {
-    return requestJSON<{ ok: boolean }>(BASE, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-    });
+/* ===== 루틴 삭제 ===== */
+export async function deleteRoutine(
+    routineId: number,
+    scope: DeleteScope = "ALL"
+) {
+    try {
+        await apiClient.delete(`/routines/${routineId}`, {
+            params: { scope },
+        });
+        return { ok: true };
+    } catch (err) {
+        throw new Error(extractErrorMessage(err, "루틴 삭제에 실패했어요."));
+    }
 }
