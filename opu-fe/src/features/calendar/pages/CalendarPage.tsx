@@ -47,6 +47,7 @@ export default function CalendarPage() {
     todoHeight,
   } = useCalendarLayout(weekCount);
 
+  /** 날짜 선택 핸들러 */
   const handleSelectDay = (day: DailyTodoStats | null) => {
     if (!day) return;
 
@@ -58,12 +59,15 @@ export default function CalendarPage() {
     setCellHeight(collapsedHeight);
   };
 
+  /** 월 이동 */
   const goPrev = () => {
     const m = month - 1;
     if (m < 1) {
       setYear(year - 1);
       setMonth(12);
-    } else setMonth(m);
+    } else {
+      setMonth(m);
+    }
   };
 
   const goNext = () => {
@@ -71,8 +75,20 @@ export default function CalendarPage() {
     if (m > 12) {
       setYear(year + 1);
       setMonth(1);
-    } else setMonth(m);
+    } else {
+      setMonth(m);
+    }
   };
+
+  /** ⭐ 리뷰 반영 — 중복 제거용 함수 */
+  const renderCalendar = (matrix: (DailyTodoStats | null)[][]) => (
+    <CalendarFull
+      calendarMatrix={matrix}
+      selectedDay={selectedDay}
+      onSelectDay={handleSelectDay}
+      cellHeight={cellHeight}
+    />
+  );
 
   return (
     <section className="fixed inset-0 flex flex-col">
@@ -108,7 +124,7 @@ export default function CalendarPage() {
           />
         </div>
 
-        {/* Calendar Area */}
+        {/* Calendar + TodoList 영역 */}
         <div className="flex-1 flex flex-col min-h-0">
           <CalendarContainer
             weekCount={weekCount}
@@ -119,31 +135,11 @@ export default function CalendarPage() {
           >
             <CalendarWeekdayHeader />
 
+            {/* ⭐ 중복 감소된 코드 */}
             <CalendarSlider
-              prev={
-                <CalendarFull
-                  calendarMatrix={prevMatrix}
-                  selectedDay={selectedDay}
-                  onSelectDay={handleSelectDay}
-                  cellHeight={cellHeight}
-                />
-              }
-              current={
-                <CalendarFull
-                  calendarMatrix={currentMatrix}
-                  selectedDay={selectedDay}
-                  onSelectDay={handleSelectDay}
-                  cellHeight={cellHeight}
-                />
-              }
-              next={
-                <CalendarFull
-                  calendarMatrix={nextMatrix}
-                  selectedDay={selectedDay}
-                  onSelectDay={handleSelectDay}
-                  cellHeight={cellHeight}
-                />
-              }
+              prev={renderCalendar(prevMatrix)}
+              current={renderCalendar(currentMatrix)}
+              next={renderCalendar(nextMatrix)}
               onPrev={goPrev}
               onNext={goNext}
             />

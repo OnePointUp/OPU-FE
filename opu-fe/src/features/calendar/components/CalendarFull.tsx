@@ -21,6 +21,9 @@ export default function CalendarFull({
   const { buildWeekCells } = useCalendarWeek();
   const [isLoading, setIsLoading] = useState(true);
 
+  // -----------------------------
+  // 로딩 처리
+  // -----------------------------
   useEffect(() => {
     if (calendarMatrix.length > 0) {
       const t = setTimeout(() => setIsLoading(false), 150);
@@ -49,13 +52,31 @@ export default function CalendarFull({
     );
   }
 
-  const firstRealDay = calendarMatrix.flat().find((d) => d !== null)!;
+  // -----------------------------
+  // ⭐ 리뷰 반영: firstRealDay 안전 처리
+  // -----------------------------
+  const firstRealDay =
+    calendarMatrix.flat().find((d) => d !== null) ?? null;
+
+  // firstRealDay 없으면 달력을 렌더할 수 없음 → 안전한 fallback UI 반환
+  if (!firstRealDay) {
+    return (
+      <div className="w-full text-center text-gray-400 py-10">
+        달력 데이터를 불러올 수 없습니다.
+      </div>
+    );
+  }
+
+  // 날짜 계산도 안전하게
   const firstDateObj = new Date(firstRealDay.date);
   const matrixStartDate = new Date(firstDateObj);
   matrixStartDate.setDate(firstDateObj.getDate() - firstDateObj.getDay());
 
+  // -----------------------------
+  // 정상 렌더링
+  // -----------------------------
   return (
-    <div className="w-full select-none">
+    <div className="w-full select-none transition-opacity duration-300">
       {calendarMatrix.map((week, wi) => {
         const cells = buildWeekCells(week, wi, matrixStartDate);
 
@@ -88,7 +109,8 @@ export default function CalendarFull({
                   <div
                     className={clsx(
                       "text-xs mb-1 flex justify-center relative",
-                      day.isToday && "text-[var(--color-opu-pink)] font-semibold"
+                      day.isToday &&
+                        "text-[var(--color-opu-pink)] font-semibold"
                     )}
                   >
                     {Number(day.date.split("-")[2])}
@@ -98,7 +120,7 @@ export default function CalendarFull({
                     )}
                   </div>
 
-                  {/* Todo 목록 */}
+                  {/* Todo 목록 — 미리보기 날은 표시 안 함 */}
                   {!day.isPreview && (
                     <div className="relative overflow-hidden flex-1">
                       <div className="text-[10px] flex flex-col gap-[2px] leading-tight">
