@@ -17,6 +17,8 @@ export default function RoutineEditPage({ id }: Props) {
         handleSubmit,
         handleDelete,
         handleDeleteIncomplete,
+        editScope,
+        setEditScope,
     } = useRoutineEditPage(id);
 
     const [deleteSheetOpen, setDeleteSheetOpen] = useState(false);
@@ -63,6 +65,8 @@ export default function RoutineEditPage({ id }: Props) {
                 onDeleteClick={openDeleteSheet}
                 submitting={submitting}
                 frequencyLabelOverride={frequencyLabelOverride}
+                editScope={editScope}
+                onEditScopeChange={setEditScope}
             />
 
             <BottomSheet

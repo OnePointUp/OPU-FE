@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import type { RoutineFormValue } from "../types";
+import type { DeleteScope, RoutineFormValue } from "../types";
 import { deleteRoutine, editRoutine } from "../services";
 import {
     type RoutineFrequency,
@@ -43,6 +43,10 @@ export function useRoutineEditPage(id: number) {
         string | undefined
     >(undefined);
     const [submitting, setSubmitting] = useState(false);
+    const [editScope, setEditScope] = useState<DeleteScope>(() => {
+        const scope = searchParams.get("scope");
+        return scope === "UNCOMPLETED_TODO" ? "UNCOMPLETED_TODO" : "ALL";
+    });
 
     const STORAGE_KEY = useMemo(() => `routine-form:edit:${id}`, [id]);
 
@@ -81,8 +85,6 @@ export function useRoutineEditPage(id: number) {
 
         if (frequencyParam) {
             const days = parseNumberList(daysParam);
-            const months = parseNumberList(monthsParam);
-            const last = lastParam;
 
             let storedForm = loadFormFromStorage(STORAGE_KEY, routineBaseForm);
 
@@ -177,17 +179,14 @@ export function useRoutineEditPage(id: number) {
 
             setSubmitting(true);
             try {
-                // TODO: scope는 나중에 UI에서 선택하게 만들면 거기서 값 받아오기
-                const scope = "ALL";
-
-                const payload = toEditRoutinePayload(form, scope);
+                const payload = toEditRoutinePayload(form, editScope);
                 await editRoutine(id, payload);
                 router.push("/routine");
             } finally {
                 setSubmitting(false);
             }
         },
-        [STORAGE_KEY, id, router]
+        [STORAGE_KEY, editScope, id, router]
     );
 
     const handleDelete = useCallback(async () => {
@@ -223,5 +222,7 @@ export function useRoutineEditPage(id: number) {
         handleSubmit,
         handleDelete,
         handleDeleteIncomplete,
+        editScope,
+        setEditScope,
     };
 }

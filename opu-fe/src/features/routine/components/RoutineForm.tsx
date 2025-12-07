@@ -5,9 +5,10 @@ import type React from "react";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import { formatDate } from "@/utils/formatDate";
 import { getFrequencyLabel } from "@/features/routine/domain";
-import type { RoutineFormValue } from "../types";
+import type { DeleteScope, RoutineFormValue } from "../types";
 import { ROUTINE_COLOR_OPTIONS } from "../constants";
 import OpuActionButton from "@/components/common/OpuActionButton";
+import ActionList, { type ActionItem } from "@/components/common/ActionList";
 import { Icon } from "@iconify/react";
 import InlineCalendar from "./InlineCalendar";
 import { useRouter } from "next/navigation";
@@ -24,6 +25,8 @@ type Props = {
     submitting?: boolean;
     disabled?: boolean;
     frequencyLabelOverride?: string;
+    editScope?: DeleteScope;
+    onEditScopeChange?: (scope: DeleteScope) => void;
 };
 
 function pad2(n: number) {
@@ -64,6 +67,8 @@ export default function RoutineForm({
     submitting = false,
     disabled = false,
     frequencyLabelOverride,
+    editScope,
+    onEditScopeChange,
 }: Props) {
     const router = useRouter();
     const isClient = typeof window !== "undefined";
@@ -74,6 +79,7 @@ export default function RoutineForm({
             : `routine-form:edit:${initialValue.id}`;
 
     const [form, setForm] = useState<RoutineFormValue>(initialValue);
+    const [showScopeSheet, setShowScopeSheet] = useState(false);
 
     useEffect(() => {
         setForm(initialValue);
@@ -238,6 +244,10 @@ export default function RoutineForm({
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (mode === "edit" && onEditScopeChange) {
+            setShowScopeSheet(true);
+            return;
+        }
         await handleSubmit();
     };
 
@@ -524,6 +534,10 @@ export default function RoutineForm({
                         disabled={isSubmitDisabled}
                         loading={submitting}
                         onClick={() => {
+                            if (mode === "edit" && onEditScopeChange) {
+                                setShowScopeSheet(true);
+                                return;
+                            }
                             void handleSubmit();
                         }}
                     />
@@ -553,6 +567,44 @@ export default function RoutineForm({
                     onConfirm={handleTimeConfirm}
                 />
             </BottomSheet>
+
+            {/* 수정 범위 선택 바텀시트 */}
+            {mode === "edit" && onEditScopeChange && editScope && (
+                <BottomSheet
+                    open={showScopeSheet}
+                    onClose={() => setShowScopeSheet(false)}
+                    showHandle
+                >
+                    <ActionList
+                        items={
+                            [
+                                {
+                                    label: "전체 수정",
+                                    primary: editScope === "ALL",
+                                    onClick: async () => {
+                                        onEditScopeChange("ALL");
+                                        setShowScopeSheet(false);
+                                        await handleSubmit();
+                                    },
+                                },
+                                {
+                                    label: "미완료만 수정",
+                                    primary: editScope === "UNCOMPLETED_TODO",
+                                    onClick: async () => {
+                                        onEditScopeChange("UNCOMPLETED_TODO");
+                                        setShowScopeSheet(false);
+                                        await handleSubmit();
+                                    },
+                                },
+                                {
+                                    label: "취소",
+                                    onClick: () => setShowScopeSheet(false),
+                                },
+                            ] satisfies ActionItem[]
+                        }
+                    />
+                </BottomSheet>
+            )}
         </>
     );
 }
