@@ -75,7 +75,7 @@ export async function createRoutine(
 }
 
 /* ===== 루틴 수정 ===== */
-export async function updateRoutine(
+export async function editRoutine(
     routineId: number,
     payload: EditRoutinePayload
 ) {

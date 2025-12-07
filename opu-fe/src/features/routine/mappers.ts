@@ -1,8 +1,8 @@
 import type { RoutineEntity } from "./domain";
 import type {
     CreateRoutinePayload,
+    EditRoutinePayload,
     RoutineFormValue,
-    UpdateRoutinePayload,
 } from "./types";
 
 export function toRoutineFormValue(e: RoutineEntity): RoutineFormValue {
@@ -51,22 +51,39 @@ export function toCreateRoutinePayload(
     return payload;
 }
 
-export function toUpdateRoutinePayload(
-    form: RoutineFormValue
-): UpdateRoutinePayload {
-    if (!form.id) {
-        throw new Error("Routine id is required for update");
-    }
-    return {
-        id: form.id,
+export function toEditRoutinePayload(
+    form: RoutineFormValue,
+    scope: string
+): EditRoutinePayload {
+    const base: EditRoutinePayload = {
         title: form.title,
-        frequency: form.frequency,
-        startDate: form.startDate ?? undefined,
-        endDate: form.endDate,
-        alarmTime: form.alarmTime ?? undefined,
         color: form.color,
-        weekDays: form.weekDays ?? undefined,
-        monthDays: form.monthDays ?? undefined,
-        yearDays: form.yearDays ?? undefined,
+        alarmTime: form.alarmTime ?? null,
+        endDate: form.endDate ?? null,
+        frequency: form.frequency,
+        scope,
     };
+
+    if (form.frequency === "WEEKLY" || form.frequency === "BIWEEKLY") {
+        return {
+            ...base,
+            weekDays: form.weekDays ?? null,
+        };
+    }
+
+    if (form.frequency === "MONTHLY") {
+        return {
+            ...base,
+            monthDays: form.monthDays ?? null,
+        };
+    }
+
+    if (form.frequency === "YEARLY") {
+        return {
+            ...base,
+            days: form.yearDays ?? null,
+        };
+    }
+
+    return base;
 }
