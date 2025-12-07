@@ -5,7 +5,7 @@ import { fetchRoutineDetail } from "../services";
 
 type Routine = Awaited<ReturnType<typeof fetchRoutineDetail>>;
 
-export function useRoutine(id: number) {
+export function useRoutineDetail(id: number) {
     const [routine, setRoutine] = useState<Routine | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<unknown>(null);
