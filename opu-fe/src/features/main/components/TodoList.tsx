@@ -260,6 +260,13 @@ export default function TodoList({
                     {formatDate(selectedDay.date)}
                 </div>
 
+                {reorderedItems.length === 0 && (
+                    <div className="w-full py-10 text-center text-[var(--color-light-gray)]"
+                        style={{ fontSize: "var(--text-sub)" }}>
+                        아직 Todo가 없습니다.
+                    </div>
+                )}
+
                 {reorderedItems.map((todo, index) => {
                     const isEditing = editingId === todo.id;
                     const displayTime = formatTime(todo.time);

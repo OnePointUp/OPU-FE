@@ -38,7 +38,7 @@ export default function MonthSelector({
         <div className={className}>
             <div
                 className={`
-          flex items-center w-full mt-[10px] mb-[20px]
+          flex items-center w-full mt-[10px]
           ${hideViewToggle ? "justify-center" : "justify-between"}
         `}
             >

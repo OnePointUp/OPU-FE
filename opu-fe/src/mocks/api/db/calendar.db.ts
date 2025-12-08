@@ -18,6 +18,17 @@ export type DailyTodoStats = {
     isToday: boolean; // 오늘인지 여부
 };
 
+const fakeDay: DailyTodoStats = {
+  date: "...",
+  todos: [],
+  total: 0,
+  doneCount: 0,
+  ratio: 0,
+  intensity: 0,
+  isToday: false,
+};
+
+
 // 캘린더 색상 (단계별 색)
 export const CALENDAR_COLORS: Record<number, string> = {
     0: "rgba(205, 233, 144, 0.15)",
