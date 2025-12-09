@@ -6,6 +6,7 @@ import RandomOpuLoadingScreen from "../components/RandomOpuLoadingScreen";
 
 import type { OpuCardModel, RandomScope, TimeCode } from "../domain";
 import { drawRandomOpu } from "../service";
+import { useRouter } from "next/navigation";
 
 type Props = {
     scope: RandomScope;
@@ -18,6 +19,7 @@ export default function RandomResultClient({
     time,
     excludeOpuId,
 }: Props) {
+    const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [item, setItem] = useState<OpuCardModel | null>(null);
 
@@ -25,8 +27,6 @@ export default function RandomResultClient({
         let timer: ReturnType<typeof setTimeout>;
 
         async function load() {
-            console.log("[RandomResultClient] scope, time =", scope, time);
-
             try {
                 const opu = await drawRandomOpu(scope, time, excludeOpuId);
                 setItem(opu);
@@ -55,5 +55,14 @@ export default function RandomResultClient({
         );
     }
 
-    return <RandomResultView item={item} />;
+    const handleRetry = () => {
+        const params = new URLSearchParams();
+        params.set("scope", scope);
+        params.set("time", time);
+        params.set("excludeOpuId", String(item.id));
+
+        router.push(`/opu/random/result?${params.toString()}`);
+    };
+
+    return <RandomResultView item={item} onRetry={handleRetry} />;
 }

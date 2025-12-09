@@ -9,20 +9,11 @@ import OpuActionButton from "@/components/common/OpuActionButton";
 
 type Props = {
     item: OpuCardModel;
+    onRetry?: () => void;
 };
 
-export default function RandomResultView({ item }: Props) {
+export default function RandomResultView({ item, onRetry }: Props) {
     const router = useRouter();
-    const searchParams = useSearchParams();
-
-    const scope = searchParams.get("scope") ?? "ALL";
-    const time = searchParams.get("time") ?? "ALL";
-
-    const handleRetry = () => {
-        router.replace(
-            `/opu/random/result?scope=${scope}&time=${time}&r=${Date.now()}`
-        );
-    };
 
     const handleConfirm = () => {
         // TODO: 나중에 캘린더로 바꿀 예정
@@ -92,7 +83,7 @@ export default function RandomResultView({ item }: Props) {
                 {/* 다시 뽑기 */}
                 <button
                     type="button"
-                    onClick={handleRetry}
+                    onClick={onRetry}
                     className="w-full h-[56px] rounded-[18px] border flex items-center justify-center gap-2 bg-white"
                     style={{
                         borderColor: "var(--color-light-gray)",
