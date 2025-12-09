@@ -1,9 +1,8 @@
 "use client";
 
 import OpuActionButton from "@/components/common/OpuActionButton";
-import type { TimeCode } from "@/features/opu/utils/time";
-import { TIME_OPTIONS } from "@/features/opu/utils/time";
 import { toastWarn } from "@/lib/toast";
+import { TIME_OPTIONS, TimeCode } from "../domain";
 
 type TimeValue = TimeCode | null;
 

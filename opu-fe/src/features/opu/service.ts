@@ -1,11 +1,20 @@
 import {
     buildOpuTodoPayload,
     FetchOpuListParams,
+    FetchRandomOpuParams,
     OpuListPage,
     OpuSummaryResponse,
+    RandomOpuResponse,
+    RandomScope,
     RegisterOpuPayload,
+    TimeCode,
 } from "./domain";
-import { toOpuCardModelFromSummary } from "./mappers";
+import {
+    mapScopeToSource,
+    mapTimeToRequiredMinutes,
+    toOpuCardModelFromRandom,
+    toOpuCardModelFromSummary,
+} from "./mappers";
 import { apiClient } from "@/lib/apiClient";
 import { ApiResponse, PageResponse } from "@/types/api";
 import { extractErrorMessage } from "@/utils/api-helpers";
@@ -202,4 +211,46 @@ export async function deleteMyOpu(opuId: number): Promise<void> {
     } catch (err: unknown) {
         throw new Error(extractErrorMessage(err, "OPU 삭제에 실패했어요"));
     }
+}
+
+/* ==== OPU 랜덤 뽑기 (raw 응답) ===== */
+export async function fetchRandomOpu(
+    params: FetchRandomOpuParams
+): Promise<RandomOpuResponse | null> {
+    try {
+        const res = await apiClient.get<ApiResponse<RandomOpuResponse>>(
+            "/opus/random",
+            {
+                params: {
+                    source: params.source,
+                    requiredMinutes: params.requiredMinutes,
+                    excludeOpuId: params.excludeOpuId,
+                },
+            }
+        );
+
+        return res.data.data ?? null;
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "랜덤 OPU를 불러오지 못했어요.")
+        );
+    }
+}
+
+/* ==== OPU 랜덤 뽑기 (화면용 카드 모델) ===== */
+export async function drawRandomOpu(
+    scope: RandomScope,
+    time: TimeCode,
+    excludeOpuId?: number
+) {
+    const params: FetchRandomOpuParams = {
+        source: mapScopeToSource(scope),
+        requiredMinutes: mapTimeToRequiredMinutes(time),
+        excludeOpuId,
+    };
+
+    const data = await fetchRandomOpu(params);
+    if (!data) return null;
+
+    return toOpuCardModelFromRandom(data);
 }

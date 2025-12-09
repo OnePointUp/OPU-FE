@@ -3,9 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import RandomTimeStep from "@/features/opu/components/RandomTimeStep";
-import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
-import { getTimeCountsByScope, type RandomScope } from "@/features/opu/random";
-import type { TimeCode } from "@/features/opu/utils/time";
+import { RandomScope, TimeCode, TIME_OPTIONS } from "../domain";
 
 type TimeValue = TimeCode | null;
 
@@ -15,9 +13,15 @@ export default function RandomTimePage() {
 
     const scope = (searchParams.get("scope") as RandomScope) ?? "ALL";
 
+    // TODO: 나중에 백엔드에서 시간대별 개수 내려주면 여기서 실제 값으로 교체
     const timeCounts = useMemo(
-        () => getTimeCountsByScope(CURRENT_MEMBER_ID, scope),
-        [scope]
+        () =>
+            TIME_OPTIONS.reduce((acc, opt) => {
+                // 일단 모든 시간 옵션을 "사용 가능" 상태로 1개씩 세팅
+                acc[opt.code] = 1;
+                return acc;
+            }, {} as Record<TimeCode, number>),
+        []
     );
 
     const [selectedTime, setSelectedTime] = useState<TimeValue>(null);

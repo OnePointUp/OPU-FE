@@ -106,6 +106,37 @@ export type RegisterOpuPayload = {
 };
 
 /* ===========================
+ * 랜덤 뽑기 관련 타입
+ * =========================== */
+
+export type RandomScope = "ALL" | "LIKED";
+
+export type RandomOpuSource = "ALL" | "FAVORITE";
+
+export type RandomOpuResponse = {
+    id: number;
+    emoji: string;
+    title: string;
+    categoryId: number;
+    categoryName: string;
+    requiredMinutes: number;
+    description: string;
+    isShared: boolean;
+    favorite: boolean;
+    myCompletionCount: number;
+    favoriteCount: number;
+    creatorId: number;
+    creatorNickname: string;
+    isMine: boolean;
+};
+
+export type FetchRandomOpuParams = {
+    source: RandomOpuSource;
+    requiredMinutes?: number;
+    excludeOpuId?: number;
+};
+
+/* ===========================
  * 목 데이터용 엔티티 타입 (프론트 전용)
  * =========================== */
 

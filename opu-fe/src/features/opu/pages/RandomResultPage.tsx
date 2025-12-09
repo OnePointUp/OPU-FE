@@ -1,25 +1,22 @@
-import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
-import { drawRandomOpu, type RandomScope } from "@/features/opu/random";
-import type { TimeCode } from "@/features/opu/utils/time";
+import { RandomScope, TimeCode } from "../domain";
 import RandomResultClient from "./RandomResultClient";
 
 type RawSearchParams = {
     scope?: string;
     time?: string;
+    excludeOpuId?: string;
 };
 
 type Props = {
-    searchParams: Promise<RawSearchParams>;
+    searchParams: RawSearchParams;
 };
 
 const VALID_SCOPES: RandomScope[] = ["ALL", "LIKED"];
 const VALID_TIMES: TimeCode[] = ["ALL", "1M", "5M", "30M", "1H", "DAILY"];
 
-export default async function RandomResultPage({ searchParams }: Props) {
-    const params = await searchParams;
-
-    const rawScope = params.scope ?? "ALL";
-    const rawTime = params.time ?? "ALL";
+export default function RandomResultPage({ searchParams }: Props) {
+    const rawScope = searchParams.scope ?? "ALL";
+    const rawTime = searchParams.time ?? "ALL";
 
     const scope: RandomScope = VALID_SCOPES.includes(rawScope as RandomScope)
         ? (rawScope as RandomScope)
@@ -29,15 +26,15 @@ export default async function RandomResultPage({ searchParams }: Props) {
         ? (rawTime as TimeCode)
         : "ALL";
 
-    const opu = await drawRandomOpu(CURRENT_MEMBER_ID, scope, time);
+    const excludeOpuId = searchParams.excludeOpuId
+        ? Number(searchParams.excludeOpuId)
+        : undefined;
 
-    if (!opu) {
-        return (
-            <div className="flex items-center justify-center text-[var(--color-dark-gray)]">
-                조건에 맞는 OPU가 없어요
-            </div>
-        );
-    }
-
-    return <RandomResultClient item={opu} delayMs={1100} />;
+    return (
+        <RandomResultClient
+            scope={scope}
+            time={time}
+            excludeOpuId={excludeOpuId}
+        />
+    );
 }
