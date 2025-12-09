@@ -1,7 +1,7 @@
 "use client";
 
 import Calendar from "../components/Calendar";
-import TodoList from "../components/TodoList";
+import TodoList from "../../todo/components/TodoList";
 import PlusButton from "@/components/common/PlusButton";
 
 import { useCalendarCore } from "@/features/calendar/hooks/useCalendarCore";

@@ -4,7 +4,7 @@ import CalendarFull, { CalendarDay } from "../components/CalendarFull";
 import CalendarContainer from "../components/CalendarContainer";
 import CalendarSlider from "../components/CalendarSlider";
 import DaySelector from "@/features/main/components/DaySelector";
-import TodoList from "@/features/main/components/TodoList";
+import TodoList from "@/features/todo/components/TodoList";
 import PlusButton from "@/components/common/PlusButton";
 
 import { useCalendarCore } from "@/features/calendar/hooks/useCalendarCore";
