@@ -8,7 +8,7 @@ type TimeValue = TimeCode | null;
 
 type Props = {
     value: TimeValue;
-    onChange: (value: TimeCode) => void;
+    onChange: (value: TimeValue) => void;
     onSubmit: () => void;
     timeCounts: Record<TimeCode, number>;
 };
@@ -56,7 +56,9 @@ export default function RandomTimeStep({
                                     isActive
                                         ? "border-[var(--color-opu-pink)] border-[2px] font-[var(--weight-medium)] text-[var(--color-opu-pink)] bg-[var(--color-super-light-pink)]"
                                         : "border-[var(--color-super-dark-navy)] text-[var(--color-dark-navy)] bg-[--background]"
-                                }`}
+                                }
+                                ${!isAvailable ? " opacity-40" : ""}
+                            `}
                         >
                             <span>{opt.label}</span>
                             <span style={{ fontSize: "var(--text-sub)" }}>

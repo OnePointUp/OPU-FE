@@ -109,9 +109,7 @@ export type RegisterOpuPayload = {
  * 랜덤 뽑기 관련 타입
  * =========================== */
 
-export type RandomScope = "ALL" | "LIKED";
-
-export type RandomOpuSource = "ALL" | "FAVORITE";
+export type RandomScope = "ALL" | "FAVORITE";
 
 export type RandomOpuResponse = {
     id: number;
@@ -131,7 +129,7 @@ export type RandomOpuResponse = {
 };
 
 export type FetchRandomOpuParams = {
-    source: RandomOpuSource;
+    source: RandomScope;
     requiredMinutes?: number;
     excludeOpuId?: number;
 };

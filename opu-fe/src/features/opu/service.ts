@@ -10,7 +10,6 @@ import {
     TimeCode,
 } from "./domain";
 import {
-    mapScopeToSource,
     mapTimeToRequiredMinutes,
     toOpuCardModelFromRandom,
     toOpuCardModelFromSummary,
@@ -244,7 +243,7 @@ export async function drawRandomOpu(
     excludeOpuId?: number
 ) {
     const params: FetchRandomOpuParams = {
-        source: mapScopeToSource(scope),
+        source: scope,
         requiredMinutes: mapTimeToRequiredMinutes(time),
         excludeOpuId,
     };
@@ -253,4 +252,56 @@ export async function drawRandomOpu(
     if (!data) return null;
 
     return toOpuCardModelFromRandom(data);
+}
+
+/* ==== 랜덤 뽑기 시간 요약 조회 ===== */
+
+type TimeSummaryPayload = {
+    requiredMinutes: Record<string, number>;
+};
+
+const KOREAN_TIME_KEY_TO_CODE: Record<string, TimeCode> = {
+    전체: "ALL",
+    "1분": "1M",
+    "5분": "5M",
+    "30분": "30M",
+    "1시간": "1H",
+    "1일": "DAILY",
+};
+
+export async function fetchRandomTimeSummary(
+    scope: RandomScope
+): Promise<Record<TimeCode, number>> {
+    try {
+        const path =
+            scope === "FAVORITE"
+                ? "/opus/time-summary/favorite"
+                : "/opus/time-summary/all";
+
+        const res = await apiClient.get<ApiResponse<TimeSummaryPayload>>(path);
+
+        const raw = res.data.data.requiredMinutes;
+
+        const result: Record<TimeCode, number> = {
+            ALL: 0,
+            "1M": 0,
+            "5M": 0,
+            "30M": 0,
+            "1H": 0,
+            DAILY: 0,
+        };
+
+        Object.entries(raw).forEach(([label, count]) => {
+            const code = KOREAN_TIME_KEY_TO_CODE[label];
+            if (code) {
+                result[code] = count;
+            }
+        });
+
+        return result;
+    } catch (err) {
+        throw new Error(
+            extractErrorMessage(err, "시간별 OPU 개수 조회에 실패했어요")
+        );
+    }
 }

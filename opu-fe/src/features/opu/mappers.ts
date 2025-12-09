@@ -2,8 +2,6 @@ import {
     OpuCardModel,
     OpuSummaryResponse,
     RandomOpuResponse,
-    RandomOpuSource,
-    RandomScope,
     TIME_CODE_TO_MINUTES,
     TimeCode,
 } from "./domain";
@@ -30,10 +28,6 @@ export function toOpuCardModelFromSummary(o: OpuSummaryResponse): OpuCardModel {
         creatorNickname: o.creatorNickname,
         isMine: o.isMine,
     };
-}
-
-export function mapScopeToSource(scope: RandomScope): RandomOpuSource {
-    return scope === "LIKED" ? "FAVORITE" : "ALL";
 }
 
 export function mapTimeToRequiredMinutes(

@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import RandomTimeStep from "@/features/opu/components/RandomTimeStep";
 import { RandomScope, TimeCode, TIME_OPTIONS } from "../domain";
+import { fetchRandomTimeSummary } from "../service";
 
 type TimeValue = TimeCode | null;
 
@@ -13,18 +14,31 @@ export default function RandomTimePage() {
 
     const scope = (searchParams.get("scope") as RandomScope) ?? "ALL";
 
-    // TODO: 나중에 백엔드에서 시간대별 개수 내려주면 여기서 실제 값으로 교체
-    const timeCounts = useMemo(
-        () =>
-            TIME_OPTIONS.reduce((acc, opt) => {
-                // 일단 모든 시간 옵션을 "사용 가능" 상태로 1개씩 세팅
-                acc[opt.code] = 1;
-                return acc;
-            }, {} as Record<TimeCode, number>),
-        []
+    const [timeCounts, setTimeCounts] = useState<Record<TimeCode, number>>(
+        () => {
+            const base = {} as Record<TimeCode, number>;
+            TIME_OPTIONS.forEach((opt) => {
+                base[opt.code] = 0;
+            });
+            return base;
+        }
     );
 
     const [selectedTime, setSelectedTime] = useState<TimeValue>(null);
+
+    useEffect(() => {
+        async function load() {
+            try {
+                const source = scope;
+                const summary = await fetchRandomTimeSummary(source);
+                setTimeCounts(summary);
+            } catch (e) {
+                console.error("failed to fetch time summary", e);
+            }
+        }
+
+        void load();
+    }, [scope]);
 
     return (
         <RandomTimeStep

@@ -11,7 +11,7 @@ type Props = {
     searchParams: RawSearchParams;
 };
 
-const VALID_SCOPES: RandomScope[] = ["ALL", "LIKED"];
+const VALID_SCOPES: RandomScope[] = ["ALL", "FAVORITE"];
 const VALID_TIMES: TimeCode[] = ["ALL", "1M", "5M", "30M", "1H", "DAILY"];
 
 export default function RandomResultPage({ searchParams }: Props) {

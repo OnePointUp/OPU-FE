@@ -40,7 +40,7 @@ export default function RandomResultClient({
                           ];
 
                 const res = await fetchRandomOpu({
-                    source: scope === "LIKED" ? "FAVORITE" : "ALL",
+                    source: scope === "FAVORITE" ? "FAVORITE" : "ALL",
                     requiredMinutes,
                     excludeOpuId,
                 });

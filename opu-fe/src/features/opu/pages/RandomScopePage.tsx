@@ -2,15 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import RandomScopeStep, {
-    ScopeValue,
-} from "@/features/opu/components/RandomScopeStep";
+import RandomScopeStep from "@/features/opu/components/RandomScopeStep";
 import { fetchProfileSummary } from "@/features/member/services";
+import { RandomScope } from "../domain";
+
+type ScopeValue = RandomScope | null;
 
 export default function RandomScopePage() {
     const router = useRouter();
     const [scope, setScope] = useState<ScopeValue>(null);
-
     const [likedCount, setLikedCount] = useState<number>(0);
 
     useEffect(() => {
