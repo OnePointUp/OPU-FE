@@ -43,11 +43,6 @@ export function useCalendarLayout(weekCount: number) {
 
     setExpandedHeight(newCellHeight);
     setCollapsedHeight(newCellHeight * 0.40);
-
-    /*
-     *  weekCount가 바뀔 때마다 cellHeight를 강제 재계산하여
-     *  5주 → 6주 변경 시 달력이 Todo와 겹치는 문제 방지.
-     */
     setCellHeight(newCellHeight);
   };
 

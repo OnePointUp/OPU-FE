@@ -1,56 +1,70 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useCalendarData, sortTodos } from "./useCalendarData";
+import { useCalendarData } from "./useCalendarData";
 import { useSelectedDay } from "./useSelectedDay";
 import { useTodoActions } from "./useTodoActions";
+import type { CalendarDay } from "@/features/calendar/components/CalendarFull";
+
+/** 로컬 기준 yyyy-mm-dd */
+function getLocalDateString(date = new Date()) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
 
 export function useCalendarCore() {
+  const todayStr = getLocalDateString();
+
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
-
   const [editingTodoId, setEditingTodoId] = useState<number | null>(null);
 
-  const { calendarData, calendarMatrix, updateCalendarData } =
-    useCalendarData(year, month);
+  /** ✔ 월간 CalendarDay[] & 6×7 매트릭스 */
+  const { calendarData, calendarMatrix } = useCalendarData(year, month);
 
-  const { selectedDay, setSelectedDay, selectDay } = useSelectedDay();
+  /** ✔ 선택된 날짜 + 해당 날짜 todos */
+  const { selectedDay, setSelectedDay, selectDay, refreshSelectedDay } =
+    useSelectedDay();
 
-  // Todo 액션 모음
-  const actions = useTodoActions(
-    selectedDay,
-    calendarData,
-    updateCalendarData,
-    setEditingTodoId
-  );
+  /** ✔ Todo 액션 */
+  const actions = useTodoActions(selectedDay, refreshSelectedDay, setEditingTodoId);
 
-  /** 오늘 날짜 자동 선택 */
+  /** ⭐ 최초 로딩 시 오늘 날짜 자동 선택 (가장 안정적인 방식) */
   useEffect(() => {
-    if (!selectedDay && calendarData.length > 0) {
-      const todayItem = calendarData.find((d) => d.isToday);
-      if (todayItem) {
-        setSelectedDay({
-          ...todayItem,
-          todos: sortTodos(todayItem.todos),
-        });
+    if (!selectedDay && calendarMatrix.length > 0) {
+      // 매트릭스 전체 flatten
+      const allDays = calendarMatrix.flat().filter(Boolean) as CalendarDay[];
+
+      // isToday = true 인 셀 찾기
+      const todayCell = allDays.find((d) => d.isToday);
+
+      if (todayCell) {
+        selectDay(todayCell.date); // Todo API 불러오기
       }
     }
-  }, [calendarData, selectedDay]);
+  }, [calendarMatrix, selectedDay]);
 
   return {
     year,
     month,
+
     calendarData,
     calendarMatrix,
+
     selectedDay,
     editingTodoId,
 
+    // setters
     setYear,
     setMonth,
     setSelectedDay,
     selectDay,
+    refreshSelectedDay,
     setEditingTodoId,
 
+    // Todo actions
     ...actions,
   };
 }

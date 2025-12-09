@@ -1,15 +1,15 @@
 "use client";
 
 import BottomSheet from "@/components/common/BottomSheet";
-import { DailyTodoStats } from "@/mocks/api/db/calendar.db";
+import type { Todo } from "@/features/todo/domain";
 
 type Props = {
   open: boolean;
-  todo: DailyTodoStats["todos"][number] | null;
+  todo: Todo | null;
   onClose: () => void;
-  onEdit: (todo: DailyTodoStats["todos"][number]) => void;
-  onDelete: (todo: DailyTodoStats["todos"][number]) => void;
-  addRoutine: (todo: DailyTodoStats["todos"][number]) => void;
+  onEdit: (todo: Todo) => void;
+  onDelete: (todo: Todo) => void;
+  addRoutine: (todo: Todo) => void;
 };
 
 export default function TodoActionSheet({
@@ -25,10 +25,11 @@ export default function TodoActionSheet({
   return (
     <BottomSheet open={open} onClose={onClose}>
       <div className="p-4">
+
         <button
           className="w-full py-3 mb-2 text-agreement-optional"
           onClick={() => onEdit(todo)}
-          >
+        >
           수정하기
         </button>
 
@@ -45,6 +46,7 @@ export default function TodoActionSheet({
         >
           삭제하기
         </button>
+
       </div>
     </BottomSheet>
   );

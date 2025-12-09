@@ -1,6 +1,6 @@
 "use client";
 
-import CalendarFull from "../components/CalendarFull";
+import CalendarFull, { CalendarDay } from "../components/CalendarFull";
 import CalendarContainer from "../components/CalendarContainer";
 import CalendarSlider from "../components/CalendarSlider";
 import DaySelector from "@/features/main/components/DaySelector";
@@ -10,7 +10,7 @@ import PlusButton from "@/components/common/PlusButton";
 import { useCalendarCore } from "@/features/calendar/hooks/useCalendarCore";
 import { useCalendarLayout } from "../hooks/useCalendarLayout";
 import { useCalendarSlideMatrices } from "@/features/calendar/hooks/useCalendarSlideMatrices";
-import type { DailyTodoStats } from "@/mocks/api/db/calendar.db";
+
 import CalendarWeekdayHeader from "../components/CalendarWeekdayHeader";
 
 export default function CalendarPage() {
@@ -19,13 +19,13 @@ export default function CalendarPage() {
   const {
     year,
     month,
-    calendarData,
-    selectedDay,
+    calendarData,       // ← CalendarDay[] 로 변경됨
+    selectedDay,        // ← CalendarDay | null
     editingTodoId,
     setYear,
     setMonth,
     setSelectedDay,
-    selectDay,
+    selectDay,          // ← 날짜 클릭 시 서버에서 todos 불러오는 함수
     handleToggle,
     handleEdit,
     handleDelete,
@@ -33,6 +33,7 @@ export default function CalendarPage() {
     handleConfirm,
   } = useCalendarCore();
 
+  // CalendarDay 기반 매트릭스
   const { prevMatrix, currentMatrix, nextMatrix } =
     useCalendarSlideMatrices(year, month);
 
@@ -48,14 +49,17 @@ export default function CalendarPage() {
   } = useCalendarLayout(weekCount);
 
   /** 날짜 선택 핸들러 */
-  const handleSelectDay = (day: DailyTodoStats | null) => {
+  const handleSelectDay = (day: CalendarDay | null) => {
     if (!day) return;
 
-    selectDay(day);
+    // 서버에서 해당 날짜의 Todo 목록 불러오기
+    selectDay(day.date);
+
     const d = new Date(day.date);
     setYear(d.getFullYear());
     setMonth(d.getMonth() + 1);
 
+    // 캘린더 접기
     setCellHeight(collapsedHeight);
   };
 
@@ -80,8 +84,7 @@ export default function CalendarPage() {
     }
   };
 
-  /** ⭐ 리뷰 반영 — 중복 제거용 함수 */
-  const renderCalendar = (matrix: (DailyTodoStats | null)[][]) => (
+  const renderCalendar = (matrix: (CalendarDay | null)[][]) => (
     <CalendarFull
       calendarMatrix={matrix}
       selectedDay={selectedDay}
@@ -114,11 +117,12 @@ export default function CalendarPage() {
             onSelect={(y, m, d) => {
               setYear(y);
               setMonth(m);
+
               const dateStr = `${y}-${String(m).padStart(2, "0")}-${String(
                 d
               ).padStart(2, "0")}`;
-              const found = calendarData.find((dd) => dd.date === dateStr);
-              if (found) setSelectedDay(found);
+
+              selectDay(dateStr);
             }}
             onToggleView={() => {}}
           />
@@ -135,7 +139,6 @@ export default function CalendarPage() {
           >
             <CalendarWeekdayHeader />
 
-            {/* ⭐ 중복 감소된 코드 */}
             <CalendarSlider
               prev={renderCalendar(prevMatrix)}
               current={renderCalendar(currentMatrix)}
