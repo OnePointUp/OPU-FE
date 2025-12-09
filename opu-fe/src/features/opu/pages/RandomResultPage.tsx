@@ -1,34 +1,26 @@
-import { RandomScope, TimeCode } from "../domain";
+"use client";
+
+import { useSearchParams } from "next/navigation";
 import RandomResultClient from "./RandomResultClient";
+import type { RandomScope, TimeCode } from "../domain";
 
-type RawSearchParams = {
-    scope?: string;
-    time?: string;
-    excludeOpuId?: string;
-};
+export default function RandomResultPage() {
+    const searchParams = useSearchParams();
 
-type Props = {
-    searchParams: RawSearchParams;
-};
+    const rawScope = searchParams.get("scope");
+    const rawTime = searchParams.get("time");
+    const rawExclude = searchParams.get("excludeOpuId");
 
-const VALID_SCOPES: RandomScope[] = ["ALL", "FAVORITE"];
-const VALID_TIMES: TimeCode[] = ["ALL", "1M", "5M", "30M", "1H", "DAILY"];
+    const scope: RandomScope = rawScope === "FAVORITE" ? "FAVORITE" : "ALL";
 
-export default function RandomResultPage({ searchParams }: Props) {
-    const rawScope = searchParams.scope ?? "ALL";
-    const rawTime = searchParams.time ?? "ALL";
-
-    const scope: RandomScope = VALID_SCOPES.includes(rawScope as RandomScope)
-        ? (rawScope as RandomScope)
-        : "ALL";
-
-    const time: TimeCode = VALID_TIMES.includes(rawTime as TimeCode)
+    const validTimes: TimeCode[] = ["ALL", "1M", "5M", "30M", "1H", "DAILY"];
+    const time: TimeCode = validTimes.includes(rawTime as TimeCode)
         ? (rawTime as TimeCode)
         : "ALL";
 
-    const excludeOpuId = searchParams.excludeOpuId
-        ? Number(searchParams.excludeOpuId)
-        : undefined;
+    const excludeOpuId = rawExclude ? Number(rawExclude) : undefined;
+
+    console.log("[RandomResultPage(client)] scope, time =", scope, time);
 
     return (
         <RandomResultClient

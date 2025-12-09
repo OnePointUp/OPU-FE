@@ -1,10 +1,4 @@
-import {
-    OpuCardModel,
-    OpuSummaryResponse,
-    RandomOpuResponse,
-    TIME_CODE_TO_MINUTES,
-    TimeCode,
-} from "./domain";
+import { OpuCardModel, OpuSummaryResponse, RandomOpuResponse } from "./domain";
 import { mapMinutesToLabel } from "./domain";
 
 export function toOpuCardModelFromSummary(o: OpuSummaryResponse): OpuCardModel {
@@ -28,13 +22,6 @@ export function toOpuCardModelFromSummary(o: OpuSummaryResponse): OpuCardModel {
         creatorNickname: o.creatorNickname,
         isMine: o.isMine,
     };
-}
-
-export function mapTimeToRequiredMinutes(
-    time: TimeCode | null
-): number | undefined {
-    if (!time || time === "ALL") return undefined;
-    return TIME_CODE_TO_MINUTES[time];
 }
 
 export function toOpuCardModelFromRandom(o: RandomOpuResponse): OpuCardModel {

@@ -2,18 +2,16 @@ import {
     buildOpuTodoPayload,
     FetchOpuListParams,
     FetchRandomOpuParams,
+    mapTimeToRequiredMinutes,
     OpuListPage,
     OpuSummaryResponse,
     RandomOpuResponse,
     RandomScope,
     RegisterOpuPayload,
+    TIME_CODE_TO_MINUTES,
     TimeCode,
 } from "./domain";
-import {
-    mapTimeToRequiredMinutes,
-    toOpuCardModelFromRandom,
-    toOpuCardModelFromSummary,
-} from "./mappers";
+import { toOpuCardModelFromRandom, toOpuCardModelFromSummary } from "./mappers";
 import { apiClient } from "@/lib/apiClient";
 import { ApiResponse, PageResponse } from "@/types/api";
 import { extractErrorMessage } from "@/utils/api-helpers";
@@ -212,7 +210,7 @@ export async function deleteMyOpu(opuId: number): Promise<void> {
     }
 }
 
-/* ==== OPU 랜덤 뽑기 (raw 응답) ===== */
+// ==== OPU 랜덤 뽑기 (raw) =====
 export async function fetchRandomOpu(
     params: FetchRandomOpuParams
 ): Promise<RandomOpuResponse | null> {
@@ -236,7 +234,7 @@ export async function fetchRandomOpu(
     }
 }
 
-/* ==== OPU 랜덤 뽑기 (화면용 카드 모델) ===== */
+// ==== OPU 랜덤 뽑기 (화면용 카드 모델) =====
 export async function drawRandomOpu(
     scope: RandomScope,
     time: TimeCode,

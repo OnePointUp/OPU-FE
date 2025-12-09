@@ -213,9 +213,13 @@ export const TIME_LABEL_MAP: Record<TimeCode, string> = {
     DAILY: "1일",
 };
 
-export function mapTimeToLabel(code: TimeCode): string {
-    return TIME_LABEL_MAP[code] ?? "소요시간 전체";
-}
+export const TIME_CODE_TO_MINUTES: Record<Exclude<TimeCode, "ALL">, number> = {
+    "1M": 1,
+    "5M": 5,
+    "30M": 30,
+    "1H": 60,
+    DAILY: 1440,
+};
 
 export const TIME_OPTIONS: { code: TimeCode; label: string }[] = [
     { code: "ALL", label: TIME_LABEL_MAP.ALL },
@@ -226,7 +230,10 @@ export const TIME_OPTIONS: { code: TimeCode; label: string }[] = [
     { code: "DAILY", label: TIME_LABEL_MAP.DAILY },
 ];
 
-// 분 단위 -> X분 / 1시간 / 1일
+export function mapTimeToLabel(code: TimeCode): string {
+    return TIME_LABEL_MAP[code] ?? "소요시간 전체";
+}
+
 export function mapMinutesToLabel(minutes: number | null): string {
     if (minutes == null) return "매일";
     if (minutes === 60) return "1시간";
@@ -234,14 +241,12 @@ export function mapMinutesToLabel(minutes: number | null): string {
     return `${minutes}분`;
 }
 
-// TimeCode -> 실제 분 단위 (백엔드 필터용)
-export const TIME_CODE_TO_MINUTES: Record<Exclude<TimeCode, "ALL">, number> = {
-    "1M": 1,
-    "5M": 5,
-    "30M": 30,
-    "1H": 60,
-    DAILY: 1440,
-};
+export function mapTimeToRequiredMinutes(
+    time: TimeCode | null
+): number | undefined {
+    if (!time || time === "ALL") return undefined;
+    return TIME_CODE_TO_MINUTES[time];
+}
 
 /* ===========================
  * 필터링 유틸

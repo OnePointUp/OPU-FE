@@ -4,14 +4,8 @@ import { useEffect, useState } from "react";
 import RandomResultView from "../components/RandomResultView";
 import RandomOpuLoadingScreen from "../components/RandomOpuLoadingScreen";
 
-import {
-    type OpuCardModel,
-    type RandomScope,
-    type TimeCode,
-    TIME_CODE_TO_MINUTES,
-} from "@/features/opu/domain";
-import { fetchRandomOpu } from "../service";
-import { toOpuCardModelFromRandom } from "../mappers";
+import type { OpuCardModel, RandomScope, TimeCode } from "../domain";
+import { drawRandomOpu } from "../service";
 
 type Props = {
     scope: RandomScope;
@@ -28,30 +22,17 @@ export default function RandomResultClient({
     const [item, setItem] = useState<OpuCardModel | null>(null);
 
     useEffect(() => {
-        let timer: NodeJS.Timeout;
+        let timer: ReturnType<typeof setTimeout>;
 
         async function load() {
+            console.log("[RandomResultClient] scope, time =", scope, time);
+
             try {
-                const requiredMinutes =
-                    time === "ALL"
-                        ? undefined
-                        : TIME_CODE_TO_MINUTES[
-                              time as Exclude<TimeCode, "ALL">
-                          ];
-
-                const res = await fetchRandomOpu({
-                    source: scope === "FAVORITE" ? "FAVORITE" : "ALL",
-                    requiredMinutes,
-                    excludeOpuId,
-                });
-                if (res) {
-                    setItem(toOpuCardModelFromRandom(res));
-                } else {
-                    setItem(null);
-                }
-
+                const opu = await drawRandomOpu(scope, time, excludeOpuId);
+                setItem(opu);
                 timer = setTimeout(() => setLoading(false), 1000);
             } catch (e) {
+                console.error(e);
                 setItem(null);
                 setLoading(false);
             }
