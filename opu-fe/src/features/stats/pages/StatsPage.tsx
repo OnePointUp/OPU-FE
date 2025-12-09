@@ -129,7 +129,7 @@ export default function StatsPage() {
                 ) : currentTab === "ROUTINE" ? (
                     <RoutineStats year={year} month={month} loading={loading} />
                 ) : (
-                    <OpuStats year={year} month={month} loading={loading} />
+                    <OpuStats year={year} month={month} />
                 )}
             </main>
         </div>
