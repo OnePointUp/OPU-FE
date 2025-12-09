@@ -1,4 +1,13 @@
 import { formatDate } from "@/utils/formatDate";
+import { RoutineFormValue, RoutineListItemResponse } from "./types";
+
+export type toRoutineListCard = {
+    id: number;
+    title: string;
+    startDate: string;
+    endDate: string | null;
+    frequencyLabel: string;
+};
 
 export type RoutineFrequency =
     | "DAILY"
@@ -16,22 +25,21 @@ export interface RoutineEntity {
     frequency: RoutineFrequency;
     startDate: string;
     endDate: string | null;
-    time: string | null;
+    alarmTime: string | null;
     color: string;
-    isActive: boolean;
+    active: boolean;
     createdAt: string;
     updatedAt: string;
-
     weekDays?: string | null;
     monthDays?: string | null;
     yearDays?: string | null;
 }
 
 export function getRoutineStatus(
-    routine: RoutineEntity,
+    routine: RoutineListItemResponse,
     today: Date = new Date()
 ): RoutineDerivedStatus {
-    if (!routine.isActive) return "ENDED";
+    if (!routine.active) return "ENDED";
 
     const start = new Date(routine.startDate);
     const end = routine.endDate ? new Date(routine.endDate) : null;
@@ -143,7 +151,7 @@ export function formatDateRange(startDate: string, endDate: string | null) {
     return `${formatDate(startDate)} - ${formatDate(endDate)}`;
 }
 
-export function getFrequencyPartsFromRoutine(routine: RoutineEntity): {
+export function getFrequencyPartsFromRoutine(routine: RoutineFormValue): {
     days: number[];
     months: number[];
     last: boolean;

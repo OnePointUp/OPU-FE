@@ -2,17 +2,17 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { fetchRoutineList } from "../services";
-import type { RoutineEntity } from "../domain";
+import { RoutineListItemResponse } from "../types";
 
-export function useRoutineList() {
-    const [items, setItems] = useState<RoutineEntity[]>([]);
+export function useRoutineListPage() {
+    const [items, setItems] = useState<RoutineListItemResponse[]>([]);
     const [loading, setLoading] = useState(false);
 
     const reload = useCallback(async () => {
         setLoading(true);
         try {
             const data = await fetchRoutineList();
-            setItems(data);
+            setItems(data.content);
         } finally {
             setLoading(false);
         }

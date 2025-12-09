@@ -5,9 +5,10 @@ import type React from "react";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import { formatDate } from "@/utils/formatDate";
 import { getFrequencyLabel } from "@/features/routine/domain";
-import type { RoutineFormValue } from "../types";
+import type { DeleteScope, RoutineFormValue } from "../types";
 import { ROUTINE_COLOR_OPTIONS } from "../constants";
 import OpuActionButton from "@/components/common/OpuActionButton";
+import ActionList, { type ActionItem } from "@/components/common/ActionList";
 import { Icon } from "@iconify/react";
 import InlineCalendar from "./InlineCalendar";
 import { useRouter } from "next/navigation";
@@ -20,9 +21,12 @@ type Props = {
     initialValue: RoutineFormValue;
     onSubmit: (form: RoutineFormValue) => Promise<void> | void;
     onDelete?: () => Promise<void> | void;
+    onDeleteClick?: () => void;
     submitting?: boolean;
     disabled?: boolean;
     frequencyLabelOverride?: string;
+    editScope?: DeleteScope;
+    onEditScopeChange?: (scope: DeleteScope) => void;
 };
 
 function pad2(n: number) {
@@ -34,16 +38,16 @@ function formatDateOrNone(date: string | null) {
     return formatDate(date);
 }
 
-function formatTimeOrNone(time: string | null) {
-    if (!time) return "없음";
+function formatTimeOrNone(alarmTime: string | null) {
+    if (!alarmTime) return "없음";
 
-    if (time.includes("오전") || time.includes("오후")) {
-        return time;
+    if (alarmTime.includes("오전") || alarmTime.includes("오후")) {
+        return alarmTime;
     }
 
-    if (time.includes(":")) {
-        const [h, m] = time.split(":").map(Number);
-        if (isNaN(h) || isNaN(m)) return time;
+    if (alarmTime.includes(":")) {
+        const [h, m] = alarmTime.split(":").map(Number);
+        if (isNaN(h) || isNaN(m)) return alarmTime;
 
         const ampm = h >= 12 ? "오후" : "오전";
         const h12 = h % 12 || 12;
@@ -51,7 +55,7 @@ function formatTimeOrNone(time: string | null) {
         return `${ampm} ${h12}:${pad2(m)}`;
     }
 
-    return time;
+    return alarmTime;
 }
 
 export default function RoutineForm({
@@ -59,9 +63,12 @@ export default function RoutineForm({
     initialValue,
     onSubmit,
     onDelete,
+    onDeleteClick,
     submitting = false,
     disabled = false,
     frequencyLabelOverride,
+    editScope,
+    onEditScopeChange,
 }: Props) {
     const router = useRouter();
     const isClient = typeof window !== "undefined";
@@ -72,6 +79,11 @@ export default function RoutineForm({
             : `routine-form:edit:${initialValue.id}`;
 
     const [form, setForm] = useState<RoutineFormValue>(initialValue);
+    const [showScopeSheet, setShowScopeSheet] = useState(false);
+
+    useEffect(() => {
+        setForm(initialValue);
+    }, [initialValue]);
 
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
@@ -80,7 +92,7 @@ export default function RoutineForm({
     >(null);
     const [showTimeSheet, setShowTimeSheet] = useState(false);
 
-    const hasTitle = form.title.trim().length > 0;
+    const hasTitle = (form.title ?? "").trim().length > 0;
     const submitLabel = mode === "create" ? "등록" : "수정";
 
     const isSubmitDisabled = !isClient || disabled || submitting || !hasTitle;
@@ -146,7 +158,7 @@ export default function RoutineForm({
                     form.frequency === "BIWEEKLY") &&
                 form.weekDays
             ) {
-                const nums = form.weekDays
+                const nums = (form.weekDays ?? "")
                     .split(",")
                     .map((s) => s.trim())
                     .filter(Boolean)
@@ -160,7 +172,7 @@ export default function RoutineForm({
             }
 
             if (form.frequency === "MONTHLY" && form.monthDays) {
-                const tokens = form.monthDays
+                const tokens = (form.monthDays ?? "")
                     .split(",")
                     .map((s) => s.trim())
                     .filter(Boolean);
@@ -186,7 +198,7 @@ export default function RoutineForm({
             }
 
             if (form.frequency === "YEARLY" && form.yearDays) {
-                const tokens = form.yearDays
+                const tokens = (form.yearDays ?? "")
                     .split(",")
                     .map((s) => s.trim())
                     .filter(Boolean);
@@ -232,17 +244,17 @@ export default function RoutineForm({
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (mode === "edit" && onEditScopeChange) {
+            setShowScopeSheet(true);
+            return;
+        }
         await handleSubmit();
     };
 
     const handleTimeConfirm = (value: string | null) => {
-        handleChange("time", value);
+        handleChange("alarmTime", value);
         setShowTimeSheet(false);
     };
-
-    useEffect(() => {
-        setForm(initialValue);
-    }, [initialValue]);
 
     useEffect(() => {
         if (!isClient) return;
@@ -480,7 +492,7 @@ export default function RoutineForm({
                                     color: "var(--color-dark-navy)",
                                 }}
                             >
-                                {formatTimeOrNone(form.time)}
+                                {formatTimeOrNone(form.alarmTime)}
                                 <Icon
                                     icon="mdi:chevron-right"
                                     width={20}
@@ -495,7 +507,13 @@ export default function RoutineForm({
                     {mode === "edit" && onDelete && (
                         <button
                             type="button"
-                            onClick={() => setShowDeleteConfirm(true)}
+                            onClick={() => {
+                                if (onDeleteClick) {
+                                    onDeleteClick();
+                                } else {
+                                    setShowDeleteConfirm(true);
+                                }
+                            }}
                             className="w-full h-[50px] rounded-[12px] border bg-white text-center"
                             style={{
                                 borderColor: "var(--color-super-light-gray)",
@@ -516,12 +534,16 @@ export default function RoutineForm({
                         disabled={isSubmitDisabled}
                         loading={submitting}
                         onClick={() => {
+                            if (mode === "edit" && onEditScopeChange) {
+                                setShowScopeSheet(true);
+                                return;
+                            }
                             void handleSubmit();
                         }}
                     />
                 </div>
 
-                {mode === "edit" && onDelete && (
+                {mode === "edit" && onDelete && !onDeleteClick && (
                     <ConfirmModal
                         isOpen={showDeleteConfirm}
                         message="이 루틴을 삭제하시겠습니까?"
@@ -541,10 +563,48 @@ export default function RoutineForm({
                 showHandle
             >
                 <TimePickerSheet
-                    current={form.time}
+                    current={form.alarmTime}
                     onConfirm={handleTimeConfirm}
                 />
             </BottomSheet>
+
+            {/* 수정 범위 선택 바텀시트 */}
+            {mode === "edit" && onEditScopeChange && editScope && (
+                <BottomSheet
+                    open={showScopeSheet}
+                    onClose={() => setShowScopeSheet(false)}
+                    showHandle
+                >
+                    <ActionList
+                        items={
+                            [
+                                {
+                                    label: "전체 수정",
+                                    primary: editScope === "ALL",
+                                    onClick: async () => {
+                                        onEditScopeChange("ALL");
+                                        setShowScopeSheet(false);
+                                        await handleSubmit();
+                                    },
+                                },
+                                {
+                                    label: "미완료만 수정",
+                                    primary: editScope === "UNCOMPLETED_TODO",
+                                    onClick: async () => {
+                                        onEditScopeChange("UNCOMPLETED_TODO");
+                                        setShowScopeSheet(false);
+                                        await handleSubmit();
+                                    },
+                                },
+                                {
+                                    label: "취소",
+                                    onClick: () => setShowScopeSheet(false),
+                                },
+                            ] satisfies ActionItem[]
+                        }
+                    />
+                </BottomSheet>
+            )}
         </>
     );
 }
