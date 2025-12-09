@@ -40,13 +40,10 @@ export function useTodoEditing(
 
   const parseTimeString = (timeStr: string | null) => {
     if (!timeStr) return null;
-
     let [hour, minute] = timeStr.split(":").map(Number);
     const ampm = (hour >= 12 ? "PM" : "AM") as "AM" | "PM";
-
     if (hour > 12) hour -= 12;
     if (hour === 0) hour = 12;
-
     return { ampm, hour, minute };
   };
 
@@ -62,13 +59,17 @@ export function useTodoEditing(
 
     const parsed = parseTimeString(todo.scheduledTime);
     setOriginalTime(parsed);
-    setTimeValue(parsed ?? { ampm: "AM", hour: 9, minute: 0 });
-    setShowTimePicker(!!parsed);
+
+    if (parsed !== null) {
+      setTimeValue(parsed);
+      setShowTimePicker(true);
+    } else {
+      setShowTimePicker(false);
+    }
 
     setIsNewTodo(todo.title === "");
   }, [editingTodoId, selectedDay]);
 
-  // 날짜 바뀌면 리셋
   useEffect(() => {
     setEditingId(null);
     setEditText("");
@@ -106,9 +107,26 @@ export function useTodoEditing(
 
     setEditText(originalTitle);
     setTimeValue(originalTime ?? { ampm: "AM", hour: 9, minute: 0 });
-    setShowTimePicker(!!originalTime);
+    setShowTimePicker(originalTime !== null);
     setEditingId(null);
     setIsNewTodo(false);
+  };
+
+  const startEditing = (todo: Todo) => {
+    setEditingId(todo.id);
+    setEditText(todo.title);
+
+    const parsed = parseTimeString(todo.scheduledTime);
+    setOriginalTime(parsed);
+
+    if (parsed !== null) {
+      setTimeValue(parsed);
+      setShowTimePicker(true);
+    } else {
+      setShowTimePicker(false);
+    }
+
+    setIsNewTodo(todo.title === "");
   };
 
   return {
@@ -121,16 +139,6 @@ export function useTodoEditing(
     setTimeValue,
     save,
     cancel,
-    startEditing: (todo: Todo) => {
-      setEditingId(todo.id);
-      setEditText(todo.title);
-
-      const parsed = parseTimeString(todo.scheduledTime);
-      setOriginalTime(parsed);
-      setTimeValue(parsed ?? { ampm: "AM", hour: 9, minute: 0 });
-      setShowTimePicker(parsed !== null);
-
-      setIsNewTodo(todo.title === "");
-    },
+    startEditing,
   };
 }
