@@ -3,15 +3,16 @@
 import { useEffect, useState, type FC } from "react";
 import { Icon } from "@iconify/react";
 
-import type { DailyTodoStats } from "@/mocks/api/db/calendar.db";
-import { getMonthlyCalendar } from "@/mocks/api/handler/calendar.handler";
-import { buildCalendarMatrix } from "@/lib/calendar";
 import StatsCalendar from "./StatsCalendar";
 import OpuRankingList from "./OpuRankingList";
 import { toastError } from "@/lib/toast";
 import { mapMinutesToLabel, type OpuCardModel } from "@/features/opu/domain";
-import { OpuMonthlyStatsResponse } from "../types";
-import { fetchMonthlyOpuStats } from "../services";
+import {
+    CalendarCell,
+    OpuCalendarDayDto,
+    OpuMonthlyStatsResponse,
+} from "../types";
+import { fetchMonthlyOpuStats, fetchOpuCalendar } from "../services";
 
 type Props = {
     year: number;
@@ -20,22 +21,16 @@ type Props = {
 
 const OpuStats: FC<Props> = ({ year, month }) => {
     const [calendarMatrix, setCalendarMatrix] = useState<
-        (DailyTodoStats | null)[][]
+        (CalendarCell | null)[][]
     >([]);
 
-    // 월별 통계 상태
     const [stats, setStats] = useState<OpuMonthlyStatsResponse | null>(null);
     const [loadingStats, setLoadingStats] = useState(true);
+    const [loadingCalendar, setLoadingCalendar] = useState(true);
 
     const [rankingItems, setRankingItems] = useState<OpuCardModel[]>([]);
 
-    // year/month 기준 캘린더 (지금은 mock 그대로 사용)
-    useEffect(() => {
-        const data = getMonthlyCalendar(year, month);
-        setCalendarMatrix(buildCalendarMatrix(data));
-    }, [year, month]);
-
-    // 월별 OPU 통계 불러오기
+    // 월별 OPU 통계
     useEffect(() => {
         let cancelled = false;
 
@@ -47,7 +42,6 @@ const OpuStats: FC<Props> = ({ year, month }) => {
 
                 setStats(res);
 
-                // 랭킹용 리스트로 매핑 (OpuCardModel)
                 const mapped: OpuCardModel[] = res.topCompletedOpus.map(
                     (o) => ({
                         id: o.opuId,
@@ -55,7 +49,7 @@ const OpuStats: FC<Props> = ({ year, month }) => {
                         description: "",
 
                         emoji: o.emoji,
-                        categoryId: 0, // 실제 id 없으니 일단 0
+                        categoryId: 0,
                         categoryName: o.categoryName,
 
                         timeLabel: mapMinutesToLabel(o.requiredMinutes),
@@ -82,6 +76,34 @@ const OpuStats: FC<Props> = ({ year, month }) => {
                 toastError("OPU 통계를 불러오지 못했어요.");
             } finally {
                 if (!cancelled) setLoadingStats(false);
+            }
+        })();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [year, month]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        (async () => {
+            setLoadingCalendar(true);
+            try {
+                const res = await fetchOpuCalendar({ year, month });
+                if (cancelled) return;
+
+                const matrix = buildOpuCalendarMatrix(
+                    res.year,
+                    res.month,
+                    res.days
+                );
+                setCalendarMatrix(matrix);
+            } catch (err) {
+                console.error(err);
+                toastError("OPU 캘린더를 불러오지 못했어요.");
+            } finally {
+                if (!cancelled) setLoadingCalendar(false);
             }
         })();
 
@@ -150,6 +172,7 @@ const OpuStats: FC<Props> = ({ year, month }) => {
             <StatsCalendar
                 calendarMatrix={calendarMatrix}
                 todayStr={todayStr}
+                loading={loadingCalendar}
             />
 
             {/* OPU 랭킹 */}
@@ -221,4 +244,68 @@ function StatsCard({
             </p>
         </div>
     );
+}
+
+function buildOpuCalendarMatrix(
+    year: number,
+    month: number,
+    days: OpuCalendarDayDto[]
+): (CalendarCell | null)[][] {
+    const map = new Map<string, number>();
+    days.forEach((d) => {
+        map.set(d.date, d.completedCount);
+    });
+
+    const firstDate = new Date(year, month - 1, 1);
+    const firstDayOfWeek = firstDate.getDay(); // 0: 일 ~ 6: 토
+    const lastDate = new Date(year, month, 0).getDate(); // 말일
+
+    const weeks: (CalendarCell | null)[][] = [];
+    let currentWeek: (CalendarCell | null)[] = [];
+
+    // 앞쪽 빈 칸
+    for (let i = 0; i < firstDayOfWeek; i += 1) {
+        currentWeek.push(null);
+    }
+
+    // 1일부터 말일까지 채우기
+    for (let day = 1; day <= lastDate; day += 1) {
+        if (currentWeek.length === 7) {
+            weeks.push(currentWeek);
+            currentWeek = [];
+        }
+
+        const mm = String(month).padStart(2, "0");
+        const dd = String(day).padStart(2, "0");
+        const dateStr = `${year}-${mm}-${dd}`;
+        const count = map.get(dateStr) ?? 0;
+
+        const intensity = getIntensityFromCount(count);
+
+        const cell: CalendarCell = {
+            date: dateStr,
+            completedCount: count,
+            intensity,
+        };
+
+        currentWeek.push(cell);
+    }
+
+    // 마지막 주 뒤쪽 빈 칸
+    if (currentWeek.length > 0) {
+        while (currentWeek.length < 7) {
+            currentWeek.push(null);
+        }
+        weeks.push(currentWeek);
+    }
+
+    return weeks;
+}
+
+function getIntensityFromCount(count: number): 0 | 1 | 2 | 3 | 4 {
+    if (count === 0) return 0;
+    if (count === 1) return 1;
+    if (count <= 3) return 2;
+    if (count <= 5) return 3;
+    return 4;
 }

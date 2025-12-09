@@ -1,22 +1,22 @@
 "use client";
 
 import type { FC } from "react";
-import MonthView from "@/features/main/components/MonthView";
-import type { DailyTodoStats } from "@/mocks/api/db/calendar.db";
-import { WEEKDAYS } from "../types";
+import { CalendarCell, WEEKDAYS } from "../types";
+import StatsMonthView from "./StatsMonthView";
 
 type StatsCalendarProps = {
-    calendarMatrix: (DailyTodoStats | null)[][];
+    calendarMatrix: (CalendarCell | null)[][];
     todayStr: string;
+    loading?: boolean;
 };
 
 const StatsCalendar: FC<StatsCalendarProps> = ({
     calendarMatrix,
     todayStr,
+    loading,
 }) => {
     return (
         <section className="mt-2 rounded-xl border border-[var(--color-super-light-gray)] bg-white px-4 pb-4 pt-1 flex justify-center">
-            {/* 가운데 정렬 + 반응형 너비 */}
             <div className="flex flex-col items-center w-full max-w-[320px] sm:max-w-[360px] md:max-w-[420px]">
                 {/* 요일 */}
                 <div className="mb-2 grid grid-cols-7 w-full gap-1 sm:gap-2 md:gap-3">
@@ -40,11 +40,12 @@ const StatsCalendar: FC<StatsCalendarProps> = ({
                 </div>
 
                 {/* 월간 캘린더 */}
-                <MonthView
+                <StatsMonthView
                     calendarMatrix={calendarMatrix}
-                    todayStr={todayStr} // 여기 원래 null 넣어놨던 거 실제 값으로 넘겨줌
+                    todayStr={todayStr}
                     selectedDay={null}
                     onSelectDay={() => {}}
+                    loading={loading}
                 />
             </div>
         </section>
