@@ -48,6 +48,8 @@ const RoutineStats: FC<RoutineStatsProps> = ({ year, month, loading }) => {
                 {FILTERS.map((f) => {
                     const isActive = activeFilter === f.key;
 
+                    if (loading) return null;
+
                     return (
                         <button
                             key={f.key}
