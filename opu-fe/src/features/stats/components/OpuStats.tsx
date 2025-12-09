@@ -46,27 +46,13 @@ const OpuStats: FC<Props> = ({ year, month }) => {
                     (o) => ({
                         id: o.opuId,
                         title: o.title,
-                        description: "",
 
                         emoji: o.emoji,
-                        categoryId: 0,
                         categoryName: o.categoryName,
 
                         timeLabel: mapMinutesToLabel(o.requiredMinutes),
 
                         completedCount: o.completedCount,
-                        isShared: true,
-
-                        isLiked: false,
-                        likeCount: 0,
-
-                        creatorId: undefined,
-                        creatorNickname: undefined,
-
-                        shareLabel: undefined,
-                        createdAt: undefined,
-                        isMine: undefined,
-                        blockedAt: undefined,
                     })
                 );
 

@@ -32,7 +32,7 @@ export type OpuCardModel = {
     title: string;
     description?: string;
     emoji?: string;
-    categoryId: number;
+    categoryId?: number;
     categoryName?: string;
 
     timeLabel: string;
@@ -40,7 +40,7 @@ export type OpuCardModel = {
     completedCount?: number;
     isShared?: boolean;
 
-    isLiked: boolean;
+    isLiked?: boolean;
     likeCount?: number;
 
     creatorId?: number;
