@@ -8,7 +8,6 @@ import {
     RandomOpuResponse,
     RandomScope,
     RegisterOpuPayload,
-    TIME_CODE_TO_MINUTES,
     TimeCode,
 } from "./domain";
 import { toOpuCardModelFromRandom, toOpuCardModelFromSummary } from "./mappers";
@@ -41,7 +40,7 @@ export async function fetchSharedOpuList({
         };
     } catch (err: unknown) {
         throw new Error(
-            extractErrorMessage(err, "공유 OPU 목록을 불러오지 못했어요")
+            extractErrorMessage(err, "공유 OPU 목록을 불러오지 못했어요.")
         );
     }
 }
@@ -71,7 +70,7 @@ export async function fetchMyOpuList({
         };
     } catch (err) {
         throw new Error(
-            extractErrorMessage(err, "내 OPU 목록을 불러오지 못했어요")
+            extractErrorMessage(err, "내 OPU 목록을 불러오지 못했어요.")
         );
     }
 }
@@ -101,7 +100,7 @@ export async function fetchLikedOpuList({
         };
     } catch (err: unknown) {
         throw new Error(
-            extractErrorMessage(err, "찜한 OPU 목록을 불러오지 못했어요")
+            extractErrorMessage(err, "찜한 OPU 목록을 불러오지 못했어요.")
         );
     }
 }
@@ -113,7 +112,7 @@ export async function likeOpu(opuId: number) {
 
         return { ok: true };
     } catch (err: unknown) {
-        throw new Error(extractErrorMessage(err, "OPU를 찜 하지 못했어요"));
+        throw new Error(extractErrorMessage(err, "OPU를 찜 하지 못했어요."));
     }
 }
 
@@ -124,7 +123,9 @@ export async function unlikeOpu(opuId: number) {
 
         return { ok: true };
     } catch (err: unknown) {
-        throw new Error(extractErrorMessage(err, "OPU를 찜 해제하지 못했어요"));
+        throw new Error(
+            extractErrorMessage(err, "OPU를 찜 해제하지 못했어요.")
+        );
     }
 }
 
@@ -150,7 +151,7 @@ export async function addTodoByOpu(opuId: number) {
         return { ok: true };
     } catch (err) {
         throw new Error(
-            extractErrorMessage(err, "투두리스트 추가에 실패했어요")
+            extractErrorMessage(err, "투두리스트 추가에 실패했어요.")
         );
     }
 }
@@ -161,7 +162,7 @@ export async function registerOpu(payload: RegisterOpuPayload) {
         await apiClient.post("/opus", payload);
         return { ok: true };
     } catch (err) {
-        throw new Error(extractErrorMessage(err, "OPU 등록에 실패했어요"));
+        throw new Error(extractErrorMessage(err, "OPU 등록에 실패했어요."));
     }
 }
 
@@ -172,7 +173,9 @@ export async function shareOpu(opuId: number) {
 
         return { ok: true };
     } catch (err: unknown) {
-        throw new Error(extractErrorMessage(err, "OPU 공개 처리에 실패했어요"));
+        throw new Error(
+            extractErrorMessage(err, "OPU 공개 처리에 실패했어요.")
+        );
     }
 }
 
@@ -184,7 +187,7 @@ export async function unshareOpu(opuId: number) {
         return { ok: true };
     } catch (err: unknown) {
         throw new Error(
-            extractErrorMessage(err, "OPU 비공개 처리에 실패했어요")
+            extractErrorMessage(err, "OPU 비공개 처리에 실패했어요.")
         );
     }
 }
@@ -206,7 +209,7 @@ export async function deleteMyOpu(opuId: number): Promise<void> {
     try {
         await apiClient.delete(`/opus/${opuId}`);
     } catch (err: unknown) {
-        throw new Error(extractErrorMessage(err, "OPU 삭제에 실패했어요"));
+        throw new Error(extractErrorMessage(err, "OPU 삭제에 실패했어요."));
     }
 }
 
@@ -299,7 +302,7 @@ export async function fetchRandomTimeSummary(
         return result;
     } catch (err) {
         throw new Error(
-            extractErrorMessage(err, "시간별 OPU 개수 조회에 실패했어요")
+            extractErrorMessage(err, "시간별 OPU 개수 조회에 실패했어요.")
         );
     }
 }

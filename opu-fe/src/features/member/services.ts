@@ -41,7 +41,7 @@ export async function editProfile(payload: EditProfilePayload) {
 
         return { ok: true };
     } catch (err: unknown) {
-        throw new Error(extractErrorMessage(err, "프로필 수정에 실패했어요"));
+        throw new Error(extractErrorMessage(err, "프로필 수정에 실패했어요."));
     }
 }
 
@@ -65,7 +65,7 @@ export async function memberWithdraw(currentPassword: string) {
             data: { currentPassword },
         });
     } catch (err: unknown) {
-        throw new Error(extractErrorMessage(err, "회원 탈퇴를 실패했어요"));
+        throw new Error(extractErrorMessage(err, "회원 탈퇴를 실패했어요."));
     }
 }
 
