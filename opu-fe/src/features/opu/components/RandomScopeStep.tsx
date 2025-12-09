@@ -2,13 +2,13 @@
 
 import OpuActionButton from "@/components/common/OpuActionButton";
 import { toastWarn } from "@/lib/toast";
+import { RandomScope } from "../domain";
 
-type Scope = "ALL" | "LIKED";
-type ScopeValue = Scope | null;
+type ScopeValue = RandomScope | null;
 
 type Props = {
     value: ScopeValue;
-    onChange: (value: Scope) => void;
+    onChange: (value: RandomScope) => void;
     onNext: () => void;
     canUseLiked: boolean;
     likedCount: number;
@@ -58,11 +58,11 @@ export default function RandomScopeStep({
                             );
                             return;
                         }
-                        onChange("LIKED");
+                        onChange("FAVORITE");
                     }}
                     className={`flex items-center justify-center gap-1 w-full h-16 rounded-2xl border
                         ${
-                            value === "LIKED"
+                            value === "FAVORITE"
                                 ? "border-[var(--color-opu-pink)] border-[2px] font-[var(--weight-medium)] text-[var(--color-opu-pink)] bg-[var(--color-super-light-pink)]"
                                 : "border-[var(--color-super-dark-navy)] font-[var(--weight-semibold)]text-[var(--color-dark-navy)] bg-[--background]"
                         }`}
@@ -84,5 +84,3 @@ export default function RandomScopeStep({
         </div>
     );
 }
-
-export type { Scope, ScopeValue };

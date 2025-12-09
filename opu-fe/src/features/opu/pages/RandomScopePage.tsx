@@ -1,18 +1,37 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import RandomScopeStep, {
-    ScopeValue,
-} from "@/features/opu/components/RandomScopeStep";
-import { getLikedCountByMember } from "../random";
-import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
+import { useEffect, useState } from "react";
+import RandomScopeStep from "@/features/opu/components/RandomScopeStep";
+import { fetchProfileSummary } from "@/features/member/services";
+import { RandomScope } from "../domain";
+
+type ScopeValue = RandomScope | null;
 
 export default function RandomScopePage() {
     const router = useRouter();
     const [scope, setScope] = useState<ScopeValue>(null);
+    const [likedCount, setLikedCount] = useState<number>(0);
 
-    const likedCount = getLikedCountByMember(CURRENT_MEMBER_ID);
+    useEffect(() => {
+        let mounted = true;
+
+        (async () => {
+            try {
+                const summary = await fetchProfileSummary();
+                if (!mounted) return;
+                setLikedCount(summary.favoriteOpuCount);
+            } catch {
+                if (!mounted) return;
+                setLikedCount(0);
+            }
+        })();
+
+        return () => {
+            mounted = false;
+        };
+    }, []);
+
     const canUseLiked = likedCount > 0;
 
     return (

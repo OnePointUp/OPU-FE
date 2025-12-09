@@ -29,7 +29,7 @@ export function useMyPageMenu({ onClickLogout }: MyPageMenuArgs) {
                     setAuthProvider(null);
                 }
                 throw new Error(
-                    extractErrorMessage(e, "프로필을 불러오지 못했어요")
+                    extractErrorMessage(e, "프로필을 불러오지 못했어요.")
                 );
             } finally {
                 if (!cancelled) {

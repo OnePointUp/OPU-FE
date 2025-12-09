@@ -86,7 +86,7 @@ export function useOpuRegisterPage() {
             router.push("/opu/my");
         } catch (e) {
             console.error(e);
-            toastError("OPU 등록에 실패했어요");
+            toastError("OPU 등록에 실패했어요.");
         } finally {
             setSubmitting(false);
             setConfirmOpen(false);

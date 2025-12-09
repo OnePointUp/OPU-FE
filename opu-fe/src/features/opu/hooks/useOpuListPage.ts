@@ -232,7 +232,7 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
 
             setData((prev) => prev.filter((item) => item.id !== opuId));
 
-            toastSuccess("OPU를 차단했어요");
+            toastSuccess("OPU를 차단했어요.");
             setSheetId(null);
         } catch (e) {
             console.error(e);
@@ -247,7 +247,7 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
             toastSuccess("해당 OPU가 오늘 할 일에 추가됐어요");
         } catch (e) {
             console.error(e);
-            toastError("투두리스트에 추가하지 못했어요");
+            toastError("투두리스트에 추가하지 못했어요.");
         }
     };
 
