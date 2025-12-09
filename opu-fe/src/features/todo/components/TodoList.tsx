@@ -13,6 +13,8 @@ import { useTodoEditing } from "@/features/todo/hooks/useTodoEditing";
 import { useTodoActionSheet } from "@/features/todo/hooks/useTodoActionSheet";
 import { useTodoTime } from "@/features/todo/hooks/useTodoTime";
 
+import { reorderTodo } from "@/features/todo/service";
+
 const skeleton = "bg-gray-200 rounded animate-pulse";
 
 type SelectedDayData = {
@@ -91,9 +93,19 @@ export default function TodoList({
     dragItem,
     isDragging,
     ghostStyle,
-  } = useDragDrop(selectedDay ? selectedDay.todos : [], (updated) => {
-    if (selectedDay) {
-      selectedDay.todos.splice(0, selectedDay.todos.length, ...updated);
+  } = useDragDrop(selectedDay ? selectedDay.todos : [], async (updated) => {
+    if (!selectedDay) return;
+
+    selectedDay.todos.splice(0, selectedDay.todos.length, ...updated);
+
+    for (let i = 0; i < updated.length; i++) {
+      const todo = updated[i];
+      const newOrder = i + 1;
+      try {
+        await reorderTodo(todo.id, newOrder);
+      } catch (err) {
+        console.error("정렬 업데이트 실패", err);
+      }
     }
   });
 
