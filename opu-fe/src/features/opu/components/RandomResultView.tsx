@@ -1,10 +1,12 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import type { OpuCardModel } from "@/features/opu/domain";
 import RandomOpuCard from "@/features/opu/components/RandomOpuCard";
-import { toastWarn } from "@/lib/toast";
+import { addTodoByOpu } from "@/features/opu/service";
+import { toastError, toastSuccess } from "@/lib/toast";
+import { blockOpu } from "@/features/blocked-opu/services";
 import OpuActionButton from "@/components/common/OpuActionButton";
 
 type Props = {
@@ -16,19 +18,28 @@ export default function RandomResultView({ item, onRetry }: Props) {
     const router = useRouter();
 
     const handleConfirm = () => {
-        // TODO: 나중에 캘린더로 바꿀 예정
-        router.push("/opu");
+        router.push("/");
     };
 
-    const handleBlock = (opuId: number) => {
-        console.log("차단 완료", opuId);
-        toastWarn("차단하기 기능은 아직 연결 전입니다.");
+    const handleBlock = async (opuId: number) => {
+        try {
+            await blockOpu(opuId);
+            toastSuccess("OPU를 차단했어요.");
+            onRetry?.();
+        } catch (e) {
+            console.error(e);
+            toastError("OPU 차단을 실패했어요.");
+        }
     };
 
-    const handleAddTodo = (opuId: number) => {
-        // TODO: 실제 투두 추가 로직
-        console.log("투두 추가", opuId);
-        toastWarn("투두 추가 기능은 아직 연결 전입니다.");
+    const handleAddTodo = async (opuId: number) => {
+        try {
+            await addTodoByOpu(opuId);
+            toastSuccess("해당 OPU가 오늘 할 일에 추가됐어요.");
+        } catch (e) {
+            console.error(e);
+            toastError("투두리스트에 추가하지 못했어요.");
+        }
     };
 
     return (
