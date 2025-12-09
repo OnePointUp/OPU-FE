@@ -10,6 +10,7 @@ export type CalendarDay = {
   isToday: boolean;
   isPreview: boolean;
   todos: Todo[];
+  color?: string; 
 };
 
 type Props = {

@@ -31,7 +31,6 @@ export function useCalendarCore() {
   /** ✔ Todo 액션 */
   const actions = useTodoActions(selectedDay, refreshSelectedDay, setEditingTodoId);
 
-  /** ⭐ 최초 로딩 시 오늘 날짜 자동 선택 (가장 안정적인 방식) */
   useEffect(() => {
     if (!selectedDay && calendarMatrix.length > 0) {
       // 매트릭스 전체 flatten

@@ -5,9 +5,28 @@ import {
   fetchMonthlyStatistics,
   fetchTodosByDate,
 } from "@/features/todo/service";
+
 import type { CalendarDay } from "@/features/calendar/components/CalendarFull";
 import { buildCalendarMatrix } from "@/features/calendar/utils/buildCalendarMatrix";
+import { CALENDAR_COLORS } from "@/mocks/api/db/calendar.db";
 
+/** 비율 → intensity(0~5) 변환 함수 */
+function calcIntensity(total: number, completed: number): number {
+  if (total === 0) return 0;
+
+  const ratio = completed / total;
+
+  if (ratio === 0) return 0;
+  if (ratio < 0.2) return 1;
+  if (ratio < 0.4) return 2;
+  if (ratio < 0.6) return 3;
+  if (ratio < 0.8) return 4;
+  return 5;
+}
+
+/**
+ * year, month → CalendarDay[] + CalendarDay[][](6×7)
+ */
 export function useCalendarData(year: number, month: number) {
   const [calendarData, setCalendarData] = useState<CalendarDay[]>([]);
   const [calendarMatrix, setCalendarMatrix] = useState<
@@ -16,10 +35,10 @@ export function useCalendarData(year: number, month: number) {
 
   useEffect(() => {
     async function load() {
-      // 1) 월간 통계 가져오기
+      /** 1) 월간 통계 조회 */
       const stats = await fetchMonthlyStatistics(year, month);
 
-      // 2) 기본 매트릭스 생성 (todos = [])
+      /** 2) 매트릭스 기본 생성 */
       const baseMatrix = buildCalendarMatrix(
         stats.map((s) => ({
           date: s.date,
@@ -30,31 +49,42 @@ export function useCalendarData(year: number, month: number) {
         month
       );
 
-      // 3) flat days
+      /** 3) flat 배열 생성 */
       const flatDays = baseMatrix.flat().filter(Boolean) as CalendarDay[];
 
-      // 4) 날짜별 todos 전부 fetch (병렬)
+      /** 4) Todos 병렬 fetch */
       const todosList = await Promise.all(
         flatDays.map((d) => fetchTodosByDate(d.date))
       );
 
-      // 5) CalendarDay에 todos 삽입
-      const filledDays = flatDays.map((day, idx) => ({
-        ...day,
-        todos: todosList[idx] ?? [],
-      }));
+      /** 5) CalendarDay 최종 조립 */
+      const filledDays = flatDays.map((day, idx) => {
+        const stat = stats.find((s) => s.date === day.date);
 
-      // 6) filledDays 기반으로 다시 매트릭스 조립
+        const total = stat?.totalCount ?? 0;
+        const completed = stat?.completedCount ?? 0;
+
+        const intensity = calcIntensity(total, completed);
+
+        return {
+          ...day,
+          todos: todosList[idx] ?? [],
+          color: CALENDAR_COLORS[intensity],
+        };
+      });
+
+      /** 6) 매트릭스로 다시 조립 */
       let index = 0;
       const filledMatrix = baseMatrix.map((week) =>
         week.map((day) => {
           if (!day) return null;
-          const updated = filledDays[index];
+          const filled = filledDays[index];
           index++;
-          return updated;
+          return filled;
         })
       );
 
+      /** 7) 상태 저장 */
       setCalendarMatrix(filledMatrix);
       setCalendarData(filledDays);
     }
@@ -62,8 +92,5 @@ export function useCalendarData(year: number, month: number) {
     load();
   }, [year, month]);
 
-  return {
-    calendarData,
-    calendarMatrix,
-  };
+  return { calendarData, calendarMatrix };
 }
