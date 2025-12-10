@@ -66,8 +66,6 @@ export function useTodoActions(
 
     setEditingTodoId(null);
     await refreshSelectedDay(selectedDay.date);
-
-    console.log("📌 UPDATE PAYLOAD:", { todoId, title: newTitle, scheduledTime: time ? convertTo24Hour(time) : null, });
   };
 
   /* ===== 삭제 ===== */
