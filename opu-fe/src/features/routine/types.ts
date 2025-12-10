@@ -2,11 +2,11 @@ import type { RoutineFrequency } from "./domain";
 
 export type RoutineListItemResponse = {
     id: number;
-    startDate: string;
-    endDate: string | null;
+    startDate?: string;
+    endDate?: string | null;
     title: string;
-    frequency: RoutineFrequency;
-    active: number;
+    frequency?: RoutineFrequency;
+    active?: number;
 };
 
 export type RoutineDetailResponse = {
