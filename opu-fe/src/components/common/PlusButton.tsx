@@ -74,7 +74,7 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
             ),
             bgColor: "var(--color-light-pink)",
             onClick: () => {
-                alert("랜덤 OPU 뽑기 클릭");
+                router.push("/opu/scope")
                 closeMenu();
             }
         }
