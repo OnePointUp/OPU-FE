@@ -14,4 +14,4 @@ export const CELL_MAX_HEIGHT = 160;
 export const CALENDAR_BOTTOM_MARGIN = 20;
 export const MENU_HEIGHT = 55;
 export const PLUS_BUTTON_AREA = 90;
-export const SAFE_PADDING = 35;
+export const SAFE_PADDING = 130;

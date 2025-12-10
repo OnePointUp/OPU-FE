@@ -1,18 +1,23 @@
 "use client";
 
 import Calendar from "../components/Calendar";
-import TodoList from "../components/TodoList";
+import TodoList from "../../todo/components/TodoList";
 import PlusButton from "@/components/common/PlusButton";
 
 import { useCalendarCore } from "@/features/calendar/hooks/useCalendarCore";
 
 export default function MainPage() {
     const {
+        year,
+        month,
+        calendarMatrix,
         selectedDay,
         editingTodoId,
+
         setYear,
         setMonth,
-        selectDay,
+        selectDay, // receives CalendarDay
+
         handleToggle,
         handleEdit,
         handleDelete,
@@ -22,14 +27,16 @@ export default function MainPage() {
 
     return (
         <div>
-            {/* 캘린더 */}
+            {/* API 기반 Calendar */}
             <Calendar
+                year={year}
+                month={month}
+                calendarMatrix={calendarMatrix}
                 selectedDay={selectedDay}
-                onSelectDay={(day) => {
-                    selectDay(day);
-                    const d = new Date(day.date);
-                    setYear(d.getFullYear());
-                    setMonth(d.getMonth() + 1);
+                onSelectDay={(day) => selectDay(day.date)}
+                onChangeMonth={(y: number, m: number) => {
+                    setYear(y);
+                    setMonth(m);
                 }}
             />
 
@@ -43,7 +50,7 @@ export default function MainPage() {
                 editingTodoId={editingTodoId}
             />
 
-            {/* 플러스 버튼 */}
+            {/* + 버튼 */}
             <PlusButton showMenu={true} onAddEvent={handleAdd} />
         </div>
     );

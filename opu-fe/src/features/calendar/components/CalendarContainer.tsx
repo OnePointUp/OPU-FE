@@ -31,39 +31,35 @@ export default function CalendarContainer({
 
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      if (e.deltaY > 0) setCellHeight(collapsedHeight);
-      else setCellHeight(expandedHeight);
+      setCellHeight(e.deltaY > 0 ? collapsedHeight : expandedHeight);
     };
 
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
   }, [expandedHeight, collapsedHeight, setCellHeight]);
 
+
+  /** 터치 스와이프 */
   const handleStart = (e: React.TouchEvent) => {
     startY.current = e.touches[0].clientY;
   };
 
   const handleMove = (e: React.TouchEvent) => {
-    if (!startY.current) return;
-    e.preventDefault();
+    if (startY.current == null) return;
 
+    e.preventDefault();
     const delta = startY.current - e.touches[0].clientY;
 
     if (delta > 0) {
-      setCellHeight((prev) =>
-        Math.max(collapsedHeight, prev - delta * DRAG_SPEED)
-      );
+      setCellHeight(prev => Math.max(collapsedHeight, prev - delta * DRAG_SPEED));
     } else {
-      setCellHeight((prev) =>
-        Math.min(expandedHeight, prev - delta * DRAG_SPEED)
-      );
+      setCellHeight(prev => Math.min(expandedHeight, prev - delta * DRAG_SPEED));
     }
   };
 
   const handleEnd = () => {
     const mid = (expandedHeight + collapsedHeight) / 2;
-    if (cellHeight < mid) setCellHeight(collapsedHeight);
-    else setCellHeight(expandedHeight);
+    setCellHeight(cellHeight < mid ? collapsedHeight : expandedHeight);
     startY.current = null;
   };
 
@@ -73,9 +69,9 @@ export default function CalendarContainer({
       onTouchStart={handleStart}
       onTouchMove={handleMove}
       onTouchEnd={handleEnd}
-      className="transition-[height] duration-200 w-full"
+      className="transition-[height] duration-200 w-full overflow-hidden"
       style={{
-        height: cellHeight * (weekCount + 1) + 50,
+        height: (weekCount + 1) * cellHeight + 50,
       }}
     >
       {children}

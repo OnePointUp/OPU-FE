@@ -1,23 +1,22 @@
 "use client";
 
-import { CALENDAR_COLORS, DailyTodoStats } from "@/mocks/api/db/calendar.db";
+import type { CalendarDay } from "@/features/calendar/components/CalendarFull";
 
 export default function MonthView({
     calendarMatrix,
     selectedDay,
     onSelectDay,
+    onChangeMonth,
     todayStr,
     loading = false,
 }: {
-    calendarMatrix: (DailyTodoStats | null)[][];
-    selectedDay: DailyTodoStats | null;
-    onSelectDay: (d: DailyTodoStats) => void;
+    calendarMatrix: (CalendarDay | null)[][];
+    selectedDay: CalendarDay | null;
+    onSelectDay: (d: CalendarDay) => void;
+    onChangeMonth: (y: number, m: number) => void;
     todayStr: string | null;
     loading?: boolean;
 }) {
-    /* ---------------------------------------------------------
-     ⭐ 1) 로딩 시 Skeleton 캘린더 표시
-     --------------------------------------------------------- */
     if (loading || calendarMatrix.length === 0) {
         const weeks = Array.from({ length: 5 });
         const days = Array.from({ length: 7 });
@@ -36,9 +35,6 @@ export default function MonthView({
         );
     }
 
-    /* ---------------------------------------------------------
-     ⭐ 2) 실제 캘린더 UI 렌더링
-     --------------------------------------------------------- */
     const visibleMatrix = calendarMatrix.filter((week) =>
         week.some((cell) => cell !== null)
     );
@@ -50,19 +46,32 @@ export default function MonthView({
                     day ? (
                         <button
                             key={day.date}
-                            onClick={() => onSelectDay(day)}
+                            onClick={() => {
+                                if (day.isPreview) {
+                                    const d = new Date(day.date);
+                                    onChangeMonth(d.getFullYear(), d.getMonth() + 1); // ★ 달 이동
+                                }
+                                onSelectDay(day);
+                            }}
                             className={`
-                              rounded-xl flex items-center justify-center
-                              aspect-square
-                              text-agreement-optional text-[var(--color-dark-gray)]
-                        
-                      `}
+                                rounded-xl flex items-center justify-center
+                                aspect-square
+                                text-agreement-optional
+                                ${
+                                    day.isPreview
+                                        ? "text-[var(--color-light-gray)]"
+                                        : "text-[var(--color-dark-gray)]"
+                                }
+                            `}
                             style={{
-                                backgroundColor: CALENDAR_COLORS[day.intensity],
+                                backgroundColor: day.isPreview
+                                    ? "transparent"
+                                    : day.color ?? "transparent",
                                 border:
                                     selectedDay?.date === day.date
                                         ? "2px solid var(--color-opu-dark-green)"
                                         : "none",
+                                opacity: day.isPreview ? 0.5 : 1,
                             }}
                         >
                             {new Date(day.date).getDate()}

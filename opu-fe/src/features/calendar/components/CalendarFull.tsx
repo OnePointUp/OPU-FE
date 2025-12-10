@@ -2,13 +2,21 @@
 
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { DailyTodoStats } from "@/mocks/api/db/calendar.db";
+import type { Todo } from "@/features/todo/domain";
 import { useCalendarWeek } from "@/features/calendar/hooks/useCalendarWeek";
 
+export type CalendarDay = {
+  date: string;
+  isToday: boolean;
+  isPreview: boolean;
+  todos: Todo[];
+  color?: string; 
+};
+
 type Props = {
-  calendarMatrix: (DailyTodoStats | null)[][];
-  selectedDay: DailyTodoStats | null;
-  onSelectDay: (day: DailyTodoStats) => void;
+  calendarMatrix: (CalendarDay | null)[][];
+  selectedDay: CalendarDay | null;
+  onSelectDay: (day: CalendarDay) => void;
   cellHeight: number;
 };
 
@@ -21,9 +29,9 @@ export default function CalendarFull({
   const { buildWeekCells } = useCalendarWeek();
   const [isLoading, setIsLoading] = useState(true);
 
-  // -----------------------------
-  // 로딩 처리
-  // -----------------------------
+  /* -----------------------------
+      로딩 처리
+  ----------------------------- */
   useEffect(() => {
     if (calendarMatrix.length > 0) {
       const t = setTimeout(() => setIsLoading(false), 150);
@@ -52,13 +60,12 @@ export default function CalendarFull({
     );
   }
 
-  // -----------------------------
-  // ⭐ 리뷰 반영: firstRealDay 안전 처리
-  // -----------------------------
+  /* -----------------------------
+      안전 처리
+  ----------------------------- */
   const firstRealDay =
     calendarMatrix.flat().find((d) => d !== null) ?? null;
 
-  // firstRealDay 없으면 달력을 렌더할 수 없음 → 안전한 fallback UI 반환
   if (!firstRealDay) {
     return (
       <div className="w-full text-center text-gray-400 py-10">
@@ -67,14 +74,14 @@ export default function CalendarFull({
     );
   }
 
-  // 날짜 계산도 안전하게
+  // 달력 시작 날짜 계산
   const firstDateObj = new Date(firstRealDay.date);
   const matrixStartDate = new Date(firstDateObj);
   matrixStartDate.setDate(firstDateObj.getDate() - firstDateObj.getDay());
 
-  // -----------------------------
-  // 정상 렌더링
-  // -----------------------------
+  /* -----------------------------
+      실제 렌더링
+  ----------------------------- */
   return (
     <div className="w-full select-none transition-opacity duration-300">
       {calendarMatrix.map((week, wi) => {
@@ -89,8 +96,13 @@ export default function CalendarFull({
                 wi === 0 ? "1px solid var(--color-super-light-gray)" : "none",
             }}
           >
-            {cells.map((day, di) => {
+            {cells.map((day) => {
               const isSelected = selectedDay?.date === day.date;
+
+              const todosToShow =
+                selectedDay && selectedDay.date === day.date
+                  ? selectedDay.todos
+                  : day.todos;
 
               return (
                 <div
@@ -120,16 +132,16 @@ export default function CalendarFull({
                     )}
                   </div>
 
-                  {/* Todo 목록 — 미리보기 날은 표시 안 함 */}
+                  {/* Todo 목록 */}
                   {!day.isPreview && (
                     <div className="relative overflow-hidden flex-1">
                       <div className="text-[10px] flex flex-col gap-[2px] leading-tight">
-                        {day.todos.map((t) => (
+                        {todosToShow.map((t) => (
                           <div
                             key={t.id}
                             className={clsx(
                               "truncate",
-                              t.done
+                              t.completed
                                 ? "text-gray-300 line-through"
                                 : "text-gray-700"
                             )}

@@ -1,115 +1,102 @@
 "use client";
 
-import { DailyTodoStats } from "@/mocks/api/db/calendar.db";
-import { sortTodos } from "./useCalendarData";
-import { toggleTodo } from "@/mocks/api/handler/calendar.handler";
+import {
+  createTodo,
+  updateTodo,
+  updateTodoStatus,
+  deleteTodo,
+} from "@/features/todo/service";
+
+import type { Todo } from "@/features/todo/domain";
+
+export type SelectedDayData = {
+  date: string;
+  todos: Todo[];
+};
+
+/* ==== AM/PM → HH:mm 변환 ==== */
+function convertTo24Hour(time: {
+  ampm: "AM" | "PM";
+  hour: number;
+  minute: number;
+}): string {
+  let { ampm, hour, minute } = time;
+
+  // PM 이면서 12시가 아닌 경우 +12
+  if (ampm === "PM" && hour !== 12) {
+    hour += 12;
+  }
+
+  // AM 이면서 12시는 00시로
+  if (ampm === "AM" && hour === 12) {
+    hour = 0;
+  }
+
+  const hh = String(hour).padStart(2, "0");
+  const mm = String(minute).padStart(2, "0");
+
+  return `${hh}:${mm}:00`;
+}
 
 export function useTodoActions(
-  selectedDay: DailyTodoStats | null,
-  calendarData: DailyTodoStats[],
-  updateCalendarData: (newData: DailyTodoStats[]) => void,
+  selectedDay: SelectedDayData | null,
+  refreshSelectedDay: (date: string) => Promise<void>,
   setEditingTodoId: (id: number | null) => void
 ) {
-  /** 공통 업데이트 helper */
-  const updateDay = (
-    date: string,
-    updater: (day: DailyTodoStats) => DailyTodoStats
-  ) => {
-    const updated = calendarData.map((day) =>
-      day.date === date ? updater(day) : day
-    );
-
-    updateCalendarData(updated);
-    return updated.find((d) => d.date === date) ?? null;
-  };
-
-  /** 체크 토글 */
-  const handleToggle = (todoId: number) => {
+  /* ===== 완료 토글 ===== */
+  const handleToggle = async (todoId: number, completed: boolean) => {
     if (!selectedDay) return;
 
-    const [y, m] = selectedDay.date.split("-").map(Number);
-    toggleTodo(y, m, selectedDay.date, todoId);
-
-    return updateDay(selectedDay.date, (day) => {
-      let todos = day.todos.map((t) =>
-        t.id === todoId ? { ...t, done: !t.done } : t
-      );
-      todos = sortTodos(todos);
-
-      return {
-        ...day,
-        todos,
-        doneCount: todos.filter((t) => t.done).length,
-        total: todos.length,
-      };
-    });
+    await updateTodoStatus(todoId, { completed });
+    await refreshSelectedDay(selectedDay.date);
   };
 
-  /** 수정 */
-  const handleEdit = (
+  /* ===== 수정 ===== */
+  const handleEdit = async (
     todoId: number,
     newTitle: string,
-    time: DailyTodoStats["todos"][number]["time"]
+    time?: { ampm: "AM" | "PM"; hour: number; minute: number } | null
   ) => {
     if (!selectedDay) return;
 
-    updateDay(selectedDay.date, (day) => {
-      let todos = day.todos.map((t) =>
-        t.id === todoId ? { ...t, title: newTitle, time } : t
-      );
-
-      return { ...day, todos: sortTodos(todos) };
+    await updateTodo(todoId, {
+      title: newTitle,
+      scheduledTime: time ? convertTo24Hour(time) : null,
     });
 
     setEditingTodoId(null);
+    await refreshSelectedDay(selectedDay.date);
   };
 
-  /** 삭제 */
-  const handleDelete = (todoId: number) => {
+  /* ===== 삭제 ===== */
+  const handleDelete = async (todoId: number) => {
     if (!selectedDay) return;
 
-    updateDay(selectedDay.date, (day) => {
-      let todos = day.todos.filter((t) => t.id !== todoId);
-      todos = sortTodos(todos);
+    await deleteTodo(todoId);
+    await refreshSelectedDay(selectedDay.date);
+  };
 
-      return {
-        ...day,
-        todos,
-        doneCount: todos.filter((t) => t.done).length,
-        total: todos.length,
-      };
+  /* ===== 생성 ===== */
+  const handleAdd = async () => {
+    if (!selectedDay) return;
+
+    const newId = await createTodo({
+      title: "",
+      scheduledDate: selectedDay.date,
+      scheduledTime: null,
     });
-  };
-
-  /** 신규 Todo 생성 */
-  const handleAdd = () => {
-    if (!selectedDay) return;
-
-    const newId = Date.now(); // number + 고유성 보장
-
-    updateDay(selectedDay.date, (day) => ({
-      ...day,
-      todos: sortTodos([
-        ...day.todos,
-        {
-          id: newId,
-          title: "",
-          done: false,
-          time: null,
-        },
-      ]),
-    }));
 
     setEditingTodoId(newId);
+    await refreshSelectedDay(selectedDay.date);
   };
 
-  /** 신규 입력 확정 */
-  const handleConfirm = (
+  /* ===== 신규 Todo 입력 확정 ===== */
+  const handleConfirm = async (
     todoId: number,
     title: string,
-    time: DailyTodoStats["todos"][number]["time"]
+    time?: { ampm: "AM" | "PM"; hour: number; minute: number } | null
   ) => {
-    handleEdit(todoId, title, time);
+    await handleEdit(todoId, title, time);
   };
 
   return {

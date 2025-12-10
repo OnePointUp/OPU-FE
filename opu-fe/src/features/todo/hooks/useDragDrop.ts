@@ -9,6 +9,8 @@ import {
   type TouchEvent as ReactTouchEvent,
 } from "react";
 
+import { reorderTodo } from "@/features/todo/service";
+
 type AnyMouseEvent = MouseEvent | ReactMouseEvent;
 type AnyTouchEvent = TouchEvent | ReactTouchEvent;
 
@@ -32,7 +34,7 @@ export type UseDragDropResult<T> = {
   };
 };
 
-export function useDragDrop<T>(
+export function useDragDrop<T extends { id: number }>(
   initialItems: T[],
   onChange: (items: T[]) => void
 ): UseDragDropResult<T> {
@@ -51,7 +53,7 @@ export function useDragDrop<T>(
     setItems(initialItems ?? []);
   }, [initialItems]);
 
-  /** 롱프레스 감지 */
+  /** 롱프레스 시작 */
   const startLongPress = (
     item: T,
     index: number,
@@ -96,7 +98,7 @@ export function useDragDrop<T>(
     });
   };
 
-  /** 드래그 이동 */
+  /** 드래그 이동 처리 */
   const handleMove = (e: AnyMouseEvent | AnyTouchEvent) => {
     if (!isDragging) return;
 
@@ -110,7 +112,7 @@ export function useDragDrop<T>(
     handleHover(clientY);
   };
 
-  /** hover 중 순서 재배열 */
+  /** hover 중 순서 계산 */
   const handleHover = (clientY: number) => {
     if (dragIndex === null) return;
 
@@ -133,16 +135,26 @@ export function useDragDrop<T>(
   };
 
   /** 드래그 종료 */
-  const drop = () => {
+  const drop = async () => {
     if (!isDragging) return;
 
     setIsDragging(false);
     setDragIndex(null);
 
-    if (dragItem) onChange(items);
+    if (dragItem) {
+      onChange(items);
+
+      await Promise.all(
+        items.map((todo, index) =>
+          reorderTodo(todo.id, index + 1).catch((err) => {
+            console.error("Todo 정렬 저장 실패", err);
+          })
+        )
+      );
+    }
   };
 
-  /** 전역 이벤트 */
+  /** 전역 move/end 이벤트 등록 */
   useEffect(() => {
     if (!isDragging) return;
 
@@ -162,7 +174,7 @@ export function useDragDrop<T>(
     };
   }, [isDragging, items]);
 
-  /** 개별 요소 이벤트 바인딩 */
+  /** UI 이벤트 */
   const bindItemEvents = (item: T, index: number) => ({
     ref: (el: HTMLDivElement | null) => {
       itemRefs.current[index] = el;
@@ -183,7 +195,7 @@ export function useDragDrop<T>(
   };
 }
 
-/** PC/모바일 좌표 가져오기 */
+/** PC/모바일 공통 좌표 처리 */
 function getPos(e: AnyMouseEvent | AnyTouchEvent): Position {
   if ("touches" in e && e.touches.length)
     return {
