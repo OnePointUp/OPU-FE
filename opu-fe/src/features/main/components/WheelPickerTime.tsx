@@ -13,11 +13,11 @@ type Props = {
   onChange: (v: TimeValue) => void;
 };
 
-export default function WheelPickerTime({ value, onChange }: Props) {
-  // UI용 라벨
-  const ampmLabels = ["오전", "오후"] as const;
+// 모든 WheelPicker가 공유할 공통 높이
+const ITEM_HEIGHT = 40;
 
-  // 실제 값은 AM/PM
+export default function WheelPickerTime({ value, onChange }: Props) {
+  const ampmLabels = ["오전", "오후"] as const;
   const ampmValues = ["AM", "PM"] as const;
 
   const hourItems = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -29,23 +29,21 @@ export default function WheelPickerTime({ value, onChange }: Props) {
     minute: 0,
   };
 
-  // base.ampm("AM" or "PM") → index (0 or 1)
   const ampmIndex = ampmValues.indexOf(base.ampm);
 
   return (
     <div className="relative flex justify-center items-center gap-4">
-      {/* 선택 라인 */}
       <div
         className="
           absolute top-1/2 left-0 right-0 
-          h-[40px] -translate-y-1/2 
-          pointer-events-none rounded-lg 
-          bg-blue-100/20 z-0
+          -translate-y-1/2 pointer-events-none 
+          rounded-lg bg-blue-100/20 z-0
         "
+        style={{ height: ITEM_HEIGHT }}
       />
 
       <div className="z-10 flex gap-4 items-center">
-        {/* 오전/오후 UI */}
+        {/* 오전/오후 */}
         <div className="w-18">
           <WheelPickerBase
             items={ampmLabels}
@@ -55,6 +53,8 @@ export default function WheelPickerTime({ value, onChange }: Props) {
               onChange({ ...base, ampm: ampmValues[idx] });
             }}
             enableInfinite={false}
+            itemHeight={ITEM_HEIGHT}
+            height={ITEM_HEIGHT * 3}   // 기본 3칸 표시
           />
         </div>
 
@@ -64,6 +64,8 @@ export default function WheelPickerTime({ value, onChange }: Props) {
             items={hourItems}
             value={base.hour}
             onChange={(hour) => onChange({ ...base, hour })}
+            itemHeight={ITEM_HEIGHT}
+            height={ITEM_HEIGHT * 3}
           />
         </div>
 
@@ -78,6 +80,8 @@ export default function WheelPickerTime({ value, onChange }: Props) {
             items={minuteItems}
             value={base.minute}
             onChange={(minute) => onChange({ ...base, minute })}
+            itemHeight={ITEM_HEIGHT}
+            height={ITEM_HEIGHT * 3}
           />
         </div>
       </div>

@@ -29,11 +29,9 @@ export default function WheelPickerBase<T extends string | number>({
 
   const middleOffset = enableInfinite ? items.length : 0;
 
-  /** 현재 인덱스 구하기 */
   const getIndexFromScroll = () =>
     Math.round((ref.current?.scrollTop ?? 0) / itemHeight);
 
-  /** 특정 인덱스로 이동 */
   const scrollToIndex = (idx: number, smooth = true) => {
     ref.current?.scrollTo({
       top: idx * itemHeight,
@@ -41,7 +39,6 @@ export default function WheelPickerBase<T extends string | number>({
     });
   };
 
-  /** value 변경 시 스크롤 위치 맞추기 */
   useEffect(() => {
     const baseIdx = items.indexOf(value);
     if (baseIdx === -1) return;
@@ -49,7 +46,6 @@ export default function WheelPickerBase<T extends string | number>({
     scrollToIndex(target, false);
   }, [value, items]);
 
-  /** scroll 처리 (snap 및 infinite 유지) */
   const scrollTimeoutRef = useRef<number | null>(null);
 
   const onScroll = () => {
@@ -84,9 +80,9 @@ export default function WheelPickerBase<T extends string | number>({
     }, 70);
   };
 
-  /** 🎯 핵심: wheel 이벤트를 scroll div 에 직접 걸어야 "1칸 이동"이 제대로 동작함 */
+  /** wheel로 정확히 1칸 이동 */
   const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-    e.preventDefault();     // 기본 스크롤 완전 차단
+    e.preventDefault();
     e.stopPropagation();
 
     const currentIdx = getIndexFromScroll();
@@ -111,23 +107,25 @@ export default function WheelPickerBase<T extends string | number>({
         WebkitMaskImage:
           "linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
       }}
+      onWheel={onWheel}
     >
-      {/* 중앙 선택 라인 */}
       <div
-        className="absolute top-1/2 left-2 right-2 -translate-y-1/2 h-[40px] 
-                   rounded-lg pointer-events-none z-0"
+        className="absolute left-2 right-2 pointer-events-none rounded-lg z-0"
+        style={{
+          height: itemHeight,
+          top: height / 2 - itemHeight / 2, // 중앙 정렬
+        }}
       />
 
-      {/* scroll 영역 */}
+      {/* 스크롤 영역 */}
       <div
         ref={ref}
         onScroll={onScroll}
-        onWheel={onWheel}
         style={{
           height,
           paddingTop: padding,
           paddingBottom: padding,
-          overflowY: "hidden",
+          overflowY: "hidden", // 스크롤바 완전 차단
           scrollSnapType: "y mandatory",
         }}
         className="[&::-webkit-scrollbar]:hidden relative z-10"
