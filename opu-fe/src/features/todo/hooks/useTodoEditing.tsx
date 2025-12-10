@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { toastError } from "@/lib/toast";
 import type { Todo } from "@/features/todo/domain";
+import { useTodoTime } from "@/features/todo/hooks/useTodoTime";
 
 export function useTodoEditing(
   selectedDay: { date: string; todos: Todo[] } | null,
@@ -19,6 +20,8 @@ export function useTodoEditing(
   ) => void,
   onDeleteTodo: (todoId: number) => void
 ) {
+  const { parse: parseTimeString } = useTodoTime(); // ✅ 중복 제거
+
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
   const [originalTitle, setOriginalTitle] = useState("");
@@ -37,15 +40,6 @@ export function useTodoEditing(
   } | null>(null);
 
   const [showTimePicker, setShowTimePicker] = useState(false);
-
-  const parseTimeString = (timeStr: string | null) => {
-    if (!timeStr) return null;
-    let [hour, minute] = timeStr.split(":").map(Number);
-    const ampm = (hour >= 12 ? "PM" : "AM") as "AM" | "PM";
-    if (hour > 12) hour -= 12;
-    if (hour === 0) hour = 12;
-    return { ampm, hour, minute };
-  };
 
   useEffect(() => {
     if (!selectedDay || editingTodoId == null) return;

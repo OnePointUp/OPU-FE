@@ -10,8 +10,8 @@ export interface Todo {
   completed: boolean;
   order: number;
 
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 /* ==== 공통 API Response ==== */

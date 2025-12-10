@@ -144,15 +144,13 @@ export function useDragDrop<T extends { id: number }>(
     if (dragItem) {
       onChange(items);
 
-      for (let i = 0; i < items.length; i++) {
-        const todo = items[i];
-        const newOrder = i + 1;
-        try {
-          await reorderTodo(todo.id, newOrder);
-        } catch (err) {
-          console.error("Todo 정렬 저장 실패", err);
-        }
-      }
+      await Promise.all(
+        items.map((todo, index) =>
+          reorderTodo(todo.id, index + 1).catch((err) => {
+            console.error("Todo 정렬 저장 실패", err);
+          })
+        )
+      );
     }
   };
 

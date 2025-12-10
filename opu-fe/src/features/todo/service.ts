@@ -61,7 +61,7 @@ export async function reorderTodo(todoId: number, newOrder: number) {
       params: { newOrder },
     });
     return { ok: true };
-  } catch (err) {
+  } catch (err: any) {
     throw new Error(extractErrorMessage(err, "투두 순서 변경에 실패했어요"));
   }
 }

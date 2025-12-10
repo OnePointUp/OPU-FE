@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 type WheelPickerBaseProps<T extends string | number> = {
   items: readonly T[];
@@ -23,7 +23,6 @@ export default function WheelPickerBase<T extends string | number>({
 
   const padding = (height - itemHeight) / 2;
 
-  // 무한 스크롤 확장
   const extended = enableInfinite
     ? [...items, ...items, ...items]
     : [...items];
@@ -42,7 +41,7 @@ export default function WheelPickerBase<T extends string | number>({
     });
   };
 
-  /** value 가 변경되면 해당 위치로 이동 */
+  /** value 변경 → 위치 이동 */
   useEffect(() => {
     const baseIdx = items.indexOf(value);
     if (baseIdx === -1) return;
@@ -51,29 +50,29 @@ export default function WheelPickerBase<T extends string | number>({
     scrollToIndex(target, true);
   }, [value, items]);
 
-  /** 스크롤이 멈출 때 현재 항목 결정 */
-  let scrollTimeout: any;
+  /** 스크롤 타이머 ref (number 타입 명시) */
+  const scrollTimeoutRef = useRef<number | null>(null);
 
+  /** 스크롤 이벤트 */
   const onScroll = () => {
-    if (scrollTimeout) clearTimeout(scrollTimeout);
+    if (scrollTimeoutRef.current !== null) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
 
-    scrollTimeout = setTimeout(() => {
+    scrollTimeoutRef.current = window.setTimeout(() => {
       const el = ref.current;
       if (!el) return;
 
-      // 무한 스크롤 루프 영역 유지
+      // 무한 스크롤 유지
       if (enableInfinite) {
         const block = items.length * itemHeight;
         const curr = el.scrollTop;
 
-        // 위로 벗어남 → 가운데 블록으로 이동
         if (curr < block) {
           el.style.scrollBehavior = "auto";
           el.scrollTop = curr + block;
           el.style.scrollBehavior = "smooth";
-        }
-        // 아래로 벗어남 → 가운데 블록으로 이동
-        else if (curr >= block * 2) {
+        } else if (curr >= block * 2) {
           el.style.scrollBehavior = "auto";
           el.scrollTop = curr - block;
           el.style.scrollBehavior = "smooth";
@@ -82,7 +81,6 @@ export default function WheelPickerBase<T extends string | number>({
 
       const idx = getIndexFromScroll();
 
-      // extended 배열 인덱스를 items 인덱스로 변환
       const realIdx = enableInfinite
         ? ((idx % items.length) + items.length) % items.length
         : Math.min(Math.max(idx, 0), items.length - 1);
@@ -97,6 +95,7 @@ export default function WheelPickerBase<T extends string | number>({
 
   return (
     <div className="relative overflow-hidden" style={{ height }}>
+      {/* 선택 영역 */}
       <div
         className="absolute left-0 right-0 border-y border-gray-300 pointer-events-none"
         style={{
@@ -105,6 +104,7 @@ export default function WheelPickerBase<T extends string | number>({
         }}
       />
 
+      {/* 실제 스크롤 */}
       <div
         ref={ref}
         onScroll={onScroll}

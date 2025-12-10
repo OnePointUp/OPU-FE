@@ -9,10 +9,6 @@ export function mapTodo(dto: TodoResponseDto): Todo {
     scheduledTime: dto.scheduledTime,
     completed: dto.completed,
     order: dto.sortOrder,
-
-    // 백엔드에 없는 필드는 일단 기본값
     content: null,
-    createdAt: "",
-    updatedAt: "",
   };
 }
