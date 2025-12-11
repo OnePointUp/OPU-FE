@@ -62,6 +62,7 @@ const TITLE_GROUP = {
         map: {
             "/routine": "루틴",
             "/routine/register": "루틴 설정",
+            "/routine/frequency": "반복 선택",
         },
     },
 };

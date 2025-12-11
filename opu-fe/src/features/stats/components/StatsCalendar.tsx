@@ -8,12 +8,14 @@ type StatsCalendarProps = {
     calendarMatrix: (CalendarCell | null)[][];
     todayStr: string;
     loading?: boolean;
+    getCellBackground?: (cell: CalendarCell) => string;
 };
 
 const StatsCalendar: FC<StatsCalendarProps> = ({
     calendarMatrix,
     todayStr,
     loading,
+    getCellBackground,
 }) => {
     return (
         <section className="mt-2 rounded-xl border border-[var(--color-super-light-gray)] bg-white px-4 pb-4 pt-1 flex justify-center">
@@ -46,6 +48,7 @@ const StatsCalendar: FC<StatsCalendarProps> = ({
                     selectedDay={null}
                     onSelectDay={() => {}}
                     loading={loading}
+                    getCellBackground={getCellBackground}
                 />
             </div>
         </section>
