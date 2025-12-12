@@ -47,12 +47,18 @@ export default function NotFound() {
         />
 
         {/* 타이틀 */}
-        <h1 className="text-[18px] font-semibold text-[var(--color-dark-navy)]">
+        <div
+          style={{ fontSize: "var(--text-h2)" }}
+          className="font-semibold text-[var(--color-dark-navy)]"
+        >
           페이지를 찾을 수 없어요
-        </h1>
+        </div>
 
         {/* 설명 */}
-        <p className="mt-2 text-[14px] leading-relaxed text-[var(--color-dark-gray)]">
+        <p
+          style={{ fontSize: "var(--text-sub)" }}
+          className="mt-2 leading-relaxed text-[var(--color-dark-gray)]"
+        >
           OPU가 할 일을 찾고 있었지만
           <br />
           이 페이지는 보이지 않아요.
@@ -60,13 +66,14 @@ export default function NotFound() {
 
         {/* 서브 카드 (랜덤 Tip) */}
         <div
+          style={{ fontSize: "var(--text-sub)" }}
           className={clsx(
             "mt-6",
-            "w-full max-w-[330px]",
-            "rounded-[20px]",
+            "w-full",
+            "rounded-2xl",
             "bg-[var(--color-super-light-pink)]",
             "px-5 py-6",
-            "text-[13px] text-[var(--color-opu-dark-pink)]"
+            "text-caption text-[var(--color-opu-dark-pink)]"
           )}
         >
           <span className="font-medium">💡 Tip</span>
