@@ -6,7 +6,7 @@ export default function LoadingScreen() {
     return (
         <div className="fixed inset-0 z-[9999] flex flex-col items-center bg-[var(--color-super-light-pink)]">
             <Image
-                src="/images/random-opu-loading.png"
+                src="/images/random-opu-loading2.png"
                 alt="loading"
                 width={380}
                 height={380}
