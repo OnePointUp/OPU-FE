@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useCalendarData } from "./useCalendarData";
 import { useSelectedDay } from "./useSelectedDay";
-import { useTodoActions } from "./useTodoActions";
+import { useTodoActions } from "../../todo/hooks/useTodoActions";
 import type { CalendarDay } from "@/features/calendar/components/CalendarFull";
 
 /** 로컬 기준 yyyy-mm-dd */
