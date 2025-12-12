@@ -74,7 +74,7 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
             ),
             bgColor: "var(--color-light-pink)",
             onClick: () => {
-                router.push("/opu/scope")
+                router.push("/opu/random/scope")
                 closeMenu();
             }
         }
