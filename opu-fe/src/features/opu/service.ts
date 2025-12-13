@@ -14,6 +14,7 @@ import { toOpuCardModelFromRandom, toOpuCardModelFromSummary } from "./mappers";
 import { apiClient } from "@/lib/apiClient";
 import { ApiResponse, PageResponse } from "@/types/api";
 import { extractErrorMessage } from "@/utils/api-helpers";
+import axios from "axios";
 
 /* ==== 공유 OPU 목록 조회 ===== */
 export async function fetchSharedOpuList({
@@ -157,12 +158,18 @@ export async function addTodoByOpu(opuId: number) {
 }
 
 /* ==== OPU 등록 ===== */
+
 export async function registerOpu(payload: RegisterOpuPayload) {
     try {
-        await apiClient.post("/opus", payload);
+        await apiClient.post<ApiResponse<number>>("/opus", payload);
         return { ok: true };
     } catch (err) {
-        throw new Error(extractErrorMessage(err, "OPU 등록에 실패했어요."));
+        if (axios.isAxiosError(err)) {
+            throw err;
+        }
+
+        /** 예상 못 한 에러 */
+        throw new Error("OPU 등록에 실패했어요.");
     }
 }
 
