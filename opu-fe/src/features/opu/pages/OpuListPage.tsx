@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { toastSuccess } from "@/lib/toast";
 
 import SearchBar from "@/components/common/SearchBar";
 import BottomSheet from "@/components/common/BottomSheet";
@@ -87,7 +86,6 @@ export default function OpuListPage({
         duplicateModalOpen,
         setDuplicateModalOpen,
         duplicates,
-        pendingShareOpuId,
         setPendingShareOpuId,
     } = useOpuListPage({ contextType });
 
@@ -265,11 +263,6 @@ export default function OpuListPage({
                 duplicates={duplicates}
                 onSelectOpu={async (opuId) => {
                     await handleAddTodoSelected(opuId);
-                    setDuplicateModalOpen(false);
-                    setPendingShareOpuId(null);
-                }}
-                onCreatePrivate={() => {
-                    toastSuccess("OPU를 비공개 상태로 유지했어요");
                     setDuplicateModalOpen(false);
                     setPendingShareOpuId(null);
                 }}

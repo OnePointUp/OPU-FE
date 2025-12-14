@@ -270,40 +270,30 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         }
     };
 
-    // 공개/비공개 토글
-    const handleShareToggle = async (
-        opuId: number,
-        isCurrentlyShared?: boolean
-    ) => {
-        // 공개 → 비공개 (중복 검사 없음)
-        if (isCurrentlyShared) {
-            try {
-                await unshareOpu(opuId);
+    const updateSharedState = (opuId: number, isShared: boolean) => {
+        setData((prev) =>
+            prev.map((item) =>
+                item.id === opuId ? { ...item, isShared } : item
+            )
+        );
+    };
 
-                setData((prev) =>
-                    prev.map((i) =>
-                        i.id === opuId ? { ...i, isShared: false } : i
-                    )
-                );
-
-                toastSuccess("OPU가 비공개로 전환되었습니다");
-            } catch {
-                toastError("OPU 비공개 전환에 실패했어요");
-            }
-            return;
+    const handleUnshare = async (opuId: number) => {
+        try {
+            await unshareOpu(opuId);
+            updateSharedState(opuId, false);
+            toastSuccess("OPU가 비공개로 전환되었습니다");
+        } catch {
+            toastError("OPU 비공개 전환에 실패했어요");
         }
+    };
 
-        // 비공개 → 공개 (중복 검사 있음)
+    const handleShare = async (opuId: number) => {
         try {
             const result = await shareOpu(opuId);
-            // result: OpuRegisterResponse
 
             if (result.created) {
-                setData((prev) =>
-                    prev.map((i) =>
-                        i.id === opuId ? { ...i, isShared: true } : i
-                    )
-                );
+                updateSharedState(opuId, true);
                 toastSuccess("OPU가 공개로 전환되었습니다");
                 return;
             }
@@ -314,6 +304,18 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
             setDuplicateModalOpen(true);
         } catch {
             toastError("OPU 공개 전환에 실패했어요");
+        }
+    };
+
+    // 공개/비공개 토글
+    const handleShareToggle = async (
+        opuId: number,
+        isCurrentlyShared?: boolean
+    ) => {
+        if (isCurrentlyShared) {
+            await handleUnshare(opuId);
+        } else {
+            await handleShare(opuId);
         }
     };
 

@@ -6,13 +6,7 @@ import { Icon } from "@iconify/react";
 
 import { mapMinutesToLabel, toCategoryName } from "../domain";
 import OpuActionButton from "@/components/common/OpuActionButton";
-
-export type DuplicateOpuItem = {
-  opuId: number;
-  title: string;
-  requiredMinutes: number;
-  categoryId: number;
-};
+import type { OpuDuplicateItem as DuplicateOpuItem } from "@/features/opu/domain";
 
 type Mode = "create" | "share";
 
