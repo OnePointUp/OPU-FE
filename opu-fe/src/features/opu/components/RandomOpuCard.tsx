@@ -3,8 +3,8 @@
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { CATEGORY_BADGE, type OpuCardModel } from "@/features/opu/domain";
-import { CURRENT_MEMBER_ID } from "@/mocks/api/db/member.db";
 import Badge from "@/components/common/Badge";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 type Props = {
     item: OpuCardModel;
@@ -13,11 +13,12 @@ type Props = {
 
 export default function RandomOpuCard({ item, onAddTodo }: Props) {
     const [liked, setLiked] = useState(item.isLiked);
+    const memberId = useAuthStore((s) => s.member?.id);
 
     const categoryKey = item.categoryName ?? "기타";
     const { bg, text } = CATEGORY_BADGE[categoryKey] ?? CATEGORY_BADGE["기타"];
 
-    const isMine = item.creatorId === CURRENT_MEMBER_ID;
+    const isMine = memberId != null && item.creatorId === memberId;
     const isPrivate = isMine && item.shareLabel === "비공유";
 
     const handleLikeClick = (e: React.MouseEvent<HTMLButtonElement>) => {

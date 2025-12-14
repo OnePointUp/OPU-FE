@@ -15,11 +15,22 @@ type Props = {
 };
 
 export default function RoutineListItem({ item, onClick }: Props) {
-    const status = getRoutineStatus(item);
+    const startDate = item.startDate ?? new Date().toISOString().split("T")[0];
+    const endDate = item.endDate ?? null;
+    const frequency = item.frequency ?? "DAILY";
+
+    const safeItem = {
+        ...item,
+        startDate,
+        endDate,
+        frequency,
+    };
+
+    const status = getRoutineStatus(safeItem);
     const statusLabel = getStatusLabel(status);
     const statusColor = getStatusColor(status);
-    const dateRange = formatDateRange(item.startDate, item.endDate);
-    const freqLabel = getFrequencyLabel(item.frequency);
+    const dateRange = formatDateRange(startDate, endDate ?? startDate);
+    const freqLabel = getFrequencyLabel(frequency);
 
     return (
         <button

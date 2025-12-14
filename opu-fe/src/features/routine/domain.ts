@@ -41,8 +41,11 @@ export function getRoutineStatus(
 ): RoutineDerivedStatus {
     if (!routine.active) return "ENDED";
 
-    const start = new Date(routine.startDate);
-    const end = routine.endDate ? new Date(routine.endDate) : null;
+    const startRaw = routine.startDate ?? new Date().toISOString();
+    const endRaw = routine.endDate ?? null;
+
+    const start = new Date(startRaw);
+    const end = endRaw ? new Date(endRaw) : null;
 
     if (today < start) return "NOT_STARTED";
     if (end && today > end) return "ENDED";

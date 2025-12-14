@@ -125,9 +125,14 @@ export default function StatsPage() {
             {/* 탭 내용 */}
             <main className="w-full pb-10 pt-4">
                 {!hasHydrated ? (
-                    <RoutineStats year={year} month={month} loading={true} />
+                    <RoutineStats routineId={0} year={year} month={month} />
                 ) : currentTab === "ROUTINE" ? (
-                    <RoutineStats year={year} month={month} loading={loading} />
+                    <RoutineStats
+                        routineId={0}
+                        year={year}
+                        month={month}
+                        loading={loading}
+                    />
                 ) : (
                     <OpuStats year={year} month={month} />
                 )}

@@ -1,10 +1,18 @@
 "use client";
 
+import { Suspense } from "react";
 import KakaoLoginLoading from "@/features/auth/components/KakaoLoginLoading";
 import { useKakaoCallback } from "@/features/auth/hooks/useKakaoCallback";
 
-export default function KakaoCallbackPage() {
+function KakaoCallbackBody() {
     useKakaoCallback();
-
     return <KakaoLoginLoading />;
+}
+
+export default function KakaoCallbackPage() {
+    return (
+        <Suspense fallback={null}>
+            <KakaoCallbackBody />
+        </Suspense>
+    );
 }
