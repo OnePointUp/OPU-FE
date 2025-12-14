@@ -105,6 +105,23 @@ export type RegisterOpuPayload = {
     categoryId: number;
 };
 
+export type OpuDuplicateItem = {
+    opuId: number;
+    title: string;
+    requiredMinutes: number;
+    categoryId: number;
+};
+
+export type OpuRegisterResponse =
+    | {
+          created: true;
+          opuId: number;
+      }
+    | {
+          created: false;
+          duplicates: OpuDuplicateItem[];
+      };
+
 /* ===========================
  * 랜덤 뽑기 관련 타입
  * =========================== */
