@@ -38,8 +38,7 @@ export default function ProtectedPushGate() {
     const onAccept = async () => {
         // denied는 브라우저가 막은 상태라 여기서 못 바꿈, 안내만 하고 닫기
         if (Notification.permission === "denied") {
-            localStorage.setItem(PUSH_PROMPT_KEY, "1");
-            setOpen(false);
+            close();
             return;
         }
 
@@ -49,15 +48,13 @@ export default function ProtectedPushGate() {
                 : Notification.permission;
 
         if (p !== "granted") {
-            localStorage.setItem(PUSH_PROMPT_KEY, "1");
-            setOpen(false);
+            close();
             return;
         }
 
         await updateWebPushAgreed(true);
 
-        localStorage.setItem(PUSH_PROMPT_KEY, "1");
-        setOpen(false);
+        close();
     };
 
     return (
