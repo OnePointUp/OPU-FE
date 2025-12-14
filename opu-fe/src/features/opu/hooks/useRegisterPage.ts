@@ -209,6 +209,7 @@ export function useOpuRegisterPage() {
         ============================= */
         duplicateListModalProps: {
             open: duplicateListOpen,
+            mode: "create",
             duplicates,
             onSelectOpu: (opuId: number) => {
                 router.push(`/opus/${opuId}`);

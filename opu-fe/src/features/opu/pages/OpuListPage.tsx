@@ -261,6 +261,7 @@ export default function OpuListPage({
 
             <OpuDuplicateListModal
                 open={duplicateModalOpen}
+                mode="share"
                 duplicates={duplicates}
                 onSelectOpu={async (opuId) => {
                     await handleAddTodoSelected(opuId);
