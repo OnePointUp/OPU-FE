@@ -14,13 +14,15 @@ import {
     getCategoryFilterLabel,
     getTimeFilterLabel,
     SORT_OPTION_TO_API_SORT,
+    OpuDuplicateItem,
 } from "@/features/opu/domain";
 import {
     fetchMyOpuList,
     fetchSharedOpuList,
     fetchLikedOpuList,
     addTodoByOpu,
-    toggleOpuShare,
+    shareOpu,
+    unshareOpu,
     deleteMyOpu,
 } from "../service";
 import { toastError, toastSuccess } from "@/lib/toast";
@@ -72,6 +74,12 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
     const [sortOption, setSortOption] = useState<SortOption>("liked");
     const [showSortSheet, setShowSortSheet] = useState(false);
     const [onlyLiked, setOnlyLiked] = useState(false);
+
+    const [pendingShareOpuId, setPendingShareOpuId] =
+        useState<number | null>(null);
+
+    const [duplicateModalOpen, setDuplicateModalOpen] = useState(false);
+    const [duplicates, setDuplicates] = useState<OpuDuplicateItem[]>([]);
 
     useEffect(() => {
         setPage(0);
@@ -218,7 +226,7 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         resetAndReload();
     };
 
-        const handleOpenFilterTime = () => {
+    const handleOpenFilterTime = () => {
         setFilterMode("time");
         setFilterSheetOpen(true);
     };
@@ -267,20 +275,45 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         opuId: number,
         isCurrentlyShared?: boolean
     ) => {
-        const prev = !!isCurrentlyShared;
-        const next = !prev;
+        // 공개 → 비공개 (중복 검사 없음)
+        if (isCurrentlyShared) {
+            try {
+                await unshareOpu(opuId);
 
-        setData((prevData) =>
-            prevData.map((i) =>
-                i.id === opuId ? { ...i, isShared: next } : i
-            )
-        );
+                setData((prev) =>
+                    prev.map((i) =>
+                        i.id === opuId ? { ...i, isShared: false } : i
+                    )
+                );
 
+                toastSuccess("OPU가 비공개로 전환되었습니다");
+            } catch {
+                toastError("OPU 비공개 전환에 실패했어요");
+            }
+            return;
+        }
+
+        // 비공개 → 공개 (중복 검사 있음)
         try {
-            await toggleOpuShare(opuId, prev);
-            toastSuccess(next ? "OPU가 공개로 전환되었습니다" : "OPU가 비공개로 전환되었습니다");
+            const result = await shareOpu(opuId);
+            // result: OpuRegisterResponse
+
+            if (result.created) {
+                setData((prev) =>
+                    prev.map((i) =>
+                        i.id === opuId ? { ...i, isShared: true } : i
+                    )
+                );
+                toastSuccess("OPU가 공개로 전환되었습니다");
+                return;
+            }
+
+            // 중복 존재 → 모달 오픈
+            setPendingShareOpuId(opuId);
+            setDuplicates(result.duplicates);
+            setDuplicateModalOpen(true);
         } catch {
-            toastError("OPU 공개 설정을 변경하지 못했어요");
+            toastError("OPU 공개 전환에 실패했어요");
         }
     };
 
@@ -364,5 +397,12 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         deleteTargetId,
         setDeleteTargetId,
         handleDeleteSelected,
+
+        //중복
+        duplicateModalOpen,
+        setDuplicateModalOpen,
+        duplicates,
+        pendingShareOpuId,
+        setPendingShareOpuId,
     };
 }

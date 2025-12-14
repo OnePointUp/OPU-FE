@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { toastSuccess } from "@/lib/toast";
 
 import SearchBar from "@/components/common/SearchBar";
 import BottomSheet from "@/components/common/BottomSheet";
@@ -11,6 +13,7 @@ import OpuList from "../components/OpuList";
 import LikedOpuFilter from "../components/LikedOpuFilter";
 import PlusButton from "@/components/common/PlusButton";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import OpuDuplicateListModal from "@/features/opu/components/OpuDuplicateListModal";
 
 import type { OpuCardModel, SortOption } from "@/features/opu/domain";
 import { useOpuListPage } from "../hooks/useOpuListPage";
@@ -79,10 +82,19 @@ export default function OpuListPage({
         deleteTargetId,
         setDeleteTargetId,
         handleDeleteSelected,
+
+        // 중복
+        duplicateModalOpen,
+        setDuplicateModalOpen,
+        duplicates,
+        pendingShareOpuId,
+        setPendingShareOpuId,
     } = useOpuListPage({ contextType });
 
     const [showBlockModal, setShowBlockModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const router = useRouter();
 
     /* ==============================
        무한 스크롤 sentinel
@@ -245,6 +257,25 @@ export default function OpuListPage({
                     setShowDeleteModal(false);
                 }}
                 onCancel={() => setShowDeleteModal(false)}
+            />
+
+            <OpuDuplicateListModal
+                open={duplicateModalOpen}
+                duplicates={duplicates}
+                onSelectOpu={async (opuId) => {
+                    await handleAddTodoSelected(opuId);
+                    setDuplicateModalOpen(false);
+                    setPendingShareOpuId(null);
+                }}
+                onCreatePrivate={() => {
+                    toastSuccess("OPU를 비공개 상태로 유지했어요");
+                    setDuplicateModalOpen(false);
+                    setPendingShareOpuId(null);
+                }}
+                onClose={() => {
+                    setDuplicateModalOpen(false);
+                    setPendingShareOpuId(null);
+                }}
             />
         </section>
     );

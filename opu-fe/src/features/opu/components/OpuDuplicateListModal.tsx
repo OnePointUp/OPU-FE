@@ -17,7 +17,9 @@ export type DuplicateOpuItem = {
 type Props = {
     open: boolean;
     duplicates: DuplicateOpuItem[];
+    /** 선택한 OPU를 오늘 투두에 추가 */
     onSelectOpu: (opuId: number) => void;
+    /** 내 OPU를 비공개로 유지 */
     onCreatePrivate: () => void;
     onClose: () => void;
 };
@@ -32,7 +34,7 @@ export default function OpuDuplicateListModal({
     const [mounted, setMounted] = useState(false);
     const [selectedOpuId, setSelectedOpuId] = useState<number | null>(null);
 
-    /* ESC 키 닫기 – ConfirmModal 동일 */
+    /* ESC 키 닫기 */
     useEffect(() => {
         const handler = (e: KeyboardEvent) => {
             if (e.key === "Escape") onClose();
@@ -63,7 +65,7 @@ export default function OpuDuplicateListModal({
             "
             onClick={onClose}
         >
-            {/* Modal Box (ConfirmModal과 동일한 개념) */}
+            {/* Modal Box */}
             <div
                 className="
                     w-[90%]
@@ -87,6 +89,8 @@ export default function OpuDuplicateListModal({
 
                 <p className="mt-2 text-sm text-center text-[var(--color-dark-gray)]">
                     이미 공개된 OPU를 먼저 사용해보는 건 어때요?
+                    <br />
+                    선택한 OPU를 <b>오늘 할 일</b>로 바로 추가할 수 있어요
                 </p>
 
                 {/* List */}
@@ -143,20 +147,17 @@ export default function OpuDuplicateListModal({
                     />
 
                     <OpuActionButton
-                        label={
-                            hasSelection
-                                ? "이 OPU 사용하기"
-                                : "비공개로 생성"
-                        }
+                        label="오늘 할 일에 추가"
                         positionFixed={false}
+                        disabled={!hasSelection}
                         onClick={() => {
-                            if (hasSelection) {
-                                onSelectOpu(selectedOpuId!);
-                            } else {
-                                onCreatePrivate();
-                            }
+                            if (!hasSelection) return;
+                            onSelectOpu(selectedOpuId!);
                         }}
-                        className="flex-1"
+                        className={`
+                            flex-1
+                            ${!hasSelection ? "[&>button]:opacity-50" : ""}
+                        `}
                     />
                 </div>
             </div>
