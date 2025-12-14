@@ -158,7 +158,6 @@ export async function addTodoByOpu(opuId: number) {
 }
 
 /* ==== OPU 등록 ===== */
-
 export async function registerOpu(
     payload: RegisterOpuPayload
 ): Promise<OpuRegisterResponse> {
@@ -170,12 +169,20 @@ export async function registerOpu(
 }
 
 /* ==== 공개 설정 ===== */
-export async function shareOpu(opuId: number) {
+export async function shareOpu(
+    opuId: number
+): Promise<OpuRegisterResponse> {
     try {
-        await apiClient.patch(`/opus/${opuId}/share`);
+        const res = await apiClient.patch<
+            ApiResponse<OpuRegisterResponse>
+        >(`/opus/${opuId}/share`);
 
-        return { ok: true };
-    } catch (err: unknown) {
+        return res.data.data;
+    } catch (err: any) {
+        if (err?.response?.status === 409) {
+            return err.response.data.data as OpuRegisterResponse;
+        }
+
         throw new Error(
             extractErrorMessage(err, "OPU 공개 처리에 실패했어요.")
         );
