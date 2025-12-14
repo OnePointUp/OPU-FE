@@ -15,7 +15,6 @@ import { toOpuCardModelFromRandom, toOpuCardModelFromSummary } from "./mappers";
 import { apiClient } from "@/lib/apiClient";
 import { ApiResponse, PageResponse } from "@/types/api";
 import { extractErrorMessage } from "@/utils/api-helpers";
-import axios from "axios";
 
 /* ==== 공유 OPU 목록 조회 ===== */
 export async function fetchSharedOpuList({
