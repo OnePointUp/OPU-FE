@@ -9,6 +9,7 @@ import {
 } from "@/components/layout/headerConfig";
 import { fetchNotificationFeed } from "@/features/notification/services";
 import { NotificationFeedItem } from "@/features/notification/types";
+import { subscribeNotificationIncoming } from "@/features/notification/utils/notificationEvents";
 import { useAuthStore } from "@/stores/useAuthStore";
 
 type Props = {
@@ -68,6 +69,13 @@ export default function Header({
 
         loadUnread();
     }, [pathname, accessToken]);
+
+    useEffect(() => {
+        const unsubscribe = subscribeNotificationIncoming(() =>
+            setHasUnread(true)
+        );
+        return () => unsubscribe();
+    }, []);
 
     if (!show || hide) return null;
 

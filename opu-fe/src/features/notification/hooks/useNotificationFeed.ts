@@ -8,6 +8,7 @@ import {
     readOneNotification,
 } from "../services";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { subscribeNotificationIncoming } from "../utils/notificationEvents";
 
 export function useNotificationFeed() {
     const [items, setItems] = useState<NotificationFeedItem[]>([]);
@@ -34,6 +35,14 @@ export function useNotificationFeed() {
         const data = await fetchNotificationFeed();
         setItems(data);
     }, []);
+
+    useEffect(() => {
+        const unsubscribe = subscribeNotificationIncoming(() =>
+            reload().catch((err) => console.error(err))
+        );
+
+        return () => unsubscribe();
+    }, [reload]);
 
     const markAsRead = useCallback(
         async (id: number) => {
