@@ -14,7 +14,7 @@ const ICON_MAP: Record<NotificationFeedItem["code"], string> = {
     EVENING: "fxemoji:crescentmoon",
     ROUTINE: "devicon:cosmosdb",
     TODO: "catppuccin:todo",
-    RANDOM: "fluent-emoji-flat:magic-wand",
+    RANDOM_DRAW: "fluent-emoji-flat:magic-wand",
 };
 
 export default function NotificationFeedRow({ item, onRead }: Props) {

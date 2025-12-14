@@ -6,6 +6,7 @@ import { login } from "@/features/auth/services";
 import { toastSuccess, toastError } from "@/lib/toast";
 import { validateEmail } from "@/utils/validation";
 import { extractErrorMessage } from "@/utils/api-helpers";
+import { fetchWebPushStatus } from "@/features/notification/services";
 
 export function useLogin() {
     const router = useRouter();
@@ -32,6 +33,21 @@ export function useLogin() {
         try {
             setLoading(true);
             await login({ email: email.trim(), password });
+
+            // 웹푸시 모달 노출 여부 동기화
+            try {
+                const status = await fetchWebPushStatus();
+
+                if (status.webPushAgreed) {
+                    // 이미 서비스 동의한 유저 -> 다시 안 뜨게
+                    localStorage.setItem("opu_push_prompt_v1", "1");
+                } else {
+                    // 아직 동의 안 한 유저 -> 홈에서 모달 뜨게
+                    localStorage.removeItem("opu_push_prompt_v1");
+                }
+            } catch {
+                localStorage.setItem("opu_push_prompt_v1", "1");
+            }
 
             toastSuccess("로그인 완료!");
             router.replace("/");

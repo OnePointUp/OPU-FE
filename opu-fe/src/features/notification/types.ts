@@ -2,7 +2,7 @@
  * 웹 푸시 알림
  */
 export type WebPushStatusResponse = {
-    agreed: boolean;
+    webPushAgreed: boolean;
     hasSubscription: boolean;
 };
 
