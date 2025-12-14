@@ -152,10 +152,7 @@ export default function OpuListPage({
             </div>
 
             {/* 카드 리스트 */}
-            <div
-                className="mt-3 -mx-1"
-                style={{ overflowAnchor: "none" }}
-            >
+            <div className="mt-3 -mx-1" style={{ overflowAnchor: "none" }}>
                 <OpuList
                     items={filtered}
                     loading={loading}

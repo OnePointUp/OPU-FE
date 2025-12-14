@@ -75,8 +75,9 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
     const [showSortSheet, setShowSortSheet] = useState(false);
     const [onlyLiked, setOnlyLiked] = useState(false);
 
-    const [pendingShareOpuId, setPendingShareOpuId] =
-        useState<number | null>(null);
+    const [pendingShareOpuId, setPendingShareOpuId] = useState<number | null>(
+        null
+    );
 
     const [duplicateModalOpen, setDuplicateModalOpen] = useState(false);
     const [duplicates, setDuplicates] = useState<OpuDuplicateItem[]>([]);
@@ -121,10 +122,22 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
 
                 const res =
                     contextType === "my"
-                        ? await fetchMyOpuList({ page, size: PAGE_SIZE, filter: requestFilter })
+                        ? await fetchMyOpuList({
+                              page,
+                              size: PAGE_SIZE,
+                              filter: requestFilter,
+                          })
                         : contextType === "liked"
-                        ? await fetchLikedOpuList({ page, size: PAGE_SIZE, filter: requestFilter })
-                        : await fetchSharedOpuList({ page, size: PAGE_SIZE, filter: requestFilter });
+                        ? await fetchLikedOpuList({
+                              page,
+                              size: PAGE_SIZE,
+                              filter: requestFilter,
+                          })
+                        : await fetchSharedOpuList({
+                              page,
+                              size: PAGE_SIZE,
+                              filter: requestFilter,
+                          });
 
                 if (cancelled) return;
 
