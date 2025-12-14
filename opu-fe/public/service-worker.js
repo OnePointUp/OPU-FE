@@ -20,6 +20,7 @@ self.addEventListener("push", (event) => {
 
             await self.registration.showNotification(title, {
                 body,
+                icon: "/images/cabit_logo2.png",
                 data: { url },
             });
         })()
