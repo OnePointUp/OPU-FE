@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -36,6 +36,7 @@ const PAGE_SIZE = 20;
 
 export function useOpuListPage({ contextType = "shared" }: Props) {
     const router = useRouter();
+    const fetchingRef = useRef(false);
 
     const [page, setPage] = useState(0);
     const [pageMeta, setPageMeta] =
@@ -52,10 +53,12 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         >();
 
     const [data, setData] = useState<OpuCardModel[]>([]);
-    const [loading, setLoading] = useState(true);
+
+    /** ✅ 로딩 상태는 딱 2개 */
+    const [initialLoading, setInitialLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
 
     const [q, setQ] = useState("");
-
     const [times, setTimes] = useState<TimeCode[]>([]);
     const [categoryIds, setCategoryIds] = useState<number[]>([]);
 
@@ -64,14 +67,20 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
     const [sheetId, setSheetId] = useState<number | null>(null);
 
     const [blockTargetId, setBlockTargetId] = useState<number | null>(null);
-
     const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
 
     const [sortOption, setSortOption] = useState<SortOption>("liked");
     const [showSortSheet, setShowSortSheet] = useState(false);
-
     const [onlyLiked, setOnlyLiked] = useState(false);
+
+    useEffect(() => {
+        setPage(0);
+        setData([]);
+        setInitialLoading(true);
+
+        fetchingRef.current = false;
+    }, [contextType]);
 
     const requestFilter: OpuListFilterRequest = useMemo(() => {
         const minutes =
@@ -80,49 +89,42 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
                 : times
                       .filter((t): t is Exclude<TimeCode, "ALL"> => t !== "ALL")
                       .map((t) => TIME_CODE_TO_MINUTES[t])
-                      .filter((v) => v != null);
-
-        const sort = SORT_OPTION_TO_API_SORT[sortOption];
+                      .filter(Boolean);
 
         return {
             categoryIds: categoryIds.length ? categoryIds : undefined,
-            requiredMinutes: minutes && minutes.length ? minutes : undefined,
+            requiredMinutes: minutes?.length ? minutes : undefined,
             search: q.trim() || undefined,
             favoriteOnly:
                 contextType === "liked" ? undefined : onlyLiked || undefined,
-            sort,
+            sort: SORT_OPTION_TO_API_SORT[sortOption],
         };
     }, [q, times, categoryIds, onlyLiked, sortOption, contextType]);
 
+    /** ================= fetch ================= */
     useEffect(() => {
         let cancelled = false;
 
         const load = async () => {
+            if (fetchingRef.current) return;
+            fetchingRef.current = true;
+
             try {
-                setLoading(true);
+                if (page > 0) setLoadingMore(true);
 
                 const res =
                     contextType === "my"
-                        ? await fetchMyOpuList({
-                              page,
-                              size: PAGE_SIZE,
-                              filter: requestFilter,
-                          })
+                        ? await fetchMyOpuList({ page, size: PAGE_SIZE, filter: requestFilter })
                         : contextType === "liked"
-                        ? await fetchLikedOpuList({
-                              page,
-                              size: PAGE_SIZE,
-                              filter: requestFilter,
-                          })
-                        : await fetchSharedOpuList({
-                              page,
-                              size: PAGE_SIZE,
-                              filter: requestFilter,
-                          });
+                        ? await fetchLikedOpuList({ page, size: PAGE_SIZE, filter: requestFilter })
+                        : await fetchSharedOpuList({ page, size: PAGE_SIZE, filter: requestFilter });
 
                 if (cancelled) return;
 
-                setData(res.content);
+                setData((prev) =>
+                    page === 0 ? res.content : [...prev, ...res.content]
+                );
+
                 setPageMeta({
                     totalElements: res.totalElements,
                     totalPages: res.totalPages,
@@ -131,25 +133,31 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
                     hasNext: res.hasNext,
                     hasPrevious: res.hasPrevious,
                 });
-            } catch (e) {
-                console.error(e);
-                if (!cancelled) {
-                    toastError("OPU 목록을 불러오지 못했어요.");
-                }
+            } catch {
+                if (!cancelled) toastError("OPU 목록을 불러오지 못했어요.");
             } finally {
                 if (!cancelled) {
-                    setLoading(false);
+                    setInitialLoading(false);
+                    setLoadingMore(false);
                 }
+                fetchingRef.current = false;
             }
         };
 
         load();
-
         return () => {
             cancelled = true;
         };
     }, [contextType, page, requestFilter]);
 
+    /** ================= infinite scroll ================= */
+    const handleNextPage = useCallback(() => {
+        if (!pageMeta?.hasNext) return;
+        if (fetchingRef.current) return;
+        setPage((p) => p + 1);
+    }, [pageMeta?.hasNext]);
+
+    /** ================= handlers ================= */
     const timeLabel = useMemo(() => getTimeFilterLabel(times), [times]);
     const categoryLabel = useMemo(
         () => getCategoryFilterLabel(categoryIds),
@@ -157,11 +165,17 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
     );
     const sortLabel = getSortLabel(sortOption);
 
-    // 정렬 변경
+    const resetAndReload = () => {
+        fetchingRef.current = false;
+        setPage(0);
+        setData([]);
+        setInitialLoading(true);
+    };
+
     const handleChangeSort = (opt: SortOption) => {
         setSortOption(opt);
         setShowSortSheet(false);
-        setPage(0);
+        resetAndReload();
     };
 
     // 시간 필터 토글
@@ -179,7 +193,7 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
             }
             return [...filtered, value];
         });
-        setPage(0);
+        resetAndReload();
     };
 
     // 카테고리 필터 토글
@@ -190,18 +204,22 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
             return;
         }
         setCategoryIds((prev) =>
-            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+            id === -1
+                ? []
+                : prev.includes(id)
+                ? prev.filter((x) => x !== id)
+                : [...prev, id]
         );
-        setPage(0);
+        resetAndReload();
     };
 
     const handleResetFilter = () => {
         setTimes([]);
         setCategoryIds([]);
-        setPage(0);
+        resetAndReload();
     };
 
-    const handleOpenFilterTime = () => {
+        const handleOpenFilterTime = () => {
         setFilterMode("time");
         setFilterSheetOpen(true);
     };
@@ -221,21 +239,16 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
     const isMine = selectedItem?.isMine ?? false;
 
     const handleEditSelected = () => {
-        if (!selectedItem) return;
-        router.push(`/opu/edit/${selectedItem.id}`);
+        if (selectedItem) router.push(`/opu/edit/${selectedItem.id}`);
     };
 
     // 차단하기
     const handleBlockSelected = async (opuId: number) => {
         try {
             await blockOpu(opuId);
-
-            setData((prev) => prev.filter((item) => item.id !== opuId));
-
+            setData((prev) => prev.filter((i) => i.id !== opuId));
             toastSuccess("OPU를 차단했어요.");
-            setSheetId(null);
-        } catch (e) {
-            console.error(e);
+        } catch {
             toastError("OPU 차단을 실패했어요");
         }
     };
@@ -245,8 +258,7 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         try {
             await addTodoByOpu(opuId);
             toastSuccess("해당 OPU가 오늘 할 일에 추가됐어요");
-        } catch (e) {
-            console.error(e);
+        } catch {
             toastError("투두리스트에 추가하지 못했어요.");
         }
     };
@@ -254,32 +266,21 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
     // 공개/비공개 토글
     const handleShareToggle = async (
         opuId: number,
-        isCurrentlyShared: boolean | undefined
+        isCurrentlyShared?: boolean
     ) => {
-        const prevShared = !!isCurrentlyShared;
-        const nextShared = !prevShared;
+        const prev = !!isCurrentlyShared;
+        const next = !prev;
 
-        // UI 먼저 반영
-        setData((prev) =>
-            prev.map((item) =>
-                item.id === opuId ? { ...item, isShared: nextShared } : item
+        setData((prevData) =>
+            prevData.map((i) =>
+                i.id === opuId ? { ...i, isShared: next } : i
             )
         );
 
         try {
-            await toggleOpuShare(opuId, prevShared);
-            toastSuccess(
-                nextShared
-                    ? "OPU가 공개로 전환되었습니다"
-                    : "OPU가 비공개로 전환되었습니다"
-            );
-        } catch (err) {
-            console.error(err);
-            setData((prev) =>
-                prev.map((item) =>
-                    item.id === opuId ? { ...item, isShared: prevShared } : item
-                )
-            );
+            await toggleOpuShare(opuId, prev);
+            toastSuccess(next ? "OPU가 공개로 전환되었습니다" : "OPU가 비공개로 전환되었습니다");
+        } catch {
             toastError("OPU 공개 설정을 변경하지 못했어요");
         }
     };
@@ -290,42 +291,26 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
 
         try {
             await deleteMyOpu(opuId);
-
-            // UI에서 제거
-            setData((prev) => prev.filter((item) => item.id !== opuId));
-
+            setData((prev) => prev.filter((i) => i.id !== opuId));
             toastSuccess("OPU가 삭제되었어요.");
-        } catch (e) {
-            console.error(e);
+        } catch {
             toastError("OPU를 삭제하지 못했어요.");
         } finally {
             setDeleteLoading(false);
         }
     };
 
-    const handleNextPage = () => {
-        if (pageMeta?.hasNext) {
-            setPage((prev) => prev + 1);
-        }
-    };
-
-    const handlePrevPage = () => {
-        if (pageMeta?.hasPrevious && page > 0) {
-            setPage((prev) => prev - 1);
-        }
-    };
-
     return {
         contextType,
-        loading,
+        loading: initialLoading,
+        loadingMore,
 
         // 목록
         data,
         filtered: data,
-        page,
+
         pageMeta,
         handleNextPage,
-        handlePrevPage,
 
         // 검색
         q,
