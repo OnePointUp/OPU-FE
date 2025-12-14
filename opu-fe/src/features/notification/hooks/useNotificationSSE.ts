@@ -65,10 +65,11 @@ export function useNotificationSse<T>({
     const [state, setState] = useState<SseState>("idle");
     const abortRef = useRef<AbortController | null>(null);
 
+    const token = useAuthStore((s) => s.accessToken);
+
     useEffect(() => {
         if (!enabled) return;
 
-        const token = useAuthStore.getState().accessToken;
         if (!token) return;
 
         const ac = new AbortController();
