@@ -1,3 +1,22 @@
+/**
+ * 웹 푸시 알림
+ */
+export type WebPushStatusResponse = {
+    agreed: boolean;
+    hasSubscription: boolean;
+};
+
+export type WebPushSubscribePayload = {
+    endpoint: string;
+    p256dh: string;
+    auth: string;
+    expirationTime?: number | null;
+};
+
+export type WebPushUnsubscribePayload = {
+    endpoint: string;
+};
+
 /* ======= 알림 코드 ======= */
 export type NotificationCode =
     | "MORNING"

@@ -7,7 +7,11 @@ import type {
     NotificationSection,
     NotificationItem,
     NotificationFeedItem,
+    WebPushStatusResponse,
+    WebPushSubscribePayload,
+    WebPushUnsubscribePayload,
 } from "./types";
+import { ApiResponse } from "@/types/api";
 
 const BASE = "/notifications";
 
@@ -139,6 +143,60 @@ export async function readAllNotifications(): Promise<void> {
     } catch (err) {
         throw new Error(
             extractErrorMessage(err, "전체 알림 읽음 처리에 실패했어요.")
+        );
+    }
+}
+
+/**
+ * 웹 푸시 알림
+ */
+
+/* ===== Web Push 상태 조회 ===== */
+export async function fetchWebPushStatus(): Promise<WebPushStatusResponse> {
+    try {
+        const res = await apiClient.get<ApiResponse<WebPushStatusResponse>>(
+            `${BASE}/push/status`
+        );
+        return res.data.data;
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "푸시 상태 조회에 실패했어요.")
+        );
+    }
+}
+
+/* ===== 서비스 동의 변경 ===== */
+export async function updateWebPushAgreed(agreed: boolean) {
+    try {
+        await apiClient.patch("/members/me/web-push", { agreed });
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "푸시 동의 변경에 실패했어요.")
+        );
+    }
+}
+
+/* ===== 구독 등록 ===== */
+export async function subscribeWebPush(payload: WebPushSubscribePayload) {
+    try {
+        await apiClient.post(`${BASE}/push/subscribe`, payload);
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "푸시 구독 등록에 실패했어요.")
+        );
+    }
+}
+
+/* ===== 구독 해제 ===== */
+export async function unsubscribeWebPush(payload: WebPushUnsubscribePayload) {
+    try {
+        await apiClient.post(`${BASE}/push/unsubscribe`, payload);
+        return { ok: true };
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "푸시 구독 해제에 실패했어요.")
         );
     }
 }
