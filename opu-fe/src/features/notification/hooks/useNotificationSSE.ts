@@ -18,9 +18,7 @@ type Options<T> = {
     onError?: (err: unknown) => void;
 };
 
-const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL ??
-    "http://ec2-13-209-4-254.ap-northeast-2.compute.amazonaws.com:8080/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api/v1";
 
 function safeJson<T>(raw: string): T | null {
     try {
