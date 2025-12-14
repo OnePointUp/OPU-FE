@@ -84,9 +84,21 @@ async function getNewAccessToken(instance: AxiosInstance): Promise<string> {
     }
 }
 
+
 export const apiClient = axios.create({
     baseURL: API_BASE_URL,
     withCredentials: true,
+
+    validateStatus: (status) => {
+        // 인증 실패 → refresh 로직 진입
+        if (status === 401) return false;
+
+        // 중복 OPU 등 비즈니스 분기
+        if (status === 409) return true;
+
+        // 나머지는 axios 기본 정책
+        return status >= 200 && status < 300;
+    },
 });
 
 /* 요청 인터셉터: 토큰 자동 첨부 또는 skipAuth 처리 */
