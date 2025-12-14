@@ -24,7 +24,6 @@ export default function WheelPickerYearMonth({
       onChange={onChange}
       height={height}
       itemHeight={itemHeight}
-      isItemDisabled={() => false}
     />
   );
 }
