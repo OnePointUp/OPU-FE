@@ -132,7 +132,11 @@ export default function OpuDuplicateListModal({
             return (
               <button
                 key={opu.opuId}
-                onClick={() => setSelectedOpuId(opu.opuId)}
+                onClick={() =>
+                    setSelectedOpuId((prev) =>
+                        prev === opu.opuId ? null : opu.opuId
+                    )
+                }
                 className={`
                   relative w-full text-left
                   rounded-xl border p-4 transition
