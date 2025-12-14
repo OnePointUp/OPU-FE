@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { subscribeWebPush } from "@/features/notification/services";
+import {
+    fetchWebPushStatus,
+    subscribeWebPush,
+} from "@/features/notification/services";
 
 function urlBase64ToUint8Array(base64String: string) {
     const clean = (base64String || "").trim().replace(/\s+/g, "");
@@ -15,53 +18,35 @@ function urlBase64ToUint8Array(base64String: string) {
 
 export default function PushBootstrap() {
     useEffect(() => {
-        console.log("[PushBootstrap] mounted");
-
         let cancelled = false;
 
         (async () => {
             try {
-                console.log("[PushBootstrap] start");
+                if (!("Notification" in window)) return;
+                if (!("serviceWorker" in navigator)) return;
+                if (!("PushManager" in window)) return;
 
-                if (!("Notification" in window))
-                    return console.log("no Notification");
-                if (!("serviceWorker" in navigator))
-                    return console.log("no SW");
-                if (!("PushManager" in window))
-                    return console.log("no PushManager");
+                const status = await fetchWebPushStatus();
+                if (!status.webPushAgreed) return;
 
-                console.log("permission:", Notification.permission);
-
-                let permission: NotificationPermission =
-                    Notification.permission;
-                if (permission === "default")
-                    permission = await Notification.requestPermission();
-                console.log("permission(after):", permission);
-                if (permission !== "granted") return;
+                if (Notification.permission !== "granted") return;
 
                 const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-                console.log("vapid key exists:", !!vapidPublicKey);
                 if (!vapidPublicKey) return;
 
                 const reg = await navigator.serviceWorker.register(
                     "/service-worker.js",
                     { scope: "/" }
                 );
-                console.log("sw registered:", reg.scope);
-
                 await navigator.serviceWorker.ready;
-                console.log("sw ready");
 
                 let sub = await reg.pushManager.getSubscription();
-                console.log("existing sub:", !!sub);
-
                 if (!sub) {
                     sub = await reg.pushManager.subscribe({
                         userVisibleOnly: true,
                         applicationServerKey:
                             urlBase64ToUint8Array(vapidPublicKey),
                     });
-                    console.log("subscribed new");
                 }
 
                 const json = sub.toJSON();
@@ -69,12 +54,6 @@ export default function PushBootstrap() {
                 const p256dh = json.keys?.p256dh ?? "";
                 const auth = json.keys?.auth ?? "";
                 const expirationTime = sub.expirationTime ?? null;
-
-                console.log("sub data:", {
-                    endpoint: !!endpoint,
-                    p256dh: !!p256dh,
-                    auth: !!auth,
-                });
 
                 if (cancelled) return;
                 if (!endpoint || !p256dh || !auth) return;
@@ -85,7 +64,6 @@ export default function PushBootstrap() {
                     auth,
                     expirationTime,
                 });
-                console.log("subscribeWebPush OK");
             } catch (e) {
                 console.warn("[PushBootstrap] failed", e);
             }

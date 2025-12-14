@@ -6,13 +6,14 @@ import { useAuthStore, type AuthMember } from "@/stores/useAuthStore";
 import { KakaoLoginResponse } from "../types";
 import { requestKakaoLogin } from "../services";
 import { toastError } from "@/lib/toast";
+import { fetchWebPushStatus } from "@/features/notification/services";
+
+const PUSH_KEY = "opu_push_prompt_v1";
 
 function applyKakaoAuth(data: KakaoLoginResponse) {
     const token = data.token;
 
-    if (!token?.accessToken || !token.refreshToken) {
-        return;
-    }
+    if (!token?.accessToken || !token.refreshToken) return;
 
     const memberFromServer = data.member;
     const currentMember = useAuthStore.getState().member;
@@ -24,11 +25,7 @@ function applyKakaoAuth(data: KakaoLoginResponse) {
     } else if (currentMember) {
         safeMember = currentMember;
     } else {
-        safeMember = {
-            id: 0,
-            email: "",
-            nickname: "",
-        };
+        safeMember = { id: 0, email: "", nickname: "" };
     }
 
     useAuthStore.getState().setAuth({
@@ -36,6 +33,20 @@ function applyKakaoAuth(data: KakaoLoginResponse) {
         refreshToken: token.refreshToken,
         member: safeMember,
     });
+}
+
+async function syncPushPromptKey() {
+    try {
+        const status = await fetchWebPushStatus();
+
+        if (status.webPushAgreed) {
+            localStorage.setItem(PUSH_KEY, "1");
+        } else {
+            localStorage.removeItem(PUSH_KEY);
+        }
+    } catch {
+        localStorage.setItem(PUSH_KEY, "1");
+    }
 }
 
 export function useKakaoCallback() {
@@ -54,8 +65,13 @@ export function useKakaoCallback() {
             try {
                 const data = await requestKakaoLogin(code);
 
+                // 1) 토큰/멤버 세팅
                 applyKakaoAuth(data);
 
+                // 2) 서버 동의 상태로 KEY 동기화 (조건부)
+                await syncPushPromptKey();
+
+                // 3) 라우팅
                 if (data.needAdditionalInfo && data.providerId) {
                     router.replace(
                         `/social-signup?provider=kakao&providerId=${data.providerId}`
