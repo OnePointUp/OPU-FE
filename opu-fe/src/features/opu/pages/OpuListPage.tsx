@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import SearchBar from "@/components/common/SearchBar";
 import BottomSheet from "@/components/common/BottomSheet";
@@ -27,21 +27,27 @@ export default function OpuListPage({
     const {
         filtered,
         loading,
+        loadingMore,
+
         // 검색
         q,
         setQ,
-        // 정렬/필터 라벨
+
+        // 라벨
         timeLabel,
         categoryLabel,
         sortLabel,
-        // 좋아요 필터
+
+        // 좋아요
         onlyLiked,
         setOnlyLiked,
-        // 정렬 시트
+
+        // 정렬
         showSortSheet,
         setShowSortSheet,
         handleChangeSort,
-        // 필터 시트
+
+        // 필터
         filterMode,
         filterSheetOpen,
         setFilterSheetOpen,
@@ -53,18 +59,23 @@ export default function OpuListPage({
         handleToggleCategory,
         handleResetFilter,
         setFilterMode,
-        // 더보기 시트
+
+        // 더보기
         selectedItem,
         sheetId,
         handleOpenMore,
         handleCloseMore,
         isMine,
-        handleEditSelected,
         handleBlockSelected,
         blockTargetId,
         setBlockTargetId,
         handleAddTodoSelected,
         handleShareToggle,
+
+        // 무한 스크롤
+        handleNextPage,
+
+        // 삭제
         deleteTargetId,
         setDeleteTargetId,
         handleDeleteSelected,
@@ -72,6 +83,31 @@ export default function OpuListPage({
 
     const [showBlockModal, setShowBlockModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    /* ==============================
+       무한 스크롤 sentinel
+    ============================== */
+    const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (!loadMoreRef.current) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (!entry.isIntersecting) return;
+                if (loading || loadingMore) return;
+                handleNextPage();
+            },
+            {
+                threshold: 0,
+                rootMargin: "200px",
+            }
+        );
+
+        observer.observe(loadMoreRef.current);
+
+        return () => observer.disconnect();
+    }, [handleNextPage, loading, loadingMore]);
 
     return (
         <section>
@@ -84,7 +120,7 @@ export default function OpuListPage({
                 className="mb-6"
             />
 
-            {/* 정렬 / 필터 툴바 / 찜 필터 */}
+            {/* 툴바 */}
             <div className="w-full pl-1 flex items-center justify-between">
                 {showLikedFilter ? (
                     <LikedOpuFilter
@@ -106,16 +142,29 @@ export default function OpuListPage({
             </div>
 
             {/* 카드 리스트 */}
-            <div className="mt-3 -mx-1">
+            <div
+                className="mt-3 -mx-1"
+                style={{ overflowAnchor: "none" }}
+            >
                 <OpuList
                     items={filtered}
                     loading={loading}
                     onMore={handleOpenMore}
                     contextType={contextType}
                 />
+
+                {/* 다음 페이지 로딩 스켈레톤 */}
+                {loadingMore && (
+                    <div className="mt-4">
+                        <OpuList items={[]} loading />
+                    </div>
+                )}
             </div>
 
-            {/* 카드 더보기 액션 시트 */}
+            {/* sentinel */}
+            <div ref={loadMoreRef} style={{ height: 1 }} />
+
+            {/* 더보기 시트 */}
             <MoreActionsSheet
                 open={sheetId !== null}
                 onClose={handleCloseMore}
@@ -156,7 +205,7 @@ export default function OpuListPage({
                 onChange={handleChangeSort}
             />
 
-            {/* 기간 / 카테고리 필터 시트 */}
+            {/* 필터 시트 */}
             <OpuFilterSheet
                 open={filterSheetOpen}
                 onClose={() => setFilterSheetOpen(false)}
@@ -172,10 +221,10 @@ export default function OpuListPage({
 
             <PlusButton showMenu={false} />
 
-            {/* 차단 ConfirmModal */}
+            {/* 차단 모달 */}
             <ConfirmModal
                 isOpen={showBlockModal}
-                message={`이 OPU를 차단할까요?\n차단하면 랜덤 뽑기와 목록에서 보이지 않아요.`}
+                message={`이 OPU를 차단할까요?\n차단하면 목록에서 보이지 않아요.`}
                 onConfirm={() => {
                     if (blockTargetId != null) {
                         handleBlockSelected(blockTargetId);
@@ -185,7 +234,7 @@ export default function OpuListPage({
                 onCancel={() => setShowBlockModal(false)}
             />
 
-            {/* 삭제 ConfirmModal */}
+            {/* 삭제 모달 */}
             <ConfirmModal
                 isOpen={showDeleteModal}
                 message={`이 OPU를 삭제할까요?\n삭제하면 되돌릴 수 없어요.`}
@@ -200,6 +249,10 @@ export default function OpuListPage({
         </section>
     );
 }
+
+/* ==============================
+   하단 컴포넌트
+============================== */
 
 type SortSheetProps = {
     open: boolean;
@@ -258,8 +311,6 @@ function MoreActionsSheet({
                 onClose();
             },
         },
-
-        { label: "루틴 추가", onClick: () => {} },
     ];
 
     if (isMine && onToggleShare) {
