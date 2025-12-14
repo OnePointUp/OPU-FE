@@ -34,7 +34,7 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
         e.stopPropagation();
         if (likeLoading) return;
 
-        const prevLiked = liked;
+        const prevLiked = liked === true;
         const nextLiked = !prevLiked;
 
         setLiked(nextLiked);
