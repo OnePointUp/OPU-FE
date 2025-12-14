@@ -6,9 +6,7 @@ import { useAuthStore, type AuthMember } from "@/stores/useAuthStore";
 import { KakaoLoginResponse } from "../types";
 import { requestKakaoLogin } from "../services";
 import { toastError } from "@/lib/toast";
-import { fetchWebPushStatus } from "@/features/notification/services";
-
-const PUSH_KEY = "opu_push_prompt_v1";
+import { syncPushPromptKey } from "@/features/notification/utils/pushPrompt";
 
 function applyKakaoAuth(data: KakaoLoginResponse) {
     const token = data.token;
@@ -33,20 +31,6 @@ function applyKakaoAuth(data: KakaoLoginResponse) {
         refreshToken: token.refreshToken,
         member: safeMember,
     });
-}
-
-async function syncPushPromptKey() {
-    try {
-        const status = await fetchWebPushStatus();
-
-        if (status.webPushAgreed) {
-            localStorage.setItem(PUSH_KEY, "1");
-        } else {
-            localStorage.removeItem(PUSH_KEY);
-        }
-    } catch {
-        localStorage.setItem(PUSH_KEY, "1");
-    }
 }
 
 export function useKakaoCallback() {

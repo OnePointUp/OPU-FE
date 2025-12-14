@@ -1,3 +1,4 @@
+import NotificationSseBootstrap from "@/features/notification/components/NotificationSseBootstrap";
 import PushBootstrap from "@/features/notification/components/PushBootstrap";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -20,6 +21,7 @@ export default async function ProtectedLayout({
     return (
         <>
             <PushBootstrap />
+            <NotificationSseBootstrap />
             {children}
         </>
     );

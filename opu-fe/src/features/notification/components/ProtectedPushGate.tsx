@@ -5,9 +5,8 @@ import {
     fetchWebPushStatus,
     updateWebPushAgreed,
 } from "@/features/notification/services";
+import { PUSH_PROMPT_KEY } from "../utils/pushPrompt";
 import WebPushModal from "./WebPushModal";
-
-const KEY = "opu_push_prompt_v1";
 
 export default function ProtectedPushGate() {
     const [open, setOpen] = useState(false);
@@ -19,18 +18,18 @@ export default function ProtectedPushGate() {
             const status = await fetchWebPushStatus();
 
             if (status.webPushAgreed) {
-                localStorage.setItem(KEY, "1");
+                localStorage.setItem(PUSH_PROMPT_KEY, "1");
                 return;
             }
 
-            if (localStorage.getItem(KEY) === "1") return;
+            if (localStorage.getItem(PUSH_PROMPT_KEY) === "1") return;
 
             setOpen(true);
         })();
     }, []);
 
     const close = () => {
-        localStorage.setItem(KEY, "1");
+        localStorage.setItem(PUSH_PROMPT_KEY, "1");
         setOpen(false);
     };
 
@@ -39,8 +38,7 @@ export default function ProtectedPushGate() {
     const onAccept = async () => {
         // denied는 브라우저가 막은 상태라 여기서 못 바꿈, 안내만 하고 닫기
         if (Notification.permission === "denied") {
-            localStorage.setItem(KEY, "1");
-            setOpen(false);
+            close();
             return;
         }
 
@@ -50,15 +48,13 @@ export default function ProtectedPushGate() {
                 : Notification.permission;
 
         if (p !== "granted") {
-            localStorage.setItem(KEY, "1");
-            setOpen(false);
+            close();
             return;
         }
 
         await updateWebPushAgreed(true);
 
-        localStorage.setItem(KEY, "1");
-        setOpen(false);
+        close();
     };
 
     return (
