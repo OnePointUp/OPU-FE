@@ -1,9 +1,29 @@
+/**
+ * 웹 푸시 알림
+ */
+export type WebPushStatusResponse = {
+    agreed: boolean;
+    hasSubscription: boolean;
+};
+
+export type WebPushSubscribePayload = {
+    endpoint: string;
+    p256dh: string;
+    auth: string;
+    expirationTime?: number | null;
+};
+
+export type WebPushUnsubscribePayload = {
+    endpoint: string;
+};
+
 /* ======= 알림 코드 ======= */
 export type NotificationCode =
     | "MORNING"
     | "EVENING"
     | "ROUTINE"
-    | "RANDOM_PICK";
+    | "RANDOM_DRAW"
+    | "TODO";
 
 /* ===== 백엔드 서버 구조 ===== */
 export type NotificationSettingItem = {
@@ -23,10 +43,22 @@ export type NotificationItem = {
     enabled: boolean;
 };
 
+export type NotificationSectionId = "BASIC" | "EXEC";
+
 export type NotificationSection = {
-    id: string;
+    id: NotificationSectionId;
     type: string;
     items: NotificationItem[];
+};
+
+export type NotificationSettingsApiResponse = {
+    webPushAgreed: boolean;
+    settings: NotificationSettingItem | NotificationSettingItem[];
+};
+
+export type NotificationSettingsView = {
+    webPushAgreed: boolean;
+    settings: NotificationSettings;
 };
 
 /* ===== 전체 설정 ===== */
