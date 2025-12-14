@@ -54,7 +54,6 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
 
     const [data, setData] = useState<OpuCardModel[]>([]);
 
-    /** ✅ 로딩 상태는 딱 2개 */
     const [initialLoading, setInitialLoading] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
 
