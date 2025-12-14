@@ -88,7 +88,7 @@ export function useOpuRegisterPage() {
     ----------------------------- */
     const buildRegisterPayload = (
         isShared: boolean
-        ): RegisterOpuPayload | null => {
+    ): RegisterOpuPayload | null => {
         if (!pendingForm || !timeCode || timeCode === "ALL" || !categoryId) {
             return null;
         }
@@ -118,15 +118,15 @@ export function useOpuRegisterPage() {
             const result = await registerOpu(payload);
 
             if (result.created) {
-            toastSuccess("OPU가 등록되었어요");
-            router.push("/opu/my");
-            return;
+                toastSuccess("OPU가 등록되었어요");
+                router.push("/opu/my");
+                return;
             }
 
             setConfirmOpen(false);
             setTimeout(() => {
-            setDuplicates(result.duplicates);
-            setDuplicateListOpen(true);
+                setDuplicates(result.duplicates);
+                setDuplicateListOpen(true);
             }, 0);
         } catch {
             toastError("OPU 등록에 실패했어요.");
@@ -222,7 +222,7 @@ export function useOpuRegisterPage() {
             mode: "create",
             duplicates,
             onSelectOpu: async (opuId: number) => {
-                try{
+                try {
                     await addTodoByOpu(opuId);
                     toastSuccess("해당 OPU가 오늘 할 일에 추가됐어요");
                     setDuplicateListOpen(false);
