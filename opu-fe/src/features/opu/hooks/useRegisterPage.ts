@@ -85,40 +85,45 @@ export function useOpuRegisterPage() {
     /* -----------------------------
        등록 확정
     ----------------------------- */
-    const handleConfirmRegister = async () => {
-        if (!pendingForm) return;
-        if (!timeCode || timeCode === "ALL" || !categoryId) return;
+    const buildRegisterPayload = (
+        isShared: boolean
+        ): RegisterOpuPayload | null => {
+        if (!pendingForm || !timeCode || timeCode === "ALL" || !categoryId) {
+            return null;
+        }
 
         const minutes = toMinutes(timeCode);
-        if (minutes == null) return;
+        if (minutes == null) return null;
 
-        const payload: RegisterOpuPayload = {
+        return {
             title: pendingForm.title,
             description: pendingForm.description,
             emoji: emoji || "😀",
             requiredMinutes: minutes,
-            isShared: pendingForm.isPublic,
+            isShared,
             categoryId,
         };
+    };
+
+    const handleConfirmRegister = async () => {
+        const payload = buildRegisterPayload(pendingForm?.isPublic ?? false);
+        if (!payload) return;
 
         setSubmitting(true);
 
         try {
             const result = await registerOpu(payload);
 
-            // 정상 생성
             if (result.created) {
-                toastSuccess("OPU가 등록되었어요");
-                router.push("/opu/my");
-                return;
+            toastSuccess("OPU가 등록되었어요");
+            router.push("/opu/my");
+            return;
             }
 
-            // 중복 OPU 분기
             setConfirmOpen(false);
-
             setTimeout(() => {
-                setDuplicates(result.duplicates);
-                setDuplicateListOpen(true);
+            setDuplicates(result.duplicates);
+            setDuplicateListOpen(true);
             }, 0);
         } catch {
             toastError("OPU 등록에 실패했어요.");
@@ -215,21 +220,11 @@ export function useOpuRegisterPage() {
                 router.push(`/opus/${opuId}`);
             },
             onCreatePrivate: async () => {
-                if (!pendingForm) return;
-
-                const minutes = toMinutes(timeCode);
-                if (minutes == null || !categoryId) return;
+                const payload = buildRegisterPayload(false);
+                if (!payload) return;
 
                 try {
-                    await registerOpu({
-                        title: pendingForm.title,
-                        description: pendingForm.description,
-                        emoji: emoji || "😀",
-                        requiredMinutes: minutes,
-                        isShared: false,
-                        categoryId,
-                    });
-
+                    await registerOpu(payload);
                     toastSuccess("비공개 OPU로 등록했어요");
                     router.push("/opu/my");
                 } catch {
