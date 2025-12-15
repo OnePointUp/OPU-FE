@@ -6,6 +6,7 @@ import { login } from "@/features/auth/services";
 import { toastSuccess, toastError } from "@/lib/toast";
 import { validateEmail } from "@/utils/validation";
 import { extractErrorMessage } from "@/utils/api-helpers";
+import { syncPushPromptKey } from "@/features/notification/utils/pushPrompt";
 
 export function useLogin() {
     const router = useRouter();
@@ -32,6 +33,9 @@ export function useLogin() {
         try {
             setLoading(true);
             await login({ email: email.trim(), password });
+
+            // 웹푸시 모달 노출 여부 동기화
+            await syncPushPromptKey();
 
             toastSuccess("로그인 완료!");
             router.replace("/");

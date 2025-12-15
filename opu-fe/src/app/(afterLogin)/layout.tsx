@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Header from "@/components/layout/Header";
 import Menu from "@/components/layout/Menu";
 import { usePathname } from "next/navigation";
@@ -37,7 +38,9 @@ export default function AfterLoginLayout({
 
     return (
         <div className="app-page">
-            <Header />
+            <Suspense fallback={null}>
+                <Header />
+            </Suspense>
 
             <main
                 className={`

@@ -25,11 +25,16 @@ type RoutineStatsProps = {
     routineId: number;
     year: number;
     month: number;
+    loading?: boolean;
 };
 
 type ActiveFilter = "all" | number;
 
-const RoutineStats: FC<RoutineStatsProps> = ({ routineId, year, month }) => {
+const RoutineStats: FC<RoutineStatsProps> = ({
+    routineId,
+    year,
+    month,
+}) => {
     const [activeFilter, setActiveFilter] = useState<ActiveFilter>("all");
 
     const [stats, setStats] = useState<RoutineCalendarResponse | null>(null);
