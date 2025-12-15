@@ -9,12 +9,12 @@ import {
     RandomScope,
     RegisterOpuPayload,
     TimeCode,
+    OpuRegisterResponse,
 } from "./domain";
 import { toOpuCardModelFromRandom, toOpuCardModelFromSummary } from "./mappers";
 import { apiClient } from "@/lib/apiClient";
 import { ApiResponse, PageResponse } from "@/types/api";
 import { extractErrorMessage } from "@/utils/api-helpers";
-import axios from "axios";
 
 /* ==== 공유 OPU 목록 조회 ===== */
 export async function fetchSharedOpuList({
@@ -147,7 +147,7 @@ export async function addTodoByOpu(opuId: number) {
     const payload = buildOpuTodoPayload();
 
     try {
-        await apiClient.post(`/opu/${opuId}/todo`, payload);
+        await apiClient.post(`/opus/${opuId}/todos`, payload);
 
         return { ok: true };
     } catch (err) {
@@ -158,28 +158,31 @@ export async function addTodoByOpu(opuId: number) {
 }
 
 /* ==== OPU 등록 ===== */
-
-export async function registerOpu(payload: RegisterOpuPayload) {
-    try {
-        await apiClient.post<ApiResponse<number>>("/opus", payload);
-        return { ok: true };
-    } catch (err) {
-        if (axios.isAxiosError(err)) {
-            throw err;
-        }
-
-        /** 예상 못 한 에러 */
-        throw new Error("OPU 등록에 실패했어요.");
-    }
+export async function registerOpu(
+    payload: RegisterOpuPayload
+): Promise<OpuRegisterResponse> {
+    const res = await apiClient.post<ApiResponse<OpuRegisterResponse>>(
+        "/opus",
+        payload
+    );
+    return res.data.data;
 }
 
 /* ==== 공개 설정 ===== */
-export async function shareOpu(opuId: number) {
+export async function shareOpu(
+    opuId: number
+): Promise<OpuRegisterResponse> {
     try {
-        await apiClient.patch(`/opus/${opuId}/share`);
+        const res = await apiClient.patch<
+            ApiResponse<OpuRegisterResponse>
+        >(`/opus/${opuId}/share`);
 
-        return { ok: true };
-    } catch (err: unknown) {
+        return res.data.data;
+    } catch (err: any) {
+        if (err?.response?.status === 409) {
+            return err.response.data.data as OpuRegisterResponse;
+        }
+
         throw new Error(
             extractErrorMessage(err, "OPU 공개 처리에 실패했어요.")
         );
