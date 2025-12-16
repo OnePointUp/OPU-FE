@@ -266,7 +266,7 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
             await addTodoByOpu(opuId);
             toastSuccess("해당 OPU가 오늘 할 일에 추가됐어요");
         } catch {
-            toastError("투두리스트에 추가하지 못했어요.");
+            toastError("오늘 할 일 추가에 실패했어요.");
         }
     };
 
