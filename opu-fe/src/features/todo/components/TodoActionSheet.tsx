@@ -25,7 +25,9 @@ export default function TodoActionSheet({
 
   const items: ActionItem[] = [
     { label: "수정하기", onClick: () => onEdit(todo) },
-    { label: "루틴 추가", onClick: () => addRoutine(todo) },
+    ...(!todo.routineId
+      ? [{ label: "루틴 추가", onClick: () => addRoutine(todo) }]
+      : []),
     { label: "삭제하기", danger: true, onClick: () => onDelete(todo) },
   ];
 
