@@ -2,7 +2,7 @@
 
 import { Icon } from "@iconify/react";
 import { useState, type MouseEvent } from "react";
-import { CATEGORY_BADGE, type OpuCardModel } from "@/features/opu/domain";
+import { getCategoryBadge, type OpuCardModel } from "@/features/opu/domain";
 import Badge from "@/components/common/Badge";
 import OpuCardSkekleton from "./OpuCardSkeleton";
 import { toggleOpuFavorite } from "@/features/opu/service";
@@ -20,8 +20,8 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
     const [likeCount, setLikeCount] = useState(item.likeCount ?? 0);
     const [likeLoading, setLikeLoading] = useState(false);
 
-    const categoryKey = item.categoryName ?? "기타";
-    const { bg, text } = CATEGORY_BADGE[categoryKey] ?? CATEGORY_BADGE["기타"];
+    const { bg, text } = getCategoryBadge(item.categoryId, item.categoryName);
+    const categoryLabel = item.categoryName ?? "기타";
 
     const isMine = item.isMine === true;
     const isPrivate = isMine && item.isShared === false;
@@ -103,7 +103,7 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
 
                     {/* 배지 */}
                     <div className="flex items-center gap-1 flex-wrap">
-                        <Badge label={categoryKey} bg={bg} color={text} />
+                        <Badge label={categoryLabel} bg={bg} color={text} />
                         <Badge
                             label={item.timeLabel}
                             bg="#E3E3E3"

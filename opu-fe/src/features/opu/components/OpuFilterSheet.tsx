@@ -2,8 +2,9 @@
 
 import { Icon } from "@iconify/react";
 import BottomSheet from "@/components/common/BottomSheet";
-import { CATEGORY_MAP, type OpuEntity } from "@/features/opu/domain";
+import { type CategoriesResponse, type OpuEntity } from "@/features/opu/domain";
 import { TIME_OPTIONS } from "../domain";
+import { useOpuCategories } from "../hooks/useOpuCategories";
 
 type FilterMode = "time" | "category";
 
@@ -36,6 +37,14 @@ export default function OpuFilterSheet({
     onToggleCategory,
     onReset,
 }: Props) {
+    const {
+        categories,
+        categoryMap,
+        loading: categoryLoading,
+        error: categoryError,
+        refetch,
+    } = useOpuCategories();
+
     const timeTags =
         selectedTimes.length === 0
             ? [
@@ -62,7 +71,7 @@ export default function OpuFilterSheet({
               ]
             : selectedCategoryIds.map((id) => ({
                   id,
-                  label: CATEGORY_MAP[id] ?? "알 수 없음",
+                  label: categoryMap[id] ?? "알 수 없음",
                   removable: true,
               }));
 
@@ -167,6 +176,10 @@ export default function OpuFilterSheet({
                             <CategoryList
                                 selectedIds={selectedCategoryIds}
                                 onToggle={onToggleCategory}
+                                categories={categories}
+                                loading={categoryLoading}
+                                error={categoryError}
+                                onRetry={refetch}
                             />
                         )}
                     </div>
@@ -267,16 +280,55 @@ function TimeList({
 function CategoryList({
     selectedIds,
     onToggle,
+    categories,
+    loading,
+    error,
+    onRetry,
 }: {
     selectedIds: number[];
     onToggle: (id: number) => void;
+    categories: CategoriesResponse[];
+    loading: boolean;
+    error: string | null;
+    onRetry: () => void;
 }) {
-    const entries = Object.entries(CATEGORY_MAP).map(([id, label]) => ({
-        id: Number(id),
-        label,
+    const entries = categories.map((category) => ({
+        id: category.id,
+        label: category.name,
     }));
 
     const isAllSelected = selectedIds.length === 0;
+
+    if (loading) {
+        return (
+            <div className="px-3 py-4 text-[var(--color-light-gray)] text-[var(--text-sub)]">
+                카테고리를 불러오는 중이에요.
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="px-3 py-4 text-[var(--color-opu-pink)] text-[var(--text-sub)] space-y-2">
+                <p>{error}</p>
+                <button
+                    type="button"
+                    className="underline"
+                    onClick={() => onRetry()}
+                >
+                    다시 불러오기
+                </button>
+            </div>
+        );
+    }
+
+    if (entries.length === 0) {
+        return (
+            <div className="px-3 py-4 text-[var(--color-light-gray)] text-[var(--text-sub)]">
+                표시할 카테고리가 없어요.
+            </div>
+        );
+    }
 
     return (
         <ul>

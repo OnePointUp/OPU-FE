@@ -7,6 +7,7 @@ import { Icon } from "@iconify/react";
 import { mapMinutesToLabel, toCategoryName } from "../domain";
 import OpuActionButton from "@/components/common/OpuActionButton";
 import type { OpuDuplicateItem as DuplicateOpuItem } from "@/features/opu/domain";
+import { useOpuCategories } from "../hooks/useOpuCategories";
 
 type Mode = "create" | "share";
 
@@ -32,6 +33,8 @@ export default function OpuDuplicateListModal({
     onCreatePrivate,
     onClose,
 }: Props) {
+    const { categoryMap } = useOpuCategories();
+
     const [mounted, setMounted] = useState(false);
     const [selectedOpuId, setSelectedOpuId] = useState<number | null>(null);
 
@@ -156,7 +159,8 @@ export default function OpuDuplicateListModal({
                                     {opu.title}
                                 </div>
                                 <div className="mt-1 text-xs text-[var(--color-dark-gray)]">
-                                    {toCategoryName(opu.categoryId)} ·{" "}
+                                    {toCategoryName(opu.categoryId, categoryMap)}{" "}
+                                    ·{" "}
                                     {mapMinutesToLabel(opu.requiredMinutes)}
                                 </div>
                             </button>
