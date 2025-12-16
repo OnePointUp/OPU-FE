@@ -53,11 +53,6 @@ export default function OpuDuplicateListModal({
         };
     }, [open, onClose]);
 
-    if (!open || !mounted) return null;
-
-    const hasSelection = selectedOpuId !== null;
-
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const description = useMemo(() => {
         if (mode === "create") {
             return (
@@ -78,6 +73,10 @@ export default function OpuDuplicateListModal({
             </>
         );
     }, [mode]);
+
+    if (!open || !mounted) return null;
+
+    const hasSelection = selectedOpuId !== null;
 
     const rightLabel =
         mode === "create"
