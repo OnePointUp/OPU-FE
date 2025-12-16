@@ -50,6 +50,10 @@ export default function Header({
         router.push("/notification");
     };
 
+    const handleGoRandom = () => {
+        router.push("/opu/random/scope");
+    };
+
     useEffect(() => {
         if (!accessToken) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -152,13 +156,27 @@ export default function Header({
                     )}
                 </div>
 
-                {showNotificationIcon ? (
-                    <div className="app-header__icon relative flex items-center justify-center">
+                <div className="app-header__actions">
+                    <button
+                        type="button"
+                        aria-label="랜덤 뽑기"
+                        onClick={handleGoRandom}
+                        className="app-header__action-btn"
+                    >
+                        <Icon
+                            icon="mingcute:random-line"
+                            width="24"
+                            height="24"
+                            style={{ color: "#000" }}
+                        />
+                    </button>
+
+                    {showNotificationIcon ? (
                         <button
                             type="button"
                             aria-label="알림 보기"
                             onClick={handleGoNotification}
-                            className="relative"
+                            className="app-header__action-btn relative"
                         >
                             <Icon
                                 icon="mingcute:notification-line"
@@ -167,13 +185,11 @@ export default function Header({
                             />
 
                             {hasUnread && (
-                                <span className="absolute top-[2px] right-[3px] w-2 h-2 rounded-full bg-[var(--color-like-pink)]" />
+                                <span className="absolute top-[6px] right-[6px] w-2 h-2 rounded-full bg-[var(--color-like-pink)]" />
                             )}
                         </button>
-                    </div>
-                ) : (
-                    <span className="app-header__spacer" />
-                )}
+                    ) : null}
+                </div>
             </div>
         </header>
     );
