@@ -33,6 +33,12 @@ export const CATEGORY_BADGE_LEGACY: Record<string, CategoryBadgeStyle> = {
     "도전&성취": CATEGORY_BADGE_PALETTE[12],
 };
 
+// 유지보수를 위해 남겨둔 호환용 매핑(기존 코드 대비)
+export const CATEGORY_BADGE: Record<string, CategoryBadgeStyle> = {
+    ...CATEGORY_BADGE_LEGACY,
+    기타: { bg: "#E3E3E3", text: "#6F6F6F" },
+};
+
 export const toCategoryName = (
     id: number,
     categoryMap?: CategoryMap
