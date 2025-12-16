@@ -15,6 +15,7 @@ export default function RoutineListPage() {
     const router = useRouter();
     const { items, loading, removeById, reload } = useRoutineListPage();
     const [onlyOngoing, setOnlyOngoing] = useState(false);
+    const [navigating, setNavigating] = useState(false);
 
     const [openSheet, setOpenSheet] = useState(false);
     const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -147,10 +148,19 @@ export default function RoutineListPage() {
                 <button
                     type="button"
                     aria-label="루틴 추가"
-                    className="flex items-center justify-center"
-                    onClick={() => router.push("/routine/register")}
+                    className="flex items-center justify-center disabled:opacity-50"
+                    disabled={navigating}
+                    onClick={() => {
+                        if (navigating) return;
+                        setNavigating(true);
+                        router.push("/routine/register");
+                    }}
                 >
-                    <Icon icon="ic:baseline-plus" width="30" height="30" />
+                    {navigating ? (
+                        <span className="form-label">이동 중...</span>
+                    ) : (
+                        <Icon icon="ic:baseline-plus" width="30" height="30" />
+                    )}
                 </button>
             </div>
 
