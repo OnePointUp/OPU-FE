@@ -147,7 +147,7 @@ export async function addTodoByOpu(opuId: number) {
     const payload = buildOpuTodoPayload();
 
     try {
-        await apiClient.post(`/opu/${opuId}/todo`, payload);
+        await apiClient.post(`/opus/${opuId}/todo`, payload);
 
         return { ok: true };
     } catch (err) {
