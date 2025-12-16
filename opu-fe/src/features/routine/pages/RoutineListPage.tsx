@@ -115,13 +115,20 @@ export default function RoutineListPage() {
                     </div>
                 ) : filtered.length === 0 ? (
                     <div
-                        className="text-center py-7 w-full"
+                        className="text-center py-10 w-full flex flex-col items-center gap-2"
                         style={{
                             fontSize: "var(--text-sub)",
                             color: "var(--color-light-gray)",
                         }}
                     >
-                        표시할 루틴이 없어요
+                        <p style={{ color: "var(--color-dark-gray)" }}>
+                            {onlyOngoing
+                                ? "진행중인 루틴이 없어요."
+                                : "아직 설정된 루틴이 없습니다."}
+                        </p>
+                        <p className="text-[var(--color-light-gray)] text-xs">
+                            하단 + 버튼으로 새로운 루틴을 만들어보세요.
+                        </p>
                     </div>
                 ) : (
                     <div>
