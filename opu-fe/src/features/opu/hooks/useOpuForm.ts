@@ -41,6 +41,7 @@ export function useOpuForm({
     const [isPublic, setIsPublic] = useState(initialValues?.isPublic ?? true);
     const [localSubmitting, setLocalSubmitting] = useState(false);
     const mountedRef = useRef(true);
+    const submittingRef = useRef(false);
 
     /** 제목 */
     const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -70,21 +71,26 @@ export function useOpuForm({
     /** 제출 */
     const handleSubmit = async (e?: FormEvent) => {
         if (e) e.preventDefault();
-        if (disabled || submitting || localSubmitting) return;
+        if (disabled || submitting || localSubmitting || submittingRef.current)
+            return;
 
+        submittingRef.current = true;
         setLocalSubmitting(true);
 
-        await onSubmit({
-            title: title.trim(),
-            description: description.trim(),
-            emoji: currentEmoji,
-            timeLabel: currentTimeLabel,
-            categoryLabel: currentCategoryLabel,
-            isPublic,
-        });
-
-        if (mountedRef.current) {
-            setLocalSubmitting(false);
+        try {
+            await onSubmit({
+                title: title.trim(),
+                description: description.trim(),
+                emoji: currentEmoji,
+                timeLabel: currentTimeLabel,
+                categoryLabel: currentCategoryLabel,
+                isPublic,
+            });
+        } finally {
+            submittingRef.current = false;
+            if (mountedRef.current) {
+                setLocalSubmitting(false);
+            }
         }
     };
 
