@@ -56,12 +56,18 @@ export default function CalendarPage() {
   /** 날짜 클릭 공통 핸들러 */
   const handleSelectCalendarDay = (day: CalendarDay) => {
     const [y, m] = day.date.split("-").map(Number);
-
+    const isSameDay = selectedDay?.date === day.date;
+    
     if (day.isPreview) {
       jumpTo(y, m);
     }
 
     selectDay(day.date);
+
+    if (isSameDay && cellHeight === collapsedHeight) {
+      setCellHeight(expandedHeight);
+      return;
+    }
 
     setCellHeight(collapsedHeight);
   };
