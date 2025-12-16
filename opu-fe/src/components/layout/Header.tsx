@@ -87,7 +87,9 @@ export default function Header({
     const finalTooltip = tooltipOverride ?? tooltip;
     const backVisible = showBack ?? defaultShowBack;
     const hideActions =
-        pathname.startsWith("/login") || pathname.startsWith("/signup");
+        pathname.startsWith("/login") ||
+        pathname.startsWith("/signup") ||
+        pathname.startsWith("/notification");
     const showNotificationIcon = !hideActions && pathname !== "/notification";
 
     return (
