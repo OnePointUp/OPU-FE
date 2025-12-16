@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import {
+    useState,
+    type ChangeEvent,
+    type FormEvent,
+    useRef,
+    useEffect,
+} from "react";
 import { toastInfo } from "@/lib/toast";
 import type { OpuFormValues } from "../domain";
 
@@ -10,7 +16,7 @@ export const MAX_DESCRIPTION_LENGTH = 100;
 type Params = {
     mode: "create" | "edit";
     initialValues?: Partial<OpuFormValues>;
-    onSubmit: (values: OpuFormValues) => void;
+    onSubmit: (values: OpuFormValues) => Promise<void> | void;
     submitting?: boolean;
     disabled?: boolean;
     currentEmoji: string;
@@ -33,6 +39,9 @@ export function useOpuForm({
         initialValues?.description ?? ""
     );
     const [isPublic, setIsPublic] = useState(initialValues?.isPublic ?? true);
+    const [localSubmitting, setLocalSubmitting] = useState(false);
+    const mountedRef = useRef(true);
+    const submittingRef = useRef(false);
 
     /** 제목 */
     const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -60,23 +69,40 @@ export function useOpuForm({
     const handleToggleChange = (v: boolean) => setIsPublic(v);
 
     /** 제출 */
-    const handleSubmit = (e?: FormEvent) => {
+    const handleSubmit = async (e?: FormEvent) => {
         if (e) e.preventDefault();
-        if (disabled || submitting) return;
+        if (disabled || submitting || localSubmitting || submittingRef.current)
+            return;
 
-        onSubmit({
-            title: title.trim(),
-            description: description.trim(),
-            emoji: currentEmoji,
-            timeLabel: currentTimeLabel,
-            categoryLabel: currentCategoryLabel,
-            isPublic,
-        });
+        submittingRef.current = true;
+        setLocalSubmitting(true);
+
+        try {
+            await onSubmit({
+                title: title.trim(),
+                description: description.trim(),
+                emoji: currentEmoji,
+                timeLabel: currentTimeLabel,
+                categoryLabel: currentCategoryLabel,
+                isPublic,
+            });
+        } finally {
+            submittingRef.current = false;
+            if (mountedRef.current) {
+                setLocalSubmitting(false);
+            }
+        }
     };
 
     const submitLabel = mode === "create" ? "등록" : "수정";
     const isSubmitDisabled =
-        disabled || submitting || title.trim().length === 0;
+        disabled || submitting || localSubmitting || title.trim().length === 0;
+
+    useEffect(() => {
+        return () => {
+            mountedRef.current = false;
+        };
+    }, []);
 
     return {
         title,
@@ -84,6 +110,7 @@ export function useOpuForm({
         isPublic,
         submitLabel,
         isSubmitDisabled,
+        localSubmitting,
         titleLength: title.length,
         descriptionLength: description.length,
         handleTitleChange,

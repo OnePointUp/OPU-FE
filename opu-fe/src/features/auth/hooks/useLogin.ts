@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/features/auth/services";
 import { toastSuccess, toastError } from "@/lib/toast";
@@ -16,6 +16,7 @@ export function useLogin() {
     const [emailError, setEmailError] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const loadingRef = useRef(false);
 
     // 이메일 입력 시 즉시 검증
     const handleEmailChange = useCallback((v: string) => {
@@ -28,10 +29,11 @@ export function useLogin() {
 
     // 로그인 처리
     const handleSubmit = useCallback(async () => {
-        if (!canSubmit || loading) return;
+        if (!canSubmit || loadingRef.current) return;
 
+        loadingRef.current = true;
+        setLoading(true);
         try {
-            setLoading(true);
             await login({ email: email.trim(), password });
 
             // 웹푸시 모달 노출 여부 동기화
@@ -48,8 +50,9 @@ export function useLogin() {
             );
         } finally {
             setLoading(false);
+            loadingRef.current = false;
         }
-    }, [canSubmit, loading, email, password, router]);
+    }, [canSubmit, email, password, router]);
 
     return {
         email,
