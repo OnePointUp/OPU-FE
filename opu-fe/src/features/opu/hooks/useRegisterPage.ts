@@ -2,18 +2,21 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 
 import { toastSuccess, toastError } from "@/lib/toast";
 import {
     TIME_CODE_TO_MINUTES,
     type TimeCode,
     type RegisterOpuPayload,
+    type OpuDuplicateItem,
 } from "../domain";
+
 import EmojiSelectSheet from "../components/EmojiSelectSheet";
 import TimeSelectSheet from "../components/TimeSelectSheet";
 import CategorySelectSheet from "../components/CategorySelectSheet";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import OpuDuplicateListModal from "../components/OpuDuplicateListModal";
+
 import { registerOpu } from "../service";
 
 function toMinutes(code: TimeCode | undefined): number | null {
@@ -25,11 +28,6 @@ type FormCoreValues = {
     title: string;
     description: string;
     isPublic: boolean;
-};
-
-type DuplicateErrorResponse = {
-    errorCode?: string;
-    message?: string;
 };
 
 export function useOpuRegisterPage() {
@@ -48,84 +46,86 @@ export function useOpuRegisterPage() {
 
     const [submitting, setSubmitting] = useState(false);
 
-    // 확인 모달용
+    /** 확인 모달 */
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [pendingForm, setPendingForm] = useState<FormCoreValues | null>(null);
 
-    // 중복 OPU 확인용 (공개 등록일 때만 사용)
-    const [isDuplicateFlow, setIsDuplicateFlow] = useState(false);
-    const [duplicateMessage, setDuplicateMessage] = useState<string | null>(
-        null
-    );
+    /** 중복 OPU 모달 */
+    const [duplicateListOpen, setDuplicateListOpen] = useState(false);
+    const [duplicates, setDuplicates] = useState<OpuDuplicateItem[]>([]);
 
-    const validateBeforeConfirm = () => {
+    /* -----------------------------
+       유효성 검사
+    ----------------------------- */
+    const validateBeforeConfirm = (values: FormCoreValues) => {
+        if (!values.title || values.title.trim().length < 2) {
+            toastError("OPU 제목은 최소 2자 이상 입력해 주세요");
+            return false;
+        }
+
         if (!timeCode || timeCode === "ALL") {
             toastError("소요 시간을 선택해 주세요");
             return false;
         }
+
         if (!categoryId) {
             toastError("카테고리를 선택해 주세요");
             return false;
         }
+
         const minutes = toMinutes(timeCode);
         if (minutes == null) {
             toastError("유효하지 않은 소요 시간이에요");
             return false;
         }
+
         return true;
     };
 
-    const handleConfirmRegister = async () => {
-        if (!pendingForm) return;
-        if (!timeCode || timeCode === "ALL" || !categoryId) return;
+    /* -----------------------------
+       등록 확정
+    ----------------------------- */
+    const buildRegisterPayload = (
+        isShared: boolean
+        ): RegisterOpuPayload | null => {
+        if (!pendingForm || !timeCode || timeCode === "ALL" || !categoryId) {
+            return null;
+        }
 
         const minutes = toMinutes(timeCode);
-        if (minutes == null) return;
+        if (minutes == null) return null;
 
-        const payload: RegisterOpuPayload = {
+        return {
             title: pendingForm.title,
             description: pendingForm.description,
             emoji: emoji || "😀",
             requiredMinutes: minutes,
-            isShared: isDuplicateFlow ? false : pendingForm.isPublic,
+            isShared,
             categoryId,
         };
+    };
+
+    const handleConfirmRegister = async () => {
+        const payload = buildRegisterPayload(pendingForm?.isPublic ?? false);
+        if (!payload) return;
+
+        setSubmitting(true);
 
         try {
-            setSubmitting(true);
-            await registerOpu(payload);
+            const result = await registerOpu(payload);
+
+            if (result.created) {
             toastSuccess("OPU가 등록되었어요");
             router.push("/opu/my");
-        } catch (e) {
-            if (axios.isAxiosError(e)) {
-                const status = e.response?.status;
-                const data = e.response?.data as DuplicateErrorResponse | undefined;
-
-                
-        console.log("OPU register error status:", status);
-        console.log("OPU register error raw data:", data);
-        console.log("OPU register errorCode:", (data as any)?.errorCode);
-        console.log("OPU register message:", (data as any)?.message);
-        console.log("OPU register isPublic:", pendingForm?.isPublic);
-
-                // 공개 등록 시에만 중복 OPU 플로우 진입
-                if (
-                    status === 409 &&
-                    data?.errorCode === "03005" &&
-                    pendingForm.isPublic === true
-                ) {
-                    setIsDuplicateFlow(true);
-                    setDuplicateMessage(
-                        data.message ?? "이미 유사한 OPU가 존재해요."
-                    );
-                    setConfirmOpen(true);
-                    return;
-                }
-
-                toastError(data?.message ?? "OPU 등록에 실패했어요.");
-                return;
+            return;
             }
 
+            setConfirmOpen(false);
+            setTimeout(() => {
+            setDuplicates(result.duplicates);
+            setDuplicateListOpen(true);
+            }, 0);
+        } catch {
             toastError("OPU 등록에 실패했어요.");
         } finally {
             setSubmitting(false);
@@ -133,6 +133,9 @@ export function useOpuRegisterPage() {
     };
 
     return {
+        /* =============================
+           Form
+        ============================= */
         formProps: {
             mode: "create" as const,
             initialValues: {
@@ -146,13 +149,15 @@ export function useOpuRegisterPage() {
             onClickTime: () => setTimeSheetOpen(true),
             onClickCategory: () => setCategorySheetOpen(true),
             onSubmit: (values: FormCoreValues) => {
-                if (!validateBeforeConfirm()) return;
+                if (!validateBeforeConfirm(values)) return;
                 setPendingForm(values);
-                setIsDuplicateFlow(false);
-                setDuplicateMessage(null);
                 setConfirmOpen(true);
             },
         },
+
+        /* =============================
+           Emoji Sheet
+        ============================= */
         emojiSheetProps: {
             open: emojiSheetOpen,
             selected: emoji,
@@ -162,6 +167,10 @@ export function useOpuRegisterPage() {
                 setEmojiSheetOpen(false);
             },
         } satisfies React.ComponentProps<typeof EmojiSelectSheet>,
+
+        /* =============================
+           Time Sheet
+        ============================= */
         timeSheetProps: {
             open: timeSheetOpen,
             selectedCode: timeCode,
@@ -172,6 +181,10 @@ export function useOpuRegisterPage() {
                 setTimeSheetOpen(false);
             },
         } satisfies React.ComponentProps<typeof TimeSelectSheet>,
+
+        /* =============================
+           Category Sheet
+        ============================= */
         categorySheetProps: {
             open: categorySheetOpen,
             selectedId: categoryId,
@@ -182,18 +195,46 @@ export function useOpuRegisterPage() {
                 setCategorySheetOpen(false);
             },
         } satisfies React.ComponentProps<typeof CategorySelectSheet>,
+
+        /* =============================
+           Confirm Modal
+        ============================= */
         confirmModalProps: {
             isOpen: confirmOpen,
-            message: isDuplicateFlow
-                ? `${duplicateMessage}\n비공개 OPU로 등록할까요?`
-                : "OPU를 등록할까요?\n등록하면 수정할 수 없습니다.",
+            message: "OPU를 등록할까요?\n등록하면 수정할 수 없습니다.",
             onConfirm: handleConfirmRegister,
             onCancel: () => {
                 setConfirmOpen(false);
                 setPendingForm(null);
-                setIsDuplicateFlow(false);
-                setDuplicateMessage(null);
             },
         } satisfies React.ComponentProps<typeof ConfirmModal>,
+
+        /* =============================
+           Duplicate OPU Modal
+        ============================= */
+        duplicateListModalProps: {
+            open: duplicateListOpen,
+            mode: "create",
+            duplicates,
+            onSelectOpu: (opuId: number) => {
+                router.push(`/opus/${opuId}`);
+            },
+            onCreatePrivate: async () => {
+                const payload = buildRegisterPayload(false);
+                if (!payload) return;
+
+                try {
+                    await registerOpu(payload);
+                    toastSuccess("비공개 OPU로 등록했어요");
+                    router.push("/opu/my");
+                } catch {
+                    toastError("OPU 등록에 실패했어요.");
+                }
+            },
+            onClose: () => {
+                setDuplicateListOpen(false);
+                setDuplicates([]);
+            },
+        } satisfies React.ComponentProps<typeof OpuDuplicateListModal>,
     };
 }
