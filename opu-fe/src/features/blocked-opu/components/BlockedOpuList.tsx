@@ -139,7 +139,7 @@ export default function BlockedOpuList({
                                     color: "var(--color-light-gray)",
                                 }}
                             >
-                                차단한 OPU가 없습니다
+                                차단한 OPU가 없습니다.
                             </div>
                         )}
                     </>
