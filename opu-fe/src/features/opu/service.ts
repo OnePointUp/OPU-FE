@@ -15,6 +15,7 @@ import { toOpuCardModelFromRandom, toOpuCardModelFromSummary } from "./mappers";
 import { apiClient } from "@/lib/apiClient";
 import { ApiResponse, PageResponse } from "@/types/api";
 import { extractErrorMessage } from "@/utils/api-helpers";
+import axios from "axios";
 
 /* ==== 공유 OPU 목록 조회 ===== */
 export async function fetchSharedOpuList({
@@ -169,20 +170,22 @@ export async function registerOpu(
 }
 
 /* ==== 공개 설정 ===== */
-export async function shareOpu(
-    opuId: number
-): Promise<OpuRegisterResponse> {
+export async function shareOpu(opuId: number): Promise<OpuRegisterResponse> {
     try {
-        const res = await apiClient.patch<
-            ApiResponse<OpuRegisterResponse>
-        >(`/opus/${opuId}/share`);
+        const res = await apiClient.patch<ApiResponse<OpuRegisterResponse>>(
+            `/opus/${opuId}/share`
+        );
 
         return res.data.data;
-    } catch (err: any) {
-        if (err?.response?.status === 409) {
-            return err.response.data.data as OpuRegisterResponse;
+    } catch (err: unknown) {
+        if (axios.isAxiosError(err) && err.response?.status === 409) {
+            const data = (
+                err.response.data as
+                    | ApiResponse<OpuRegisterResponse>
+                    | undefined
+            )?.data;
+            if (data) return data;
         }
-
         throw new Error(
             extractErrorMessage(err, "OPU 공개 처리에 실패했어요.")
         );
