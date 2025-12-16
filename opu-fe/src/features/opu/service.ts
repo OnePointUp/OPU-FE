@@ -169,13 +169,11 @@ export async function registerOpu(
 }
 
 /* ==== 공개 설정 ===== */
-export async function shareOpu(
-    opuId: number
-): Promise<OpuRegisterResponse> {
+export async function shareOpu(opuId: number): Promise<OpuRegisterResponse> {
     try {
-        const res = await apiClient.patch<
-            ApiResponse<OpuRegisterResponse>
-        >(`/opus/${opuId}/share`);
+        const res = await apiClient.patch<ApiResponse<OpuRegisterResponse>>(
+            `/opus/${opuId}/share`
+        );
 
         return res.data.data;
     } catch (err: any) {
