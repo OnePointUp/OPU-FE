@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import RoutineListItem from "../components/RoutineListItem";
 import { getRoutineStatus } from "../domain";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import BottomSheet from "@/components/common/BottomSheet";
 import ActionList, { type ActionItem } from "@/components/common/ActionList";
@@ -16,6 +16,7 @@ export default function RoutineListPage() {
     const { items, loading, removeById, reload } = useRoutineListPage();
     const [onlyOngoing, setOnlyOngoing] = useState(false);
     const [navigating, setNavigating] = useState(false);
+    const navigatingRef = useRef(false);
 
     const [openSheet, setOpenSheet] = useState(false);
     const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -151,7 +152,8 @@ export default function RoutineListPage() {
                     className="flex items-center justify-center disabled:opacity-50"
                     disabled={navigating}
                     onClick={() => {
-                        if (navigating) return;
+                        if (navigatingRef.current) return;
+                        navigatingRef.current = true;
                         setNavigating(true);
                         router.push("/routine/register");
                     }}
