@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type React from "react";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import { formatDate } from "@/utils/formatDate";
@@ -72,6 +72,7 @@ export default function RoutineForm({
 }: Props) {
     const router = useRouter();
     const isClient = typeof window !== "undefined";
+    const mountedRef = useRef(true);
 
     const STORAGE_KEY =
         mode === "create"
@@ -80,6 +81,7 @@ export default function RoutineForm({
 
     const [form, setForm] = useState<RoutineFormValue>(initialValue);
     const [showScopeSheet, setShowScopeSheet] = useState(false);
+    const [localSubmitting, setLocalSubmitting] = useState(false);
 
     useEffect(() => {
         setForm(initialValue);
@@ -95,7 +97,8 @@ export default function RoutineForm({
     const hasTitle = (form.title ?? "").trim().length > 0;
     const submitLabel = mode === "create" ? "등록" : "수정";
 
-    const isSubmitDisabled = !isClient || disabled || submitting || !hasTitle;
+    const isSubmitDisabled =
+        !isClient || disabled || submitting || localSubmitting || !hasTitle;
 
     const frequencyLabel =
         frequencyLabelOverride ?? getFrequencyLabel(form.frequency);
@@ -236,9 +239,14 @@ export default function RoutineForm({
     };
 
     const handleSubmit = async () => {
+        if (isSubmitDisabled) return;
+        setLocalSubmitting(true);
         await onSubmit(form);
         if (typeof window !== "undefined") {
             window.sessionStorage.removeItem(STORAGE_KEY);
+        }
+        if (mountedRef.current) {
+            setLocalSubmitting(false);
         }
     };
 
@@ -263,6 +271,12 @@ export default function RoutineForm({
             window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
         }
     }, [form, STORAGE_KEY, isClient, mode]);
+
+    useEffect(() => {
+        return () => {
+            mountedRef.current = false;
+        };
+    }, []);
 
     return (
         <>
@@ -532,7 +546,7 @@ export default function RoutineForm({
                     <OpuActionButton
                         label={submitLabel}
                         disabled={isSubmitDisabled}
-                        loading={submitting}
+                        loading={submitting || localSubmitting}
                         onClick={() => {
                             if (mode === "edit" && onEditScopeChange) {
                                 setShowScopeSheet(true);

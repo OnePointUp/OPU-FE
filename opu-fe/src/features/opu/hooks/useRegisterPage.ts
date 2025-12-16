@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { toastSuccess, toastError } from "@/lib/toast";
@@ -45,6 +45,7 @@ export function useOpuRegisterPage() {
     const [categoryId, setCategoryId] = useState<number | undefined>();
 
     const [submitting, setSubmitting] = useState(false);
+    const submittingRef = useRef(false);
 
     /** 확인 모달 */
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -87,7 +88,7 @@ export function useOpuRegisterPage() {
     ----------------------------- */
     const buildRegisterPayload = (
         isShared: boolean
-        ): RegisterOpuPayload | null => {
+    ): RegisterOpuPayload | null => {
         if (!pendingForm || !timeCode || timeCode === "ALL" || !categoryId) {
             return null;
         }
@@ -106,28 +107,31 @@ export function useOpuRegisterPage() {
     };
 
     const handleConfirmRegister = async () => {
+        if (submittingRef.current) return;
         const payload = buildRegisterPayload(pendingForm?.isPublic ?? false);
         if (!payload) return;
 
+        submittingRef.current = true;
         setSubmitting(true);
 
         try {
             const result = await registerOpu(payload);
 
             if (result.created) {
-            toastSuccess("OPU가 등록되었어요");
-            router.push("/opu/my");
-            return;
+                toastSuccess("OPU가 등록되었어요");
+                router.push("/opu/my");
+                return;
             }
 
             setConfirmOpen(false);
             setTimeout(() => {
-            setDuplicates(result.duplicates);
-            setDuplicateListOpen(true);
+                setDuplicates(result.duplicates);
+                setDuplicateListOpen(true);
             }, 0);
         } catch {
             toastError("OPU 등록에 실패했어요.");
         } finally {
+            submittingRef.current = false;
             setSubmitting(false);
         }
     };
@@ -207,6 +211,7 @@ export function useOpuRegisterPage() {
                 setConfirmOpen(false);
                 setPendingForm(null);
             },
+            confirmDisabled: submitting,
         } satisfies React.ComponentProps<typeof ConfirmModal>,
 
         /* =============================
@@ -217,7 +222,7 @@ export function useOpuRegisterPage() {
             mode: "create",
             duplicates,
             onSelectOpu: async (opuId: number) => {
-                try{
+                try {
                     await addTodoByOpu(opuId);
                     toastSuccess("해당 OPU가 오늘 할 일에 추가됐어요");
                     setDuplicateListOpen(false);
