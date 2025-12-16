@@ -57,14 +57,22 @@ export default function CalendarPage() {
   const handleSelectCalendarDay = (day: CalendarDay) => {
     const [y, m] = day.date.split("-").map(Number);
 
-    // 미리보기 날짜면 → 해당 달로 이동
     if (day.isPreview) {
       jumpTo(y, m);
     }
 
-    // 날짜 선택
     selectDay(day.date);
   };
+
+  /** CalendarFull 렌더 헬퍼 */
+  const renderCalendar = (matrix: (CalendarDay | null)[][]) => (
+    <CalendarFull
+      calendarMatrix={matrix}
+      selectedDay={selectedDay}
+      onSelectDay={(d) => d && handleSelectCalendarDay(d)}
+      cellHeight={cellHeight}
+    />
+  );
 
   return (
     <section className="fixed inset-0 flex flex-col">
@@ -107,36 +115,9 @@ export default function CalendarPage() {
               <div className="flex items-center justify-center h-full" />
             ) : (
               <CalendarSlider
-                prev={
-                  <CalendarFull
-                    calendarMatrix={window.prev}
-                    selectedDay={selectedDay}
-                    onSelectDay={(d) =>
-                      d && handleSelectCalendarDay(d)
-                    }
-                    cellHeight={cellHeight}
-                  />
-                }
-                current={
-                  <CalendarFull
-                    calendarMatrix={window.current}
-                    selectedDay={selectedDay}
-                    onSelectDay={(d) =>
-                      d && handleSelectCalendarDay(d)
-                    }
-                    cellHeight={cellHeight}
-                  />
-                }
-                next={
-                  <CalendarFull
-                    calendarMatrix={window.next}
-                    selectedDay={selectedDay}
-                    onSelectDay={(d) =>
-                      d && handleSelectCalendarDay(d)
-                    }
-                    cellHeight={cellHeight}
-                  />
-                }
+                prev={renderCalendar(window.prev)}
+                current={renderCalendar(window.current)}
+                next={renderCalendar(window.next)}
                 onPrev={slidePrev}
                 onNext={slideNext}
                 gestureLock={gestureLock}

@@ -15,6 +15,7 @@ type Props = {
 };
 
 const DRAG_SPEED = 0.4;
+const GESTURE_LOCK_TIMEOUT = 200;
 
 export default function CalendarContainer({
   children,
@@ -44,7 +45,7 @@ export default function CalendarContainer({
 
       setTimeout(() => {
         setGestureLock("none");
-      }, 200);
+      }, GESTURE_LOCK_TIMEOUT);
     };
 
     el.addEventListener("wheel", onWheel, { passive: false });
