@@ -86,7 +86,9 @@ export default function Header({
     const finalTitle = titleOverride ?? title;
     const finalTooltip = tooltipOverride ?? tooltip;
     const backVisible = showBack ?? defaultShowBack;
-    const showNotificationIcon = pathname !== "/notification";
+    const hideActions =
+        pathname.startsWith("/login") || pathname.startsWith("/signup");
+    const showNotificationIcon = !hideActions && pathname !== "/notification";
 
     return (
         <header className="app-header">
@@ -156,40 +158,44 @@ export default function Header({
                     )}
                 </div>
 
-                <div className="app-header__actions">
-                    <button
-                        type="button"
-                        aria-label="랜덤 뽑기"
-                        onClick={handleGoRandom}
-                        className="app-header__action-btn"
-                    >
-                        <Icon
-                            icon="mingcute:random-line"
-                            width="24"
-                            height="24"
-                            style={{ color: "#000" }}
-                        />
-                    </button>
-
-                    {showNotificationIcon ? (
+                {hideActions ? (
+                    <span className="app-header__spacer" />
+                ) : (
+                    <div className="app-header__actions">
                         <button
                             type="button"
-                            aria-label="알림 보기"
-                            onClick={handleGoNotification}
-                            className="app-header__action-btn relative"
+                            aria-label="랜덤 뽑기"
+                            onClick={handleGoRandom}
+                            className="app-header__action-btn"
                         >
                             <Icon
-                                icon="mingcute:notification-line"
-                                width={26}
-                                height={26}
+                                icon="mingcute:random-line"
+                                width="24"
+                                height="24"
+                                style={{ color: "#000" }}
                             />
-
-                            {hasUnread && (
-                                <span className="absolute top-[6px] right-[6px] w-2 h-2 rounded-full bg-[var(--color-like-pink)]" />
-                            )}
                         </button>
-                    ) : null}
-                </div>
+
+                        {showNotificationIcon ? (
+                            <button
+                                type="button"
+                                aria-label="알림 보기"
+                                onClick={handleGoNotification}
+                                className="app-header__action-btn relative"
+                            >
+                                <Icon
+                                    icon="mingcute:notification-line"
+                                    width={26}
+                                    height={26}
+                                />
+
+                                {hasUnread && (
+                                    <span className="absolute top-[6px] right-[6px] w-2 h-2 rounded-full bg-[var(--color-like-pink)]" />
+                                )}
+                            </button>
+                        ) : null}
+                    </div>
+                )}
             </div>
         </header>
     );
