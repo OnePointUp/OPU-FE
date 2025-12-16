@@ -10,12 +10,28 @@ import {
     RegisterOpuPayload,
     TimeCode,
     OpuRegisterResponse,
+    CategoriesResponse,
 } from "./domain";
 import { toOpuCardModelFromRandom, toOpuCardModelFromSummary } from "./mappers";
 import { apiClient } from "@/lib/apiClient";
 import { ApiResponse, PageResponse } from "@/types/api";
 import { extractErrorMessage } from "@/utils/api-helpers";
 import axios from "axios";
+
+/* ==== OPU 카테고리 조회 ===== */
+export async function fetchOpuCategories(): Promise<CategoriesResponse[]> {
+    try {
+        const res = await apiClient.get<ApiResponse<CategoriesResponse[]>>(
+            "/opus/categories"
+        );
+
+        return res.data.data;
+    } catch (err: unknown) {
+        throw new Error(
+            extractErrorMessage(err, "OPU 카테고리를 불러오지 못했어요.")
+        );
+    }
+}
 
 /* ==== 공유 OPU 목록 조회 ===== */
 export async function fetchSharedOpuList({

@@ -2,7 +2,7 @@
 
 import { Icon } from "@iconify/react";
 import BottomSheet from "@/components/common/BottomSheet";
-import { CATEGORY_MAP } from "@/features/opu/domain";
+import { useOpuCategories } from "../hooks/useOpuCategories";
 
 type Props = {
     open: boolean;
@@ -11,17 +11,15 @@ type Props = {
     onSelect: (option: { id: number; label: string }) => void;
 };
 
-const CATEGORY_OPTIONS = Object.entries(CATEGORY_MAP).map(([id, label]) => ({
-    id: Number(id),
-    label,
-}));
-
 export default function CategorySelectSheet({
     open,
     selectedId,
     onClose,
     onSelect,
 }: Props) {
+    const { categories, loading, error, refetch } = useOpuCategories();
+    const options = categories.map((c) => ({ id: c.id, label: c.name }));
+
     return (
         <BottomSheet open={open} onClose={onClose}>
             {/* <div className="-my-2"> */}
@@ -39,53 +37,75 @@ export default function CategorySelectSheet({
                 </div>
 
                 {/* 리스트 */}
-                <ul>
-                    {CATEGORY_OPTIONS.map((opt, index) => {
-                        const checked = opt.id === selectedId;
+                {loading ? (
+                    <div className="px-3 py-4 text-[var(--color-light-gray)] text-[var(--text-sub)]">
+                        카테고리를 불러오는 중이에요.
+                    </div>
+                ) : options.length === 0 ? (
+                    <div className="px-3 py-4 text-[var(--color-light-gray)] text-[var(--text-sub)]">
+                        표시할 카테고리가 없어요.
+                    </div>
+                ) : (
+                    <ul>
+                        {options.map((opt, index) => {
+                            const checked = opt.id === selectedId;
 
-                        return (
-                            <li
-                                key={opt.id}
-                                className={
-                                    index === 0
-                                        ? "px-3 py-4 text-[var(--text-sub)]"
-                                        : "px-3 py-4 text-[var(--text-sub)] border-t border-[var(--color-super-light-gray)]"
-                                }
-                            >
-                                <button
-                                    type="button"
-                                    className="w-full flex items-center justify-between"
-                                    onClick={() => {
-                                        onSelect(opt);
-                                        onClose();
-                                    }}
+                            return (
+                                <li
+                                    key={opt.id}
+                                    className={
+                                        index === 0
+                                            ? "px-3 py-4 text-[var(--text-sub)]"
+                                            : "px-3 py-4 text-[var(--text-sub)] border-t border-[var(--color-super-light-gray)]"
+                                    }
                                 >
-                                    <span
-                                        style={{
-                                            fontWeight: checked
-                                                ? "var(--weight-semibold)"
-                                                : "var(--weight-regular)",
+                                    <button
+                                        type="button"
+                                        className="w-full flex items-center justify-between"
+                                        onClick={() => {
+                                            onSelect(opt);
+                                            onClose();
                                         }}
                                     >
-                                        {opt.label}
-                                    </span>
-
-                                    {checked && (
-                                        <Icon
-                                            icon="ic:round-check"
-                                            width={18}
-                                            height={18}
-                                            className="shrink-0"
+                                        <span
                                             style={{
-                                                color: "var(--foreground)",
+                                                fontWeight: checked
+                                                    ? "var(--weight-semibold)"
+                                                    : "var(--weight-regular)",
                                             }}
-                                        />
-                                    )}
-                                </button>
-                            </li>
-                        );
-                    })}
-                </ul>
+                                        >
+                                            {opt.label}
+                                        </span>
+
+                                        {checked && (
+                                            <Icon
+                                                icon="ic:round-check"
+                                                width={18}
+                                                height={18}
+                                                className="shrink-0"
+                                                style={{
+                                                    color: "var(--foreground)",
+                                                }}
+                                            />
+                                        )}
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                )}
+                {error && (
+                    <div className="px-3 pb-3 text-[12px] text-[var(--color-opu-pink)]">
+                        {error}{" "}
+                        <button
+                            type="button"
+                            className="underline"
+                            onClick={() => refetch()}
+                        >
+                            다시 시도
+                        </button>
+                    </div>
+                )}
             </div>
             {/* </div> */}
         </BottomSheet>

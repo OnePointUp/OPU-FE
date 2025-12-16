@@ -27,6 +27,7 @@ import {
 } from "../service";
 import { toastError, toastSuccess } from "@/lib/toast";
 import { blockOpu } from "@/features/blocked-opu/services";
+import { useOpuCategories } from "./useOpuCategories";
 
 export type FilterMode = "time" | "category";
 
@@ -39,6 +40,7 @@ const PAGE_SIZE = 20;
 export function useOpuListPage({ contextType = "shared" }: Props) {
     const router = useRouter();
     const fetchingRef = useRef(false);
+    const { categoryMap } = useOpuCategories();
 
     const [page, setPage] = useState(0);
     const [pageMeta, setPageMeta] =
@@ -180,8 +182,8 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
     /** ================= handlers ================= */
     const timeLabel = useMemo(() => getTimeFilterLabel(times), [times]);
     const categoryLabel = useMemo(
-        () => getCategoryFilterLabel(categoryIds),
-        [categoryIds]
+        () => getCategoryFilterLabel(categoryIds, categoryMap),
+        [categoryIds, categoryMap]
     );
     const sortLabel = getSortLabel(sortOption);
 

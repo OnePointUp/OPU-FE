@@ -2,7 +2,7 @@
 
 import { Icon } from "@iconify/react";
 import { useState } from "react";
-import { CATEGORY_BADGE, type OpuCardModel } from "@/features/opu/domain";
+import { getCategoryBadge, type OpuCardModel } from "@/features/opu/domain";
 import Badge from "@/components/common/Badge";
 import { useAuthStore } from "@/stores/useAuthStore";
 
@@ -15,8 +15,8 @@ export default function RandomOpuCard({ item, onAddTodo }: Props) {
     const [liked, setLiked] = useState(item.isLiked);
     const memberId = useAuthStore((s) => s.member?.id);
 
-    const categoryKey = item.categoryName ?? "기타";
-    const { bg, text } = CATEGORY_BADGE[categoryKey] ?? CATEGORY_BADGE["기타"];
+    const categoryLabel = item.categoryName ?? "기타";
+    const { bg, text } = getCategoryBadge(item.categoryId, item.categoryName);
 
     const isMine = memberId != null && item.creatorId === memberId;
     const isPrivate = isMine && item.shareLabel === "비공유";
@@ -85,7 +85,7 @@ export default function RandomOpuCard({ item, onAddTodo }: Props) {
                 {/* 배지 */}
                 <div className="flex items-center justify-center gap-1 flex-wrap">
                     <Badge
-                        label={categoryKey}
+                        label={categoryLabel}
                         bg={bg}
                         color={text}
                         height={22}
