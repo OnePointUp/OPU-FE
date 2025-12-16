@@ -229,7 +229,7 @@ export default function OpuListPage({
                 onReset={handleResetFilter}
             />
 
-            <PlusButton showMenu={false} />
+            {contextType !== "liked" && <PlusButton showMenu={false} />}
 
             {/* 차단 모달 */}
             <ConfirmModal

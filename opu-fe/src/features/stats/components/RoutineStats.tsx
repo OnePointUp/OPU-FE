@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type FC } from "react";
+import Link from "next/link";
 import { Icon } from "@iconify/react";
 
 import StatsCalendar from "./StatsCalendar";
@@ -178,6 +179,13 @@ const RoutineStats: FC<RoutineStatsProps> = ({
     ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
     const routineColor = stats?.color ?? "#B8DD7C";
+    const hasRoutines = routines.length > 0;
+    const showEmptyRoutines = !loadingRoutines && !hasRoutines;
+    const showNoStats =
+        !loadingOverview &&
+        !loadingRoutines &&
+        hasRoutines &&
+        overviewItems.length === 0;
 
     return (
         <div className="space-y-4">
@@ -259,15 +267,41 @@ const RoutineStats: FC<RoutineStatsProps> = ({
                                   </div>
                               </div>
                           ))
-                        : overviewItems.map((item) => (
-                              <RoutineOverviewCard
-                                  key={item.routineId}
-                                  item={item}
-                                  onSelect={() =>
-                                      setActiveFilter(item.routineId)
-                                  }
-                              />
-                          ))}
+                        : showEmptyRoutines ? (
+                              <div className="col-span-2 flex flex-col items-center justify-center gap-3 rounded-2xl border border-[var(--color-super-light-gray)] bg-white py-10 text-center">
+                                  <p className="text-[var(--text-sub)] text-[var(--color-dark-gray)] font-[var(--weight-medium)]">
+                                      아직 설정된 루틴이 없습니다.
+                                  </p>
+                                  <p className="text-xs text-[var(--color-light-gray)]">
+                                      루틴을 등록하고 월별 통계를 확인해보세요.
+                                  </p>
+                                  <Link
+                                      href="/routine/register"
+                                      className="inline-flex items-center justify-center rounded-full bg-[var(--color-opu-pink)] px-4 py-2 text-white text-[13px] font-[var(--weight-semibold)] shadow-sm"
+                                  >
+                                      루틴 등록하기
+                                  </Link>
+                              </div>
+                          ) : showNoStats ? (
+                              <div className="col-span-2 flex flex-col items-center justify-center gap-2 rounded-2xl border border-[var(--color-super-light-gray)] bg-white py-8 text-center">
+                                  <p className="text-[var(--text-sub)] text-[var(--color-dark-gray)] font-[var(--weight-medium)]">
+                                      선택한 기간의 통계가 아직 없어요.
+                                  </p>
+                                  <p className="text-xs text-[var(--color-light-gray)]">
+                                      루틴을 꾸준히 완료하면 통계가 채워집니다.
+                                  </p>
+                              </div>
+                          ) : (
+                              overviewItems.map((item) => (
+                                  <RoutineOverviewCard
+                                      key={item.routineId}
+                                      item={item}
+                                      onSelect={() =>
+                                          setActiveFilter(item.routineId)
+                                      }
+                                  />
+                              ))
+                          )}
                 </section>
             )}
 
