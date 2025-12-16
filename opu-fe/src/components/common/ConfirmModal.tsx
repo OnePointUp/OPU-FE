@@ -25,8 +25,6 @@ export default function ConfirmModal({
 
     if (!isOpen) return null;
 
-    const disabled = confirmDisabled;
-
     return (
         <div
             className="fixed inset-0 z-500 flex items-center justify-center bg-[var(--color-modal-bg)]"
@@ -53,7 +51,7 @@ export default function ConfirmModal({
                     </button>
                     <button
                         onClick={onConfirm}
-                        disabled={disabled}
+                        disabled={confirmDisabled}
                         className="w-1/2 h-10 rounded-md bg-[var(--color-opu-dark-green)] text-white font-[var(--weight-semibold)] disabled:opacity-60 disabled:cursor-not-allowed"
                         style={{ fontSize: "var(--text-sub)" }}
                     >
