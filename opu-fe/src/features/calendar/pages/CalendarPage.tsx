@@ -62,6 +62,8 @@ export default function CalendarPage() {
     }
 
     selectDay(day.date);
+
+    setCellHeight(collapsedHeight);
   };
 
   /** CalendarFull 렌더 헬퍼 */
