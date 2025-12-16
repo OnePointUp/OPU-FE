@@ -114,8 +114,6 @@ export function useOpuRegisterPage() {
         submittingRef.current = true;
         setSubmitting(true);
 
-        setSubmitting(true);
-
         try {
             const result = await registerOpu(payload);
 
