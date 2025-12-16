@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import CalendarFull from "../components/CalendarFull";
+import CalendarFull, { CalendarDay } from "../components/CalendarFull";
 import CalendarContainer from "../components/CalendarContainer";
 import CalendarSlider from "../components/CalendarSlider";
 import DaySelector from "@/features/main/components/DaySelector";
@@ -53,6 +53,19 @@ export default function CalendarPage() {
     todoHeight,
   } = useCalendarLayout(weekCount);
 
+  /** 날짜 클릭 공통 핸들러 */
+  const handleSelectCalendarDay = (day: CalendarDay) => {
+    const [y, m] = day.date.split("-").map(Number);
+
+    // 미리보기 날짜면 → 해당 달로 이동
+    if (day.isPreview) {
+      jumpTo(y, m);
+    }
+
+    // 날짜 선택
+    selectDay(day.date);
+  };
+
   return (
     <section className="fixed inset-0 flex flex-col">
       <div className="w-full max-w-[var(--app-max)] mx-auto pt-app-header flex flex-col">
@@ -98,7 +111,9 @@ export default function CalendarPage() {
                   <CalendarFull
                     calendarMatrix={window.prev}
                     selectedDay={selectedDay}
-                    onSelectDay={(d) => d && selectDay(d.date)}
+                    onSelectDay={(d) =>
+                      d && handleSelectCalendarDay(d)
+                    }
                     cellHeight={cellHeight}
                   />
                 }
@@ -106,7 +121,9 @@ export default function CalendarPage() {
                   <CalendarFull
                     calendarMatrix={window.current}
                     selectedDay={selectedDay}
-                    onSelectDay={(d) => d && selectDay(d.date)}
+                    onSelectDay={(d) =>
+                      d && handleSelectCalendarDay(d)
+                    }
                     cellHeight={cellHeight}
                   />
                 }
@@ -114,7 +131,9 @@ export default function CalendarPage() {
                   <CalendarFull
                     calendarMatrix={window.next}
                     selectedDay={selectedDay}
-                    onSelectDay={(d) => d && selectDay(d.date)}
+                    onSelectDay={(d) =>
+                      d && handleSelectCalendarDay(d)
+                    }
                     cellHeight={cellHeight}
                   />
                 }

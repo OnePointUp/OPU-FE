@@ -126,21 +126,51 @@ export function useCalendarWindow(initYear: number, initMonth: number) {
 
   /** 헤더에서 월 점프 */
   const jumpTo = async (year: number, month: number) => {
-    setReady(false);
+    if (!window) return;
 
+    const curY = cursor.year;
+    const curM = cursor.month;
+
+    // ▶ 다음 달 클릭
+    if (
+        year === curY &&
+        month === curM + 1
+    ) {
+        slideNext();
+        return;
+    }
+
+    // ◀ 이전 달 클릭
+    if (
+        year === curY &&
+        month === curM - 1
+    ) {
+        slidePrev();
+        return;
+    }
+
+    // 🔹 먼 달 점프 (optimistic)
+    setCursor({ year, month });
+
+    // 화면은 즉시 바꿈 (current만 우선)
+    setWindow((w) => ({
+        prev: w!.prev,
+        current: w!.current,
+        next: w!.next,
+    }));
+
+    // 뒤에서 실제 데이터 채움
     const prev = addMonth(year, month, -1);
     const next = addMonth(year, month, 1);
 
     const [pm, cm, nm] = await Promise.all([
-      buildFilledMatrix(prev.year, prev.month),
-      buildFilledMatrix(year, month),
-      buildFilledMatrix(next.year, next.month),
+        buildFilledMatrix(prev.year, prev.month),
+        buildFilledMatrix(year, month),
+        buildFilledMatrix(next.year, next.month),
     ]);
 
     setWindow({ prev: pm, current: cm, next: nm });
-    setCursor({ year, month });
-    setReady(true);
-  };
+    };
 
   return {
     window,
