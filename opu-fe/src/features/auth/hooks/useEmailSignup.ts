@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { requestEmailSignup } from "@/features/auth/services";
@@ -20,6 +20,7 @@ export function useSignupEmail() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const loadingRef = useRef(false);
 
     const { nickname, setNickname, dupError, checking, handleBlurNickname } =
         useNicknameField();
@@ -50,11 +51,12 @@ export function useSignupEmail() {
         agreedRequired;
 
     const handleSubmit = useCallback(async () => {
-        if (!canSubmit) return;
+        if (!canSubmit || loadingRef.current) return;
+
+        loadingRef.current = true;
+        setLoading(true);
 
         try {
-            setLoading(true);
-
             await requestEmailSignup({
                 email: email.trim(),
                 password,
@@ -72,6 +74,7 @@ export function useSignupEmail() {
             );
         } finally {
             setLoading(false);
+            loadingRef.current = false;
         }
     }, [canSubmit, email, password, nickname, webPushAgreed, router]);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toastSuccess, toastError } from "@/lib/toast";
 import { AuthMember, useAuthStore } from "@/stores/useAuthStore";
@@ -24,6 +24,7 @@ export function useSocialSignupForm() {
     const searchParams = useSearchParams();
 
     const [saving, setSaving] = useState(false);
+    const savingRef = useRef(false);
 
     const { nickname, setNickname, dupError, checking, handleBlurNickname } =
         useNicknameField();
@@ -43,7 +44,7 @@ export function useSocialSignupForm() {
 
     // 제출
     const handleSubmit = useCallback(async () => {
-        if (!canSubmit) return;
+        if (!canSubmit || savingRef.current) return;
 
         const providerId = searchParams.get("providerId");
         if (!providerId) {
@@ -55,6 +56,7 @@ export function useSocialSignupForm() {
         }
 
         try {
+            savingRef.current = true;
             setSaving(true);
 
             const payload = {
@@ -92,6 +94,7 @@ export function useSocialSignupForm() {
             toastError("회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.");
         } finally {
             setSaving(false);
+            savingRef.current = false;
         }
     }, [canSubmit, nickname, searchParams, router]);
 
