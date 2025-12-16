@@ -269,21 +269,10 @@ const RoutineStats: FC<RoutineStatsProps> = ({
                           ))
                         : showEmptyRoutines ? (
                               <div className="col-span-2 flex flex-col items-center justify-center gap-3 rounded-2xl border border-[var(--color-super-light-gray)] bg-white py-10 text-center">
-                                  <p
-                                      style={{
-                                          fontSize: "var(--text-sub)",
-                                          color: "var(--color-dark-gray)",
-                                          fontWeight: "var(--weight-medium)",
-                                      }}
-                                  >
+                                  <p className="text-[var(--text-sub)] text-[var(--color-dark-gray)] font-[var(--weight-medium)]">
                                       아직 설정된 루틴이 없습니다.
                                   </p>
-                                  <p
-                                      className="text-xs"
-                                      style={{
-                                          color: "var(--color-light-gray)",
-                                      }}
-                                  >
+                                  <p className="text-xs text-[var(--color-light-gray)]">
                                       루틴을 등록하고 월별 통계를 확인해보세요.
                                   </p>
                                   <Link
@@ -295,21 +284,10 @@ const RoutineStats: FC<RoutineStatsProps> = ({
                               </div>
                           ) : showNoStats ? (
                               <div className="col-span-2 flex flex-col items-center justify-center gap-2 rounded-2xl border border-[var(--color-super-light-gray)] bg-white py-8 text-center">
-                                  <p
-                                      style={{
-                                          fontSize: "var(--text-sub)",
-                                          color: "var(--color-dark-gray)",
-                                          fontWeight: "var(--weight-medium)",
-                                      }}
-                                  >
+                                  <p className="text-[var(--text-sub)] text-[var(--color-dark-gray)] font-[var(--weight-medium)]">
                                       선택한 기간의 통계가 아직 없어요.
                                   </p>
-                                  <p
-                                      className="text-xs"
-                                      style={{
-                                          color: "var(--color-light-gray)",
-                                      }}
-                                  >
+                                  <p className="text-xs text-[var(--color-light-gray)]">
                                       루틴을 꾸준히 완료하면 통계가 채워집니다.
                                   </p>
                               </div>
