@@ -7,6 +7,9 @@ import NotificationToggleRow from "./NotificationToggleRow";
 import NotificationToggleList from "./NotificationToggleList";
 
 export default function NotificationContent() {
+    const supportsNotification =
+        typeof window !== "undefined" && "Notification" in window;
+
     const {
         settings,
         webPushAgreed,
@@ -19,14 +22,16 @@ export default function NotificationContent() {
     const [pushSaving, setPushSaving] = useState(false);
 
     const permission = useMemo(() => {
-        if (typeof window === "undefined") return "default" as const;
+        if (!supportsNotification) return "default" as const;
         return Notification.permission;
-    }, []);
+    }, [supportsNotification]);
 
-    const pushDisabled = permission === "denied";
+    const pushDisabled = permission === "denied" || !supportsNotification;
 
     const pushDescription = pushDisabled
-        ? "브라우저 설정에서 알림 권한을 허용해야 받을 수 있어요"
+        ? supportsNotification
+            ? "브라우저 설정에서 알림 권한을 허용해야 받을 수 있어요"
+            : "이 브라우저에서는 웹 알림을 지원하지 않아요"
         : webPushAgreed && permission === "granted"
         ? "허용됨 · 브라우저 알림으로 바로 받을 수 있어요"
         : "꺼짐 · 켜면 브라우저 알림으로 받을 수 있어요";
@@ -37,7 +42,7 @@ export default function NotificationContent() {
 
             // 켜기: 브라우저 권한 요청
             if (next) {
-                if (typeof window !== "undefined") {
+                if (supportsNotification) {
                     const p =
                         Notification.permission === "default"
                             ? await Notification.requestPermission()
@@ -54,7 +59,7 @@ export default function NotificationContent() {
                 setPushSaving(false);
             }
         },
-        [pushSaving, toggleWebPushAgreed]
+        [pushSaving, supportsNotification, toggleWebPushAgreed]
     );
 
     if (loading || !settings) {

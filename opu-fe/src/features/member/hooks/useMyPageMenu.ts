@@ -48,6 +48,7 @@ export function useMyPageMenu({ onClickLogout }: MyPageMenuArgs) {
     const isLocal = authProvider === "local";
 
     const items: MyPageMenuItem[] = [
+        { label: "루틴 관리", href: "/routine" },
         { label: "차단 OPU 관리", href: "/opu/blocked" },
         { label: "알림 설정", href: "/notification/setting" },
     ];

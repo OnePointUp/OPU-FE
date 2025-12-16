@@ -10,8 +10,11 @@ import WebPushModal from "./WebPushModal";
 
 export default function ProtectedPushGate() {
     const [open, setOpen] = useState(false);
-    const permission: NotificationPermission =
-        typeof window === "undefined" ? "default" : Notification.permission;
+    const supportsNotification =
+        typeof window !== "undefined" && "Notification" in window;
+    const permission: NotificationPermission = supportsNotification
+        ? Notification.permission
+        : "default";
 
     useEffect(() => {
         (async () => {
@@ -36,6 +39,12 @@ export default function ProtectedPushGate() {
     const onLater = close;
 
     const onAccept = async () => {
+        // 브라우저가 알림을 지원하지 않으면 바로 닫기
+        if (!supportsNotification) {
+            close();
+            return;
+        }
+
         // denied는 브라우저가 막은 상태라 여기서 못 바꿈, 안내만 하고 닫기
         if (Notification.permission === "denied") {
             close();

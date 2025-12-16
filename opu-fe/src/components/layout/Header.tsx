@@ -50,6 +50,10 @@ export default function Header({
         router.push("/notification");
     };
 
+    const handleGoRandom = () => {
+        router.push("/opu/random/scope");
+    };
+
     useEffect(() => {
         if (!accessToken) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -82,7 +86,11 @@ export default function Header({
     const finalTitle = titleOverride ?? title;
     const finalTooltip = tooltipOverride ?? tooltip;
     const backVisible = showBack ?? defaultShowBack;
-    const showNotificationIcon = pathname !== "/notification";
+    const hideActions =
+        pathname.startsWith("/login") ||
+        pathname.startsWith("/signup") ||
+        pathname.startsWith("/notification");
+    const showNotificationIcon = !hideActions && pathname !== "/notification";
 
     return (
         <header className="app-header">
@@ -152,27 +160,43 @@ export default function Header({
                     )}
                 </div>
 
-                {showNotificationIcon ? (
-                    <div className="app-header__icon relative flex items-center justify-center">
+                {hideActions ? (
+                    <span className="app-header__spacer" />
+                ) : (
+                    <div className="app-header__actions">
                         <button
                             type="button"
-                            aria-label="알림 보기"
-                            onClick={handleGoNotification}
-                            className="relative"
+                            aria-label="랜덤 뽑기"
+                            onClick={handleGoRandom}
+                            className="app-header__action-btn"
                         >
                             <Icon
-                                icon="mingcute:notification-line"
-                                width={26}
-                                height={26}
+                                icon="mingcute:random-line"
+                                width={24}
+                                height={24}
+                                style={{ color: "#000" }}
                             />
-
-                            {hasUnread && (
-                                <span className="absolute top-[2px] right-[3px] w-2 h-2 rounded-full bg-[var(--color-like-pink)]" />
-                            )}
                         </button>
+
+                        {showNotificationIcon ? (
+                            <button
+                                type="button"
+                                aria-label="알림 보기"
+                                onClick={handleGoNotification}
+                                className="app-header__action-btn relative"
+                            >
+                                <Icon
+                                    icon="mingcute:notification-line"
+                                    width={26}
+                                    height={26}
+                                />
+
+                                {hasUnread && (
+                                    <span className="absolute top-[6px] right-[6px] w-2 h-2 rounded-full bg-[var(--color-like-pink)]" />
+                                )}
+                            </button>
+                        ) : null}
                     </div>
-                ) : (
-                    <span className="app-header__spacer" />
                 )}
             </div>
         </header>
