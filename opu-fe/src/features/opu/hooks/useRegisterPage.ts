@@ -17,7 +17,7 @@ import CategorySelectSheet from "../components/CategorySelectSheet";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import OpuDuplicateListModal from "../components/OpuDuplicateListModal";
 
-import { registerOpu } from "../service";
+import { addTodoByOpu, registerOpu } from "../service";
 
 function toMinutes(code: TimeCode | undefined): number | null {
     if (!code || code === "ALL") return null;
@@ -216,8 +216,16 @@ export function useOpuRegisterPage() {
             open: duplicateListOpen,
             mode: "create",
             duplicates,
-            onSelectOpu: (opuId: number) => {
-                router.push(`/opus/${opuId}`);
+            onSelectOpu: async (opuId: number) => {
+                try{
+                    await addTodoByOpu(opuId);
+                    toastSuccess("해당 OPU가 오늘 할 일에 추가됐어요");
+                    setDuplicateListOpen(false);
+                    setDuplicates([]);
+                    router.back();
+                } catch {
+                    toastError("오늘 할 일 추가에 실패했어요.");
+                }
             },
             onCreatePrivate: async () => {
                 const payload = buildRegisterPayload(false);
