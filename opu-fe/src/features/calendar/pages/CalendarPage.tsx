@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import CalendarFull from "../components/CalendarFull";
 import CalendarContainer from "../components/CalendarContainer";
 import CalendarSlider from "../components/CalendarSlider";
@@ -12,8 +14,13 @@ import { useCalendarCore } from "@/features/calendar/hooks/useCalendarCore";
 import { useCalendarLayout } from "../hooks/useCalendarLayout";
 import { useCalendarWindow } from "../hooks/useCalendarWindow";
 
+export type GestureLock = "none" | "horizontal" | "vertical";
+
 export default function CalendarPage() {
   const today = new Date();
+
+  /** 제스처 락 */
+  const [gestureLock, setGestureLock] = useState<GestureLock>("none");
 
   const {
     selectedDay,
@@ -78,42 +85,44 @@ export default function CalendarPage() {
             setCellHeight={setCellHeight}
             expandedHeight={expandedHeight}
             collapsedHeight={collapsedHeight}
+            gestureLock={gestureLock}
+            setGestureLock={setGestureLock}
           >
             <CalendarWeekdayHeader />
-            
+
             {!window || !ready ? (
-              <div className="flex items-center justify-center h-full">
-                {/* skeleton */}
-              </div>
+              <div className="flex items-center justify-center h-full" />
             ) : (
-            <CalendarSlider
-              prev={
-                <CalendarFull
-                  calendarMatrix={window.prev}
-                  selectedDay={selectedDay}
-                  onSelectDay={(d) => d && selectDay(d.date)}
-                  cellHeight={cellHeight}
-                />
-              }
-              current={
-                <CalendarFull
-                  calendarMatrix={window.current}
-                  selectedDay={selectedDay}
-                  onSelectDay={(d) => d && selectDay(d.date)}
-                  cellHeight={cellHeight}
-                />
-              }
-              next={
-                <CalendarFull
-                  calendarMatrix={window.next}
-                  selectedDay={selectedDay}
-                  onSelectDay={(d) => d && selectDay(d.date)}
-                  cellHeight={cellHeight}
-                />
-              }
-              onPrev={slidePrev}
-              onNext={slideNext}
-            />
+              <CalendarSlider
+                prev={
+                  <CalendarFull
+                    calendarMatrix={window.prev}
+                    selectedDay={selectedDay}
+                    onSelectDay={(d) => d && selectDay(d.date)}
+                    cellHeight={cellHeight}
+                  />
+                }
+                current={
+                  <CalendarFull
+                    calendarMatrix={window.current}
+                    selectedDay={selectedDay}
+                    onSelectDay={(d) => d && selectDay(d.date)}
+                    cellHeight={cellHeight}
+                  />
+                }
+                next={
+                  <CalendarFull
+                    calendarMatrix={window.next}
+                    selectedDay={selectedDay}
+                    onSelectDay={(d) => d && selectDay(d.date)}
+                    cellHeight={cellHeight}
+                  />
+                }
+                onPrev={slidePrev}
+                onNext={slideNext}
+                gestureLock={gestureLock}
+                setGestureLock={setGestureLock}
+              />
             )}
           </CalendarContainer>
 

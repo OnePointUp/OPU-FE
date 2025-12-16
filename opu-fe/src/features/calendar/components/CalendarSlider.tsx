@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { GestureLock } from "../pages/CalendarPage";
 
 type Props = {
   prev: React.ReactNode;
@@ -8,9 +9,12 @@ type Props = {
   next: React.ReactNode;
   onPrev: () => void;
   onNext: () => void;
+  gestureLock: GestureLock;
+  setGestureLock: React.Dispatch<React.SetStateAction<GestureLock>>;
 };
 
 const SWIPE_THRESHOLD = 50;
+const SLIDE_DURATION = 250;
 
 export default function CalendarSlider({
   prev,
@@ -18,6 +22,8 @@ export default function CalendarSlider({
   next,
   onPrev,
   onNext,
+  gestureLock,
+  setGestureLock,
 }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +34,7 @@ export default function CalendarSlider({
   const [width, setWidth] = useState(0);
   const [animating, setAnimating] = useState(false);
 
-  /** ✔ 부모 컨테이너 width 측정 */
+  /** width 측정 */
   useEffect(() => {
     if (!wrapperRef.current) return;
 
@@ -39,18 +45,20 @@ export default function CalendarSlider({
     };
 
     resize();
-
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
   }, []);
 
-  /** 공통: 드래그 시작 */
+  /** 드래그 시작 */
   const beginDrag = (clientX: number) => {
+    if (gestureLock !== "none" || animating) return;
+
+    setGestureLock("horizontal");
     startX.current = clientX;
     isDragging.current = true;
   };
 
-  /** 공통: 드래그 이동 */
+  /** 드래그 이동 */
   const moveDrag = (clientX: number) => {
     if (!isDragging.current || animating) return;
 
@@ -58,7 +66,7 @@ export default function CalendarSlider({
     setTranslateX(-width + delta);
   };
 
-  /** 공통: 드래그 종료 */
+  /** 드래그 종료 */
   const endDrag = (clientX: number) => {
     if (!isDragging.current) return;
     isDragging.current = false;
@@ -74,17 +82,20 @@ export default function CalendarSlider({
           onNext();
           setTranslateX(-width);
           setAnimating(false);
-        }, 250);
+          setGestureLock("none");
+        }, SLIDE_DURATION);
       } else {
         setTranslateX(0);
         setTimeout(() => {
           onPrev();
           setTranslateX(-width);
           setAnimating(false);
-        }, 250);
+          setGestureLock("none");
+        }, SLIDE_DURATION);
       }
     } else {
       setTranslateX(-width);
+      setGestureLock("none");
     }
   };
 
@@ -92,17 +103,21 @@ export default function CalendarSlider({
     <div
       ref={wrapperRef}
       className="w-full h-full overflow-hidden"
-
       onMouseDown={(e) => beginDrag(e.clientX)}
       onMouseMove={(e) => isDragging.current && moveDrag(e.clientX)}
       onMouseUp={(e) => endDrag(e.clientX)}
       onMouseLeave={(e) => isDragging.current && endDrag(e.clientX)}
-
       onTouchStart={(e) => beginDrag(e.touches[0].clientX)}
       onTouchMove={(e) => moveDrag(e.touches[0].clientX)}
       onTouchEnd={(e) => endDrag(e.changedTouches[0].clientX)}
-
-      style={{ cursor: isDragging.current ? "grabbing" : "grab" }}
+      style={{
+        cursor:
+          gestureLock === "horizontal"
+            ? "grabbing"
+            : "grab",
+        pointerEvents:
+          gestureLock === "vertical" ? "none" : "auto",
+      }}
     >
       {width > 0 && (
         <div
@@ -110,7 +125,9 @@ export default function CalendarSlider({
           style={{
             width: width * 3,
             transform: `translateX(${translateX}px)`,
-            transition: animating ? "transform .25s ease" : "none",
+            transition: animating
+              ? `transform ${SLIDE_DURATION}ms ease`
+              : "none",
           }}
         >
           <div style={{ width }}>{prev}</div>
