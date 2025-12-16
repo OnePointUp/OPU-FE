@@ -100,7 +100,7 @@ export default function OpuRankingList({
                                     color: "var(--color-light-gray)",
                                 }}
                             >
-                                <p>아직 수행한 OPU가 없어요 😅 </p>
+                                <p>아직 수행한 OPU가 없습니다.</p>
                             </div>
                         )}
                     </>
