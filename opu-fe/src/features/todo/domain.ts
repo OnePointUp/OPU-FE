@@ -1,6 +1,8 @@
 /* ==== 단일 Todo ==== */
 export interface Todo {
   id: number;
+  routineId?: number | null;
+  opuId?: number | null;
   title: string;
   content?: string | null;
 
