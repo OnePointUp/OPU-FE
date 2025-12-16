@@ -7,6 +7,7 @@ type ConfirmModalProps = {
     message?: string;
     onConfirm: () => void;
     onCancel: () => void;
+    confirmDisabled?: boolean;
 };
 
 export default function ConfirmModal({
@@ -14,6 +15,7 @@ export default function ConfirmModal({
     message = "삭제하시겠습니까?",
     onConfirm,
     onCancel,
+    confirmDisabled = false,
 }: ConfirmModalProps) {
     useEffect(() => {
         const handler = (e: KeyboardEvent) => e.key === "Escape" && onCancel();
@@ -22,6 +24,8 @@ export default function ConfirmModal({
     }, [isOpen, onCancel]);
 
     if (!isOpen) return null;
+
+    const disabled = confirmDisabled;
 
     return (
         <div
@@ -49,7 +53,8 @@ export default function ConfirmModal({
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="w-1/2 h-10 rounded-md bg-[var(--color-opu-dark-green)] text-white font-[var(--weight-semibold)]"
+                        disabled={disabled}
+                        className="w-1/2 h-10 rounded-md bg-[var(--color-opu-dark-green)] text-white font-[var(--weight-semibold)] disabled:opacity-60 disabled:cursor-not-allowed"
                         style={{ fontSize: "var(--text-sub)" }}
                     >
                         확인

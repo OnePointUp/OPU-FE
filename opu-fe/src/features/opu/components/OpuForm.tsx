@@ -13,7 +13,7 @@ import {
 type Props = {
     mode: "create" | "edit";
     initialValues?: Partial<OpuFormValues>;
-    onSubmit: (values: OpuFormValues) => void;
+    onSubmit: (values: OpuFormValues) => Promise<void> | void;
     onClickTime?: () => void;
     onClickCategory?: () => void;
     onClickEmoji?: () => void;
@@ -43,6 +43,7 @@ export default function OpuForm({
         isSubmitDisabled,
         titleLength,
         descriptionLength,
+        localSubmitting,
         handleTitleChange,
         handleDescriptionChange,
         handleToggleChange,
@@ -177,7 +178,7 @@ export default function OpuForm({
                     <OpuActionButton
                         label={submitLabel}
                         disabled={isSubmitDisabled}
-                        loading={submitting}
+                        loading={submitting || localSubmitting}
                         onClick={handleSubmit}
                     />
                 </div>

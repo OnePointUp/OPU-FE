@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { toastSuccess, toastError } from "@/lib/toast";
@@ -45,6 +45,7 @@ export function useOpuRegisterPage() {
     const [categoryId, setCategoryId] = useState<number | undefined>();
 
     const [submitting, setSubmitting] = useState(false);
+    const submittingRef = useRef(false);
 
     /** 확인 모달 */
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -106,9 +107,11 @@ export function useOpuRegisterPage() {
     };
 
     const handleConfirmRegister = async () => {
+        if (submittingRef.current) return;
         const payload = buildRegisterPayload(pendingForm?.isPublic ?? false);
         if (!payload) return;
 
+        submittingRef.current = true;
         setSubmitting(true);
 
         try {
@@ -128,6 +131,7 @@ export function useOpuRegisterPage() {
         } catch {
             toastError("OPU 등록에 실패했어요.");
         } finally {
+            submittingRef.current = false;
             setSubmitting(false);
         }
     };
@@ -207,6 +211,7 @@ export function useOpuRegisterPage() {
                 setConfirmOpen(false);
                 setPendingForm(null);
             },
+            confirmDisabled: submitting,
         } satisfies React.ComponentProps<typeof ConfirmModal>,
 
         /* =============================
