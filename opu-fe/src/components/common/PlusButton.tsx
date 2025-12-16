@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -19,15 +19,16 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
 
     // 브라우저에서만 document.body 설정
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setPortalTarget(document.body);
     }, []);
 
-    const toggleMenu = () => setIsOpen(prev => !prev);
+    const toggleMenu = () => setIsOpen((prev) => !prev);
     const closeMenu = () => setIsOpen(false);
 
     const handleDefaultAdd = () => router.push("/opu/register");
 
-    const runAddEvent = () => onAddEvent ? onAddEvent() : handleDefaultAdd();
+    const runAddEvent = () => (onAddEvent ? onAddEvent() : handleDefaultAdd());
 
     const menuItems = [
         {
@@ -44,7 +45,7 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
             onClick: () => {
                 runAddEvent();
                 closeMenu();
-            }
+            },
         },
         {
             label: "OPU에서 추가",
@@ -58,10 +59,11 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
             ),
             bgColor: "var(--color-light-yellow)",
             onClick: () => {
-                router.push("/opu")
+                router.push("/opu");
                 closeMenu();
-            }
+            },
         },
+
         {
             label: "랜덤 OPU 뽑기",
             icon: (
@@ -69,15 +71,32 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
                     icon="lucide:rabbit"
                     width={30}
                     height={30}
+                    style={{ color: "var(--color-opu-brown)" }}
+                />
+            ),
+            bgColor: "var(--color-opu-light-yellow)",
+
+            onClick: () => {
+                router.push("/opu/random/scope");
+                closeMenu();
+            },
+        },
+        {
+            label: "루틴 등록",
+            icon: (
+                <Icon
+                    icon="mdi:alarm-plus"
+                    width={28}
+                    height={28}
                     className="text-white"
                 />
             ),
             bgColor: "var(--color-light-pink)",
             onClick: () => {
-                router.push("/opu/random/scope")
+                router.push("/routine/register");
                 closeMenu();
-            }
-        }
+            },
+        },
     ];
 
     // 아직 portalTarget이 없으면 렌더하지 않음
@@ -98,7 +117,6 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
 
             {/* 기존 container */}
             <div className="plus-button__container">
-
                 {/* 메뉴 */}
                 {showMenu && (
                     <div
@@ -108,8 +126,13 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
                         )}
                     >
                         {menuItems.map((item, index) => (
-                            <div key={index} className="plus-menu__item-wrapper">
-                                <span className="plus-menu__label">{item.label}</span>
+                            <div
+                                key={index}
+                                className="plus-menu__item-wrapper"
+                            >
+                                <span className="plus-menu__label">
+                                    {item.label}
+                                </span>
                                 <button
                                     onClick={item.onClick}
                                     className="plus-menu__item"
@@ -124,7 +147,11 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
 
                 {/* 플러스 버튼 */}
                 <button
-                    onClick={showMenu ? toggleMenu : () => router.push("/opu/register")}
+                    onClick={
+                        showMenu
+                            ? toggleMenu
+                            : () => router.push("/opu/register")
+                    }
                     className={clsx(
                         "plus-button",
                         showMenu && isOpen && "plus-button--rotated"
