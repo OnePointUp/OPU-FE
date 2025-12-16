@@ -35,6 +35,8 @@ export default function SharedOpuList({
                     <br />
                     OPU를 등록해보세요!
                 </>
+            ) : contextType === "liked" ? (
+                <>찜한 OPU가 없습니다.</>
             ) : (
                 <>공유된 OPU가 없습니다.</>
             );
