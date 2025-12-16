@@ -172,8 +172,8 @@ export default function Header({
                         >
                             <Icon
                                 icon="mingcute:random-line"
-                                width="24"
-                                height="24"
+                                width={24}
+                                height={24}
                                 style={{ color: "#000" }}
                             />
                         </button>
