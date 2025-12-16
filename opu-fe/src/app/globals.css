@@ -41,7 +41,9 @@
     --color-sunday: #f88183;
     --color-opu-red: #ff615b;
     --color-opu-blue: #49a7ff;
+    --color-opu-light-yellow: #fff7cc;
     --color-opu-yellow: #fff7e0;
+    --color-opu-brown: #bba891;
 
     --color-placeholder: #c9cacd;
     --color-error: #e11d48;
@@ -58,7 +60,7 @@
     --color-dark-blue-gray: #64758b;
     --color-dark-navy: #0f172a;
 
-    --color-dark-yellow: #d7d7b4;
+    --color-dark-yellow: #bebe99;
     --color-light-yellow: #ffffe8;
     --color-kakao-yellow: #fee500;
 
