@@ -6,7 +6,7 @@ import { Icon } from "@iconify/react";
 
 type Props = {
     item: NotificationFeedItem;
-    onRead: (id: number) => void;
+    onClick: (item: NotificationFeedItem) => void;
 };
 
 const ICON_MAP: Record<NotificationFeedItem["code"], string> = {
@@ -17,13 +17,13 @@ const ICON_MAP: Record<NotificationFeedItem["code"], string> = {
     RANDOM_DRAW: "fluent-emoji-flat:magic-wand",
 };
 
-export default function NotificationFeedRow({ item, onRead }: Props) {
+export default function NotificationFeedRow({ item, onClick }: Props) {
     const isDimmed = item.read;
     const icon = ICON_MAP[item.code];
 
     return (
         <li
-            onClick={() => onRead(item.id)}
+            onClick={() => onClick(item)}
             className="cursor-pointer flex gap-4 py-3"
             style={{
                 background: "var(--color-background)",
