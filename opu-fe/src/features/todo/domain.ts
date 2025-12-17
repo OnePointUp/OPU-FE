@@ -76,3 +76,15 @@ export interface TodoStatisticsDto {
   totalCount: number;
   completedCount: number;
 }
+
+/* ==== 월별 전체 투두 조회 ==== */
+export interface TodoMonthDayDto {
+  date: string;
+  todos: TodoResponseDto[];
+}
+
+export interface TodoMonthResponse {
+  year: number;
+  month: number;
+  days: TodoMonthDayDto[];
+}

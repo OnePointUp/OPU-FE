@@ -8,6 +8,7 @@ import {
   TodoStatisticsDto,
   TodoResponseDto,
   PageResponse,
+  TodoMonthResponse,
 } from "./domain";
 import { mapTodo } from "./mappers";
 
@@ -103,6 +104,24 @@ export async function fetchMonthlyStatistics(
   } catch (err) {
     throw new Error(
       extractErrorMessage(err, "월간 통계를 불러오지 못했어요")
+    );
+  }
+}
+
+/* ==== 월별 전체 투두 조회 ===== */
+export async function fetchTodosInMonth(
+  year: number,
+  month: number
+): Promise<TodoMonthResponse> {
+  try {
+    const res = await apiClient.get(`/todos/month`, {
+      params: { year, month },
+    });
+
+    return res.data;
+  } catch (err) {
+    throw new Error(
+      extractErrorMessage(err, "월간 투두 조회에 실패했어요")
     );
   }
 }
