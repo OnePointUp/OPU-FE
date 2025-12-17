@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 import CalendarFull, { CalendarDay } from "../components/CalendarFull";
 import CalendarContainer from "../components/CalendarContainer";
@@ -54,17 +54,38 @@ export default function CalendarPage() {
   } = useCalendarLayout(weekCount);
 
   /** 날짜 클릭 공통 핸들러 */
-  const handleSelectCalendarDay = (day: CalendarDay) => {
-    const [y, m] = day.date.split("-").map(Number);
+  const handleSelectCalendarDay = useCallback(
+    (day: CalendarDay) => {
+      const [y, m] = day.date.split("-").map(Number);
+      const isSameDay = selectedDay?.date === day.date;
 
-    if (day.isPreview) {
-      jumpTo(y, m);
-    }
+      // 미리보기 날짜 → 해당 달로 이동
+      if (day.isPreview) {
+        jumpTo(y, m);
+      }
 
-    selectDay(day.date);
+      // 날짜 선택
+      selectDay(day.date);
 
-    setCellHeight(collapsedHeight);
-  };
+      // 같은 날짜 다시 클릭 → 펼치기
+      if (isSameDay && cellHeight === collapsedHeight) {
+        setCellHeight(expandedHeight);
+        return;
+      }
+
+      // 기본 동작 → 접기
+      setCellHeight(collapsedHeight);
+    },
+    [
+      selectedDay,
+      cellHeight,
+      collapsedHeight,
+      expandedHeight,
+      jumpTo,
+      selectDay,
+      setCellHeight,
+    ]
+  );
 
   /** CalendarFull 렌더 헬퍼 */
   const renderCalendar = (matrix: (CalendarDay | null)[][]) => (
@@ -128,15 +149,23 @@ export default function CalendarPage() {
             )}
           </CalendarContainer>
 
-          <TodoList
-            selectedDay={selectedDay}
-            onToggleTodo={handleToggle}
-            onEditTodo={handleEdit}
-            onDeleteTodo={handleDelete}
-            onConfirmNewTodo={handleConfirm}
-            editingTodoId={editingTodoId}
-            maxHeight={todoHeight}
-          />
+          <div
+            className="transition-opacity duration-300"
+            style={{
+              opacity: cellHeight < expandedHeight * 0.8 ? 1 : 0,
+              height: todoHeight,
+            }}
+          >
+            <TodoList
+              selectedDay={selectedDay}
+              onToggleTodo={handleToggle}
+              onEditTodo={handleEdit}
+              onDeleteTodo={handleDelete}
+              onConfirmNewTodo={handleConfirm}
+              editingTodoId={editingTodoId}
+              maxHeight={todoHeight}
+            />
+          </div>
         </div>
 
         <PlusButton
