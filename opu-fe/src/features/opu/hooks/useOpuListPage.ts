@@ -395,22 +395,21 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
 
                 // rollback
                 setData((prev) => {
-                    const exists = prev.some((i) => i.id === opuId);
+                    const restored = [...prev];
+                    const existingIndex = restored.findIndex(
+                        (i) => i.id === opuId
+                    );
 
-                    if (exists) {
-                        return prev.map((i) =>
-                            i.id === opuId
-                                ? {
-                                      ...i,
-                                      isLiked: prevLiked,
-                                      likeCount: prevLikeCount,
-                                  }
-                                : i
-                        );
+                    // 대부분의 경우 아이템은 그대로 존재 (optimistic update로 in-place 변경)
+                    if (existingIndex >= 0) {
+                        restored[existingIndex] = original;
+                        return restored;
                     }
 
-                    const restored: typeof prev = [...prev];
-                    const restoreIndex = Math.min(index, restored.length);
+                    // optimistic update에서 아이템을 제거했었다면(찜-only 목록), 다시 되돌려 놓기
+                    const restoreIndex = shouldRemoveFromList
+                        ? Math.min(index, restored.length)
+                        : restored.length;
                     restored.splice(restoreIndex, 0, original);
                     return restored;
                 });
