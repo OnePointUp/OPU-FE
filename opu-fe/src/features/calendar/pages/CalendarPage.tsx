@@ -1,31 +1,31 @@
 "use client";
 
+import { useState } from "react";
+
 import CalendarFull, { CalendarDay } from "../components/CalendarFull";
 import CalendarContainer from "../components/CalendarContainer";
 import CalendarSlider from "../components/CalendarSlider";
 import DaySelector from "@/features/main/components/DaySelector";
 import TodoList from "@/features/todo/components/TodoList";
 import PlusButton from "@/components/common/PlusButton";
+import CalendarWeekdayHeader from "../components/CalendarWeekdayHeader";
 
 import { useCalendarCore } from "@/features/calendar/hooks/useCalendarCore";
 import { useCalendarLayout } from "../hooks/useCalendarLayout";
-import { useCalendarSlideMatrices } from "@/features/calendar/hooks/useCalendarSlideMatrices";
+import { useCalendarWindow } from "../hooks/useCalendarWindow";
 
-import CalendarWeekdayHeader from "../components/CalendarWeekdayHeader";
+export type GestureLock = "none" | "horizontal" | "vertical";
 
 export default function CalendarPage() {
   const today = new Date();
 
+  /** 제스처 락 */
+  const [gestureLock, setGestureLock] = useState<GestureLock>("none");
+
   const {
-    year,
-    month,
-    calendarData,       // ← CalendarDay[] 로 변경됨
-    selectedDay,        // ← CalendarDay | null
+    selectedDay,
     editingTodoId,
-    setYear,
-    setMonth,
-    setSelectedDay,
-    selectDay,          // ← 날짜 클릭 시 서버에서 todos 불러오는 함수
+    selectDay,
     handleToggle,
     handleEdit,
     handleDelete,
@@ -33,11 +33,16 @@ export default function CalendarPage() {
     handleConfirm,
   } = useCalendarCore();
 
-  // CalendarDay 기반 매트릭스
-  const { prevMatrix, currentMatrix, nextMatrix } =
-    useCalendarSlideMatrices(year, month);
+  const {
+    window,
+    cursor,
+    ready,
+    slideNext,
+    slidePrev,
+    jumpTo,
+  } = useCalendarWindow(today.getFullYear(), today.getMonth() + 1);
 
-  const weekCount = currentMatrix.length;
+  const weekCount = window?.current.length ?? 0;
 
   const {
     daySelectorRef,
@@ -48,65 +53,36 @@ export default function CalendarPage() {
     todoHeight,
   } = useCalendarLayout(weekCount);
 
-  /** 날짜 선택 핸들러 */
-  const handleSelectDay = (day: CalendarDay | null) => {
-    if (!day) return;
+  /** 날짜 클릭 공통 핸들러 */
+  const handleSelectCalendarDay = (day: CalendarDay) => {
+    const [y, m] = day.date.split("-").map(Number);
 
-    // 서버에서 해당 날짜의 Todo 목록 불러오기
+    if (day.isPreview) {
+      jumpTo(y, m);
+    }
+
     selectDay(day.date);
 
-    const d = new Date(day.date);
-    setYear(d.getFullYear());
-    setMonth(d.getMonth() + 1);
-
-    // 캘린더 접기
     setCellHeight(collapsedHeight);
   };
 
-  /** 월 이동 */
-  const goPrev = () => {
-    const m = month - 1;
-    if (m < 1) {
-      setYear(year - 1);
-      setMonth(12);
-    } else {
-      setMonth(m);
-    }
-  };
-
-  const goNext = () => {
-    const m = month + 1;
-    if (m > 12) {
-      setYear(year + 1);
-      setMonth(1);
-    } else {
-      setMonth(m);
-    }
-  };
-
+  /** CalendarFull 렌더 헬퍼 */
   const renderCalendar = (matrix: (CalendarDay | null)[][]) => (
     <CalendarFull
       calendarMatrix={matrix}
       selectedDay={selectedDay}
-      onSelectDay={handleSelectDay}
+      onSelectDay={(d) => d && handleSelectCalendarDay(d)}
       cellHeight={cellHeight}
     />
   );
 
   return (
     <section className="fixed inset-0 flex flex-col">
-      <div
-        className="w-full max-w-[var(--app-max)] mx-auto pt-app-header flex flex-col"
-        style={{
-          paddingLeft: "max(1rem, env(safe-area-inset-left))",
-          paddingRight: "max(1rem, env(safe-area-inset-right))",
-        }}
-      >
-        {/* Day Selector */}
-        <div ref={daySelectorRef} className="shrink-0">
+      <div className="w-full max-w-[var(--app-max)] mx-auto pt-app-header flex flex-col">
+        <div ref={daySelectorRef}>
           <DaySelector
-            year={year}
-            month={month}
+            year={cursor.year}
+            month={cursor.month}
             day={
               selectedDay
                 ? Number(selectedDay.date.split("-")[2])
@@ -115,20 +91,16 @@ export default function CalendarPage() {
             hideViewToggle
             viewMode="month"
             onSelect={(y, m, d) => {
-              setYear(y);
-              setMonth(m);
-
               const dateStr = `${y}-${String(m).padStart(2, "0")}-${String(
                 d
               ).padStart(2, "0")}`;
-
+              jumpTo(y, m);
               selectDay(dateStr);
             }}
             onToggleView={() => {}}
           />
         </div>
 
-        {/* Calendar + TodoList 영역 */}
         <div className="flex-1 flex flex-col min-h-0">
           <CalendarContainer
             weekCount={weekCount}
@@ -136,40 +108,39 @@ export default function CalendarPage() {
             setCellHeight={setCellHeight}
             expandedHeight={expandedHeight}
             collapsedHeight={collapsedHeight}
+            gestureLock={gestureLock}
+            setGestureLock={setGestureLock}
           >
             <CalendarWeekdayHeader />
 
-            <CalendarSlider
-              prev={renderCalendar(prevMatrix)}
-              current={renderCalendar(currentMatrix)}
-              next={renderCalendar(nextMatrix)}
-              onPrev={goPrev}
-              onNext={goNext}
-            />
+            {!window || !ready ? (
+              <div className="flex items-center justify-center h-full" />
+            ) : (
+              <CalendarSlider
+                prev={renderCalendar(window.prev)}
+                current={renderCalendar(window.current)}
+                next={renderCalendar(window.next)}
+                onPrev={slidePrev}
+                onNext={slideNext}
+                gestureLock={gestureLock}
+                setGestureLock={setGestureLock}
+              />
+            )}
           </CalendarContainer>
 
-          {/* TodoList */}
-          <div
-            className="transition-opacity duration-300"
-            style={{
-              opacity: cellHeight < expandedHeight * 0.8 ? 1 : 0,
-              height: todoHeight,
-            }}
-          >
-            <TodoList
-              selectedDay={selectedDay}
-              onToggleTodo={handleToggle}
-              onEditTodo={handleEdit}
-              onDeleteTodo={handleDelete}
-              onConfirmNewTodo={handleConfirm}
-              editingTodoId={editingTodoId}
-              maxHeight={todoHeight}
-            />
-          </div>
+          <TodoList
+            selectedDay={selectedDay}
+            onToggleTodo={handleToggle}
+            onEditTodo={handleEdit}
+            onDeleteTodo={handleDelete}
+            onConfirmNewTodo={handleConfirm}
+            editingTodoId={editingTodoId}
+            maxHeight={todoHeight}
+          />
         </div>
 
         <PlusButton
-          showMenu={true}
+          showMenu
           onAddEvent={() => {
             handleAdd();
             setCellHeight(collapsedHeight);
