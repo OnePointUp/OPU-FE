@@ -34,7 +34,7 @@ export default function Calendar({
         today.getMonth() + 1
     ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-    const [viewMode, setViewMode] = useState<"month" | "week">("month");
+    const [viewMode, setViewMode] = useState<"month" | "week">("week");
 
     // 기존 구조 유지: 선택한 날짜가 속한 주를 찾는 함수
     const getWeekOf = (dateStr: string | undefined): (CalendarDay | null)[] => {
