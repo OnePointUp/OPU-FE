@@ -6,6 +6,11 @@ import NotificationFeedRow from "../components/NotificationFeedRow";
 import NotificationFeedRowSkeleton from "../components/NotificationFeedRowSkeleton";
 import type { NotificationCode, NotificationFeedItem } from "../types";
 
+function getRedirectPath(code: NotificationCode) {
+    if (code === "RANDOM_DRAW") return "/opu/random/scope";
+    return "/";
+}
+
 function sortByCreatedAt<T extends { createdAt: string }>(items: T[]): T[] {
     return [...items].sort(
         (a, b) =>
@@ -64,20 +69,6 @@ function groupByDate<T extends { createdAt: string }>(items: T[]) {
 export default function NotificationListPage() {
     const { items, loading, markAllRead, markAsRead } = useNotificationFeed();
     const router = useRouter();
-
-    const getRedirectPath = (code: NotificationCode) => {
-        switch (code) {
-            case "MORNING":
-            case "EVENING":
-            case "TODO":
-            case "ROUTINE":
-                return "/";
-            case "RANDOM_DRAW":
-                return "/opu/random/scope";
-            default:
-                return "/";
-        }
-    };
 
     const handleClickItem = (item: NotificationFeedItem) => {
         // 읽음 처리 + 리다이렉트
