@@ -24,6 +24,7 @@ import {
     shareOpu,
     unshareOpu,
     deleteMyOpu,
+    toggleOpuFavorite,
 } from "../service";
 import { toastError, toastSuccess } from "@/lib/toast";
 import { blockOpu } from "@/features/blocked-opu/services";
@@ -194,6 +195,11 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         setInitialLoading(true);
     };
 
+    const handleChangeOnlyLiked = (value: boolean) => {
+        setOnlyLiked(value);
+        resetAndReload();
+    };
+
     const handleChangeSort = (opt: SortOption) => {
         setSortOption(opt);
         setShowSortSheet(false);
@@ -349,6 +355,72 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
         }
     };
 
+    const handleToggleFavorite = useCallback(
+        async (opuId: number) => {
+            const index = data.findIndex((i) => i.id === opuId);
+            if (index < 0) return;
+
+            const original = data[index];
+            const prevLiked = original.isLiked === true;
+            const nextLiked = !prevLiked;
+
+            const prevLikeCount = original.likeCount ?? 0;
+            const nextLikeCount = prevLikeCount + (nextLiked ? 1 : -1);
+
+            const shouldRemoveFromList =
+                nextLiked === false &&
+                (contextType === "liked" || onlyLiked === true);
+
+            // optimistic update
+            if (shouldRemoveFromList) {
+                setData((prev) => prev.filter((i) => i.id !== opuId));
+            } else {
+                setData((prev) =>
+                    prev.map((i) =>
+                        i.id === opuId
+                            ? {
+                                  ...i,
+                                  isLiked: nextLiked,
+                                  likeCount: nextLikeCount,
+                              }
+                            : i
+                    )
+                );
+            }
+
+            try {
+                await toggleOpuFavorite(opuId, prevLiked);
+            } catch (err) {
+                console.error(err);
+
+                // rollback
+                setData((prev) => {
+                    const exists = prev.some((i) => i.id === opuId);
+
+                    if (exists) {
+                        return prev.map((i) =>
+                            i.id === opuId
+                                ? {
+                                      ...i,
+                                      isLiked: prevLiked,
+                                      likeCount: prevLikeCount,
+                                  }
+                                : i
+                        );
+                    }
+
+                    const restored: typeof prev = [...prev];
+                    const restoreIndex = Math.min(index, restored.length);
+                    restored.splice(restoreIndex, 0, original);
+                    return restored;
+                });
+
+                toastError("OPU 찜 상태를 변경하지 못했어요.");
+            }
+        },
+        [contextType, data, onlyLiked]
+    );
+
     return {
         contextType,
         loading: initialLoading,
@@ -367,7 +439,8 @@ export function useOpuListPage({ contextType = "shared" }: Props) {
 
         // 좋아요 필터
         onlyLiked,
-        setOnlyLiked,
+        setOnlyLiked: handleChangeOnlyLiked,
+        handleToggleFavorite,
 
         // 필터
         times,

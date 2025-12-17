@@ -6,6 +6,7 @@ import type { OpuCardModel } from "@/features/opu/domain";
 type Props = {
     items: OpuCardModel[];
     onMore?: (id: number) => void;
+    onToggleFavorite?: (id: number) => Promise<void> | void;
     loading?: boolean;
     contextType?: "shared" | "my" | "liked";
 };
@@ -13,6 +14,7 @@ type Props = {
 export default function SharedOpuList({
     items,
     onMore,
+    onToggleFavorite,
     loading = false,
     contextType,
 }: Props) {
@@ -71,6 +73,7 @@ export default function SharedOpuList({
                         key={item.id}
                         item={item}
                         onMore={onMore}
+                        onToggleFavorite={onToggleFavorite}
                         loading={loading && item.id < 0}
                     />
                 ))}
@@ -83,6 +86,7 @@ export default function SharedOpuList({
                         key={item.id}
                         item={item}
                         onMore={onMore}
+                        onToggleFavorite={onToggleFavorite}
                         loading={loading && item.id < 0}
                     />
                 ))}

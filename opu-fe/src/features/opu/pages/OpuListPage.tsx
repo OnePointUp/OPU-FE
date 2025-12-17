@@ -43,6 +43,7 @@ export default function OpuListPage({
         // 좋아요
         onlyLiked,
         setOnlyLiked,
+        handleToggleFavorite,
 
         // 정렬
         showSortSheet,
@@ -91,8 +92,6 @@ export default function OpuListPage({
 
     const [showBlockModal, setShowBlockModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-    const router = useRouter();
 
     /* ==============================
        무한 스크롤 sentinel
@@ -157,6 +156,7 @@ export default function OpuListPage({
                     items={filtered}
                     loading={loading}
                     onMore={handleOpenMore}
+                    onToggleFavorite={handleToggleFavorite}
                     contextType={contextType}
                 />
 
