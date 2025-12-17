@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import type { CalendarDay } from "@/features/calendar/components/CalendarFull";
 
@@ -36,6 +36,9 @@ export default function Calendar({
 
     const [viewMode, setViewMode] = useState<"month" | "week">("week");
 
+    const [containerHeight, setContainerHeight] = useState<number | "auto">(120);
+    const contentRef = useRef<HTMLDivElement>(null);
+
     // 기존 구조 유지: 선택한 날짜가 속한 주를 찾는 함수
     const getWeekOf = (dateStr: string | undefined): (CalendarDay | null)[] => {
         if (!dateStr) return calendarMatrix[0] ?? [];
@@ -44,6 +47,19 @@ export default function Calendar({
         }
         return calendarMatrix[0] ?? [];
     };
+
+    useEffect(() => {
+    if (!contentRef.current) return;
+
+    const active =
+        viewMode === "month"
+        ? contentRef.current.children[0]
+        : contentRef.current.children[1];
+
+    if (active instanceof HTMLElement) {
+        setContainerHeight(active.scrollHeight);
+    }
+    }, [viewMode, calendarMatrix, selectedDay]);
 
     return (
         <div className="space-y-2 mb-4">
@@ -100,29 +116,52 @@ export default function Calendar({
 
                     {/* 월 / 주 뷰 */}
                     <div
-                        className={`w-full overflow-hidden relative transition-all duration-300 ease-in-out ${
-                            viewMode === "month"
-                                ? "max-h-[500px]"
-                                : "max-h-[120px]"
-                        }`}
+                    className="w-full overflow-hidden relative transition-[height] duration-300 ease-in-out"
+                    style={{
+                        height: `${containerHeight}px`,
+                    }}
                     >
-                        {viewMode === "month" ? (
+                        <div ref={contentRef} className="relative">
+                            {/* Month */}
+                            <div
+                            className={`absolute inset-0 transition-all duration-300 ease-in-out
+                                ${
+                                viewMode === "month"
+                                    ? "opacity-100 scale-y-100"
+                                    : "opacity-0 scale-y-75 pointer-events-none"
+                                }
+                            `}
+                            style={{ transformOrigin: "top" }}
+                            >
                             <MonthView
                                 calendarMatrix={calendarMatrix}
                                 selectedDay={selectedDay}
                                 onSelectDay={onSelectDay}
-                                onChangeMonth={onChangeMonth} 
+                                onChangeMonth={onChangeMonth}
                                 todayStr={todayStr}
                             />
-                        ) : (
+                            </div>
+
+                            {/* Week */}
+                            <div
+                            className={`absolute inset-0 transition-all duration-300 ease-in-out
+                                ${
+                                viewMode === "week"
+                                    ? "opacity-100 scale-y-100"
+                                    : "opacity-0 scale-y-75 pointer-events-none"
+                                }
+                            `}
+                            style={{ transformOrigin: "top" }}
+                            >
                             <WeekView
                                 week={getWeekOf(selectedDay?.date)}
                                 selectedDay={selectedDay}
                                 onSelectDay={onSelectDay}
-                                onChangeMonth={onChangeMonth} 
+                                onChangeMonth={onChangeMonth}
                                 todayStr={todayStr}
                             />
-                        )}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
