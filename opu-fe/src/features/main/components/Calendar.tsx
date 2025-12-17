@@ -51,10 +51,7 @@ export default function Calendar({
     useEffect(() => {
     if (!contentRef.current) return;
 
-    const active =
-        viewMode === "month"
-        ? contentRef.current.children[0]
-        : contentRef.current.children[1];
+    const active = contentRef.current.querySelector(`[data-view="${viewMode}"]`);
 
     if (active instanceof HTMLElement) {
         setContainerHeight(active.scrollHeight);
