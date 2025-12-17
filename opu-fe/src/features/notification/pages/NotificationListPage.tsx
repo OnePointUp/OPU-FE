@@ -126,7 +126,7 @@ export default function NotificationListPage() {
                             <ul className="flex flex-col">
                                 {group.items.map((item) => (
                                     <NotificationFeedRow
-                                        key={item.id + item.createdAt}
+                                        key={item.id}
                                         item={item}
                                         onClick={handleClickItem}
                                     />
