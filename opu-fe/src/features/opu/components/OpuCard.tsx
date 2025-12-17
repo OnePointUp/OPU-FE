@@ -5,19 +5,23 @@ import { useState, type MouseEvent } from "react";
 import { getCategoryBadge, type OpuCardModel } from "@/features/opu/domain";
 import Badge from "@/components/common/Badge";
 import OpuCardSkekleton from "./OpuCardSkeleton";
-import { toggleOpuFavorite } from "@/features/opu/service";
-import { toastError } from "@/lib/toast";
 
 type Props = {
     item: OpuCardModel;
     onAddTodo?: (id: number) => void;
     onMore?: (id: number) => void;
+    onToggleFavorite?: (id: number) => Promise<void> | void;
     loading?: boolean;
 };
 
-export default function OpuCard({ item, onMore, loading = false }: Props) {
-    const [liked, setLiked] = useState(item.isLiked);
-    const [likeCount, setLikeCount] = useState(item.likeCount ?? 0);
+export default function OpuCard({
+    item,
+    onMore,
+    onToggleFavorite,
+    loading = false,
+}: Props) {
+    const liked = item.isLiked === true;
+    const likeCount = item.likeCount ?? 0;
     const [likeLoading, setLikeLoading] = useState(false);
 
     const { bg, text } = getCategoryBadge(item.categoryId, item.categoryName);
@@ -33,21 +37,10 @@ export default function OpuCard({ item, onMore, loading = false }: Props) {
     const handleLikeClick = async (e: MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         if (likeLoading) return;
-
-        const prevLiked = liked === true;
-        const nextLiked = !prevLiked;
-
-        setLiked(nextLiked);
-        setLikeCount((prev) => prev + (nextLiked ? 1 : -1));
         setLikeLoading(true);
 
         try {
-            await toggleOpuFavorite(item.id, prevLiked);
-        } catch (err) {
-            console.error(err);
-            setLiked(prevLiked);
-            setLikeCount((prev) => prev + (nextLiked ? -1 : 1));
-            toastError("OPU 찜 상태를 변경하지 못했어요.");
+            await onToggleFavorite?.(item.id);
         } finally {
             setLikeLoading(false);
         }
