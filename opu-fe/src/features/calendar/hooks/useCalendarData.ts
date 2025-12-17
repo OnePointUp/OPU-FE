@@ -52,10 +52,14 @@ export function useCalendarData(year: number, month: number) {
       /** 4) 월간 todos */
       const monthTodos = await fetchTodosInMonth(year, month);
 
-      /** ✔ 기존 todosList 구조로 변환 */
+      /** ✔ 날짜 → todos Map (성능 개선) */
+      const todosByDate = new Map(
+        monthTodos.days.map((d) => [d.date, d.todos])
+      );
+
+      /** ✔ 기존 todosList 구조로 변환 (의도 유지) */
       const todosList: Todo[][] = flatDays.map((day) => {
-        const dayTodos =
-          monthTodos.days.find((d) => d.date === day.date)?.todos ?? [];
+        const dayTodos = todosByDate.get(day.date) ?? [];
         return dayTodos.map(mapTodo);
       });
 
