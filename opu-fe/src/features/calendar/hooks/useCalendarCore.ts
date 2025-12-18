@@ -5,6 +5,7 @@ import { useCalendarData } from "./useCalendarData";
 import { useSelectedDay } from "./useSelectedDay";
 import { useTodoActions } from "../../todo/hooks/useTodoActions";
 import type { CalendarDay } from "@/features/calendar/components/CalendarFull";
+import { CALENDAR_COLORS } from "@/mocks/api/db/calendar.db";
 
 /** 로컬 기준 yyyy-mm-dd */
 function getLocalDateString(date = new Date()) {
@@ -14,6 +15,18 @@ function getLocalDateString(date = new Date()) {
   return `${y}-${m}-${d}`;
 }
 
+/** intensity 계산 (calendarMatrix 정리용) */
+function calcIntensity(total: number, completed: number): number {
+  if (total === 0) return 0;
+  const ratio = completed / total;
+  if (ratio === 0) return 0;
+  if (ratio < 0.2) return 1;
+  if (ratio < 0.4) return 2;
+  if (ratio < 0.6) return 3;
+  if (ratio < 0.8) return 4;
+  return 5;
+}
+
 export function useCalendarCore() {
   const todayStr = getLocalDateString();
 
@@ -21,29 +34,67 @@ export function useCalendarCore() {
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [editingTodoId, setEditingTodoId] = useState<number | null>(null);
 
-  /** ✔ 월간 CalendarDay[] & 6×7 매트릭스 */
-  const { calendarData, calendarMatrix } = useCalendarData(year, month);
+  /** 월간 CalendarDay[] & 6×7 매트릭스 */
+  const { calendarData, calendarMatrix, setCalendarMatrix } =
+    useCalendarData(year, month);
 
-  /** ✔ 선택된 날짜 + 해당 날짜 todos */
+  /** 선택된 날짜 + 해당 날짜 todos */
   const { selectedDay, setSelectedDay, selectDay, refreshSelectedDay } =
     useSelectedDay();
 
-  /** ✔ Todo 액션 */
-  const actions = useTodoActions(selectedDay, refreshSelectedDay, setEditingTodoId);
+  /** Todo 액션 */
+  const actions = useTodoActions(
+    selectedDay,
+    refreshSelectedDay,
+    setEditingTodoId,
+    setCalendarMatrix
+  );
 
+  /** 최초 진입 시 오늘 날짜 자동 선택 */
   useEffect(() => {
     if (!selectedDay && calendarMatrix.length > 0) {
-      // 매트릭스 전체 flatten
       const allDays = calendarMatrix.flat().filter(Boolean) as CalendarDay[];
-
-      // isToday = true 인 셀 찾기
       const todayCell = allDays.find((d) => d.isToday);
 
       if (todayCell) {
-        selectDay(todayCell.date); // Todo API 불러오기
+        selectDay(todayCell.date);
       }
     }
   }, [calendarMatrix, selectedDay]);
+
+  /** 날짜 변경 시 임시 todo 정리 */
+  useEffect(() => {
+    if (editingTodoId === null || editingTodoId >= 0) return;
+
+    setCalendarMatrix((prev) =>
+      prev.map((week) =>
+        week.map((day) => {
+          if (!day) return day;
+
+          const hasTemp = day.todos.some((t) => t.id === editingTodoId);
+          if (!hasTemp) return day;
+
+          const filteredTodos = day.todos.filter(
+            (t) => t.id !== editingTodoId
+          );
+
+          const completed = filteredTodos.filter((t) => t.completed).length;
+          const intensity = calcIntensity(
+            filteredTodos.length,
+            completed
+          );
+
+          return {
+            ...day,
+            todos: filteredTodos,
+            color: CALENDAR_COLORS[intensity],
+          };
+        })
+      )
+    );
+
+    setEditingTodoId(null);
+  }, [selectedDay?.date]);
 
   return {
     year,

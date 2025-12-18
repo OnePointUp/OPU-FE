@@ -32,10 +32,10 @@ export function useCalendarData(year: number, month: number) {
 
   useEffect(() => {
     async function load() {
-      /** 1) 월간 통계 */
+      /** 월간 통계 */
       const stats = await fetchMonthlyStatistics(year, month);
 
-      /** 2) 기본 매트릭스 */
+      /** 기본 매트릭스 */
       const baseMatrix = buildCalendarMatrix(
         stats.map((s) => ({
           date: s.date,
@@ -46,24 +46,21 @@ export function useCalendarData(year: number, month: number) {
         month
       );
 
-      /** 3) flat day */
+      /** flat days */
       const flatDays = baseMatrix.flat().filter(Boolean) as CalendarDay[];
 
-      /** 4) 월간 todos */
+      /** 월간 todos */
       const monthTodos = await fetchTodosInMonth(year, month);
 
-      /** ✔ 날짜 → todos Map (성능 개선) */
       const todosByDate = new Map(
         monthTodos.days.map((d) => [d.date, d.todos])
       );
 
-      /** ✔ 기존 todosList 구조로 변환 (의도 유지) */
-      const todosList: Todo[][] = flatDays.map((day) => {
-        const dayTodos = todosByDate.get(day.date) ?? [];
-        return dayTodos.map(mapTodo);
-      });
+      const todosList: Todo[][] = flatDays.map((day) =>
+        (todosByDate.get(day.date) ?? []).map(mapTodo)
+      );
 
-      /** 5) CalendarDay 조립 */
+      /** CalendarDay 조립 */
       const filledDays = flatDays.map((day, idx) => {
         const stat = stats.find((s) => s.date === day.date);
 
@@ -78,16 +75,13 @@ export function useCalendarData(year: number, month: number) {
         };
       });
 
-      /** 6) 매트릭스 재조립 */
+      /** 매트릭스 재조립 */
       let index = 0;
       const filledMatrix = baseMatrix.map((week) =>
-        week.map((day) => {
-          if (!day) return null;
-          return filledDays[index++];
-        })
+        week.map((day) => (day ? filledDays[index++] : null))
       );
-      
-      /** 7) 상태 저장 */
+
+      /** 상태 저장 */
       setCalendarMatrix(filledMatrix);
       setCalendarData(filledDays);
     }
@@ -95,5 +89,9 @@ export function useCalendarData(year: number, month: number) {
     load();
   }, [year, month]);
 
-  return { calendarData, calendarMatrix };
+  return {
+    calendarData,
+    calendarMatrix,
+    setCalendarMatrix,
+  };
 }
