@@ -2,7 +2,6 @@
 
 import {
   createTodo,
-  updateTodo,
   updateTodoStatus,
   deleteTodo,
 } from "@/features/todo/service";
@@ -10,17 +9,10 @@ import {
 import type { Todo } from "@/features/todo/domain";
 import type { CalendarDay } from "@/features/calendar/components/CalendarFull";
 import { CALENDAR_COLORS } from "@/mocks/api/db/calendar.db";
+import { calcIntensity } from "@/features/main/utils/calcIntensity";
 
 /* =========================
-   타입 (기존 유지)
-========================= */
-export type SelectedDayData = {
-  date: string;
-  todos: Todo[];
-};
-
-/* =========================
-   AM/PM → HH:mm 변환 (기존 유지)
+   AM/PM → HH:mm 변환
 ========================= */
 function convertTo24Hour(time: {
   ampm: "AM" | "PM";
@@ -39,21 +31,7 @@ function convertTo24Hour(time: {
 }
 
 /* =========================
-   intensity 계산 (기존 정책)
-========================= */
-function calcIntensity(total: number, completed: number): number {
-  if (total === 0) return 0;
-  const ratio = completed / total;
-  if (ratio === 0) return 0;
-  if (ratio < 0.2) return 1;
-  if (ratio < 0.4) return 2;
-  if (ratio < 0.6) return 3;
-  if (ratio < 0.8) return 4;
-  return 5;
-}
-
-/* =========================
-   임시 Todo ID 생성
+   임시 Todo ID
 ========================= */
 function createTempId() {
   return -Date.now();
@@ -63,31 +41,34 @@ function createTempId() {
    useTodoActions
 ========================= */
 export function useTodoActions(
-  selectedDay: SelectedDayData | null,
+  selectedDay: CalendarDay | null,
+  setSelectedDay: React.Dispatch<
+    React.SetStateAction<CalendarDay | null>
+  >,
   refreshSelectedDay: (date: string) => Promise<void>,
   setEditingTodoId: (id: number | null) => void,
   setCalendarMatrix: React.Dispatch<
     React.SetStateAction<(CalendarDay | null)[][]>
   >
 ) {
-  /* ===== 완료 토글 ===== */
-  const handleToggle = async (todoId: number, completed: boolean) => {
-    if (!selectedDay) return;
-    if (todoId < 0) return;
-
-    await updateTodoStatus(todoId, { completed });
-
+  /* =========================
+     공통 calendarMatrix 업데이트 헬퍼
+  ========================= */
+  const updateCalendarDayTodos = (
+    date: string,
+    updateFn: (todos: Todo[]) => Todo[]
+  ) => {
     setCalendarMatrix((prev) =>
       prev.map((week) =>
         week.map((day) => {
-          if (!day || day.date !== selectedDay.date) return day;
+          if (!day || day.date !== date) return day;
 
-          const updatedTodos = day.todos.map((t) =>
-            t.id === todoId ? { ...t, completed } : t
+          const updatedTodos = updateFn(day.todos);
+          const completed = updatedTodos.filter((t) => t.completed).length;
+          const intensity = calcIntensity(
+            updatedTodos.length,
+            completed
           );
-
-          const done = updatedTodos.filter((t) => t.completed).length;
-          const intensity = calcIntensity(updatedTodos.length, done);
 
           return {
             ...day,
@@ -97,25 +78,20 @@ export function useTodoActions(
         })
       )
     );
-
-    await refreshSelectedDay(selectedDay.date);
   };
 
-  /* ===== 수정 ===== */
-  const handleEdit = async (
-    todoId: number,
-    newTitle: string,
-    time?: { ampm: "AM" | "PM"; hour: number; minute: number } | null
-  ) => {
-    if (!selectedDay) return;
-    if (todoId < 0) return;
+  /* ===== 완료 토글 ===== */
+  const handleToggle = async (todoId: number, completed: boolean) => {
+    if (!selectedDay || todoId < 0) return;
 
-    await updateTodo(todoId, {
-      title: newTitle,
-      scheduledTime: time ? convertTo24Hour(time) : null,
-    });
+    await updateTodoStatus(todoId, { completed });
 
-    setEditingTodoId(null);
+    updateCalendarDayTodos(selectedDay.date, (todos) =>
+      todos.map((t) =>
+        t.id === todoId ? { ...t, completed } : t
+      )
+    );
+
     await refreshSelectedDay(selectedDay.date);
   };
 
@@ -127,29 +103,21 @@ export function useTodoActions(
       await deleteTodo(todoId);
     }
 
-    setCalendarMatrix((prev) =>
-      prev.map((week) =>
-        week.map((day) => {
-          if (!day || day.date !== selectedDay.date) return day;
+    updateCalendarDayTodos(selectedDay.date, (todos) =>
+      todos.filter((t) => t.id !== todoId)
+    );
 
-          const updatedTodos = day.todos.filter((t) => t.id !== todoId);
-          const done = updatedTodos.filter((t) => t.completed).length;
-          const intensity = calcIntensity(updatedTodos.length, done);
-
-          return {
-            ...day,
-            todos: updatedTodos,
-            color: CALENDAR_COLORS[intensity],
-          };
-        })
-      )
+    setSelectedDay((prev) =>
+      prev
+        ? { ...prev, todos: prev.todos.filter((t) => t.id !== todoId) }
+        : prev
     );
 
     setEditingTodoId(null);
     await refreshSelectedDay(selectedDay.date);
   };
 
-  /* ===== 생성 (임시 Todo만 추가) ===== */
+  /* ===== 생성 (임시 Todo) ===== */
   const handleAdd = async () => {
     if (!selectedDay) return;
 
@@ -165,25 +133,14 @@ export function useTodoActions(
       order: selectedDay.todos.length,
     };
 
-    setCalendarMatrix((prev) =>
-      prev.map((week) =>
-        week.map((day) => {
-          if (!day || day.date !== selectedDay.date) return day;
+    updateCalendarDayTodos(selectedDay.date, (todos) => [
+      ...todos,
+      tempTodo,
+    ]);
 
-          const updatedTodos = [...day.todos, tempTodo];
-          const completed = updatedTodos.filter((t) => t.completed).length;
-          const intensity = calcIntensity(updatedTodos.length, completed);
-
-          return {
-            ...day,
-            todos: updatedTodos,
-            color: CALENDAR_COLORS[intensity],
-          };
-        })
-      )
+    setSelectedDay((prev) =>
+      prev ? { ...prev, todos: [...prev.todos, tempTodo] } : prev
     );
-
-    selectedDay.todos.push(tempTodo);
 
     setEditingTodoId(tempId);
   };
@@ -203,47 +160,28 @@ export function useTodoActions(
         scheduledTime: time ? convertTo24Hour(time) : null,
       });
 
-      setCalendarMatrix((prev) =>
-        prev.map((week) =>
-          week.map((day) => {
-            if (!day || day.date !== selectedDay.date) return day;
-
-            const updatedTodos = day.todos.map((t) =>
-              t.id === todoId
-                ? {
-                    ...t,
-                    id: newId,
-                    title,
-                    scheduledTime: time
-                      ? convertTo24Hour(time)
-                      : null,
-                  }
-                : t
-            );
-
-            const completed = updatedTodos.filter((t) => t.completed).length;
-            const intensity = calcIntensity(updatedTodos.length, completed);
-
-            return {
-              ...day,
-              todos: updatedTodos,
-              color: CALENDAR_COLORS[intensity],
-            };
-          })
+      updateCalendarDayTodos(selectedDay.date, (todos) =>
+        todos.map((t) =>
+          t.id === todoId
+            ? {
+                ...t,
+                id: newId,
+                title,
+                scheduledTime: time
+                  ? convertTo24Hour(time)
+                  : null,
+              }
+            : t
         )
       );
 
       setEditingTodoId(null);
       await refreshSelectedDay(selectedDay.date);
-      return;
     }
-
-    await handleEdit(todoId, title, time);
   };
 
   return {
     handleToggle,
-    handleEdit,
     handleDelete,
     handleAdd,
     handleConfirm,

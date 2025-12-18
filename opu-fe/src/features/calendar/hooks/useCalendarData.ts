@@ -11,18 +11,7 @@ import { buildCalendarMatrix } from "@/features/calendar/utils/buildCalendarMatr
 import { CALENDAR_COLORS } from "@/mocks/api/db/calendar.db";
 import { mapTodo } from "@/features/todo/mappers";
 import type { Todo } from "@/features/todo/domain";
-
-/** 비율 → intensity(0~5) */
-function calcIntensity(total: number, completed: number): number {
-  if (total === 0) return 0;
-  const ratio = completed / total;
-  if (ratio === 0) return 0;
-  if (ratio < 0.2) return 1;
-  if (ratio < 0.4) return 2;
-  if (ratio < 0.6) return 3;
-  if (ratio < 0.8) return 4;
-  return 5;
-}
+import { calcIntensity } from "@/features/main/utils/calcIntensity";
 
 export function useCalendarData(year: number, month: number) {
   const [calendarData, setCalendarData] = useState<CalendarDay[]>([]);

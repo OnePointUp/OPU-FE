@@ -6,6 +6,7 @@ import { useSelectedDay } from "./useSelectedDay";
 import { useTodoActions } from "../../todo/hooks/useTodoActions";
 import type { CalendarDay } from "@/features/calendar/components/CalendarFull";
 import { CALENDAR_COLORS } from "@/mocks/api/db/calendar.db";
+import { calcIntensity } from "@/features/main/utils/calcIntensity";
 
 /** 로컬 기준 yyyy-mm-dd */
 function getLocalDateString(date = new Date()) {
@@ -13,18 +14,6 @@ function getLocalDateString(date = new Date()) {
   const m = String(date.getMonth() + 1).padStart(2, "0");
   const d = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
-}
-
-/** intensity 계산 (calendarMatrix 정리용) */
-function calcIntensity(total: number, completed: number): number {
-  if (total === 0) return 0;
-  const ratio = completed / total;
-  if (ratio === 0) return 0;
-  if (ratio < 0.2) return 1;
-  if (ratio < 0.4) return 2;
-  if (ratio < 0.6) return 3;
-  if (ratio < 0.8) return 4;
-  return 5;
 }
 
 export function useCalendarCore() {
@@ -45,6 +34,7 @@ export function useCalendarCore() {
   /** Todo 액션 */
   const actions = useTodoActions(
     selectedDay,
+    setSelectedDay,
     refreshSelectedDay,
     setEditingTodoId,
     setCalendarMatrix
