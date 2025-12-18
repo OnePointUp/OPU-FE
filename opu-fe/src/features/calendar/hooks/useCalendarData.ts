@@ -3,19 +3,19 @@
 import { useEffect, useState } from "react";
 import {
   fetchMonthlyStatistics,
-  fetchTodosByDate,
+  fetchTodosInMonth,
 } from "@/features/todo/service";
 
 import type { CalendarDay } from "@/features/calendar/components/CalendarFull";
 import { buildCalendarMatrix } from "@/features/calendar/utils/buildCalendarMatrix";
 import { CALENDAR_COLORS } from "@/mocks/api/db/calendar.db";
+import { mapTodo } from "@/features/todo/mappers";
+import type { Todo } from "@/features/todo/domain";
 
-/** 비율 → intensity(0~5) 변환 함수 */
+/** 비율 → intensity(0~5) */
 function calcIntensity(total: number, completed: number): number {
   if (total === 0) return 0;
-
   const ratio = completed / total;
-
   if (ratio === 0) return 0;
   if (ratio < 0.2) return 1;
   if (ratio < 0.4) return 2;
@@ -24,9 +24,6 @@ function calcIntensity(total: number, completed: number): number {
   return 5;
 }
 
-/**
- * year, month → CalendarDay[] + CalendarDay[][](6×7)
- */
 export function useCalendarData(year: number, month: number) {
   const [calendarData, setCalendarData] = useState<CalendarDay[]>([]);
   const [calendarMatrix, setCalendarMatrix] = useState<
@@ -35,10 +32,10 @@ export function useCalendarData(year: number, month: number) {
 
   useEffect(() => {
     async function load() {
-      /** 1) 월간 통계 조회 */
+      /** 1) 월간 통계 */
       const stats = await fetchMonthlyStatistics(year, month);
 
-      /** 2) 매트릭스 기본 생성 */
+      /** 2) 기본 매트릭스 */
       const baseMatrix = buildCalendarMatrix(
         stats.map((s) => ({
           date: s.date,
@@ -49,41 +46,47 @@ export function useCalendarData(year: number, month: number) {
         month
       );
 
-      /** 3) flat 배열 생성 */
+      /** 3) flat day */
       const flatDays = baseMatrix.flat().filter(Boolean) as CalendarDay[];
 
-      /** 4) Todos 병렬 fetch */
-      const todosList = await Promise.all(
-        flatDays.map((d) => fetchTodosByDate(d.date))
+      /** 4) 월간 todos */
+      const monthTodos = await fetchTodosInMonth(year, month);
+
+      /** ✔ 날짜 → todos Map (성능 개선) */
+      const todosByDate = new Map(
+        monthTodos.days.map((d) => [d.date, d.todos])
       );
 
-      /** 5) CalendarDay 최종 조립 */
+      /** ✔ 기존 todosList 구조로 변환 (의도 유지) */
+      const todosList: Todo[][] = flatDays.map((day) => {
+        const dayTodos = todosByDate.get(day.date) ?? [];
+        return dayTodos.map(mapTodo);
+      });
+
+      /** 5) CalendarDay 조립 */
       const filledDays = flatDays.map((day, idx) => {
         const stat = stats.find((s) => s.date === day.date);
 
         const total = stat?.totalCount ?? 0;
         const completed = stat?.completedCount ?? 0;
-
         const intensity = calcIntensity(total, completed);
 
         return {
           ...day,
-          todos: todosList[idx] ?? [],
+          todos: todosList[idx],
           color: CALENDAR_COLORS[intensity],
         };
       });
 
-      /** 6) 매트릭스로 다시 조립 */
+      /** 6) 매트릭스 재조립 */
       let index = 0;
       const filledMatrix = baseMatrix.map((week) =>
         week.map((day) => {
           if (!day) return null;
-          const filled = filledDays[index];
-          index++;
-          return filled;
+          return filledDays[index++];
         })
       );
-
+      
       /** 7) 상태 저장 */
       setCalendarMatrix(filledMatrix);
       setCalendarData(filledDays);
