@@ -4,6 +4,7 @@ import {
   createTodo,
   updateTodoStatus,
   deleteTodo,
+  updateTodo,
 } from "@/features/todo/service";
 
 import type { Todo } from "@/features/todo/domain";
@@ -145,7 +146,7 @@ export function useTodoActions(
     setEditingTodoId(tempId);
   };
 
-  /* ===== 신규 Todo 입력 확정 ===== */
+  /* ===== Todo 생성, 수정 입력 확정 ===== */
   const handleConfirm = async (
     todoId: number,
     title: string,
@@ -153,31 +154,55 @@ export function useTodoActions(
   ) => {
     if (!selectedDay) return;
 
+    const scheduledTime = time ? convertTo24Hour(time) : null;
+
+    // ===== 임시 Todo → 생성 =====
     if (todoId < 0) {
       const newId = await createTodo({
         title,
         scheduledDate: selectedDay.date,
-        scheduledTime: time ? convertTo24Hour(time) : null,
+        scheduledTime,
       });
 
       updateCalendarDayTodos(selectedDay.date, (todos) =>
         todos.map((t) =>
           t.id === todoId
-            ? {
-                ...t,
-                id: newId,
-                title,
-                scheduledTime: time
-                  ? convertTo24Hour(time)
-                  : null,
-              }
+            ? { ...t, id: newId, title, scheduledTime }
             : t
         )
       );
 
       setEditingTodoId(null);
       await refreshSelectedDay(selectedDay.date);
+      return;
     }
+
+    // ===== 기존 Todo → 수정 =====
+    await updateTodo(todoId, {
+      title,
+      scheduledTime,
+    });
+
+    updateCalendarDayTodos(selectedDay.date, (todos) =>
+      todos.map((t) =>
+        t.id === todoId
+          ? { ...t, title, scheduledTime }
+          : t
+      )
+    );
+
+    setEditingTodoId(null);
+    await refreshSelectedDay(selectedDay.date);
+  };
+
+  /* ===== 수정 ===== */
+  const handleEdit = async (
+    todoId: number,
+    title: string,
+    time?: { ampm: "AM" | "PM"; hour: number; minute: number } | null
+  ) => {
+    if (todoId < 0) return; // 임시 todo는 confirm에서만 처리
+    await handleConfirm(todoId, title, time);
   };
 
   return {
@@ -185,5 +210,6 @@ export function useTodoActions(
     handleDelete,
     handleAdd,
     handleConfirm,
+    handleEdit,
   };
 }
