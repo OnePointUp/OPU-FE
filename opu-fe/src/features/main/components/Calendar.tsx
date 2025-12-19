@@ -55,7 +55,7 @@ export default function Calendar({
         viewMode === "month"
         ? contentRef.current.children[0]
         : contentRef.current.children[1];
-
+    
     if (active instanceof HTMLElement) {
         setContainerHeight(active.scrollHeight);
     }
