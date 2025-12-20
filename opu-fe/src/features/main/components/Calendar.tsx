@@ -36,7 +36,8 @@ export default function Calendar({
 
     const [viewMode, setViewMode] = useState<"month" | "week">("week");
 
-    const [containerHeight, setContainerHeight] = useState<number | "auto">(49);
+    const initialWeekSkeletonHeight = 48;
+    const [containerHeight, setContainerHeight] = useState<number | "auto">(initialWeekSkeletonHeight);
     const contentRef = useRef<HTMLDivElement>(null);
 
     const [isLoading, setIsLoading] = useState(true);
