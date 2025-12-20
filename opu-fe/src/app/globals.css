@@ -637,7 +637,7 @@
     }
     .plus-menu--open .plus-menu__item-wrapper:nth-child(4) {
         transform: translateY(-10px);
-        transition-delay: 0.05s;
+        transition-delay: 0.02s;
     }
 
     /* ---------------- 닫힐 때 애니메이션 ---------------- */
