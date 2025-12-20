@@ -111,7 +111,7 @@ export default function WheelPickerBase<T extends string | number>({
 
   const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     const el = ref.current;
-    if (!el || touchStartY.current === null) return;
+    if (!el || touchStartY.current === null || e.touches.length === 0) return;
 
     const currentY = e.touches[0].clientY;
     const diff = currentY - touchStartY.current;
