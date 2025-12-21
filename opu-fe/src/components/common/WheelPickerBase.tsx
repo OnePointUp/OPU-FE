@@ -39,6 +39,9 @@ export default function WheelPickerBase<T extends string | number>({
     });
   };
 
+  const touchStartY = useRef<number | null>(null);
+  const touchStartScrollTop = useRef<number>(0);
+
   useEffect(() => {
     const baseIdx = items.indexOf(value);
     if (baseIdx === -1) return;
@@ -80,7 +83,7 @@ export default function WheelPickerBase<T extends string | number>({
     }, 70);
   };
 
-  /** wheel로 정확히 1칸 이동 */
+  /** (마우스) wheel로 1칸 이동 */
   const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -97,18 +100,54 @@ export default function WheelPickerBase<T extends string | number>({
     scrollToIndex(nextIdx);
   };
 
+  // ======= 터치 ========
+  const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    const el = ref.current;
+    if (!el) return;
+
+    touchStartY.current = e.touches[0].clientY;
+    touchStartScrollTop.current = el.scrollTop;
+  };
+
+  const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    const el = ref.current;
+    if (!el || touchStartY.current === null || e.touches.length === 0) return;
+
+    const currentY = e.touches[0].clientY;
+    const diff = currentY - touchStartY.current;
+
+    // 손가락 아래로 → 리스트 위로
+    el.scrollTop = touchStartScrollTop.current - diff;
+
+    e.preventDefault();
+  };
+
+  const onTouchEnd = () => {
+    const el = ref.current;
+    if (!el) return;
+
+    touchStartY.current = null;
+
+    const idx = getIndexFromScroll();
+
+    scrollToIndex(idx); // 가장 가까운 칸으로 스냅
+  };
+
   return (
-    <div
-      className="relative overflow-hidden select-none"
-      style={{
-        height,
-        maskImage:
-          "linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
-        WebkitMaskImage:
-          "linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
-      }}
-      onWheel={onWheel}
-    >
+  <div
+    className="relative overflow-hidden select-none touch-none"
+    style={{
+      height,
+      maskImage:
+        "linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
+      WebkitMaskImage:
+        "linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
+    }}
+    onWheel={onWheel}
+    onTouchStart={onTouchStart}
+    onTouchMove={onTouchMove}
+    onTouchEnd={onTouchEnd}
+  >
       <div
         className="absolute left-2 right-2 pointer-events-none rounded-lg z-0"
         style={{

@@ -4,7 +4,7 @@ import { Icon } from "@iconify/react";
 import TodoActionSheet from "./TodoActionSheet";
 import { MouseEvent } from "react";
 import Toggle from "@/components/common/Toggle";
-import WheelPickerTime from "../../main/components/WheelPickerTime";
+import WheelPickerTime from "./WheelPickerTime";
 import { useDragDrop } from "../hooks/useDragDrop";
 import { useRouter } from "next/navigation";
 import type { Todo } from "@/features/todo/domain";
