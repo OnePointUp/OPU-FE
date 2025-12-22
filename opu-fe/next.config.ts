@@ -15,8 +15,8 @@ const nextConfig: NextConfig = {
     async rewrites() {
         return [
             {
-                source: "/api/(.*)",
-                destination: "https://api.onepointup.site/$1",
+                source: "/api/v1/:path*",
+                destination: "https://api.onepointup.site/api/v1/:path*",
             },
         ];
     },
