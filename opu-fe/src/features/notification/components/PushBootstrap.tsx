@@ -41,6 +41,8 @@ export default function PushBootstrap() {
                 await navigator.serviceWorker.ready;
 
                 let sub = await reg.pushManager.getSubscription();
+                const hadSub = Boolean(sub);
+
                 if (!sub) {
                     sub = await reg.pushManager.subscribe({
                         userVisibleOnly: true,
@@ -57,6 +59,9 @@ export default function PushBootstrap() {
 
                 if (cancelled) return;
                 if (!endpoint || !p256dh || !auth) return;
+
+                // 서버/클라이언트 모두 이미 구독 상태면 재등록 생략
+                if (hadSub && status.hasSubscription) return;
 
                 await subscribeWebPush({
                     endpoint,
