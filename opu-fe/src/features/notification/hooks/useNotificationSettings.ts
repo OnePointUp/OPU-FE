@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
     fetchNotificationSettings,
+    fetchWebPushStatus,
     patchNotificationItem,
     setAllNotifications,
     subscribeWebPush,
@@ -59,6 +60,8 @@ export function useNotificationSettings() {
                 });
 
                 if (agreed) {
+                    const status = await fetchWebPushStatus();
+
                     if (
                         typeof window === "undefined" ||
                         !("Notification" in window) ||
@@ -92,6 +95,8 @@ export function useNotificationSettings() {
                     await navigator.serviceWorker.ready;
 
                     let sub = await reg.pushManager.getSubscription();
+                    const hadSub = Boolean(sub);
+
                     if (!sub) {
                         sub = await reg.pushManager.subscribe({
                             userVisibleOnly: true,
@@ -110,12 +115,15 @@ export function useNotificationSettings() {
                         throw new Error("푸시 구독 정보가 올바르지 않아요.");
                     }
 
-                    await subscribeWebPush({
-                        endpoint,
-                        p256dh,
-                        auth,
-                        expirationTime,
-                    });
+                    // 서버/클라이언트 모두 이미 구독 상태면 재등록 생략
+                    if (!(hadSub && status.hasSubscription)) {
+                        await subscribeWebPush({
+                            endpoint,
+                            p256dh,
+                            auth,
+                            expirationTime,
+                        });
+                    }
                 } else {
                     const reg = await navigator.serviceWorker.getRegistration(
                         "/"
