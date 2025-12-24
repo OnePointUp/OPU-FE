@@ -5,6 +5,8 @@ import {
     fetchNotificationSettings,
     patchNotificationItem,
     setAllNotifications,
+    subscribeWebPush,
+    unsubscribeWebPush,
     updateWebPushAgreed,
 } from "@/features/notification/services";
 import type {
@@ -12,6 +14,16 @@ import type {
     NotificationCode,
 } from "@/features/notification/types";
 import { toastError } from "@/lib/toast";
+
+function urlBase64ToUint8Array(base64String: string) {
+    const clean = (base64String || "").trim().replace(/\s+/g, "");
+    const padding = "=".repeat((4 - (clean.length % 4)) % 4);
+    const base64 = (clean + padding).replace(/-/g, "+").replace(/_/g, "/");
+    const rawData = atob(base64);
+    const out = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; i += 1) out[i] = rawData.charCodeAt(i);
+    return out;
+}
 
 export function useNotificationSettings() {
     const [view, setView] = useState<NotificationSettingsView | null>(null);
@@ -37,19 +49,97 @@ export function useNotificationSettings() {
         load();
     }, [refresh]);
 
-    // 웹푸시 허용 ON/OFF
+    // 웹푸시 허용 ON/OFF (+ 구독/해제 API 호출)
     const toggleWebPushAgreed = useCallback(
         async (agreed: boolean) => {
-            setView((prev) => {
-                if (!prev) return prev;
-                return { ...prev, webPushAgreed: agreed };
-            });
-
             try {
+                setView((prev) => {
+                    if (!prev) return prev;
+                    return { ...prev, webPushAgreed: agreed };
+                });
+
+                if (agreed) {
+                    if (
+                        typeof window === "undefined" ||
+                        !("Notification" in window) ||
+                        !("serviceWorker" in navigator) ||
+                        !("PushManager" in window)
+                    ) {
+                        throw new Error(
+                            "웹 푸시를 지원하지 않는 브라우저예요."
+                        );
+                    }
+
+                    if (Notification.permission !== "granted") {
+                        throw new Error(
+                            "알림 권한을 허용해야 웹푸시를 켤 수 있어요."
+                        );
+                    }
+
+                    const vapidPublicKey =
+                        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+                    if (!vapidPublicKey) {
+                        throw new Error("웹푸시 키가 설정되지 않았어요.");
+                    }
+
+                    const reg =
+                        (await navigator.serviceWorker.getRegistration("/")) ??
+                        (await navigator.serviceWorker.register(
+                            "/service-worker.js",
+                            { scope: "/" }
+                        ));
+
+                    await navigator.serviceWorker.ready;
+
+                    let sub = await reg.pushManager.getSubscription();
+                    if (!sub) {
+                        sub = await reg.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey:
+                                urlBase64ToUint8Array(vapidPublicKey),
+                        });
+                    }
+
+                    const json = sub.toJSON();
+                    const endpoint = sub.endpoint;
+                    const p256dh = json.keys?.p256dh ?? "";
+                    const auth = json.keys?.auth ?? "";
+                    const expirationTime = sub.expirationTime ?? null;
+
+                    if (!endpoint || !p256dh || !auth) {
+                        throw new Error("푸시 구독 정보가 올바르지 않아요.");
+                    }
+
+                    await subscribeWebPush({
+                        endpoint,
+                        p256dh,
+                        auth,
+                        expirationTime,
+                    });
+                } else {
+                    const reg = await navigator.serviceWorker.getRegistration(
+                        "/"
+                    );
+                    const sub = await reg?.pushManager.getSubscription();
+                    const endpoint = sub?.endpoint;
+
+                    if (endpoint) {
+                        await unsubscribeWebPush({ endpoint });
+                    }
+
+                    try {
+                        await sub?.unsubscribe();
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }
+
                 await updateWebPushAgreed(agreed);
             } catch (e) {
                 console.error(e);
-                toastError("저장에 실패했어요.");
+                toastError(
+                    e instanceof Error ? e.message : "저장에 실패했어요."
+                );
 
                 try {
                     await refresh();
