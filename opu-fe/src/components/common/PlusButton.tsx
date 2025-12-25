@@ -135,7 +135,7 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
                                 </span>
                                 <button
                                     onClick={item.onClick}
-                                    className="plus-menu__item"
+                                    className="plus-menu__item cursor-pointer"
                                     style={{ backgroundColor: item.bgColor }}
                                 >
                                     {item.icon}
@@ -154,6 +154,7 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
                     }
                     className={clsx(
                         "plus-button",
+                        "cursor-pointer",
                         showMenu && isOpen && "plus-button--rotated"
                     )}
                     style={{ backgroundColor: "var(--color-opu-pink)" }}
