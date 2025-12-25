@@ -92,7 +92,7 @@ export default function BlockedOpuList({
                     <button
                         type="button"
                         onClick={() => setShowConfirm(true)}
-                        className="h-7 px-2 rounded-md bg-[var(--color-opu-dark-green)] text-[12px] font-[var(--weight-medium)] text-white disabled:opacity-50"
+                        className="h-7 px-2 rounded-md bg-[var(--color-opu-dark-green)] text-[12px] font-[var(--weight-medium)] text-white disabled:opacity-50 cursor-pointer"
                         disabled={selected.size === 0}
                         title="선택 삭제"
                     >
