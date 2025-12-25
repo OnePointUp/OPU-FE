@@ -41,7 +41,7 @@ export default function WebPushModal({
                     </div>
                     <button
                         type="button"
-                        className="text-[var(--color-dark-gray)]"
+                        className="text-[var(--color-dark-gray)] cursor-pointer"
                         onClick={onClose}
                         aria-label="닫기"
                     >
@@ -68,7 +68,7 @@ export default function WebPushModal({
                 <button
                     type="button"
                     onClick={onAccept}
-                    className="mt-5 w-full rounded-full bg-black py-3 text-sm text-white"
+                    className="mt-5 w-full rounded-full bg-black py-3 text-sm text-white cursor-pointer"
                     style={{ fontWeight: "var(--weight-semibold)" }}
                 >
                     {denied ? "확인" : "알림 받기"}
@@ -77,7 +77,7 @@ export default function WebPushModal({
                 <button
                     type="button"
                     onClick={onLater}
-                    className="underline mt-3 w-full text-center text-[length:var(--text-caption)] text-[var(--color-dark-gray)]"
+                    className="underline mt-3 w-full text-center text-[length:var(--text-caption)] text-[var(--color-dark-gray)] cursor-pointer"
                 >
                     나중에 받을게요.
                 </button>
