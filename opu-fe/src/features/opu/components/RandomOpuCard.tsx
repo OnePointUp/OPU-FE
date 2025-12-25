@@ -44,7 +44,7 @@ export default function RandomOpuCard({ item, onAddTodo }: Props) {
                 type="button"
                 onClick={handleLikeClick}
                 aria-pressed={liked}
-                className="w-full flex justify-end"
+                className="w-full flex justify-end cursor-pointer"
                 title="찜하기"
             >
                 <Icon
@@ -123,7 +123,7 @@ export default function RandomOpuCard({ item, onAddTodo }: Props) {
                     <button
                         type="button"
                         onClick={handleAddTodoClick}
-                        className="w-full inline-flex items-center justify-center gap-1 py-2 rounded-full border"
+                        className="w-full inline-flex items-center justify-center gap-1 py-2 rounded-full border cursor-pointer"
                         style={{
                             borderColor: "var(--color-opu-pink)",
                             color: "var(--color-opu-pink)",

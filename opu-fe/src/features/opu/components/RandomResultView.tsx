@@ -71,7 +71,7 @@ export default function RandomResultView({ item, onRetry }: Props) {
                     <button
                         type="button"
                         onClick={() => handleBlock(item.id)}
-                        className="underline"
+                        className="underline cursor-pointer"
                         style={{
                             fontSize: "var(--text-mini)",
                             fontWeight: "var(--weight-medium)",
@@ -95,7 +95,7 @@ export default function RandomResultView({ item, onRetry }: Props) {
                 <button
                     type="button"
                     onClick={onRetry}
-                    className="w-full h-[56px] rounded-[18px] border flex items-center justify-center gap-2 bg-white"
+                    className="w-full h-[56px] rounded-[18px] border flex items-center justify-center gap-2 bg-white cursor-pointer"
                     style={{
                         borderColor: "var(--color-light-gray)",
                         color: "var(--color-light-gray)",
