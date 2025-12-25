@@ -262,14 +262,14 @@ export default function TodoList({
                   <div className="flex gap-3 mt-1">
                     <button
                       onClick={cancel}
-                      className="flex-1 h-[48px] rounded-[12px] bg-gray-200 text-gray-700 font-semibold"
+                      className="flex-1 h-[48px] rounded-[12px] bg-gray-200 text-gray-700 font-semibold cursor-pointer"
                     >
                       취소
                     </button>
 
                     <button
                       onClick={save}
-                      className="flex-1 h-[48px] rounded-[12px] bg-[var(--color-opu-green)] text-white font-semibold"
+                      className="flex-1 h-[48px] rounded-[12px] bg-[var(--color-opu-green)] text-white font-semibold cursor-pointer"
                     >
                       확인
                     </button>
