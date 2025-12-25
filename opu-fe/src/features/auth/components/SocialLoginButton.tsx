@@ -35,7 +35,7 @@ export default function SocialLoginButton({provider, onClick}: SocialLoginButton
             color: config.text,
             borderColor: config.border,
         }}
-        className="flex items-center justify-center gap-2 w-[min(90%,355px)] h-[50px] rounded-[6px] font-semibold transition-all border hover:brightness-95"
+        className="flex items-center justify-center gap-2 w-[min(90%,355px)] h-[50px] rounded-[6px] font-semibold transition-all border hover:brightness-95 cursor-pointer"
         >
         <Icon icon={config.icon} width={20} height={20} />
         {config.label}

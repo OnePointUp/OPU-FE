@@ -43,7 +43,7 @@ export default function PasswordInput({
                 <button
                     type="button"
                     onClick={() => setShow((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[12px]"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[12px] cursor-pointer"
                     aria-label={show ? "비밀번호 가리기" : "비밀번호 보기"}
                     style={{ color: "var(--color-placeholder)" }}
                 >
