@@ -24,7 +24,7 @@ export default function NotificationFeedRow({ item, onClick }: Props) {
     return (
         <li
             onClick={() => onClick(item)}
-            className="cursor-pointer flex gap-4 py-3"
+            className="cursor-pointer flex gap-4 py-3 cursor-pointer"
             style={{
                 background: "var(--color-background)",
                 opacity: isDimmed ? 0.5 : 1,
