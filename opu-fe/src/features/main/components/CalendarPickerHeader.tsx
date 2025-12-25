@@ -19,19 +19,19 @@ export default function CalendarHeader({
 }: CalendarHeaderProps) {
   return (
     <div className="flex items-center justify-between px-4 py-3 select-none">
-      <button onClick={onPrev} className="p-2">
+      <button onClick={onPrev} className="p-2 cursor-pointer">
         <Icon icon="mingcute:left-line" width={22} />
       </button>
 
       {/* 연도·월 클릭 → WheelPicker 연도 선택 모달 열림 */}
       <button
         onClick={onClickYear}
-        className="text-lg font-semibold flex items-center gap-1"
+        className="text-lg font-semibold flex items-center gap-1 cursor-pointer"
       >
         {year}년 {month + 1}월
       </button>
 
-      <button onClick={onNext} className="p-2">
+      <button onClick={onNext} className="p-2 cursor-pointer">
         <Icon icon="mingcute:right-line" width={22} />
       </button>
     </div>
