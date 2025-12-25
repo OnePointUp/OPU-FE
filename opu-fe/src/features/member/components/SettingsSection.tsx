@@ -44,7 +44,7 @@ export default function SettingsSection({
                 <button
                     type="button"
                     onClick={handleWithdrawClick}
-                    className="h-12 w-full text-left text-[var(--color-light-gray)] opacity-70 hover:opacity-90 focus:opacity-90 focus:outline-none"
+                    className="h-12 w-full text-left text-[var(--color-light-gray)] opacity-70 hover:opacity-90 focus:opacity-90 focus:outline-none cursor-pointer"
                     style={{ fontSize: "var(--text-caption)" }}
                 >
                     회원 탈퇴

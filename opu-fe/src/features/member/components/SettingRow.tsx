@@ -8,7 +8,7 @@ type Props =
 
 export default function SettingRow({ label, href, onClick, disabled }: Props) {
     const cls =
-        "relative flex items-center justify-between h-13 w-full font-[var(--weight-semibold)]";
+        "relative flex items-center justify-between h-13 w-full font-[var(--weight-semibold)] cursor-pointer";
     const right = (
         <Icon
             icon="mdi:chevron-right"
