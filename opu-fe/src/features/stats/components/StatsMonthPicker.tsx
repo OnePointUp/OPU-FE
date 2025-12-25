@@ -20,7 +20,7 @@ export default function MonthPicker({
             {/* 이전 달 */}
             <button
                 type="button"
-                className="p-2 shrink-0"
+                className="p-2 shrink-0 cursor-pointer"
                 aria-label="이전 달"
                 onClick={onPrev}
             >
@@ -46,7 +46,7 @@ export default function MonthPicker({
             {/* 다음 달 */}
             <button
                 type="button"
-                className="p-2 shrink-0"
+                className="p-2 shrink-0 cursor-pointer"
                 aria-label="다음 달"
                 onClick={onNext}
             >
