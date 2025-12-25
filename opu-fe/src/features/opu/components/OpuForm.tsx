@@ -82,7 +82,7 @@ export default function OpuForm({
                         type="button"
                         disabled={disabled}
                         onClick={onClickEmoji}
-                        className="px-2 py-2 flex items-center justify-between rounded-[12px] border border-[var(--color-input-border)] bg-white text-2xl"
+                        className="px-2 py-2 flex items-center justify-between rounded-[12px] border border-[var(--color-input-border)] bg-white text-2xl cursor-pointer"
                     >
                         {currentEmoji || "😀"}
                         <Icon icon="mdi:chevron-down" width={20} height={20} />
@@ -110,7 +110,7 @@ export default function OpuForm({
                             type="button"
                             onClick={onClickTime}
                             disabled={disabled}
-                            className="input-box-2 input-box--field flex items-center justify-between overflow-hidden pr-2"
+                            className="input-box-2 input-box--field flex items-center justify-between overflow-hidden pr-2 cursor-pointer"
                         >
                             <span
                                 style={{
@@ -138,7 +138,7 @@ export default function OpuForm({
                             type="button"
                             onClick={onClickCategory}
                             disabled={disabled}
-                            className="input-box-2 input-box--field flex items-center justify-between overflow-hidden pr-2"
+                            className="input-box-2 input-box--field flex items-center justify-between overflow-hidden pr-2 cursor-pointer"
                         >
                             <span
                                 style={{

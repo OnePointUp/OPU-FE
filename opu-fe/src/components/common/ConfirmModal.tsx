@@ -44,7 +44,7 @@ export default function ConfirmModal({
                 <div className="flex justify-center gap-2 mt-5">
                     <button
                         onClick={onCancel}
-                        className="w-1/2 h-10 rounded-md bg-[var(--color-super-light-gray)] text-[var(--color-dark-gray)] font-[var(--weight-semibold)]"
+                        className="w-1/2 h-10 rounded-md bg-[var(--color-super-light-gray)] text-[var(--color-dark-gray)] font-[var(--weight-semibold)] cursor-pointer"
                         style={{ fontSize: "var(--text-sub)" }}
                     >
                         취소
@@ -52,7 +52,7 @@ export default function ConfirmModal({
                     <button
                         onClick={onConfirm}
                         disabled={confirmDisabled}
-                        className="w-1/2 h-10 rounded-md bg-[var(--color-opu-dark-green)] text-white font-[var(--weight-semibold)] disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="w-1/2 h-10 rounded-md bg-[var(--color-opu-dark-green)] text-white font-[var(--weight-semibold)] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                         style={{ fontSize: "var(--text-sub)" }}
                     >
                         확인

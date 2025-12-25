@@ -24,7 +24,7 @@ export default function OpuToolbar({
             <button
                 type="button"
                 onClick={onClickTime}
-                className="flex items-center justify-center gap-1"
+                className="flex items-center justify-center gap-1 cursor-pointer"
                 style={{ fontSize: "var(--text-caption)" }}
             >
                 <span>{timeLabel}</span>
@@ -39,7 +39,7 @@ export default function OpuToolbar({
             <button
                 type="button"
                 onClick={onClickCategory}
-                className="flex items-center justify-center gap-1"
+                className="flex items-center justify-center gap-1 cursor-pointer"
                 style={{ fontSize: "var(--text-caption)" }}
             >
                 <span>{categoryLabel}</span>
@@ -54,7 +54,7 @@ export default function OpuToolbar({
             <button
                 type="button"
                 onClick={onClickSort}
-                className="flex items-center justify-center gap-1"
+                className="flex items-center justify-center gap-1 cursor-pointer"
                 style={{ fontSize: "var(--text-caption)" }}
             >
                 <span>{sortLabel}</span>

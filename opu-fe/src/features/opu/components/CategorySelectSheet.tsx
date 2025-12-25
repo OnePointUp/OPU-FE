@@ -61,7 +61,7 @@ export default function CategorySelectSheet({
                                 >
                                     <button
                                         type="button"
-                                        className="w-full flex items-center justify-between"
+                                        className="w-full flex items-center justify-between cursor-pointer"
                                         onClick={() => {
                                             onSelect(opt);
                                             onClose();

@@ -48,6 +48,7 @@ export default function OpuActionButton({
                 transition-all
                 bg-[var(--color-opu-green)] text-white
                 disabled:opacity-50 disabled:cursor-not-allowed
+                cursor-pointer
                 `}
             >
                 {loading ? <Spinner /> : label}
