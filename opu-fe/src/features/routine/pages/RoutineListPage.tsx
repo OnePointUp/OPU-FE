@@ -10,6 +10,7 @@ import ActionList, { type ActionItem } from "@/components/common/ActionList";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import { deleteRoutine } from "../services";
 import { useRoutineListPage } from "../hooks/useRoutineListPage";
+import SpinnerOverlay from "@/components/common/SpinnerOverlay";
 
 export default function RoutineListPage() {
     const router = useRouter();
@@ -158,13 +159,11 @@ export default function RoutineListPage() {
                         router.push("/routine/register");
                     }}
                 >
-                    {navigating ? (
-                        <span className="form-label">이동 중...</span>
-                    ) : (
-                        <Icon icon="ic:baseline-plus" width="30" height="30" />
-                    )}
+                    <Icon icon="ic:baseline-plus" width="30" height="30" />
                 </button>
             </div>
+
+            {navigating && <SpinnerOverlay />}
 
             <BottomSheet open={openSheet} onClose={onCloseSheet}>
                 <ActionList items={actionItems} />
