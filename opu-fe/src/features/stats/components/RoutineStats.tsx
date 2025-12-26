@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FC } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 
@@ -31,7 +31,7 @@ type RoutineStatsProps = {
 
 type ActiveFilter = "all" | number;
 
-const RoutineStats: FC<RoutineStatsProps> = ({ routineId, year, month }) => {
+const RoutineStats = ({ routineId, year, month }: RoutineStatsProps) => {
     const [activeFilter, setActiveFilter] = useState<ActiveFilter>("all");
 
     const [stats, setStats] = useState<RoutineCalendarResponse | null>(null);
