@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 type InlineCalendarProps = {
     value: string | null;
     onSelect: (value: string) => void;
+    minDate?: string | null;
 };
 
 function toDateString(year: number, month: number, day: number) {
@@ -19,6 +20,7 @@ const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 export default function InlineCalendar({
     value,
     onSelect,
+    minDate = null,
 }: InlineCalendarProps) {
     const [year, setYear] = useState<number>(() => {
         const base = value ? new Date(value) : new Date();
@@ -38,9 +40,17 @@ export default function InlineCalendar({
         return d;
     }, []);
 
-    const isBeforeTodayMonth = (y: number, m: number) => {
-        if (y < today.getFullYear()) return true;
-        if (y === today.getFullYear() && m < today.getMonth()) return true;
+    const minAllowedDate = useMemo(() => {
+        if (!minDate) return today;
+        const d = new Date(minDate);
+        d.setHours(0, 0, 0, 0);
+        return d;
+    }, [minDate, today]);
+
+    const isBeforeMinMonth = (y: number, m: number) => {
+        if (y < minAllowedDate.getFullYear()) return true;
+        if (y === minAllowedDate.getFullYear() && m < minAllowedDate.getMonth())
+            return true;
         return false;
     };
 
@@ -89,7 +99,7 @@ export default function InlineCalendar({
                 targetMonth = 0;
             }
 
-            if (isBeforeTodayMonth(targetYear, targetMonth)) {
+            if (isBeforeMinMonth(targetYear, targetMonth)) {
                 return prev;
             }
 
@@ -142,10 +152,10 @@ export default function InlineCalendar({
                             height={20}
                             className="text-[var(--color-dark-gray)]"
                             style={{
-                                opacity: isBeforeTodayMonth(year, month)
+                                opacity: isBeforeMinMonth(year, month)
                                     ? 0.3
                                     : 1,
-                                pointerEvents: isBeforeTodayMonth(year, month)
+                                pointerEvents: isBeforeMinMonth(year, month)
                                     ? "none"
                                     : "auto",
                             }}
@@ -243,7 +253,8 @@ export default function InlineCalendar({
                     const cellDate = new Date(year, month, day);
                     cellDate.setHours(0, 0, 0, 0);
                     const isToday = cellDate.getTime() === today.getTime();
-                    const isPast = cellDate.getTime() < today.getTime();
+                    const isPast =
+                        cellDate.getTime() < minAllowedDate.getTime();
                     const isSelected = selectedDay === day;
 
                     return (

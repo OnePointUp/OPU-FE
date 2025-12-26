@@ -406,6 +406,7 @@ export default function RoutineForm({
                         {activeDateField === "startDate" && (
                             <InlineCalendar
                                 value={form.startDate}
+                                minDate={mode === "edit" ? form.startDate : null}
                                 onSelect={(v) =>
                                     handleSelectDate("startDate", v)
                                 }
@@ -457,6 +458,11 @@ export default function RoutineForm({
                         {activeDateField === "endDate" && (
                             <InlineCalendar
                                 value={form.endDate}
+                                minDate={
+                                    mode === "edit"
+                                        ? form.startDate ?? form.endDate
+                                        : form.startDate
+                                }
                                 onSelect={(v) => handleSelectDate("endDate", v)}
                             />
                         )}
