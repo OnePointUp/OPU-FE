@@ -86,30 +86,17 @@ export default function InlineCalendar({
     }, [year, month, value]);
 
     const moveMonth = (delta: number) => {
-        setMonth((prev) => {
-            const next = prev + delta;
-            let targetYear = year;
-            let targetMonth = next;
+        const nextDate = new Date(year, month, 1);
+        nextDate.setMonth(nextDate.getMonth() + delta);
+        nextDate.setHours(0, 0, 0, 0);
 
-            if (next < 0) {
-                return prev;
-            }
-            if (next > 11) {
-                targetYear = year + 1;
-                targetMonth = 0;
-            }
+        const nextYear = nextDate.getFullYear();
+        const nextMonth = nextDate.getMonth();
 
-            if (isBeforeMinMonth(targetYear, targetMonth)) {
-                return prev;
-            }
+        if (isBeforeMinMonth(nextYear, nextMonth)) return;
 
-            if (next > 11) {
-                setYear(targetYear);
-                return 0;
-            }
-
-            return next;
-        });
+        setYear(nextYear);
+        setMonth(nextMonth);
     };
 
     const handleSelect = (day: number) => {
@@ -122,6 +109,7 @@ export default function InlineCalendar({
     };
 
     const handleSelectMonth = (targetYear: number, targetMonth: number) => {
+        if (isBeforeMinMonth(targetYear, targetMonth)) return;
         setYear(targetYear);
         setMonth(targetMonth);
         setShowMonthPicker(false);
@@ -145,22 +133,33 @@ export default function InlineCalendar({
                 </button>
 
                 <div className="flex items-center gap-1">
-                    <button type="button" onClick={() => moveMonth(-1)}>
-                        <Icon
-                            icon="mdi:chevron-left"
-                            width={20}
-                            height={20}
-                            className="text-[var(--color-dark-gray)]"
-                            style={{
-                                opacity: isBeforeMinMonth(year, month)
-                                    ? 0.3
-                                    : 1,
-                                pointerEvents: isBeforeMinMonth(year, month)
-                                    ? "none"
-                                    : "auto",
-                            }}
-                        />
-                    </button>
+                    {(() => {
+                        const prevDate = new Date(year, month - 1, 1);
+                        const disablePrev = isBeforeMinMonth(
+                            prevDate.getFullYear(),
+                            prevDate.getMonth()
+                        );
+                        return (
+                            <button
+                                type="button"
+                                onClick={() => moveMonth(-1)}
+                                disabled={disablePrev}
+                            >
+                                <Icon
+                                    icon="mdi:chevron-left"
+                                    width={20}
+                                    height={20}
+                                    className="text-[var(--color-dark-gray)]"
+                                    style={{
+                                        opacity: disablePrev ? 0.3 : 1,
+                                        pointerEvents: disablePrev
+                                            ? "none"
+                                            : "auto",
+                                    }}
+                                />
+                            </button>
+                        );
+                    })()}
                     <button type="button" onClick={() => moveMonth(1)}>
                         <Icon
                             icon="mdi:chevron-right"
