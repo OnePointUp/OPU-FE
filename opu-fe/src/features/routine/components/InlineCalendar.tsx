@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 type InlineCalendarProps = {
     value: string | null;
     onSelect: (value: string) => void;
+    minDate?: string | null;
 };
 
 function toDateString(year: number, month: number, day: number) {
@@ -19,6 +20,7 @@ const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 export default function InlineCalendar({
     value,
     onSelect,
+    minDate = null,
 }: InlineCalendarProps) {
     const [year, setYear] = useState<number>(() => {
         const base = value ? new Date(value) : new Date();
@@ -37,6 +39,20 @@ export default function InlineCalendar({
         d.setHours(0, 0, 0, 0);
         return d;
     }, []);
+
+    const minAllowedDate = useMemo(() => {
+        if (!minDate) return today;
+        const d = new Date(minDate);
+        d.setHours(0, 0, 0, 0);
+        return d;
+    }, [minDate, today]);
+
+    const isBeforeMinMonth = (y: number, m: number) => {
+        if (y < minAllowedDate.getFullYear()) return true;
+        if (y === minAllowedDate.getFullYear() && m < minAllowedDate.getMonth())
+            return true;
+        return false;
+    };
 
     // 연도 섹션: 현재 연도 기준 -1, 현재, +1
     const yearOptions = useMemo(() => [year - 1, year, year + 1], [year]);
@@ -70,18 +86,17 @@ export default function InlineCalendar({
     }, [year, month, value]);
 
     const moveMonth = (delta: number) => {
-        setMonth((prev) => {
-            const next = prev + delta;
-            if (next < 0) {
-                setYear((y) => y - 1);
-                return 11;
-            }
-            if (next > 11) {
-                setYear((y) => y + 1);
-                return 0;
-            }
-            return next;
-        });
+        const nextDate = new Date(year, month, 1);
+        nextDate.setMonth(nextDate.getMonth() + delta);
+        nextDate.setHours(0, 0, 0, 0);
+
+        const nextYear = nextDate.getFullYear();
+        const nextMonth = nextDate.getMonth();
+
+        if (isBeforeMinMonth(nextYear, nextMonth)) return;
+
+        setYear(nextYear);
+        setMonth(nextMonth);
     };
 
     const handleSelect = (day: number) => {
@@ -94,6 +109,7 @@ export default function InlineCalendar({
     };
 
     const handleSelectMonth = (targetYear: number, targetMonth: number) => {
+        if (isBeforeMinMonth(targetYear, targetMonth)) return;
         setYear(targetYear);
         setMonth(targetMonth);
         setShowMonthPicker(false);
@@ -117,14 +133,33 @@ export default function InlineCalendar({
                 </button>
 
                 <div className="flex items-center gap-1">
-                    <button type="button" onClick={() => moveMonth(-1)}>
-                        <Icon
-                            icon="mdi:chevron-left"
-                            width={20}
-                            height={20}
-                            className="text-[var(--color-dark-gray)]"
-                        />
-                    </button>
+                    {(() => {
+                        const prevDate = new Date(year, month - 1, 1);
+                        const disablePrev = isBeforeMinMonth(
+                            prevDate.getFullYear(),
+                            prevDate.getMonth()
+                        );
+                        return (
+                            <button
+                                type="button"
+                                onClick={() => moveMonth(-1)}
+                                disabled={disablePrev}
+                            >
+                                <Icon
+                                    icon="mdi:chevron-left"
+                                    width={20}
+                                    height={20}
+                                    className="text-[var(--color-dark-gray)]"
+                                    style={{
+                                        opacity: disablePrev ? 0.3 : 1,
+                                        pointerEvents: disablePrev
+                                            ? "none"
+                                            : "auto",
+                                    }}
+                                />
+                            </button>
+                        );
+                    })()}
                     <button type="button" onClick={() => moveMonth(1)}>
                         <Icon
                             icon="mdi:chevron-right"
@@ -214,29 +249,39 @@ export default function InlineCalendar({
                 {cells.map((day, idx) => {
                     if (!day) return <span key={idx} className="h-8" />;
 
-                    const isSelected = selectedDay === day;
-
                     const cellDate = new Date(year, month, day);
                     cellDate.setHours(0, 0, 0, 0);
                     const isToday = cellDate.getTime() === today.getTime();
+                    const isPast =
+                        cellDate.getTime() < minAllowedDate.getTime();
+                    const isSelected = selectedDay === day;
 
                     return (
                         <button
                             key={idx}
                             type="button"
-                            onClick={() => handleSelect(day)}
+                            onClick={() => {
+                                if (isPast) return;
+                                handleSelect(day);
+                            }}
                             className="mx-auto flex items-center justify-center w-7 h-7 rounded-full"
                             style={{
                                 backgroundColor: isSelected
                                     ? "#000000"
+                                    : isPast
+                                    ? "transparent"
                                     : isToday
                                     ? "var(--color-super-light-gray)"
                                     : "transparent",
                                 color: isSelected
                                     ? "#ffffff"
+                                    : isPast
+                                    ? "var(--color-light-gray)"
                                     : "var(--color-dark-navy)",
                                 fontSize: "var(--text-sub)",
+                                opacity: isPast ? 0.5 : 1,
                             }}
+                            disabled={isPast}
                         >
                             {day}
                         </button>

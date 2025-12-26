@@ -14,7 +14,7 @@ import InlineCalendar from "./InlineCalendar";
 import { useRouter } from "next/navigation";
 import BottomSheet from "@/components/common/BottomSheet";
 import TimePickerSheet from "./TimePickerSheet";
-import { toastWarn } from "@/lib/toast";
+import { toastError, toastWarn } from "@/lib/toast";
 
 type Props = {
     mode: "create" | "edit";
@@ -93,6 +93,7 @@ export default function RoutineForm({
         "startDate" | "endDate" | null
     >(null);
     const [showTimeSheet, setShowTimeSheet] = useState(false);
+    const preserveSessionRef = useRef(false);
 
     const hasTitle = (form.title ?? "").trim().length > 0;
     const submitLabel = mode === "create" ? "등록" : "수정";
@@ -148,6 +149,7 @@ export default function RoutineForm({
         if (typeof window !== "undefined") {
             window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
         }
+        preserveSessionRef.current = true;
 
         const params = new URLSearchParams();
         params.set("frequency", form.frequency);
@@ -240,12 +242,21 @@ export default function RoutineForm({
 
     const handleSubmit = async () => {
         if (isSubmitDisabled) return;
-        setLocalSubmitting(true);
-        await onSubmit(form);
-        if (typeof window !== "undefined") {
-            window.sessionStorage.removeItem(STORAGE_KEY);
+
+        if (!form.startDate) {
+            toastWarn("시작 날짜를 선택해 주세요.");
+            return;
         }
-        if (mountedRef.current) {
+
+        setLocalSubmitting(true);
+        try {
+            await onSubmit(form);
+            if (typeof window !== "undefined") {
+                window.sessionStorage.removeItem(STORAGE_KEY);
+            }
+        } catch (e) {
+            toastError("저장에 실패했어요. 입력값을 확인해 주세요.");
+        } finally {
             setLocalSubmitting(false);
         }
     };
@@ -274,9 +285,12 @@ export default function RoutineForm({
 
     useEffect(() => {
         return () => {
+            if (!preserveSessionRef.current && typeof window !== "undefined") {
+                window.sessionStorage.removeItem(STORAGE_KEY);
+            }
             mountedRef.current = false;
         };
-    }, []);
+    }, [STORAGE_KEY]);
 
     return (
         <>
@@ -392,6 +406,7 @@ export default function RoutineForm({
                         {activeDateField === "startDate" && (
                             <InlineCalendar
                                 value={form.startDate}
+                                minDate={mode === "edit" ? form.startDate : null}
                                 onSelect={(v) =>
                                     handleSelectDate("startDate", v)
                                 }
@@ -443,6 +458,11 @@ export default function RoutineForm({
                         {activeDateField === "endDate" && (
                             <InlineCalendar
                                 value={form.endDate}
+                                minDate={
+                                    mode === "edit"
+                                        ? form.startDate ?? form.endDate
+                                        : form.startDate
+                                }
                                 onSelect={(v) => handleSelectDate("endDate", v)}
                             />
                         )}
