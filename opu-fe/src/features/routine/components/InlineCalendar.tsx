@@ -38,6 +38,12 @@ export default function InlineCalendar({
         return d;
     }, []);
 
+    const isBeforeTodayMonth = (y: number, m: number) => {
+        if (y < today.getFullYear()) return true;
+        if (y === today.getFullYear() && m < today.getMonth()) return true;
+        return false;
+    };
+
     // 연도 섹션: 현재 연도 기준 -1, 현재, +1
     const yearOptions = useMemo(() => [year - 1, year, year + 1], [year]);
 
@@ -72,14 +78,26 @@ export default function InlineCalendar({
     const moveMonth = (delta: number) => {
         setMonth((prev) => {
             const next = prev + delta;
+            let targetYear = year;
+            let targetMonth = next;
+
             if (next < 0) {
-                setYear((y) => y - 1);
-                return 11;
+                return prev;
             }
             if (next > 11) {
-                setYear((y) => y + 1);
+                targetYear = year + 1;
+                targetMonth = 0;
+            }
+
+            if (isBeforeTodayMonth(targetYear, targetMonth)) {
+                return prev;
+            }
+
+            if (next > 11) {
+                setYear(targetYear);
                 return 0;
             }
+
             return next;
         });
     };
@@ -123,6 +141,14 @@ export default function InlineCalendar({
                             width={20}
                             height={20}
                             className="text-[var(--color-dark-gray)]"
+                            style={{
+                                opacity: isBeforeTodayMonth(year, month)
+                                    ? 0.3
+                                    : 1,
+                                pointerEvents: isBeforeTodayMonth(year, month)
+                                    ? "none"
+                                    : "auto",
+                            }}
                         />
                     </button>
                     <button type="button" onClick={() => moveMonth(1)}>
@@ -214,29 +240,38 @@ export default function InlineCalendar({
                 {cells.map((day, idx) => {
                     if (!day) return <span key={idx} className="h-8" />;
 
-                    const isSelected = selectedDay === day;
-
                     const cellDate = new Date(year, month, day);
                     cellDate.setHours(0, 0, 0, 0);
                     const isToday = cellDate.getTime() === today.getTime();
+                    const isPast = cellDate.getTime() < today.getTime();
+                    const isSelected = selectedDay === day;
 
                     return (
                         <button
                             key={idx}
                             type="button"
-                            onClick={() => handleSelect(day)}
+                            onClick={() => {
+                                if (isPast) return;
+                                handleSelect(day);
+                            }}
                             className="mx-auto flex items-center justify-center w-7 h-7 rounded-full"
                             style={{
                                 backgroundColor: isSelected
                                     ? "#000000"
+                                    : isPast
+                                    ? "transparent"
                                     : isToday
                                     ? "var(--color-super-light-gray)"
                                     : "transparent",
                                 color: isSelected
                                     ? "#ffffff"
+                                    : isPast
+                                    ? "var(--color-light-gray)"
                                     : "var(--color-dark-navy)",
                                 fontSize: "var(--text-sub)",
+                                opacity: isPast ? 0.5 : 1,
                             }}
+                            disabled={isPast}
                         >
                             {day}
                         </button>
