@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import RoutineFrequencyPage from "@/features/routine/pages/RoutineFrequencyPage";
 import {
     parseNumberList,
@@ -31,13 +32,15 @@ export default async function FrequencyPage({ searchParams }: Props) {
     const mode = sp.mode;
 
     return (
-        <RoutineFrequencyPage
-            initialFrequency={freq}
-            initialDays={days}
-            initialMonths={months}
-            initialLast={last}
-            routineId={routineId}
-            mode={mode}
-        />
+        <Suspense fallback={null}>
+            <RoutineFrequencyPage
+                initialFrequency={freq}
+                initialDays={days}
+                initialMonths={months}
+                initialLast={last}
+                routineId={routineId}
+                mode={mode}
+            />
+        </Suspense>
     );
 }
