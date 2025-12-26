@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Header from "@/components/layout/Header";
 import Menu from "@/components/layout/Menu";
 import { usePathname } from "next/navigation";
@@ -43,7 +44,9 @@ export default function AfterLoginLayout({
 
     return (
         <div className="app-page">
-            <Header />
+            <Suspense fallback={null}>
+                <Header />
+            </Suspense>
 
             <main className="app-container pt-app-header px-6 py-20 overflow-y-auto overflow-x-hidden">
                 {children}
