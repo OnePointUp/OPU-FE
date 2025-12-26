@@ -6,7 +6,7 @@ import { RoutineListItemResponse } from "../types";
 
 export function useRoutineListPage() {
     const [items, setItems] = useState<RoutineListItemResponse[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const reload = useCallback(async () => {
         setLoading(true);
