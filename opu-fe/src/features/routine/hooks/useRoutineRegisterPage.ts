@@ -85,6 +85,18 @@ export function useRoutineRegisterPage() {
     useEffect(() => {
         let restored = loadFormFromStorage(freq);
 
+        // 반복 페이지에서 WEEKLY/BIWEEKLY 선택하고 돌아온 경우
+        if (frequencyParam === "WEEKLY" || frequencyParam === "BIWEEKLY") {
+            const weekIdx = days.map((d) => d - 1); // 1~7 → 0~6
+            restored = {
+                ...restored,
+                frequency: frequencyParam,
+                weekDays: weekIdx.length > 0 ? weekIdx.join(",") : null,
+                monthDays: null,
+                yearDays: null,
+            };
+        }
+
         // 반복 페이지에서 MONTHLY 선택하고 돌아온 경우
         if (frequencyParam === "MONTHLY") {
             const tokens: string[] = [];
@@ -106,6 +118,8 @@ export function useRoutineRegisterPage() {
                 ...restored,
                 frequency: "MONTHLY",
                 monthDays: tokens.length > 0 ? tokens.join(",") : null,
+                weekDays: null,
+                yearDays: null,
             };
         }
 
@@ -129,6 +143,8 @@ export function useRoutineRegisterPage() {
                 ...restored,
                 frequency: "YEARLY",
                 yearDays: tokens.length > 0 ? tokens.join(",") : null,
+                weekDays: null,
+                monthDays: null,
             };
         }
 
