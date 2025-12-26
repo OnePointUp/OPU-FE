@@ -86,7 +86,7 @@ export default function StatsPage() {
                     <button
                         type="button"
                         onClick={() => handleChangeTab("ROUTINE")}
-                        className="relative pb-3"
+                        className="relative pb-3 cursor-pointer"
                         style={{
                             fontWeight: "var(--weight-semibold)",
                             fontSize: "var(--text-sub)",
@@ -104,7 +104,7 @@ export default function StatsPage() {
                     <button
                         type="button"
                         onClick={() => handleChangeTab("OPU")}
-                        className="relative pb-3"
+                        className="relative pb-3 cursor-pointer"
                         style={{
                             fontWeight: "var(--weight-semibold)",
                             fontSize: "var(--text-sub)",

@@ -54,7 +54,7 @@ export default function MonthView({
                                 onSelectDay(day);
                             }}
                             className={`
-                                rounded-xl flex items-center justify-center
+                                rounded-xl flex items-center justify-center cursor-pointer
                                 aspect-square
                                 text-agreement-optional
                                 ${

@@ -195,7 +195,7 @@ const RoutineStats: FC<RoutineStatsProps> = ({
                 <button
                     type="button"
                     onClick={() => setActiveFilter("all")}
-                    className="flex items-center gap-1 rounded-full border border-[var(--color-opu-pink)] px-3 py-1 whitespace-nowrap transition-colors"
+                    className="flex items-center gap-1 rounded-full border border-[var(--color-opu-pink)] px-3 py-1 whitespace-nowrap transition-colors cursor-pointer"
                     style={{
                         fontWeight: "var(--weight-semibold)",
                         fontSize: "var(--text-caption)",
@@ -223,7 +223,7 @@ const RoutineStats: FC<RoutineStatsProps> = ({
                                   key={r.id}
                                   type="button"
                                   onClick={() => setActiveFilter(r.id)}
-                                  className="flex items-center gap-1 rounded-full border border-[var(--color-opu-pink)] px-3 py-1 whitespace-nowrap transition-colors"
+                                  className="flex items-center gap-1 rounded-full border border-[var(--color-opu-pink)] px-3 py-1 whitespace-nowrap transition-colors cursor-pointer"
                                   style={{
                                       fontWeight: "var(--weight-semibold)",
                                       fontSize: "var(--text-caption)",

@@ -51,7 +51,7 @@ export default function RandomTimeStep({
                                 onChange(opt.code);
                             }}
                             style={{ fontSize: "var(--text-body)" }}
-                            className={`flex items-center justify-center gap-1 w-full h-16 rounded-2xl border
+                            className={`flex items-center justify-center gap-1 w-full h-16 rounded-2xl border cursor-pointer
                                 ${
                                     isActive
                                         ? "border-[var(--color-opu-pink)] border-[2px] font-[var(--weight-medium)] text-[var(--color-opu-pink)] bg-[var(--color-super-light-pink)]"

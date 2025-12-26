@@ -97,7 +97,7 @@ export default function Header({
             <div className="app-header__inner">
                 {backVisible ? (
                     <button
-                        className="app-header__icon"
+                        className="app-header__icon cursor-pointer"
                         aria-label="뒤로가기"
                         onClick={onBack ?? (() => router.back())}
                     >
@@ -168,7 +168,7 @@ export default function Header({
                             type="button"
                             aria-label="랜덤 뽑기"
                             onClick={handleGoRandom}
-                            className="app-header__action-btn"
+                            className="app-header__action-btn cursor-pointer"
                         >
                             <Icon
                                 icon="mingcute:random-line"
@@ -183,7 +183,7 @@ export default function Header({
                                 type="button"
                                 aria-label="알림 보기"
                                 onClick={handleGoNotification}
-                                className="app-header__action-btn relative"
+                                className="app-header__action-btn relative cursor-pointer"
                             >
                                 <Icon
                                     icon="mingcute:notification-line"

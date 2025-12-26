@@ -109,7 +109,7 @@ export default function OpuCard({
                     type="button"
                     onClick={handleLikeClick}
                     aria-pressed={liked}
-                    className="inline-flex disabled:opacity-50"
+                    className="inline-flex disabled:opacity-50 cursor-pointer"
                     title="찜하기"
                     disabled={likeLoading}
                 >

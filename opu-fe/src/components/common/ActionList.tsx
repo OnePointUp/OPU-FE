@@ -16,7 +16,7 @@ export default function ActionList({ items }: { items: ActionItem[] }) {
                         type="button"
                         onClick={it.onClick}
                         className={`
-              w-full px-4 py-4 text-center text-[15px]
+              w-full px-4 py-4 text-center text-[15px] cursor-pointer
               ${i !== 0 ? "border-t border-zinc-100" : ""}
               ${
                   it.danger

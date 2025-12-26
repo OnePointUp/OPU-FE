@@ -62,7 +62,7 @@ export default function OpuManagement({
             {/* 첫 번째 버튼 */}
             <button
                 onClick={cards[0].onClick}
-                className="flex-1 flex items-center justify-between px-6 py-4 bg-gray-50 transition "
+                className="flex-1 flex items-center justify-between px-6 py-4 bg-gray-50 transition cursor-pointer"
             >
                 <div className="flex items-center gap-2">
                     <Icon icon={cards[0].icon} width={22} height={22} />
@@ -92,7 +92,7 @@ export default function OpuManagement({
             {/* 두 번째 버튼 */}
             <button
                 onClick={cards[1].onClick}
-                className="flex-1 flex items-center justify-between px-6 py-4 bg-gray-50 transition"
+                className="flex-1 flex items-center justify-between px-6 py-4 bg-gray-50 transition cursor-pointer"
             >
                 <div className="flex items-center gap-2">
                     <Icon icon={cards[1].icon} width={22} height={22} />

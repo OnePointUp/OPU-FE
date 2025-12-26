@@ -44,7 +44,7 @@ export default function MonthSelector({
             >
                 <button
                     onClick={() => setOpen(true)}
-                    className="flex items-center gap-1.5 font-semibold"
+                    className="flex items-center gap-1.5 font-semibold cursor-pointer"
                     style={{ fontSize: "var(--text-body)" }}
                 >
                     {year}년 {month}월
@@ -59,7 +59,7 @@ export default function MonthSelector({
                 {!hideViewToggle && (
                     <button
                         onClick={onToggleView}
-                        className="px-3 py-1 rounded-full bg-[var(--color-light-blue-gray)]"
+                        className="px-3 py-1 rounded-full bg-[var(--color-light-blue-gray)] cursor-pointer"
                         style={{
                             fontSize: "var(--text-sub)",
                             fontWeight: "var(--weight-semibold)",

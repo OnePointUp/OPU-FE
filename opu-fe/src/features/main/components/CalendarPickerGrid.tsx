@@ -65,7 +65,7 @@ export default function CalendarGrid({
                       ? "bg-[var(--color-opu-light-green)] text-black font-semibold"
                       : isToday
                       ? "text-[var(--color-opu-green)] font-semibold"
-                      : "text-black"
+                      : "text-black cursor-pointer"
                   }
                 `}
               >

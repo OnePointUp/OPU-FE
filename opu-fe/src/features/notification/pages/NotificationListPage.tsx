@@ -83,7 +83,7 @@ export default function NotificationListPage() {
             <div className="flex justify-end -mt-2">
                 <button
                     type="button"
-                    className="underline underline-offset-[3px] decoration-[1px]"
+                    className="underline underline-offset-[3px] decoration-[1px] cursor-pointer"
                     style={{
                         fontSize: "var(--text-caption)",
                         color: "var(--color-light-gray)",

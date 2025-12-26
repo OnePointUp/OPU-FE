@@ -38,7 +38,7 @@ export default function RandomScopeStep({
                     type="button"
                     onClick={() => onChange("ALL")}
                     style={{ fontSize: "var(--text-body)" }}
-                    className={`w-full h-16 rounded-2xl border
+                    className={`w-full h-16 rounded-2xl border cursor-pointer
                         ${
                             value === "ALL"
                                 ? "border-[var(--color-opu-pink)] border-[2px] font-[var(--weight-medium)] text-[var(--color-opu-pink)] bg-[var(--color-super-light-pink)]"
@@ -60,7 +60,7 @@ export default function RandomScopeStep({
                         }
                         onChange("FAVORITE");
                     }}
-                    className={`flex items-center justify-center gap-1 w-full h-16 rounded-2xl border
+                    className={`flex items-center justify-center gap-1 w-full h-16 rounded-2xl border cursor-pointer
                         ${
                             value === "FAVORITE"
                                 ? "border-[var(--color-opu-pink)] border-[2px] font-[var(--weight-medium)] text-[var(--color-opu-pink)] bg-[var(--color-super-light-pink)]"

@@ -51,7 +51,7 @@ export default function EmailVerifyPage() {
                             color: "var(--color-light-gray)",
                             fontSize: "var(--text-caption)",
                         }}
-                        className="underline disabled:opacity-50"
+                        className="underline disabled:opacity-50 cursor-pointer"
                     >
                         이메일을 받지 못하셨나요?
                     </button>

@@ -29,7 +29,7 @@ export default function WeekView({
                             onSelectDay(day);
                         }}
                         className={`
-                            rounded-xl flex items-center justify-center
+                            rounded-xl flex items-center justify-center cursor-pointer
                             aspect-square text-agreement-optional
                             ${
                                 day.isPreview

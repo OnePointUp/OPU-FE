@@ -76,6 +76,7 @@ export default function BlockedOpuCard({
                                 </p>
                                 <button
                                     type="button"
+                                    className="cursor-pointer"
                                     aria-haspopup="menu"
                                     aria-expanded={menuOpen}
                                     onClick={(e) => {

@@ -154,7 +154,7 @@ function CalendarMode({
 
       <button
         onClick={onSelect}
-        className="mt-6 w-full py-3 rounded-xl bg-[var(--color-opu-light-green)] font-semibold"
+        className="mt-6 w-full py-3 rounded-xl bg-[var(--color-opu-light-green)] font-semibold cursor-pointer"
       >
         완료
       </button>
@@ -209,7 +209,7 @@ function PickerMode({
 
       <button
         onClick={onConfirm}
-        className="w-full py-3 mt-4 rounded-xl bg-[var(--color-opu-light-green)] font-semibold"
+        className="w-full py-3 mt-4 rounded-xl bg-[var(--color-opu-light-green)] font-semibold cursor-pointer"
       >
         확인
       </button>
