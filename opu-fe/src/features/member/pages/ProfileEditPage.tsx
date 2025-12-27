@@ -7,6 +7,7 @@ import OpuActionButton from "@/components/common/OpuActionButton";
 import { useProfileEdit } from "../hooks/useProfileEdit";
 import { useState } from "react";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import SpinnerOverlay from "@/components/common/SpinnerOverlay";
 
 export default function ProfileEditPage() {
     const {
@@ -21,12 +22,15 @@ export default function ProfileEditPage() {
         handlePickImage,
         handleSave,
         canSubmit,
+        loadingProfile,
     } = useProfileEdit();
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     return (
         <section>
+            {loadingProfile && <SpinnerOverlay />}
+
             <ProfileAvatarPicker
                 nickname={nickname}
                 previewUrl={profileImageUrl ?? undefined}
