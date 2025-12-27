@@ -21,6 +21,7 @@ import {
     fetchMonthlyRoutineStats,
 } from "../services";
 import { toastError } from "@/lib/toast";
+import SpinnerOverlay from "@/components/common/SpinnerOverlay";
 
 type RoutineStatsProps = {
     routineId: number;
@@ -51,7 +52,7 @@ const RoutineStats = ({ routineId, year, month }: RoutineStatsProps) => {
     const [overviewItems, setOverviewItems] = useState<
         RoutineCalendarResponse[]
     >([]);
-    const [loadingOverview, setLoadingOverview] = useState(false);
+    const [loadingOverview, setLoadingOverview] = useState(true);
 
     // 루틴 목록
     useEffect(() => {
@@ -239,29 +240,10 @@ const RoutineStats = ({ routineId, year, month }: RoutineStatsProps) => {
 
             {/* === 전체 모드 === */}
             {activeFilter === "all" && (
-                <section className="grid grid-cols-2 gap-2 px-1">
-                    {loadingOverview ? (
-                        Array.from({ length: 4 }).map((_, i) => (
-                            <div
-                                key={i}
-                                className="flex flex-col rounded-2xl border border-[var(--color-super-light-gray)] bg-white p-3"
-                            >
-                                <div className="skeleton h-4 w-24 mb-3" />
-                                <div className="grid grid-cols-7 gap-1 mb-3">
-                                    {Array.from({ length: 28 }).map((_, j) => (
-                                        <div
-                                            key={j}
-                                            className="skeleton aspect-square rounded-md"
-                                        />
-                                    ))}
-                                </div>
-                                <div className="flex items-center justify-between mt-1">
-                                    <div className="skeleton h-3 w-10" />
-                                    <div className="skeleton h-3 w-10" />
-                                </div>
-                            </div>
-                        ))
-                    ) : showEmptyRoutines ? (
+                <section className="grid grid-cols-2 gap-2 px-1 relative">
+                    {loadingOverview && <SpinnerOverlay />}
+
+                    {!loadingOverview && showEmptyRoutines ? (
                         <div className="col-span-2 flex flex-col items-center justify-center gap-3 rounded-2xl border border-[var(--color-super-light-gray)] bg-white py-10 text-center">
                             <p className="text-[var(--text-sub)] text-[var(--color-dark-gray)] font-[var(--weight-medium)]">
                                 아직 설정된 루틴이 없습니다.
@@ -276,7 +258,7 @@ const RoutineStats = ({ routineId, year, month }: RoutineStatsProps) => {
                                 루틴 등록하기
                             </Link>
                         </div>
-                    ) : showNoStats ? (
+                    ) : !loadingOverview && showNoStats ? (
                         <div className="col-span-2 flex flex-col items-center justify-center gap-2 rounded-2xl border border-[var(--color-super-light-gray)] bg-white py-8 text-center">
                             <p className="text-[var(--text-sub)] text-[var(--color-dark-gray)] font-[var(--weight-medium)]">
                                 선택한 기간의 통계가 아직 없어요.
@@ -285,7 +267,7 @@ const RoutineStats = ({ routineId, year, month }: RoutineStatsProps) => {
                                 루틴을 꾸준히 완료하면 통계가 채워집니다.
                             </p>
                         </div>
-                    ) : (
+                    ) : !loadingOverview ? (
                         overviewItems.map((item) => (
                             <RoutineOverviewCard
                                 key={item.routineId}
@@ -293,7 +275,7 @@ const RoutineStats = ({ routineId, year, month }: RoutineStatsProps) => {
                                 onSelect={() => setActiveFilter(item.routineId)}
                             />
                         ))
-                    )}
+                    ) : null}
                 </section>
             )}
 
