@@ -30,17 +30,15 @@ export default function SettingsSection({
     const handleSocialWithdraw = async () => {
         if (withdrawing) return;
 
+        setWithdrawing(true);
         try {
-            setWithdrawing(true);
-
             // 소셜 로그인 → 비밀번호 없이 탈퇴
             await memberWithdraw("");
 
             // 탈퇴 성공 → 로그아웃 처리
-            handleLogout();
+            await handleLogout();
         } catch (e) {
             toastError("회원 탈퇴 중 문제가 발생했어요.");
-        } finally {
             setWithdrawing(false);
             setWithdrawModalOpen(false);
         }
