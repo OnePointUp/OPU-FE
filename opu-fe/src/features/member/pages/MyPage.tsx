@@ -13,7 +13,7 @@ import { useMyPageMenu } from "../hooks/useMyPageMenu";
 export default function MyPageScreen() {
     const router = useRouter();
 
-    const { profile, loading, authProvider } = useMyProfile();
+    const { profile, loading, authProvider, isLocal } = useMyProfile();
     const { handleLogout } = useLogout();
     const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
@@ -55,6 +55,7 @@ export default function MyPageScreen() {
                 <SettingsSection
                     items={myPageMenuItems}
                     loading={menuLoading}
+                    isLocal={isLocal}
                 />
             </div>
 
