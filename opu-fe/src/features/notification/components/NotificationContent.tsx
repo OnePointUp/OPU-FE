@@ -5,6 +5,7 @@ import Toggle from "@/components/common/Toggle";
 import { useNotificationSettings } from "@/features/notification/hooks/useNotificationSettings";
 import NotificationToggleRow from "./NotificationToggleRow";
 import NotificationToggleList from "./NotificationToggleList";
+import SpinnerOverlay from "@/components/common/SpinnerOverlay";
 
 export default function NotificationContent() {
     const supportsNotification =
@@ -63,7 +64,7 @@ export default function NotificationContent() {
     );
 
     if (loading || !settings) {
-        return <div className="px-2" />;
+        return <SpinnerOverlay />;
     }
 
     return (

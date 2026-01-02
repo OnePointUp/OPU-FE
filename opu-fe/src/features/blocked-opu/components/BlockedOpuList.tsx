@@ -8,6 +8,7 @@ import BlockedOpuCard from "./BlockedOpuCard";
 import type { OpuCardModel } from "@/features/opu/domain";
 import { useBlockedOpuList } from "@/features/blocked-opu/hooks/useBlockedOpuList";
 import BlockedOpuCardSkeleton from "./BlockedOpuCardSkeleton";
+import SpinnerOverlay from "@/components/common/SpinnerOverlay";
 
 type Props = {
     initialItems: OpuCardModel[];
@@ -111,14 +112,10 @@ export default function BlockedOpuList({
             <div className="h-[1px] bg-[var(--color-super-light-gray)] -mx-6" />
 
             {/* 리스트 */}
-            <div className="flex flex-col gap-2.5">
-                {loading ? (
-                    Array.from({ length: filtered.length || 4 }).map(
-                        (_, idx) => (
-                            <BlockedOpuCardSkeleton key={idx} selectable />
-                        )
-                    )
-                ) : (
+            <div className="flex flex-col gap-2.5 relative">
+                {loading && <SpinnerOverlay />}
+
+                {!loading && (
                     <>
                         {filtered.map((item) => (
                             <BlockedOpuCard

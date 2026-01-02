@@ -10,6 +10,7 @@ import ActionList, { type ActionItem } from "@/components/common/ActionList";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import { deleteRoutine } from "../services";
 import { useRoutineListPage } from "../hooks/useRoutineListPage";
+import SpinnerOverlay from "@/components/common/SpinnerOverlay";
 
 export default function RoutineListPage() {
     const router = useRouter();
@@ -105,17 +106,9 @@ export default function RoutineListPage() {
             </div>
 
             <main className="flex-1">
-                {loading ? (
-                    <div
-                        className="text-center py-7 w-full"
-                        style={{
-                            fontSize: "var(--text-sub)",
-                            color: "var(--color-light-gray)",
-                        }}
-                    >
-                        루틴 불러오는 중...
-                    </div>
-                ) : filtered.length === 0 ? (
+                {loading && <SpinnerOverlay />}
+
+                {!loading && filtered.length === 0 ? (
                     <div
                         className="text-center py-10 w-full flex flex-col items-center gap-2"
                         style={{
@@ -132,7 +125,7 @@ export default function RoutineListPage() {
                             하단 + 버튼으로 새로운 루틴을 만들어보세요.
                         </p>
                     </div>
-                ) : (
+                ) : !loading ? (
                     <div>
                         {filtered.map((item) => (
                             <RoutineListItem
@@ -142,7 +135,7 @@ export default function RoutineListPage() {
                             />
                         ))}
                     </div>
-                )}
+                ) : null}
             </main>
 
             <div className="flex items-center justify-center py-8">
@@ -158,13 +151,11 @@ export default function RoutineListPage() {
                         router.push("/routine/register");
                     }}
                 >
-                    {navigating ? (
-                        <span className="form-label">이동 중...</span>
-                    ) : (
-                        <Icon icon="ic:baseline-plus" width="30" height="30" />
-                    )}
+                    <Icon icon="ic:baseline-plus" width="30" height="30" />
                 </button>
             </div>
+
+            {navigating && <SpinnerOverlay />}
 
             <BottomSheet open={openSheet} onClose={onCloseSheet}>
                 <ActionList items={actionItems} />

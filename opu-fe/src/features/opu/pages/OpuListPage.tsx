@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 
 import SearchBar from "@/components/common/SearchBar";
 import BottomSheet from "@/components/common/BottomSheet";
@@ -13,6 +12,7 @@ import LikedOpuFilter from "../components/LikedOpuFilter";
 import PlusButton from "@/components/common/PlusButton";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import OpuDuplicateListModal from "@/features/opu/components/OpuDuplicateListModal";
+import SpinnerOverlay from "@/components/common/SpinnerOverlay";
 
 import type { OpuCardModel, SortOption } from "@/features/opu/domain";
 import { useOpuListPage } from "../hooks/useOpuListPage";
@@ -92,6 +92,8 @@ export default function OpuListPage({
 
     const [showBlockModal, setShowBlockModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const isShared = contextType === "shared";
+    const showSpinnerOverlay = !isShared && (loading || loadingMore);
 
     /* ==============================
        무한 스크롤 sentinel
@@ -152,18 +154,20 @@ export default function OpuListPage({
 
             {/* 카드 리스트 */}
             <div className="mt-3 -mx-1" style={{ overflowAnchor: "none" }}>
+                {showSpinnerOverlay && <SpinnerOverlay />}
+
                 <OpuList
                     items={filtered}
-                    loading={loading}
+                    loading={isShared && loading}
                     onMore={handleOpenMore}
                     onToggleFavorite={handleToggleFavorite}
                     contextType={contextType}
                 />
 
                 {/* 다음 페이지 로딩 스켈레톤 */}
-                {loadingMore && (
+                {isShared && loadingMore && filtered.length > 0 && (
                     <div className="mt-4">
-                        <OpuList items={[]} loading />
+                        <OpuList items={filtered} loading />
                     </div>
                 )}
             </div>
