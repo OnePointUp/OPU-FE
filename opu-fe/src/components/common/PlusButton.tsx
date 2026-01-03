@@ -32,32 +32,16 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
 
     const menuItems = [
         {
-            label: "직접 생성",
+            label: "OPU에서 추가",
             icon: (
                 <Icon
-                    icon="pajamas:todo-done"
+                    icon="mdi:bulletin-board"
                     width={28}
                     height={28}
                     className="text-white"
                 />
             ),
             bgColor: "var(--color-opu-green)",
-            onClick: () => {
-                runAddEvent();
-                closeMenu();
-            },
-        },
-        {
-            label: "OPU에서 추가",
-            icon: (
-                <Icon
-                    icon="mdi:bulletin-board"
-                    width={30}
-                    height={30}
-                    style={{ color: "var(--color-dark-yellow)" }}
-                />
-            ),
-            bgColor: "var(--color-light-yellow)",
             onClick: () => {
                 router.push("/opu");
                 closeMenu();
@@ -71,11 +55,10 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
                     icon="lucide:rabbit"
                     width={30}
                     height={30}
-                    style={{ color: "var(--color-opu-brown)" }}
+                    style={{ color: "var(--color-dark-yellow)" }}
                 />
             ),
-            bgColor: "var(--color-opu-light-yellow)",
-
+            bgColor: "var(--color-light-yellow)",
             onClick: () => {
                 router.push("/opu/random/scope");
                 closeMenu();
@@ -86,6 +69,23 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
             icon: (
                 <Icon
                     icon="mdi:alarm-plus"
+                    width={30}
+                    height={30}
+                    style={{ color: "var(--color-opu-brown)" }}
+                />
+            ),
+            bgColor: "var(--color-opu-light-yellow)",
+            
+            onClick: () => {
+                router.push("/routine/register");
+                closeMenu();
+            },
+        },
+        {
+            label: "직접 생성",
+            icon: (
+                <Icon
+                    icon="pajamas:todo-done"
                     width={28}
                     height={28}
                     className="text-white"
@@ -93,7 +93,7 @@ export default function PlusButton({ showMenu, onAddEvent }: PlusButtonProps) {
             ),
             bgColor: "var(--color-light-pink)",
             onClick: () => {
-                router.push("/routine/register");
+                runAddEvent();
                 closeMenu();
             },
         },
